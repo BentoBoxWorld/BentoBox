@@ -31,8 +31,11 @@ import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
  *       {@code deletable} (e.g. from {@code /is reset}), ignoring file age.</li>
  * </ul>
  *
- * <p>Both cycles are gated on the single {@code housekeeping.enabled} flag
- * (default OFF) and share an {@code inProgress} guard so they never overlap.
+ * <p>Each cycle is independently gated: the age sweep is enabled via
+ * {@link world.bentobox.bentobox.Settings#isHousekeepingAgeEnabled()} and the
+ * deleted sweep via
+ * {@link world.bentobox.bentobox.Settings#isHousekeepingDeletedEnabled()}.
+ * Both cycles share an {@code inProgress} guard so they never overlap.
  *
  * <p>Last-run timestamps are persisted to
  * {@code <plugin-data-folder>/database/housekeeping.yml} regardless of the
@@ -241,6 +244,7 @@ public class HousekeepingManager {
 
         int totalWorlds = 0;
         int totalRegionsPurged = 0;
+        boolean hasErrors = false;
         for (GameModeAddon gm : gameModes) {
             World overworld = gm.getOverWorld();
             if (overworld == null) {
@@ -250,14 +254,23 @@ public class HousekeepingManager {
             plugin.log("Housekeeping age sweep: scanning '" + gm.getDescription().getName()
                     + "' world '" + overworld.getName() + "'");
             PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
-            totalRegionsPurged += runDeleteIfNonEmpty(scan, overworld, "age sweep");
+            int purged = runDeleteIfNonEmpty(scan, overworld, "age sweep");
+            if (purged < 0) {
+                hasErrors = true;
+            } else {
+                totalRegionsPurged += purged;
+            }
         }
 
         Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
         plugin.log("Housekeeping age sweep: complete — " + totalWorlds + " world(s) processed, "
                 + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
-        lastAgeRunMillis = System.currentTimeMillis();
-        saveState();
+        if (!hasErrors) {
+            lastAgeRunMillis = System.currentTimeMillis();
+            saveState();
+        } else {
+            plugin.logError("Housekeeping age sweep: completed with errors, last-run timestamp not advanced");
+        }
     }
 
     private void executeDeletedCycle() {
@@ -267,6 +280,7 @@ public class HousekeepingManager {
 
         int totalWorlds = 0;
         int totalRegionsPurged = 0;
+        boolean hasErrors = false;
         for (GameModeAddon gm : gameModes) {
             World overworld = gm.getOverWorld();
             if (overworld == null) {
@@ -281,14 +295,23 @@ public class HousekeepingManager {
             if (!scan.isEmpty()) {
                 evictChunksOnMainThread(scan);
             }
-            totalRegionsPurged += runDeleteIfNonEmpty(scan, overworld, "deleted sweep");
+            int purged = runDeleteIfNonEmpty(scan, overworld, "deleted sweep");
+            if (purged < 0) {
+                hasErrors = true;
+            } else {
+                totalRegionsPurged += purged;
+            }
         }
 
         Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
         plugin.log("Housekeeping deleted sweep: complete — " + totalWorlds + " world(s) processed, "
                 + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
-        lastDeletedRunMillis = System.currentTimeMillis();
-        saveState();
+        if (!hasErrors) {
+            lastDeletedRunMillis = System.currentTimeMillis();
+            saveState();
+        } else {
+            plugin.logError("Housekeeping deleted sweep: completed with errors, last-run timestamp not advanced");
+        }
     }
 
     private void evictChunksOnMainThread(PurgeScanResult scan) {
@@ -319,7 +342,7 @@ public class HousekeepingManager {
         if (!ok) {
             plugin.logError("Housekeeping " + label + ": purge of " + overworld.getName()
                     + " completed with errors");
-            return 0;
+            return -1;
         }
         return scan.deletableRegions().size();
     }
