@@ -306,7 +306,7 @@ class IslandRespawnListenerTest extends CommonTestSetup {
      * Test method for
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      * When the home location is unsafe and no safe location can be found on the island,
-     * the respawn location should remain unchanged (world default spawn).
+     * and the player has no island, the respawn location should remain unchanged.
      */
     @Test
     void testOnPlayerRespawnUnsafeHomeNoSafeIslandLocation() {
@@ -317,14 +317,54 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         l.onPlayerDeath(e);
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        // Home is unsafe and no island location exists
+        // Home is unsafe, no island location, and getIsland returns null (no island)
         when(im.isSafeLocation(safeLocation)).thenReturn(false);
         when(im.getIslandLocation(eq(world), any(UUID.class))).thenReturn(null);
+        when(im.getIsland(any(World.class), any(User.class))).thenReturn(null);
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
-        // Player should respawn at the default location unchanged
+        // No island: location unchanged and SafeSpotTeleport should NOT be scheduled
         assertSame(location, ev.getRespawnLocation());
+        verify(sch, never()).runTask(any(), any(Runnable.class));
+    }
+
+    /**
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * When all quick sync checks fail but the player has an island, the respawn
+     * location should be set to the island protection center and SafeSpotTeleport
+     * should be scheduled to find a truly safe spot after respawn.
+     */
+    @Test
+    void testOnPlayerRespawnSafeSpotTeleportFallback() {
+        // Die
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+        // Has island
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        // Home, one-above, and center offsets are all unsafe
+        when(im.isSafeLocation(safeLocation)).thenReturn(false);
+        when(safeLocation.add(any(Vector.class))).thenReturn(safeLocation);
+        when(islandCenter.clone()).thenReturn(islandCenter);
+        when(islandCenter.add(any(Vector.class))).thenReturn(islandCenter);
+        when(im.getIslandLocation(eq(world), any(UUID.class))).thenReturn(islandCenter);
+        when(im.isSafeLocation(islandCenter)).thenReturn(false);
+        // Player has an island for SafeSpotTeleport fallback
+        when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
+        Location protectionCenter = mock(Location.class);
+        when(protectionCenter.getWorld()).thenReturn(world);
+        when(protectionCenter.clone()).thenReturn(protectionCenter);
+        when(island.getProtectionCenter()).thenReturn(protectionCenter);
+        // Respawn
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
+        l.onPlayerRespawn(ev);
+        // Respawn location should be set to island protection center as best-effort
+        assertEquals(protectionCenter, ev.getRespawnLocation());
+        // SafeSpotTeleport should be scheduled to run on next tick
+        verify(sch).runTask(eq(plugin), any(Runnable.class));
     }
 }
 
