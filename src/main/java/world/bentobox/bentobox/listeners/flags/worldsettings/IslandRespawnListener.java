@@ -112,12 +112,12 @@ public class IslandRespawnListener extends FlagListener {
         if (islandLoc == null) {
             return null;
         }
-        // Try a default offset from the island center
+        // Try a default offset from the island center (same offsets used by getAsyncSafeHomeLocation)
         Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
         if (getIslands().isSafeLocation(dl)) {
             return dl;
         }
-        // Try just above the island center
+        // Try directly above the island center at a safe height
         dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
         if (getIslands().isSafeLocation(dl)) {
             return dl;
