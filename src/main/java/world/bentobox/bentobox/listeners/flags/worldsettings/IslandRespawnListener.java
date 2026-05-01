@@ -11,6 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -69,7 +72,18 @@ public class IslandRespawnListener extends FlagListener {
         World w = Util.getWorld(world);
         String ownerName = e.getPlayer().getName();
         if (w != null) {
-            final Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
+            Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
+            if (respawnLocation != null && !getIslands().isSafeLocation(respawnLocation)) {
+                // Home location is not safe (e.g. the block was removed).
+                // Try one block above first (covers slabs, stairs, etc.)
+                Location lPlusOne = respawnLocation.clone().add(new Vector(0, 1, 0));
+                if (getIslands().isSafeLocation(lPlusOne)) {
+                    respawnLocation = lPlusOne;
+                } else {
+                    // Fall back to a safe spot anywhere on the island
+                    respawnLocation = getSafeIslandLocation(world, e.getPlayer().getUniqueId());
+                }
+            }
             if (respawnLocation != null && getIslands().isSafeLocation(respawnLocation)) {
                 e.setRespawnLocation(respawnLocation);
                 // Get the island owner name
@@ -81,6 +95,41 @@ public class IslandRespawnListener extends FlagListener {
         }
         // Run respawn commands, if any
         Util.runCommands(User.getInstance(e.getPlayer()), ownerName, getIWM().getOnRespawnCommands(world), "respawn");
+    }
+
+    /**
+     * Tries to find a safe respawn location on the player's island by scanning from
+     * the island center upward. Used as a fallback when the player's home location
+     * is not safe (e.g. the home block was removed).
+     *
+     * @param world - the island world
+     * @param uuid  - the player's UUID
+     * @return a safe location on the island, or {@code null} if none can be found
+     */
+    @Nullable
+    private Location getSafeIslandLocation(@NonNull World world, @NonNull UUID uuid) {
+        Location islandLoc = getIslands().getIslandLocation(world, uuid);
+        if (islandLoc == null) {
+            return null;
+        }
+        // Try a default offset from the island center
+        Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
+        if (getIslands().isSafeLocation(dl)) {
+            return dl;
+        }
+        // Try just above the island center
+        dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
+        if (getIslands().isSafeLocation(dl)) {
+            return dl;
+        }
+        // Scan upward from the island center
+        for (int y = islandLoc.getBlockY(); y < world.getMaxHeight(); y++) {
+            dl = new Location(world, islandLoc.getX() + 0.5D, y, islandLoc.getZ() + 0.5D);
+            if (getIslands().isSafeLocation(dl)) {
+                return dl;
+            }
+        }
+        return null;
     }
 
 }
