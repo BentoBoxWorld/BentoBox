@@ -239,11 +239,11 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
     /**
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
      * All block spreading on an island with offline members should be blocked,
-     * regardless of the material type.
+     * regardless of the material type — including vines which were previously excluded.
      */
     @Test
     void testOnSpreadMembersOfflineAnyMaterial() {
-        when(block.getType()).thenReturn(Material.SPRUCE_LOG);
+        when(block.getType()).thenReturn(Material.VINE);
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();

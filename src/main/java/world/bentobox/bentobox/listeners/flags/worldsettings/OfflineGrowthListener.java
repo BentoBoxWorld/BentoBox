@@ -28,7 +28,8 @@ public class OfflineGrowthListener extends FlagListener {
             // We do not want to run any check if this is not the right world or if it is allowed.
             return;
         }
-        // Check if island exists and members are online
+        // Check if island exists and all members are offline.
+        // BlockGrowEvent has no source/destination split — the block itself is the one growing.
         checkGrowth(e.getBlock().getLocation(), e);
     }
 
@@ -43,7 +44,7 @@ public class OfflineGrowthListener extends FlagListener {
             // We do not want to run any check if this is not the right world or if it is allowed.
             return;
         }
-        // Check if island exists and members are online - use source block location
+        // Check if island exists and all members are offline - use source block location
         // so vines, kelp, bamboo and any other spreading plant are all caught
         checkGrowth(e.getSource().getLocation(), e);
     }
@@ -60,7 +61,7 @@ public class OfflineGrowthListener extends FlagListener {
             // We do not want to run any check if this is not the right world or if it is allowed.
             return;
         }
-        // Check if island exists and members are online
+        // Check if island exists and all members are offline
         checkGrowth(e.getLocation(), e);
     }
 
