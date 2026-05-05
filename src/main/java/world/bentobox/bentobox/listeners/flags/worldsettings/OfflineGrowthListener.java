@@ -3,11 +3,13 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -26,36 +28,51 @@ public class OfflineGrowthListener extends FlagListener {
             // We do not want to run any check if this is not the right world or if it is allowed.
             return;
         }
-        // Check if island exists and members are online
-        getIslands().getProtectedIslandAt(e.getBlock().getLocation()).ifPresent(i -> {
-            for (UUID uuid : i.getMemberSet(RanksManager.COOP_RANK)) {
-                if (Bukkit.getPlayer(uuid) != null) {
-                    return;
-                }
-            }
-            e.setCancelled(true);
-        });
+        // Check if island exists and all members are offline.
+        // BlockGrowEvent has no source/destination split — the block itself is the one growing.
+        checkGrowth(e.getBlock().getLocation(), e);
     }
 
+    /**
+     * Handles all block spreading (vines, kelp, bamboo, etc.).
+     * Uses the source block location so that plants growing outward from an island
+     * are correctly associated with that island.
+     */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onSpread(BlockSpreadEvent e) {
         if (!getIWM().inWorld(e.getBlock().getWorld()) || Flags.OFFLINE_GROWTH.isSetForWorld(e.getBlock().getWorld())) {
             // We do not want to run any check if this is not the right world or if it is allowed.
             return;
         }
-        // Check what is spreading - disallow Bamboo and Kelp growth
-        Material m = e.getBlock().getType();
-        if (!m.equals(Material.KELP) && !m.equals(Material.BAMBOO) && !m.equals(Material.BAMBOO_SAPLING)) {
+        // Check if island exists and all members are offline - use source block location
+        // so vines, kelp, bamboo and any other spreading plant are all caught
+        checkGrowth(e.getSource().getLocation(), e);
+    }
+
+    /**
+     * Handles tree and mushroom growth via {@link StructureGrowEvent}.
+     * Trees (birch, spruce, acacia, mangrove, etc.) and mushrooms do not fire
+     * {@link BlockGrowEvent} when growing from a sapling; they use this event instead.
+     * @since 3.15.1
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onStructureGrow(StructureGrowEvent e) {
+        if (!getIWM().inWorld(e.getWorld()) || Flags.OFFLINE_GROWTH.isSetForWorld(e.getWorld())) {
+            // We do not want to run any check if this is not the right world or if it is allowed.
             return;
         }
-        // Check if island exists and members are online
-        getIslands().getProtectedIslandAt(e.getBlock().getLocation()).ifPresent(i -> {
+        // Check if island exists and all members are offline
+        checkGrowth(e.getLocation(), e);
+    }
+
+    private void checkGrowth(Location location, Cancellable event) {
+        getIslands().getProtectedIslandAt(location).ifPresent(i -> {
             for (UUID uuid : i.getMemberSet(RanksManager.COOP_RANK)) {
                 if (Bukkit.getPlayer(uuid) != null) {
                     return;
                 }
             }
-            e.setCancelled(true);
+            event.setCancelled(true);
         });
     }
 }
