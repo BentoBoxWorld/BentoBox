@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -91,6 +92,17 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         }
         if (!is.inTeam(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
+            return false;
+        }
+        // Refuse if the recipient is already at their concurrent-islands cap.
+        // Without this check, ownership transfer bypasses the limit set in IslandCreateCommand (#2908).
+        User target = User.getInstance(targetUUID);
+        int num = getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld());
+        int max = target.getPermissionValue(
+                getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number",
+                getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
+        if (num >= max) {
+            user.sendMessage("commands.island.team.setowner.errors.at-max");
             return false;
         }
         return true;

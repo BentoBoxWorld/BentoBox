@@ -172,6 +172,10 @@ commands:
         confirmation: '<green>Are you sure you want to set [name] to be the owner of the
           [prefix_island] at [xyz]?</green>'
         success: '<aqua>[name]</aqua><green> is now the owner of this [prefix_island].</green>'
+        errors:
+          at-max: '<red>[name] already owns [number] [prefix_islands] - the maximum
+            allowed by settings or perms is [max]. Adjust their permission to allow
+            more.</red>'
         extra-islands: '<red>Warning: this player now owns [number] islands. This is
           more than allowed by settings or perms: [max].</red>'
       maxsize:

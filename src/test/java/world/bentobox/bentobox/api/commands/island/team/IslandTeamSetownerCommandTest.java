@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -225,8 +227,9 @@ class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
     @Test
     void testExecuteUserStringListOfStringHasManyConcurrentAndPerm() {
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(40);
-        when(im.getNumberOfConcurrentIslands(any(), eq(world))).thenReturn(20);
         UUID target = UUID.randomUUID();
+        // Force the recipient to be treated as offline so getPermissionValue returns the world default (3).
+        mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(null);
         when(pm.getUUID(anyString())).thenReturn(target);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, target));
         when(island.inTeam(any())).thenReturn(true);
@@ -237,12 +240,27 @@ class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
     }
 
     /**
+     * Recipient already owns the maximum allowed concurrent islands - transfer must be refused.
+     */
+    @Test
+    void testCanExecuteTargetAtConcurrentIslandsCap() {
+        UUID target = UUID.randomUUID();
+        mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(null);
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(island.inTeam(any())).thenReturn(true);
+        when(im.getNumberOfConcurrentIslands(eq(target), any())).thenReturn(3);
+        assertFalse(its.canExecute(user, "", List.of("tastybento")));
+        verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     void testExecuteUserStringListOfStringSuccess() {
         when(im.inTeam(any(), any())).thenReturn(true);
         UUID target = UUID.randomUUID();
+        mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(null);
         when(pm.getUUID(anyString())).thenReturn(target);
         when(island.inTeam(any())).thenReturn(true);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
