@@ -157,10 +157,12 @@ commands:
         fixed: '<green>Fixed</green>'
         done: '<green>Scan</green>'
       kick:
-        parameters: <team player>
+        parameters: <team player> [--all]
         description: kick a player from a team
         cannot-kick-owner: '<red>You cannot kick the owner. Kick members first.</red>'
         not-in-team: '<red>This player is not in a team.</red>'
+        not-member-of-this-island: '<red>Player is not a member of the [prefix_island] you are standing on.</red>'
+        must-stand-on-island: '<red>You must stand on the [prefix_island] you want to kick from, or use --all to kick from every [prefix_island].</red>'
         admin-kicked: '<red>The admin kicked you from the team.</red>'
         success: '<aqua>[name] </aqua><green>has been kicked from </green><aqua>[owner]</aqua><green>''s [prefix_island].</green>'
         success-all: '<aqua>Player removed from all teams in this world</aqua>'
