@@ -6,7 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,12 +16,14 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +76,8 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
         when(block.getWorld()).thenReturn(world);
         when(block.getLocation()).thenReturn(inside);
         when(block.getType()).thenReturn(Material.KELP);
+        // Make the inside location return the world (needed for StructureGrowEvent)
+        when(inside.getWorld()).thenReturn(world);
 
         // World Settings
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -232,21 +238,23 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent)}.
+     * All block spreading on an island with offline members should be blocked,
+     * regardless of the material type.
      */
     @Test
-    void testOnSpreadMembersOfflineTree() {
+    void testOnSpreadMembersOfflineAnyMaterial() {
         when(block.getType()).thenReturn(Material.SPRUCE_LOG);
         // Make an event to give some current to block
         BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
         OfflineGrowthListener orl = new OfflineGrowthListener();
         // Offline Growth not allowed
         Flags.OFFLINE_GROWTH.setSetting(world, false);
-        // Members are online
+        // Members are offline
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
 
         orl.onSpread(e);
-        // Do not block growth
-        assertFalse(e.isCancelled());
+        // Block growth - material filter removed, all spreading is blocked
+        assertTrue(e.isCancelled());
     }
 
     /**
@@ -278,5 +286,97 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
         orl.onSpread(e);
         // Allow growth
         assertFalse(e.isCancelled());
+    }
+
+    // ---- StructureGrowEvent tests ----
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onStructureGrow(StructureGrowEvent)}.
+     * When offline growth is allowed, the event should not be cancelled.
+     */
+    @Test
+    void testOnStructureGrowDoNothing() {
+        StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.TREE, false, null, new ArrayList<>());
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, true);
+        orl.onStructureGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onStructureGrow(StructureGrowEvent)}.
+     * When offline growth is disabled but members are online, growth should be allowed.
+     */
+    @Test
+    void testOnStructureGrowMembersOnline() {
+        StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.TREE, false, null, new ArrayList<>());
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
+        orl.onStructureGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onStructureGrow(StructureGrowEvent)}.
+     * When offline growth is disabled and all members are offline, tree growth should be blocked.
+     */
+    @Test
+    void testOnStructureGrowMembersOffline() {
+        StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.TREE, false, null, new ArrayList<>());
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+        orl.onStructureGrow(e);
+        // Block growth
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onStructureGrow(StructureGrowEvent)}.
+     * When the sapling is not on an island, growth should be allowed.
+     */
+    @Test
+    void testOnStructureGrowNonIsland() {
+        StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.TREE, false, null, new ArrayList<>());
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        when(im.getProtectedIslandAt(inside)).thenReturn(Optional.empty());
+        orl.onStructureGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onStructureGrow(StructureGrowEvent)}.
+     * When the event does not occur in a BentoBox world, growth should be allowed.
+     */
+    @Test
+    void testOnStructureGrowNonBentoBoxWorld() {
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.TREE, false, null, new ArrayList<>());
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        orl.onStructureGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onStructureGrow(StructureGrowEvent)}.
+     * Bone-mealed sapling on an island with offline members should also be blocked.
+     */
+    @Test
+    void testOnStructureGrowBoneMealMembersOffline() {
+        List<BlockState> blocks = new ArrayList<>();
+        StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.BIRCH, true, null, blocks);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+        orl.onStructureGrow(e);
+        // Block growth even with bone meal
+        assertTrue(e.isCancelled());
     }
 }
