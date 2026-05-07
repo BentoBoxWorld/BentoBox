@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +48,8 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
     @Mock
     private Island island2;
 
+    private static final String XYZ = "0,0,0";
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -69,25 +71,21 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
-        when(user.getLocation()).thenReturn(location);
         User.setPlugin(plugin);
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getWorld()).thenReturn(world);
 
-        // island is owned by admin (uuid), island2 is owned by notUUID (the target)
-        when(island.getOwner()).thenReturn(uuid);
+        // island2 is owned by notUUID (the target) and has a team
         when(island2.getOwner()).thenReturn(notUUID);
+        when(island2.hasTeam()).thenReturn(true);
+        when(island2.getCenter()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
 
-        // By default, admin is standing on island2 (the target's island)
-        when(im.getIslandAt(location)).thenReturn(Optional.of(island2));
-        // Target (notUUID) is a member of island2
-        when(island2.inTeam(notUUID)).thenReturn(true);
-
-        // Target is in a team
+        // Target (notUUID) is in a team and is a member of island2
         when(im.inTeam(any(), eq(notUUID))).thenReturn(true);
-        // Target is on island2 only (single island by default)
+        // By default, target is on island2 only
         when(im.getIslands(world, notUUID)).thenReturn(List.of(island2));
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -101,9 +99,6 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
-
-        // Util
-        mockedUtil.when(() -> Util.getOnlinePlayerList(any())).thenReturn(List.of());
     }
 
     @Override
@@ -156,49 +151,7 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Test that an invalid second argument shows help.
-     */
-    @Test
-    void testCanExecuteBadSecondArg() {
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target", "badarg")));
-    }
-
-    /**
-     * Test that a non-player (console) user without --all gets an error.
-     */
-    @Test
-    void testCanExecuteConsoleWithoutAllFlag() {
-        when(user.isPlayer()).thenReturn(false);
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(user).sendMessage("commands.admin.team.kick.must-stand-on-island");
-    }
-
-    /**
-     * Test that a player not standing on any island gets an error.
-     */
-    @Test
-    void testCanExecuteNotOnIsland() {
-        when(im.getIslandAt(location)).thenReturn(Optional.empty());
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(user).sendMessage("commands.admin.team.kick.must-stand-on-island");
-    }
-
-    /**
-     * Test that kicking a player not on the specific island gives an error.
-     */
-    @Test
-    void testCanExecuteTargetNotMemberOfThisIsland() {
-        when(island2.inTeam(notUUID)).thenReturn(false);
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(user).sendMessage("commands.admin.team.kick.not-member-of-this-island");
-    }
-
-    /**
-     * Test that standing on the island allows a kick.
+     * Test that a player in a team on a single island can be kicked with 1 arg.
      */
     @Test
     void testCanExecuteSuccess() {
@@ -207,26 +160,44 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Test that --all flag is accepted.
+     * Test that a player on multiple islands requires an xyz arg.
      */
     @Test
-    void testCanExecuteWithAllFlag() {
+    void testCanExecuteMultipleIslandsRequiresXyz() {
+        // Set up island (admin-owned) with a different center location so it gets a unique xyz key
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.hasTeam()).thenReturn(true);
+        org.bukkit.Location loc2 = mock(org.bukkit.Location.class);
+        when(loc2.toVector()).thenReturn(new Vector(100, 64, 100));
+        when(island.getCenter()).thenReturn(loc2);
+        when(im.getIslands(world, notUUID)).thenReturn(List.of(island, island2));
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", "--all")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
     }
 
     /**
-     * Test that --all flag is case-insensitive.
+     * Test that an unknown xyz arg gives an error.
      */
     @Test
-    void testCanExecuteWithAllFlagCaseInsensitive() {
+    void testCanExecuteUnknownIslandLocation() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", "--ALL")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target", "9,9,9")));
+        verify(user).sendMessage("commands.admin.unregister.errors.unknown-island-location");
+    }
+
+    /**
+     * Test that a valid xyz arg selects the correct island.
+     */
+    @Test
+    void testCanExecuteWithValidXyz() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", XYZ)));
     }
 
     /**
      * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
-     * Admin is standing on island2 (owned by target), kicks target from that island only.
+     * Target on one island; kicked with 1 arg.
      */
     @Test
     void testExecuteSingleIsland() {
@@ -235,77 +206,57 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(name)));
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
         verify(im).removePlayer(island2, notUUID);
-        verify(im, never()).removePlayer(island, notUUID);
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), any(), eq("[owner]"),
                 any());
-        verify(user, never()).sendMessage("commands.admin.team.kick.success-all");
-        // 3 events: TeamEvent + IslandEvent (2 callEvent calls in IslandEvent.build)
+        // 3 events: TeamEvent + IslandEvent (IslandEvent.build fires 2 callEvent calls)
         verify(pim, times(3)).callEvent(any());
     }
 
     /**
      * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
-     * --all flag kicks target from all islands in the world.
+     * Target on multiple islands; kicked with explicit xyz.
      */
     @Test
-    void testExecuteAllIslands() {
-        when(im.getIslands(world, notUUID)).thenReturn(List.of(island, island2));
-        String name = "target";
+    void testExecuteWithXyz() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertTrue(itl.canExecute(user, itl.getLabel(), List.of(name, "--all")));
-        assertTrue(itl.execute(user, itl.getLabel(), List.of(name, "--all")));
-        // island is owned by uuid (admin); kickFromIsland skips it because user IS the owner
-        verify(im, never()).removePlayer(island, notUUID);
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", XYZ)));
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("target", XYZ)));
         verify(im).removePlayer(island2, notUUID);
-        verify(user).sendMessage("commands.admin.team.kick.success-all");
+        verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), any(), eq("[owner]"),
+                any());
+        verify(pim, times(3)).callEvent(any());
     }
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
-     * When --all is used but target is on no island, execute returns false.
+     * Test tab complete with no args returns empty.
      */
     @Test
-    void testExecuteAllNoIslands() {
-        when(im.getIslands(world, notUUID)).thenReturn(List.of());
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", "--all")));
-        assertFalse(itl.execute(user, itl.getLabel(), List.of("target", "--all")));
-    }
-
-    /**
-     * Test tab complete returns player list for first arg.
-     */
-    @Test
-    void testTabCompleteFirstArg() {
+    void testTabCompleteNoArgs() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         Optional<List<String>> result = itl.tabComplete(user, "", List.of(""));
-        assertTrue(result.isPresent());
+        assertTrue(result.isEmpty());
     }
 
     /**
-     * Test tab complete returns --all when target is on multiple islands.
+     * Test tab complete for second arg returns xyz of the target's team islands.
      */
     @Test
-    void testTabCompleteSecondArgMultipleIslands() {
+    void testTabCompleteSecondArg() {
         when(pm.getUUID("target")).thenReturn(notUUID);
-        when(im.getIslands(world, notUUID)).thenReturn(List.of(island, island2));
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         Optional<List<String>> result = itl.tabComplete(user, "", List.of("target", ""));
         assertTrue(result.isPresent());
-        assertTrue(result.get().contains("--all"));
+        assertTrue(result.get().contains(XYZ));
     }
 
     /**
-     * Test tab complete does not return --all when target is on one island only.
+     * Test tab complete for second arg returns empty when player is unknown.
      */
     @Test
-    void testTabCompleteSecondArgSingleIsland() {
-        when(pm.getUUID("target")).thenReturn(notUUID);
-        when(im.getIslands(world, notUUID)).thenReturn(List.of(island2));
+    void testTabCompleteSecondArgUnknownPlayer() {
+        when(pm.getUUID("unknown")).thenReturn(null);
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        Optional<List<String>> result = itl.tabComplete(user, "", List.of("target", ""));
-        // Returns player list (no --all hint for single island)
-        assertTrue(result.isPresent());
-        assertFalse(result.get().contains("--all"));
+        Optional<List<String>> result = itl.tabComplete(user, "", List.of("unknown", ""));
+        assertTrue(result.isEmpty());
     }
 }
