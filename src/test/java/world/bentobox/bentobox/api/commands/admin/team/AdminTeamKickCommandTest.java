@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +48,8 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
     @Mock
     private Island island2;
 
+    private static final String XYZ = "0,0,0";
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -58,8 +60,9 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Player
+        // Admin player (user)
         when(user.isOp()).thenReturn(false);
+        when(user.isPlayer()).thenReturn(true);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
         while (notUUID.equals(uuid)) {
@@ -74,19 +77,20 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getWorld()).thenReturn(world);
 
-        // Island
-        when(island.getOwner()).thenReturn(uuid);
+        // island2 is owned by notUUID (the target) and has a team
         when(island2.getOwner()).thenReturn(notUUID);
+        when(island2.hasTeam()).thenReturn(true);
+        when(island2.getCenter()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
 
-        // Player has island to begin with
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.getIslands(world, uuid)).thenReturn(List.of(island, island2));
-
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+        // Target (notUUID) is in a team and is a member of island2
+        when(im.inTeam(any(), eq(notUUID))).thenReturn(true);
+        // By default, target is on island2 only
+        when(im.getIslands(world, notUUID)).thenReturn(List.of(island2));
 
         when(plugin.getPlayers()).thenReturn(pm);
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getName(any())).thenReturn("target");
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -95,7 +99,6 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
-
     }
 
     @Override
@@ -118,6 +121,16 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
      * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
+    void testCanExecuteTooManyArgs() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("a", "b", "c")));
+        // Show help
+    }
+
+    /**
+     * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
+     */
+    @Test
     void testCanExecuteUnknownPlayer() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         when(pm.getUUID(any())).thenReturn(null);
@@ -132,28 +145,118 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
     void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         when(pm.getUUID(any())).thenReturn(notUUID);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        when(im.inTeam(any(), eq(notUUID))).thenReturn(false);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(user).sendMessage("commands.admin.team.kick.not-in-team");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamKickCommand#execute(User, String, List)}.
+     * Test that a player in a team on a single island can be kicked with 1 arg.
      */
     @Test
-    void testExecute() {
-        when(im.inTeam(any(), any())).thenReturn(true);
-        String name = "tastybento";
-        when(pm.getUUID(any())).thenReturn(uuid);
-        when(pm.getName(any())).thenReturn(name);
+    void testCanExecuteSuccess() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+    }
 
+    /**
+     * Test that a player on multiple islands requires an xyz arg.
+     */
+    @Test
+    void testCanExecuteMultipleIslandsRequiresXyz() {
+        // Set up island (admin-owned) with a different center location so it gets a unique xyz key
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.hasTeam()).thenReturn(true);
+        org.bukkit.Location loc2 = mock(org.bukkit.Location.class);
+        when(loc2.toVector()).thenReturn(new Vector(100, 64, 100));
+        when(island.getCenter()).thenReturn(loc2);
+        when(im.getIslands(world, notUUID)).thenReturn(List.of(island, island2));
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
+    }
+
+    /**
+     * Test that an unknown xyz arg gives an error.
+     */
+    @Test
+    void testCanExecuteUnknownIslandLocation() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target", "9,9,9")));
+        verify(user).sendMessage("commands.admin.unregister.errors.unknown-island-location");
+    }
+
+    /**
+     * Test that a valid xyz arg selects the correct island.
+     */
+    @Test
+    void testCanExecuteWithValidXyz() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", XYZ)));
+    }
+
+    /**
+     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
+     * Target on one island; kicked with 1 arg.
+     */
+    @Test
+    void testExecuteSingleIsland() {
+        String name = "target";
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(name)));
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
-        verify(im, never()).removePlayer(island, uuid);
-        verify(im).removePlayer(island2, uuid);
-        verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), any(), eq("[owner]"), eq(name));
-        // Offline so event will be called 3 times
+        verify(im).removePlayer(island2, notUUID);
+        verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), any(), eq("[owner]"),
+                any());
+        // 3 events: TeamEvent + IslandEvent (IslandEvent.build fires 2 callEvent calls)
         verify(pim, times(3)).callEvent(any());
     }
 
+    /**
+     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
+     * Target on multiple islands; kicked with explicit xyz.
+     */
+    @Test
+    void testExecuteWithXyz() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target", XYZ)));
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("target", XYZ)));
+        verify(im).removePlayer(island2, notUUID);
+        verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), any(), eq("[owner]"),
+                any());
+        verify(pim, times(3)).callEvent(any());
+    }
+
+    /**
+     * Test tab complete with no args returns empty.
+     */
+    @Test
+    void testTabCompleteNoArgs() {
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        Optional<List<String>> result = itl.tabComplete(user, "", List.of(""));
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Test tab complete for second arg returns xyz of the target's team islands.
+     */
+    @Test
+    void testTabCompleteSecondArg() {
+        when(pm.getUUID("target")).thenReturn(notUUID);
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        Optional<List<String>> result = itl.tabComplete(user, "", List.of("target", ""));
+        assertTrue(result.isPresent());
+        assertTrue(result.get().contains(XYZ));
+    }
+
+    /**
+     * Test tab complete for second arg returns empty when player is unknown.
+     */
+    @Test
+    void testTabCompleteSecondArgUnknownPlayer() {
+        when(pm.getUUID("unknown")).thenReturn(null);
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        Optional<List<String>> result = itl.tabComplete(user, "", List.of("unknown", ""));
+        assertTrue(result.isEmpty());
+    }
 }
