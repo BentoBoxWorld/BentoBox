@@ -53,7 +53,7 @@ public class OfflineGrowthListener extends FlagListener {
      * Handles tree and mushroom growth via {@link StructureGrowEvent}.
      * Trees (birch, spruce, acacia, mangrove, etc.) and mushrooms do not fire
      * {@link BlockGrowEvent} when growing from a sapling; they use this event instead.
-     * @since 3.15.1
+     * @since 3.16.0
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent e) {
