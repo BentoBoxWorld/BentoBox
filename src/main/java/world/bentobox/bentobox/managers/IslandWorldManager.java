@@ -497,6 +497,17 @@ public class IslandWorldManager {
     }
 
     /**
+     * Whether the team subsystem is disabled in this world.
+     * @param world - world
+     * @return true if teams are disabled in this world
+     * @since 3.16.0
+     * @see WorldSettings#isTeamsDisabled()
+     */
+    public boolean isTeamsDisabled(@NonNull World world) {
+        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isTeamsDisabled();
+    }
+
+    /**
      * Get max coop size for this world
      * @param world - world
      * @return max coop size or zero if world is not a game world

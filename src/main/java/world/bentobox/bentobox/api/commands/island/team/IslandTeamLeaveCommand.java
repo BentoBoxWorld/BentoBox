@@ -28,6 +28,10 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        if (getIWM().isTeamsDisabled(getWorld())) {
+            user.sendMessage("commands.island.team.errors.teams-disabled");
+            return false;
+        }
         if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;

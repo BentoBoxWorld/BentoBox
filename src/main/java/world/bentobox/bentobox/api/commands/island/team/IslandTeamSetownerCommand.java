@@ -65,6 +65,10 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
      */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (getIWM().isTeamsDisabled(getWorld())) {
+            user.sendMessage("commands.island.team.errors.teams-disabled");
+            return false;
+        }
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
