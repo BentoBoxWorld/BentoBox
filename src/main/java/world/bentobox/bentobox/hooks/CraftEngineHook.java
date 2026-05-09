@@ -100,4 +100,20 @@ public class CraftEngineHook extends Hook {
         }
         return Optional.ofNullable(customItem.buildItemStack());
     }
+
+    /**
+     * Returns the namespaced ID (e.g. {@code "mynamespace:my_block"}) of the CraftEngine custom item
+     * represented by the given ItemStack, or {@code null} if it is not a CraftEngine custom item.
+     * Useful for command handlers that need to look up the held item against custom-block configuration.
+     *
+     * @param item the ItemStack to check
+     * @return namespaced item ID or {@code null}
+     */
+    public static String getItemId(ItemStack item) {
+        if (item == null || !CraftEngineItems.isCustomItem(item)) {
+            return null;
+        }
+        Key id = CraftEngineItems.getCustomItemId(item);
+        return id == null ? null : id.asString();
+    }
 }
