@@ -183,6 +183,8 @@ commands:
         must-be-on-island: '<red>주인의 설정을 하려면 [prefix_island]에 있어야 합니다.</red>'
         confirmation: '<green>정말로 [xyz]에 있는 [prefix_island]의 소유자를 [name]으로 설정하시겠습니까?</green>'
         success: '<aqua>[name]</aqua><green> 은 이제 이 섬의 주인입니다.</green>'
+        errors:
+          at-max: '<red>[name] 님은 이미 [number]개의 [prefix_islands]을(를) 소유하고 있습니다 - 설정이나 권한으로 허용된 최대치는 [max]입니다. 더 허용하려면 권한을 조정하십시오.</red>'
         extra-islands: >-
           <red>경고: 이 플레이어는 현재 [number] 개의 섬을 소유하고 있습니다. 이는 설정이나 권한으로 허용된 수 [max]를</red>
           초과했습니다.

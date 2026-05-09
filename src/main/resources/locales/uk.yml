@@ -181,6 +181,8 @@ commands:
         must-be-on-island: '<red>Ви маєте бути на цьому [prefix_island], щоб призначити власника</red>'
         confirmation: '<green>Ви певні, що хочете зробити [name] власником [prefix_island] на [xyz]?</green>'
         success: '<aqua>[name]</aqua><green>тепер власник цього [prefix_island].</green>'
+        errors:
+          at-max: '<red>[name] вже володіє [number] [prefix_islands] - максимум, дозволений налаштуваннями або правами, дорівнює [max]. Змініть його дозвіл, щоб дозволити більше.</red>'
         extra-islands: '<red>Увага: тепер цей гравець має [number] островів. Це більше ніж дозволено налаштуваннями або пермами: [max].</red>'
       maxsize:
         parameters: <гравець> <size>

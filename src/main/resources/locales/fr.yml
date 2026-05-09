@@ -204,6 +204,8 @@ commands:
           <green>Êtes-vous sûr de vouloir définir [name] comme propriétaire de</green>
           [prefix_island] à [xyz]?
         success: '<aqua>[name] </aqua><green>est maintenant le propriétaire de cette île.</green>'
+        errors:
+          at-max: '<red>[name] possède déjà [number] [prefix_islands] - le maximum autorisé par les paramètres ou les permissions est [max]. Ajustez sa permission pour en autoriser davantage.</red>'
         extra-islands: >-
           <red>Avertissement : ce joueur possède maintenant [number] îles. C'est</red>
           plus que ce qui est autorisé par les paramètres ou les permissions :

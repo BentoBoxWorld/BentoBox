@@ -195,6 +195,8 @@ commands:
           <green>Vai tiešām vēlies, lai [name] kļūtu par [prefix_island] īpašnieku</green>
           vietā [xyz]?
         success: '<aqua>[name]</aqua><green>tagad ir šīs salas īpašnieks.</green>'
+        errors:
+          at-max: '<red>[name] jau pieder [number] [prefix_islands] - iestatījumos vai atļaujās noteiktais maksimums ir [max]. Pielāgojiet viņa atļauju, lai atļautu vairāk.</red>'
         extra-islands: >-
           <red>Brīdinājums: šim spēlētājam tagad pieder [number] salas. Tas ir</red>
           vairāk nekā atļautais limits pēc iestatījumiem vai atļaujām: [max].

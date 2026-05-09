@@ -200,6 +200,8 @@ commands:
         must-be-on-island: '<red>Trebuie să fii pe insulă pentru a stabili proprietarul</red>'
         confirmation: '<green>Sigur doriți să setați [name] să fie proprietarul insulei la [xyz]?</green>'
         success: '<aqua>[name] </aqua><green>este acum proprietarul acestei insule.</green>'
+        errors:
+          at-max: '<red>[name] deține deja [number] [prefix_islands] - maximul permis de setări sau permisiuni este [max]. Ajustează-i permisiunea pentru a permite mai multe.</red>'
         extra-islands: >-
           <red>Avertisment: acest jucător deține acum [number] insule. Acest lucru</red>
           este mai mult decât permis de setări sau perms: [max].

@@ -172,6 +172,8 @@ commands:
         must-be-on-island: '<red>所有者を設定するには、[prefix_island]にいる必要があります</red>'
         confirmation: '<green>[prefix_island]の所有者に[xyz]の所有者になるように[name]を設定したいですか？</green>'
         success: '<aqua>[name]</aqua><green>がこの島の所有者になりました。</green>'
+        errors:
+          at-max: '<red>[name] はすでに [number] 個の [prefix_islands] を所有しています - 設定または権限により許可される最大数は [max] です。さらに許可するには権限を調整してください。</red>'
         extra-islands: '<red>警告：このプレーヤーは現在、[number]島を所有しています。これは、設定またはパーマで許可されている以上のものです：[max]。</red>'
       maxsize:
         parameters: <プレイヤー> <サイズ>

@@ -206,6 +206,8 @@ commands:
           <green>Biztos vagy benne, hogy a [name]-t akarod kijelölni a</green>
           [prefix_island] tulajdonosának a [xyz]-nél?
         success: '<aqua>[name]</aqua><green> most a [prefix_island] tulajdonosa.</green>'
+        errors:
+          at-max: '<red>[name] már birtokol [number] [prefix_islands]-t - a beállítások vagy jogosultságok által engedélyezett maximum [max]. Módosítsd a jogosultságát, hogy többet engedélyezz.</red>'
         extra-islands: >-
           <red>Figyelmeztetés: ez a játékos most [number] szigettel rendelkezik.</red>
           Ez több, mint amit a beállítások vagy jogosultságok engednek: [max].

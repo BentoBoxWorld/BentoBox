@@ -201,6 +201,8 @@ commands:
         confirmation: <green>Вы уверены, что хотите сделать [name] владельцем [prefix_island]
           на [xyz]?</green>
         success: <green><aqua>[name] </aqua>теперь является владельцем острова.</green>
+        errors:
+          at-max: '<red>[name] уже владеет [number] [prefix_islands] - максимум, разрешённый настройками или правами, равен [max]. Измените его разрешение, чтобы разрешить больше.</red>'
         extra-islands: '<red>Внимание: у этого игрока теперь есть [number] островов.
           Это больше, чем разрешено настройками или правами: [max].</red>'
       maxsize:

@@ -197,6 +197,8 @@ commands:
           <green>Bạn có chắc chắn muốn đặt [name] làm chủ sở hữu của [prefix_island]</green>
           tại [xyz]?
         success: '<aqua>[name]</aqua><green> thành chủ đảo này.</green>'
+        errors:
+          at-max: '<red>[name] đã sở hữu [number] [prefix_islands] - tối đa được phép theo cài đặt hoặc quyền là [max]. Điều chỉnh quyền của họ để cho phép nhiều hơn.</red>'
         extra-islands: >-
           <red>Cảnh báo: người chơi này hiện đang sở hữu [number] hòn đảo. Đây là</red>
           nhiều hơn mức cho phép theo cài đặt hoặc quyền: [max].

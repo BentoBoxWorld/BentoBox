@@ -194,6 +194,8 @@ commands:
           <green>[xyz] konumundaki [prefix_island]ın sahibi olarak [name]'i</green>
           ayarlamak istediğinizden emin misiniz?
         success: '<light_purple>[name] </light_purple><aqua>artık adanın sahibi!</aqua>'
+        errors:
+          at-max: '<red>[name] zaten [number] adet [prefix_islands] sahibi - ayarlar veya izinler tarafından izin verilen maksimum [max]. Daha fazlasına izin vermek için iznini ayarla.</red>'
         extra-islands: >-
           <red>Uyarı: bu oyuncunun şimdi [number] adası var. Bu, ayarlar veya</red>
           izinler tarafından izin verilen [max] miktarından fazladır.

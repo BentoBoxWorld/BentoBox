@@ -199,6 +199,8 @@ commands:
           <green>Apakah Anda yakin ingin menetapkan [name] sebagai pemilik</green>
           [prefix_island] di [xyz]?
         success: '<aqua>[name]</aqua><green>sekarang adalah pemilik pulau ini.</green>'
+        errors:
+          at-max: '<red>[name] sudah memiliki [number] [prefix_islands] - maksimum yang diizinkan oleh pengaturan atau izin adalah [max]. Sesuaikan izinnya untuk mengizinkan lebih banyak.</red>'
         extra-islands: >-
           <red>Peringatan: pemain ini sekarang memiliki [number] pulau. Ini lebih</red>
           dari yang diizinkan oleh pengaturan atau izin: [max].

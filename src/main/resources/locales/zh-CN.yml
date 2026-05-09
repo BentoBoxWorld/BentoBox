@@ -178,6 +178,8 @@ commands:
         must-be-on-island: '<red>你必须在岛屿上才能设置所有者</red>'
         confirmation: '<green>你确定要把[name]设置为[xyz]的岛主吗?</green>'
         success: '<aqua>[name]</aqua><green>已被设置为当前岛屿的岛主.</green>'
+        errors:
+          at-max: '<red>[name] 已拥有 [number] 个 [prefix_islands] - 设置或权限允许的最大数量为 [max]。请调整其权限以允许更多。</red>'
         extra-islands: '<red>警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.</red>'
       maxsize:
         parameters: <player> <size>

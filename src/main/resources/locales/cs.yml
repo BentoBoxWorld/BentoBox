@@ -188,6 +188,8 @@ commands:
           <green>Jste si jisti, že chcete nastavit [name], aby se stal vlastníkem</green>
           [prefix_island] na [xyz]?
         success: '<aqua>[name]</aqua><green> je nyní vlastníkem tohoto ostrova.</green>'
+        errors:
+          at-max: '<red>[name] již vlastní [number] [prefix_islands] - maximum povolené nastavením nebo právy je [max]. Upravte jeho oprávnění, aby mohl mít více.</red>'
         extra-islands: >-
           <red>Varování: Tento hráč nyní vlastní [number] ostrovy. To je více, než</red>
           je povoleno nastavením nebo Perms: [max].

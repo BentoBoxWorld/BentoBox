@@ -196,6 +196,8 @@ commands:
           <green>Jeste li sigurni da želite postaviti [name] kao vlasnika</green>
           [prefix_island] na [xyz]?
         success: '<aqua>[name]</aqua><green>je sada vlasnik ovog otoka.</green>'
+        errors:
+          at-max: '<red>[name] već posjeduje [number] [prefix_islands] - maksimum dopušten postavkama ili dozvolama je [max]. Prilagodi njegovu dozvolu da omogućiš više.</red>'
         extra-islands: >-
           <red>Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od</red>
           dopuštenog prema postavkama ili dozvolama: [max].

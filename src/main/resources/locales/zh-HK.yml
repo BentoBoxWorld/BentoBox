@@ -179,6 +179,8 @@ commands:
         must-be-on-island: '<red>您必須在[prefix_island]上設置所有者</red>'
         confirmation: 您確定要設置[name]在[xyz]上成為[prefix_island]的所有者嗎？
         success: '<green>已將</green><aqua>[name]</aqua><green>提升為島主。</green>'
+        errors:
+          at-max: '<red>[name] 已擁有 [number] 個 [prefix_islands] - 設定或權限允許的最大數量為 [max]。請調整其權限以允許更多。</red>'
         extra-islands: 警告：該玩家現在擁有 [number] 個島嶼。這超過了設置或權限所允許的數量：[max]。
       maxsize:
         parameters: <player> <size>

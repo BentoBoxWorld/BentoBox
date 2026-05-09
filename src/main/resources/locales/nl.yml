@@ -202,6 +202,8 @@ commands:
           <green>Weet je zeker dat je [name] als eigenaar van de [prefix_island] bij</green>
           [xyz] wilt instellen?
         success: '<aqua>[name] </aqua><green>is nu de eigenaar van dit eiland.</green>'
+        errors:
+          at-max: '<red>[name] bezit al [number] [prefix_islands] - het maximum toegestaan door instellingen of permissies is [max]. Pas hun permissie aan om meer toe te staan.</red>'
         extra-islands: >-
           <red>Waarschuwing: deze speler bezit nu [number] eilanden. Dit is meer</red>
           dan toegestaan volgens de instellingen of permissies: [max].

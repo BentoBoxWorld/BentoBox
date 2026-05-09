@@ -205,6 +205,8 @@ commands:
           <green>Möchtest du [name] wirklich als Eigentümer der Insel in [xyz]</green>
           festlegen?
         success: '<aqua>[name]</aqua><green>ist jetzt der Besitzer dieser Insel.</green>'
+        errors:
+          at-max: '<red>[name] besitzt bereits [number] [prefix_islands] - das durch Einstellungen oder Rechte maximal erlaubte ist [max]. Passe die Berechtigung an, um mehr zuzulassen.</red>'
         extra-islands: >-
           <red>Warnung: Dieser Spieler besitzt jetzt [number] Inseln. Das sind</red>
           mehr als durch die Einstellungen oder Berechtigungen erlaubt ist:
