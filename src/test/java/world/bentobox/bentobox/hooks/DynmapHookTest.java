@@ -17,6 +17,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -126,6 +127,8 @@ class DynmapHookTest extends CommonTestSetup {
         when(island.getWorld()).thenReturn(overWorld);
         when(island.getName()).thenReturn(null);
         when(overWorld.getName()).thenReturn("bskyblock_world");
+        when(overWorld.getMinHeight()).thenReturn(-64);
+        when(overWorld.getMaxHeight()).thenReturn(320);
 
         // IWM: return addon for overWorld
         when(iwm.getAddon(overWorld)).thenReturn(Optional.of(addon));
@@ -205,6 +208,15 @@ class DynmapHookTest extends CommonTestSetup {
         hookAndReady();
         verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
                 eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
+    }
+
+    @Test
+    void testAreaMarkerYRangeSetToWorldHeight() {
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        // Area marker Y range must span the full world height so that the marker
+        // appears at the correct elevation in isometric view, not at the default y=64.
+        verify(areaMarker).setRangeY(320.0, -64.0);
     }
 
     @Test
@@ -460,5 +472,23 @@ class DynmapHookTest extends CommonTestSetup {
         hook.addPointMarker("warps", "marker1", "My Warp", loc, "nonexistent");
         verify(markerSet).createMarker("marker1", "My Warp", true, "bskyblock_world",
                 10.0, 64.0, 20.0, defaultIcon, true);
+    }
+
+    @Test
+    void testAddPolygonMarkerSetsYRange() {
+        hookAndReady();
+        double[] xPoints = { 0.0, 100.0, 100.0, 0.0 };
+        double[] zPoints = { 0.0, 0.0, 100.0, 100.0 };
+        hook.addPolygonMarker("BSkyBlock", "poly1", "Test", overWorld, xPoints, zPoints,
+                Color.BLUE, Color.CYAN, 2);
+        verify(areaMarker).setRangeY(320.0, -64.0);
+    }
+
+    @Test
+    void testAddAreaMarkerSetsYRange() {
+        hookAndReady();
+        hook.addAreaMarker("BSkyBlock", "area1", "Test", overWorld, 0.0, 0.0, 100.0, 100.0,
+                Color.BLUE, Color.CYAN, 2);
+        verify(areaMarker).setRangeY(320.0, -64.0);
     }
 }
