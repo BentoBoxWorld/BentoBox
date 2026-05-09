@@ -55,6 +55,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         TeamInvite invite = itc.getInvite(playerUUID);
         if (invite.getType().equals(Type.TEAM)) {
+            // Refuse team invitations when the team subsystem is disabled in this world.
+            // Trust/coop invites are still honoured below.
+            if (getIWM().isTeamsDisabled(getWorld())) {
+                user.sendMessage("commands.island.team.errors.teams-disabled");
+                itc.removeInvite(playerUUID);
+                return false;
+            }
             // Check rank to of inviter
             Island island = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
             String inviteUsage = getParent().getSubCommand("invite").map(CompositeCommand::getUsage).orElse("");

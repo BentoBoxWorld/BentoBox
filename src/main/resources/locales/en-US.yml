@@ -145,6 +145,10 @@ commands:
         use-disband-owner: '<red>Not owner! Use disband [owner].</red>'
         disbanded: '<red>Admin disbanded your team!</red>'
         success: '<aqua>[name]</aqua><green>''s team has been disbanded.</green>'
+      disbandall:
+        description: strip every member and sub-owner from every [prefix_island] in this world
+        confirmation: '<red>This will remove every member and sub-owner from every [prefix_island] in this world. Trusted and coop players will not be affected. Type the confirmation command to proceed.</red>'
+        success: '<green>Removed </green><aqua>[number]</aqua><green> members from </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: scans and fixes cross [prefix_island] membership in database
         scanning: Scanning database...
@@ -722,6 +726,8 @@ commands:
       success: '<green>Successfully reset your [prefix_island] name.</green>'
     team:
       description: manage your team
+      errors:
+        teams-disabled: '<red>Teams are disabled in this world. Use trust or coop instead.</red>'
       gui:
         titles:
           team-panel: Team Management

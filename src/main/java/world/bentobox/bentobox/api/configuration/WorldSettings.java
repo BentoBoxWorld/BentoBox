@@ -663,4 +663,19 @@ public interface WorldSettings extends ConfigObject {
     default boolean isDisallowTeamMemberIslands() {
         return true;
     }
+
+    /**
+     * Whether the team subsystem (invite, accept, promote, demote, setowner, kick, leave, admin team add)
+     * is disabled in this world. When {@code true}, every {@code island team *} sub-command except
+     * {@code trust}, {@code coop}, {@code untrust} and {@code uncoop} refuses to run, and members can
+     * no longer be assigned to islands. Trusted and coop relationships are unaffected.
+     * <p>
+     * Use the admin {@code team disbandall} command to strip pre-existing members from islands when
+     * flipping this on.
+     * @return true if the team subsystem should be disabled for this world; defaults to {@code false}.
+     * @since 3.16.0
+     */
+    default boolean isTeamsDisabled() {
+        return false;
+    }
 }

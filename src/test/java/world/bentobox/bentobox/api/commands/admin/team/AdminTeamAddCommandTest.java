@@ -251,6 +251,23 @@ class AdminTeamAddCommandTest extends CommonTestSetup {
     }
 
     /**
+     * Refuses to add a player when the team subsystem is disabled in the world.
+     */
+    @Test
+    void testExecuteTeamsDisabled() {
+        when(iwm.isTeamsDisabled(any())).thenReturn(true);
+        AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
+        String[] name = { "tastybento", "poslovich" };
+
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("poslovich")).thenReturn(notUUID);
+
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        verify(user).sendMessage("commands.island.team.errors.teams-disabled");
+        verify(im, org.mockito.Mockito.never()).setJoinTeam(any(), any());
+    }
+
+    /**
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamAddCommand#execute(User, String, List)}.
      */
