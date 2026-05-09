@@ -59,42 +59,70 @@ public class AdminTeamKickCommand extends CompositeCommand {
             return false;
         }
 
-        Map<String, Island> islands = getMemberIslandsXYZ(targetUUID);
-        if (islands.isEmpty()) {
-            user.sendMessage("commands.admin.team.kick.not-in-team");
+        Map<String, Island> kickable = getMemberIslandsXYZ(targetUUID);
+        if (kickable.isEmpty()) {
+            // Either the target is not on any team island, or every team island they
+            // are on is one they own — kick is the wrong tool for that case.
+            if (ownsAnyTeamIsland(targetUUID)) {
+                user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
+            } else {
+                user.sendMessage("commands.admin.team.kick.not-in-team");
+            }
             return false;
         }
 
         if (args.size() == 1) {
-            if (islands.size() == 1) {
-                island = islands.values().iterator().next();
+            if (kickable.size() == 1) {
+                island = kickable.values().iterator().next();
             } else {
                 // Multiple islands – require the player to specify which one
                 user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
-                islands.keySet().forEach(coords ->
+                kickable.keySet().forEach(coords ->
                         user.sendMessage("commands.admin.unregister.errors.specify-island-location",
                                 TextVariables.XYZ, coords));
                 return false;
             }
         } else {
             // args.size() == 2: xyz was supplied
-            if (!islands.containsKey(args.get(1))) {
-                user.sendMessage("commands.admin.unregister.errors.unknown-island-location");
+            String coord = args.get(1);
+            if (!kickable.containsKey(coord)) {
+                // Distinguish "target owns this island" from "no island at this coord
+                // for this target" so the admin gets actionable feedback.
+                if (ownsTeamIslandAt(targetUUID, coord)) {
+                    user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
+                } else {
+                    user.sendMessage("commands.admin.unregister.errors.unknown-island-location");
+                }
                 return false;
             }
-            island = islands.get(args.get(1));
+            island = kickable.get(coord);
         }
         return true;
     }
 
     /**
      * Returns a map of x,y,z → island for all team islands in this world that the
-     * target player is a member of.
+     * target player is a member of but does not own. Owner islands must be handled
+     * via setowner or disband, not kick.
      */
     private Map<String, Island> getMemberIslandsXYZ(UUID target) {
         return getIslands().getIslands(getWorld(), target).stream()
                 .filter(Island::hasTeam)
+                .filter(i -> !target.equals(i.getOwner()))
                 .collect(Collectors.toMap(i -> Util.xyz(i.getCenter().toVector()), i -> i));
+    }
+
+    private boolean ownsAnyTeamIsland(UUID target) {
+        return getIslands().getIslands(getWorld(), target).stream()
+                .filter(Island::hasTeam)
+                .anyMatch(i -> target.equals(i.getOwner()));
+    }
+
+    private boolean ownsTeamIslandAt(UUID target, String xyz) {
+        return getIslands().getIslands(getWorld(), target).stream()
+                .filter(Island::hasTeam)
+                .filter(i -> target.equals(i.getOwner()))
+                .anyMatch(i -> xyz.equals(Util.xyz(i.getCenter().toVector())));
     }
 
     @Override

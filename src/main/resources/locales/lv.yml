@@ -185,11 +185,10 @@ commands:
       kick:
         parameters: <komandas spēlētājs>
         description: izmet spēlētāju no komandas
-        cannot-kick-owner: '<red>Nevar izmest īpašnieku kamēr komandā ir citi spēlētāji.</red>'
+        cannot-kick-owner: '<red>Nevar izmest īpašnieku. Izmanto </red><yellow>setowner</yellow><red>, lai nodotu īpašumtiesības, vai </red><yellow>disband</yellow><red>, lai izformētu komandu.</red>'
         not-in-team: '<red>Šis spēlētājs nav komandā.</red>'
         admin-kicked: '<red>Admins tevi izmenta no komandas.</red>'
         success: '<aqua>[name] </aqua><green>tika izmests no </green><aqua>[owner]</aqua><green>salas.</green>'
-        success-all: '<aqua>Spēlētājs noņemts no visām komandām šajā pasaulē</aqua>'
       setowner:
         parameters: <spēlētājs>
         description: iecelt par salas īpašnieku

@@ -164,11 +164,10 @@ commands:
       kick:
         parameters: <チームのプレーヤー>
         description: チームからプレーヤーを外す。
-        cannot-kick-owner: '<red>チームリーダーを外すことはできません。まずはメンバーを外してください。</red>'
+        cannot-kick-owner: '<red>オーナーを外すことはできません。所有権を移すには </red><yellow>setowner</yellow><red> を、チームを解散するには </red><yellow>disband</yellow><red> を使用してください。</red>'
         not-in-team: '<red>このプレーヤーはチームに所属していません。</red>'
         admin-kicked: 管理者は、あなたをチームから外しました。
         success: '<aqua>[name]</aqua><green>は</green><aqua>[owner]</aqua><green>の島から追い出されました。</green>'
-        success-all: '<aqua>プレーヤーはこの世界のすべてのチームから削除されました</aqua>'
       setowner:
         parameters: <プレーヤー>
         description: プレーヤーをチームのリーダーにする％

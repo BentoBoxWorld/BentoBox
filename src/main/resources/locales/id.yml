@@ -187,13 +187,10 @@ commands:
       kick:
         parameters: <pemain tim>
         description: menendang pemain dari tim
-        cannot-kick-owner: >-
-          <red>Anda tidak dapat menendang pemiliknya. Tendang anggota terlebih</red>
-          dahulu.
+        cannot-kick-owner: '<red>Anda tidak dapat menendang pemilik. Gunakan </red><yellow>setowner</yellow><red> untuk mentransfer kepemilikan, atau </red><yellow>disband</yellow><red> untuk membubarkan tim.</red>'
         not-in-team: '<red>Pemain ini tidak ada dalam tim.</red>'
         admin-kicked: '<red>Admin mengeluarkan Anda dari tim.</red>'
         success: '<aqua>[name] </aqua><green>telah diusir dari pulau </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Pemain dihapus dari semua tim di dunia ini</aqua>'
       setowner:
         parameters: <pemain>
         description: mentransfer kepemilikan pulau kepada pemain

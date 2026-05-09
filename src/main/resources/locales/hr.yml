@@ -186,11 +186,10 @@ commands:
       kick:
         parameters: <timski igrač>
         description: šutnuti igrača iz momčadi
-        cannot-kick-owner: '<red>Ne možete šutnuti vlasnika. Prvo udarite članove.</red>'
+        cannot-kick-owner: '<red>Ne možeš izbaciti vlasnika. Koristi </red><yellow>setowner</yellow><red> za prijenos vlasništva ili </red><yellow>disband</yellow><red> za raspuštanje tima.</red>'
         not-in-team: '<red>Ovaj igrač nije u timu.</red>'
         admin-kicked: '<red>Admin vas je izbacio iz tima.</red>'
         success: '<aqua>[name] </aqua><green>je izbačen s otoka </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Igrač uklonjen iz svih timova u ovom svijetu</aqua>'
       setowner:
         parameters: <igrač>
         description: prenosi vlasništvo nad otokom na igrača

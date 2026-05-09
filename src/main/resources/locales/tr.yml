@@ -184,11 +184,10 @@ commands:
       kick:
         parameters: <takım oyuncusu>
         description: takımından oyuncu at
-        cannot-kick-owner: '<dark_red>Ada sahibini atamazsın. İlk önce diğer üyeleri at.</dark_red>'
+        cannot-kick-owner: '<dark_red>Ada sahibini atamazsın. Sahipliği devretmek için </dark_red><yellow>setowner</yellow><dark_red>, takımı dağıtmak için </dark_red><yellow>disband</yellow><dark_red> komutunu kullan.</dark_red>'
         not-in-team: '<dark_red>Bu oyunbu bu takımda değil!</dark_red>'
         admin-kicked: '<blue>Admin seni takımından attı!</blue>'
         success: '<light_purple>[name] </light_purple><blue>[owner] </blue><dark_red>adasından atıldı!</dark_red>'
-        success-all: '<aqua>Bu dünyadaki tüm takımlardan oyuncu çıkarıldı</aqua>'
       setowner:
         parameters: <player>
         description: Oyuncuya ada liderligini ver!

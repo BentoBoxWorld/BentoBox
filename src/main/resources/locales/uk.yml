@@ -173,11 +173,10 @@ commands:
       kick:
         parameters: <team player>
         description: вигнати гравця з команди
-        cannot-kick-owner: '<red>Не можна вигнати власника. Спершу видаліть учасників.</red>'
+        cannot-kick-owner: '<red>Не можна вигнати власника. Використовуйте </red><yellow>setowner</yellow><red>, щоб передати володіння, або </red><yellow>disband</yellow><red>, щоб розпустити команду.</red>'
         not-in-team: '<red>Цей гравець не в команді.</red>'
         admin-kicked: '<red>Адміністратор вигнав вас із команди.</red>'
         success: '<aqua>[name] </aqua><green>вигнано з [prefix_island] гравця </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Гравця видалено з усіх команд у цьому світі</aqua>'
       setowner:
         parameters: <гравець>
         description: передати право власності [prefix_island] гравцю

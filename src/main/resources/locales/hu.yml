@@ -196,11 +196,10 @@ commands:
       kick:
         parameters: <Csapat játékos>
         description: Egy játékos kirúgása a csapatból.
-        cannot-kick-owner: '<red>Nem rúghatod ki a tulajdonost. Először rúgd ki a tagokat.</red>'
+        cannot-kick-owner: '<red>Nem rúghatod ki a tulajdonost. Használd a </red><yellow>setowner</yellow><red> parancsot a tulajdonjog átadásához, vagy a </red><yellow>disband</yellow><red> parancsot a csapat feloszlatásához.</red>'
         not-in-team: '<red>Ez a játékos nem tagja egy csapatnak sem.</red>'
         admin-kicked: '<red>Egy adminisztrátor kirúgott téged a csapatból.</red>'
         success: '<aqua>[name] </aqua><green>ki lett rúgva </green><aqua>[owner]</aqua><green>szigetéről.</green>'
-        success-all: '<aqua>A játékos eltávolítva minden csapatból ebben a világban</aqua>'
       setowner:
         parameters: <Játékosnév>
         description: A [prefix_island] tulajdonjogának átruházása a játékosnak.

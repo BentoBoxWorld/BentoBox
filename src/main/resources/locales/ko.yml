@@ -175,11 +175,10 @@ commands:
       kick:
         parameters: <섬원>
         description: 플레이어를 섬원에서 추방합니다
-        cannot-kick-owner: '<red>당신은 섬의 주인을 추방할 수 없습니다. 먼저 섬원들을 추방하십시오.</red>'
+        cannot-kick-owner: '<red>섬 주인을 추방할 수 없습니다. 소유권을 이전하려면 </red><yellow>setowner</yellow><red>, 팀을 해산하려면 </red><yellow>disband</yellow><red>를 사용하세요.</red>'
         not-in-team: '<red>이 플레이어는 섬에 소속되어있지 않습니다.</red>'
         admin-kicked: '<red>관리자가 당신을 소속되있던 섬에서 추방시켰습니다.</red>'
         success: '<aqua>[name] </aqua><green>이가 </green><aqua>[owner]</aqua><green>의 섬에서 추방당했습니다.</green>'
-        success-all: '<aqua>이 세계의 모든 팀에서 플레이어가 제거되었습니다.</aqua>'
       setowner:
         parameters: <닉네임>
         description: 섬의 주인권한을 플레이어에게 넘깁니다

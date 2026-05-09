@@ -192,11 +192,10 @@ commands:
       kick:
         parameters: <teamspeler>
         description: schop een speler uit een team
-        cannot-kick-owner: '<red>Je kunt de eigenaar niet schoppen. Schop leden eerst.</red>'
+        cannot-kick-owner: '<red>Je kunt de eigenaar niet kicken. Gebruik </red><yellow>setowner</yellow><red> om het eigendom over te dragen, of </red><yellow>disband</yellow><red> om het team op te heffen.</red>'
         not-in-team: '<red>Deze speler maakt geen deel uit van een team.</red>'
         admin-kicked: '<red>De admin heeft je uit het team geschopt.</red>'
         success: '<aqua>[name] </aqua><green>is geschopt van </green><aqua>[owner] </aqua><green>''s eiland.</green>'
-        success-all: '<aqua>Speler is van alle teams in deze wereld verwijderd</aqua>'
       setowner:
         parameters: <speler>
         description: draagt het eilandbezit over aan de speler

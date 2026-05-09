@@ -171,11 +171,10 @@ commands:
       kick:
         parameters: <Team Player>
         description: 從隊伍中踢走指定玩家
-        cannot-kick-owner: '<red>您不能踢走隊長。請先踢走成員</red>'
+        cannot-kick-owner: '<red>無法踢走隊長。請使用 </red><yellow>setowner</yellow><red> 轉讓所有權，或使用 </red><yellow>disband</yellow><red> 解散團隊。</red>'
         not-in-team: '<red>這玩家不在隊伍中。</red>'
         admin-kicked: '<red>管理員將您從隊伍中踢了出來。</red>'
         success: '<green>您已將 </green><aqua>[name] </aqua><green>從 </green><aqua>[owner] </aqua><green>的島嶼裡踢出去。</green>'
-        success-all: '<aqua>玩家已從此世界中的所有隊伍中移除</aqua>'
       setowner:
         parameters: <player>
         description: 將島嶼所有權轉移給指定玩家

@@ -45,6 +45,7 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
     @Mock
     private PlayersManager pm;
     private UUID notUUID;
+    private UUID ownerUUID;
     @Mock
     private Island island2;
 
@@ -77,8 +78,13 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getWorld()).thenReturn(world);
 
-        // island2 is owned by notUUID (the target) and has a team
-        when(island2.getOwner()).thenReturn(notUUID);
+        // island2 is owned by a third party; the target (notUUID) is a regular team member.
+        // Owner-as-target is covered separately.
+        ownerUUID = UUID.randomUUID();
+        while (ownerUUID.equals(uuid) || ownerUUID.equals(notUUID)) {
+            ownerUUID = UUID.randomUUID();
+        }
+        when(island2.getOwner()).thenReturn(ownerUUID);
         when(island2.hasTeam()).thenReturn(true);
         when(island2.getCenter()).thenReturn(location);
         when(location.toVector()).thenReturn(new Vector(0, 0, 0));
@@ -164,8 +170,8 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
      */
     @Test
     void testCanExecuteMultipleIslandsRequiresXyz() {
-        // Set up island (admin-owned) with a different center location so it gets a unique xyz key
-        when(island.getOwner()).thenReturn(uuid);
+        // Second island also owned by a third party so the target is a member of both.
+        when(island.getOwner()).thenReturn(ownerUUID);
         when(island.hasTeam()).thenReturn(true);
         org.bukkit.Location loc2 = mock(org.bukkit.Location.class);
         when(loc2.toVector()).thenReturn(new Vector(100, 64, 100));
@@ -174,6 +180,30 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(user).sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
+    }
+
+    /**
+     * Test that kicking refuses when the only matched island is one the target owns,
+     * and directs the admin to setowner / disband.
+     */
+    @Test
+    void testCanExecuteRefusesWhenTargetOwnsAllMatchedIslands() {
+        when(island2.getOwner()).thenReturn(notUUID);
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage("commands.admin.team.kick.cannot-kick-owner");
+    }
+
+    /**
+     * Test that kicking with an explicit xyz that resolves to an island the target
+     * owns refuses with cannot-kick-owner rather than unknown-island-location.
+     */
+    @Test
+    void testCanExecuteRefusesXyzWhenTargetOwnsThatIsland() {
+        when(island2.getOwner()).thenReturn(notUUID);
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target", XYZ)));
+        verify(user).sendMessage("commands.admin.team.kick.cannot-kick-owner");
     }
 
     /**

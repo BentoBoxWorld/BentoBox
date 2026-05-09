@@ -190,11 +190,10 @@ commands:
       kick:
         parameters: <jogador da equipe>
         description: expulse um jogador de um time
-        cannot-kick-owner: '<red>Você não pode expulsar o dono. Expulse os membros primeiro.</red>'
+        cannot-kick-owner: '<red>Não podes expulsar o dono. Usa </red><yellow>setowner</yellow><red> para transferir a propriedade, ou </red><yellow>disband</yellow><red> para dissolver a equipa.</red>'
         not-in-team: '<red>Este jogador não está em um time.</red>'
         admin-kicked: '<red>O administrador expulsou você do time.</red>'
         success: '<aqua>[name] </aqua><green>foi expulsa da ilha de </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Jogador removido de todas as equipes neste mundo</aqua>'
       setowner:
         parameters: <jogador>
         description: transfere o dono da ilha para o jogador

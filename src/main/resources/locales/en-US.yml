@@ -163,7 +163,7 @@ commands:
       kick:
         parameters: <team player> [x,y,z]
         description: kick a player from a team
-        cannot-kick-owner: '<red>You cannot kick the owner. Kick members first.</red>'
+        cannot-kick-owner: '<red>You cannot kick the owner. Use </red><yellow>setowner</yellow><red> to transfer ownership first, or </red><yellow>disband</yellow><red> to remove the team.</red>'
         not-in-team: '<red>This player is not in a team.</red>'
         admin-kicked: '<red>The admin kicked you from the team.</red>'
         success: '<aqua>[name] </aqua><green>has been kicked from </green><aqua>[owner]</aqua><green>''s [prefix_island].</green>'

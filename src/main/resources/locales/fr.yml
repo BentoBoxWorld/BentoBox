@@ -192,13 +192,10 @@ commands:
       kick:
         parameters: <joueur>
         description: Kicker le joueur de son équipe
-        cannot-kick-owner: >-
-          <red>Vous ne pouvez pas kicker le propriétaire. Kickez d'abord les</red>
-          membres.
+        cannot-kick-owner: '<red>Vous ne pouvez pas exclure le propriétaire. Utilisez </red><yellow>setowner</yellow><red> pour transférer la propriété, ou </red><yellow>disband</yellow><red> pour dissoudre l''équipe.</red>'
         not-in-team: '<red>Ce joueur ne fait pas partie d''une équipe.</red>'
         admin-kicked: '<red>L''administrateur vous a kické de l''équipe.</red>'
         success: '<aqua>[name] </aqua><green>a été kické de l''île de </green><aqua>[owner] </aqua><green>.</green>'
-        success-all: '<aqua>Joueur retiré de toutes les équipes dans ce monde</aqua>'
       setowner:
         parameters: <joueur>
         description: transférer la propriété de l'île au joueur

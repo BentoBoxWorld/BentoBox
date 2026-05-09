@@ -665,18 +665,32 @@ public interface WorldSettings extends ConfigObject {
     }
 
     /**
-     * Whether the team subsystem is disabled in this world. When {@code true}, the action commands
-     * that add, remove or reorganise team members refuse to run:
-     * {@code island team invite}, {@code invite accept} (for TEAM invitations),
-     * {@code kick}, {@code leave}, {@code promote}, {@code demote}, {@code setowner}
-     * and the admin {@code team add} command.
+     * Whether the team subsystem is disabled in this world.
      * <p>
-     * Read-only commands ({@code info}, {@code invites}) and trust/coop relationships
-     * ({@code trust}, {@code coop}, {@code untrust}, {@code uncoop}) are unaffected, since
-     * trust/coop are the supported alternative to teams when this flag is on.
-     * <p>
-     * Use the admin {@code team disbandall} command to strip pre-existing members and sub-owners
-     * from islands when flipping this on.
+     * When {@code true}, exactly the following commands refuse to run, all with the message
+     * {@code commands.island.team.errors.teams-disabled}:
+     * <ul>
+     *   <li>{@code /island team invite} — block sending new team invitations</li>
+     *   <li>{@code /island team invite accept} — block accepting a TEAM invitation
+     *       (COOP and TRUST invitations are still accepted)</li>
+     *   <li>{@code /island team kick}</li>
+     *   <li>{@code /island team leave}</li>
+     *   <li>{@code /island team promote} and {@code demote}</li>
+     *   <li>{@code /island team setowner}</li>
+     *   <li>{@code /[admin] team add}</li>
+     * </ul>
+     * Every other command remains available, by design:
+     * <ul>
+     *   <li>Read-only / panel commands: {@code /island team} (panel), {@code info},
+     *       {@code invites}, {@code invite reject}.</li>
+     *   <li>Trust and coop relationships: {@code trust}, {@code untrust}, {@code coop},
+     *       {@code uncoop} — these are the supported alternative to teams when this flag is on.</li>
+     *   <li>Admin commands that operate on existing teams: {@code /[admin] team kick},
+     *       {@code disband}, {@code disbandall}, {@code setowner}, {@code fix}, {@code maxsize}.</li>
+     * </ul>
+     * Use {@code /[admin] team disbandall} once after flipping this on to strip pre-existing
+     * members and sub-owners from islands.
+     *
      * @return true if the team subsystem should be disabled for this world; defaults to {@code false}.
      * @since 3.16.0
      */

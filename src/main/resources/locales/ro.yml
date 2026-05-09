@@ -192,11 +192,10 @@ commands:
       kick:
         parameters: <jucător de echipă>
         description: lovi cu piciorul un jucător dintr-o echipă
-        cannot-kick-owner: '<red>Nu poți da lovitura cu proprietarul. Lovi mai întâi membrii.</red>'
+        cannot-kick-owner: '<red>Nu poți da afară proprietarul. Folosește </red><yellow>setowner</yellow><red> pentru a transfera proprietatea sau </red><yellow>disband</yellow><red> pentru a desființa echipa.</red>'
         not-in-team: '<red>Acest jucător nu face parte dintr-o echipă.</red>'
         admin-kicked: '<red>Administratorul te-a dat afară din echipă.</red>'
         success: '<aqua>[name] </aqua><green>a fost dat afară de pe insula lui </green><aqua>[owner] </aqua><green>.</green>'
-        success-all: '<aqua>Jucător eliminat din toate echipele din această lume</aqua>'
       setowner:
         parameters: <player>
         description: transferă proprietatea insulei către jucător

@@ -187,11 +187,10 @@ commands:
       kick:
         parameters: <người chơi>
         description: đuổi người chơi khỏi đội
-        cannot-kick-owner: '<red>Bạn không thể đuổi chủ. Hãy đuổi thành viên trước.</red>'
+        cannot-kick-owner: '<red>Bạn không thể đuổi chủ sở hữu. Dùng </red><yellow>setowner</yellow><red> để chuyển quyền sở hữu, hoặc </red><yellow>disband</yellow><red> để giải tán đội.</red>'
         not-in-team: '<red>Người chơi này không có trong đội.</red>'
         admin-kicked: '<red>Quản trị viên đã đuổi bạn khỏi đội.</red>'
         success: '<aqua>[name] </aqua><green>đã bị đuổi khỏi đội của </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Người chơi đã được loại bỏ khỏi tất cả các đội trong thế giới này</aqua>'
       setowner:
         parameters: <người chơi>
         description: Chuyển quyền chủ đảo cho người chơi
