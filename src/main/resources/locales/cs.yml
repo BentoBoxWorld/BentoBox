@@ -162,6 +162,10 @@ commands:
         use-disband-owner: '<red>Není vlastník! Použij </red><yellow>disband [owner]</yellow><red>.</red>'
         disbanded: '<red>Admin rozpustil tvůj tým!</red>'
         success: '<green>Tým hráče </green><aqua>[name]</aqua><green>byl rozpuštěn.</green>'
+      disbandall:
+        description: strhne všechny členy a sub-vlastníky ze všech [prefix_islands] v tomto světě
+        confirmation: '<red>Tato akce odebere všechny členy a sub-vlastníky ze všech [prefix_islands] v tomto světě. Důvěryhodní (trust) a coop hráči nebudou ovlivněni. Pro pokračování zadej potvrzovací příkaz.</red>'
+        success: '<green>Odebráno </green><aqua>[number]</aqua><green> členů z </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: skenuje a opravuje členství napříč ostrovy v databázi
         scanning: Skenování databáze...
@@ -758,6 +762,8 @@ commands:
       success: '<green>Úspěšně resetujte název vašeho ostrova.</green>'
     team:
       description: spravovat svůj tým
+      errors:
+        teams-disabled: '<red>Týmy jsou v tomto světě zakázány. Použij místo toho trust nebo coop.</red>'
       gui:
         titles:
           team-panel: Správa týmu

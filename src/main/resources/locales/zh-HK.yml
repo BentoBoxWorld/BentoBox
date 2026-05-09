@@ -155,6 +155,10 @@ commands:
         use-disband-owner: '<red>不是隊長!請用 disband [owner]</red>'
         disbanded: '<red>管理員解散了您的隊伍!</red>'
         success: '<aqua>[name] </aqua><green>的島嶼成員已被解散。</green>'
+      disbandall:
+        description: 移除此世界中每個 [prefix_islands] 的所有成員和副島主
+        confirmation: '<red>這將移除此世界中每個 [prefix_island] 的所有成員和副島主。受信任 (trust) 和合作 (coop) 玩家不受影響。請輸入確認命令以繼續。</red>'
+        success: '<green>已從 </green><aqua>[islands]</aqua><green> 個 [prefix_islands] 中移除 </green><aqua>[number]</aqua><green> 名成員。</green>'
       fix:
         description: 掃描數據庫，並修復跨島嶼成員(某些玩家錯誤地擁有或歸屬於多個島嶼)。
         scanning: '<yellow>正在掃描數據庫...</yellow>'
@@ -709,6 +713,8 @@ commands:
       success: '<green>已成功重置島嶼名稱。</green>'
     team:
       description: 管理您的隊伍
+      errors:
+        teams-disabled: '<red>此世界已停用團隊。請改用 trust 或 coop。</red>'
       gui:
         titles:
           team-panel: 團隊管理

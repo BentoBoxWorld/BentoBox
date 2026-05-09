@@ -168,6 +168,10 @@ commands:
         use-disband-owner: '<dark_red>Sahibi degilsin. Sahibi </dark_red><light_purple>[owner]</light_purple>'
         disbanded: '<dark_red>Admin takımınızı dağıttı!</dark_red>'
         success: '<light_purple>[name] </light_purple><aqua>takımı dağıtıldı!</aqua>'
+      disbandall:
+        description: bu dünyadaki her [prefix_island] üzerindeki tüm üyeleri ve alt-sahipleri kaldırır
+        confirmation: '<red>Bu, bu dünyadaki her [prefix_island] üzerindeki tüm üyeleri ve alt-sahipleri kaldıracaktır. Trust ve coop oyuncuları etkilenmez. Devam etmek için onay komutunu yaz.</red>'
+        success: '<green></green><aqua>[islands]</aqua><green> [prefix_islands] adasından </green><aqua>[number]</aqua><green> üye kaldırıldı.</green>'
       fix:
         description: Veritabanındaki adalar arası üyeliği tarar ve düzeltir
         scanning: Veritabanı taranıyor ...
@@ -759,6 +763,8 @@ commands:
       success: '<blue>Ada ismini başarıyla sıfırladın.</blue>'
     team:
       description: Takımını yönet!
+      errors:
+        teams-disabled: '<red>Bu dünyada takımlar devre dışı bırakıldı. Onun yerine trust veya coop kullan.</red>'
       gui:
         titles:
           team-panel: Ekip Yönetimi

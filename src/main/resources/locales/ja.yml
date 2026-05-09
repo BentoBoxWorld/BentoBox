@@ -148,6 +148,10 @@ commands:
         use-disband-owner: リーダーじゃない！解散を使用 [owner]
         disbanded: 管理者はあなたのチームを解散!
         success: '<aqua>[name]</aqua><green>のチームは解散しました。</green>'
+      disbandall:
+        description: このワールドのすべての [prefix_islands] からメンバーとサブオーナーをすべて取り除きます
+        confirmation: '<red>これはこのワールドのすべての [prefix_island] からメンバーとサブオーナーを取り除きます。trust と coop のプレイヤーは影響を受けません。続行するには確認コマンドを入力してください。</red>'
+        success: '<green></green><aqua>[islands]</aqua><green> 個の [prefix_islands] から </green><aqua>[number]</aqua><green> 人のメンバーを取り除きました。</green>'
       fix:
         description: データベース内のクロスアイランドメンバーシップをスキャンして修正
         scanning: データベースをスキャンしています...
@@ -697,6 +701,8 @@ commands:
       success: '<green>島の名前を正常にリセットしました。</green>'
     team:
       description: チームの管理
+      errors:
+        teams-disabled: '<red>このワールドではチームが無効です。代わりに trust または coop を使用してください。</red>'
       gui:
         titles:
           team-panel: チーム管理

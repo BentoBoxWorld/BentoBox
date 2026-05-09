@@ -176,6 +176,10 @@ commands:
         use-disband-owner: '<red>Nu este proprietar! Folosiți disband [owner].</red>'
         disbanded: '<red>Administratorul v-a desființat echipa!</red>'
         success: 'Echipa <aqua>[name] </aqua><green>a fost desființată.</green>'
+      disbandall:
+        description: elimină fiecare membru și sub-proprietar din fiecare [prefix_island] din această lume
+        confirmation: '<red>Aceasta va elimina fiecare membru și sub-proprietar din fiecare [prefix_island] din această lume. Jucătorii trust și coop nu vor fi afectați. Tastează comanda de confirmare pentru a continua.</red>'
+        success: '<green>Eliminat </green><aqua>[number]</aqua><green> membri de pe </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: scanează și remediază apartenența la insulă în baza de date
         scanning: Se scanează baza de date ...
@@ -793,6 +797,8 @@ commands:
       success: '<green>Resetați cu succes numele insulei.</green>'
     team:
       description: gestionează-ți echipa
+      errors:
+        teams-disabled: '<red>Echipele sunt dezactivate în această lume. Folosește în schimb trust sau coop.</red>'
       gui:
         titles:
           team-panel: Managementul echipei

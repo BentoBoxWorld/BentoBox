@@ -159,6 +159,10 @@ commands:
         use-disband-owner: '<red>섬의 주인이 아닙니다! disband [owner]을 사용해주세요!</red>'
         disbanded: '<red>관리자가 당신의 섬원들을 해산시켰습니다</red>'
         success: '<aqua>[name]</aqua><green>의 섬원들을 해산시켰습니다</green>'
+      disbandall:
+        description: 이 월드의 모든 [prefix_islands]에서 모든 멤버와 부소유자를 제거합니다
+        confirmation: '<red>이는 이 월드의 모든 [prefix_island]에서 모든 멤버와 부소유자를 제거합니다. 신뢰(trust) 및 협동(coop) 플레이어는 영향을 받지 않습니다. 계속하려면 확인 명령을 입력하십시오.</red>'
+        success: '<green></green><aqua>[islands]</aqua><green>개의 [prefix_islands]에서 </green><aqua>[number]</aqua><green>명의 멤버를 제거했습니다.</green>'
       fix:
         description: 데이터베이스에서 [prefix_island] 멤버십을 스캔하고 수정합니다.
         scanning: 데이터베이스 스캔 중...
@@ -713,6 +717,8 @@ commands:
       success: '<green>섬의 이름을 초기화 했습니다</green>'
     team:
       description: 섬원들을 관리합니다
+      errors:
+        teams-disabled: '<red>이 월드에서는 팀이 비활성화되어 있습니다. 대신 trust 또는 coop을 사용하십시오.</red>'
       gui:
         titles:
           team-panel: 팀 관리

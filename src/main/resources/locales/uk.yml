@@ -157,6 +157,10 @@ commands:
         use-disband-owner: '<red>Ви не власник! Використайте disband [owner].</red>'
         disbanded: '<red>Адмін розпустив вашу команду!</red>'
         success: '<green>Команду </green><aqua>[name]</aqua><green>розформовано.</green>'
+      disbandall:
+        description: видаляє всіх учасників та співвласників з кожного [prefix_island] у цьому світі
+        confirmation: '<red>Це видалить усіх учасників та співвласників з кожного [prefix_island] у цьому світі. Гравці з trust та coop не будуть зачеплені. Введіть команду підтвердження, щоб продовжити.</red>'
+        success: '<green>Видалено </green><aqua>[number]</aqua><green> учасників з </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: сканує і виправляє перехресне членство у [prefix_island] у БД
         scanning: Сканую базу даних...
@@ -698,6 +702,8 @@ commands:
       success: '<green>Успішно скинуто назву вашого [prefix_island].</green>'
     team:
       description: керування вашою командою
+      errors:
+        teams-disabled: '<red>Команди вимкнені в цьому світі. Використовуйте натомість trust або coop.</red>'
       gui:
         titles:
           team-panel: Керування командою

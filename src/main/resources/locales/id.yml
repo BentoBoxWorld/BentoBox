@@ -171,6 +171,10 @@ commands:
         use-disband-owner: '<red>Bukan pemilik! Gunakan pembubaran [owner].</red>'
         disbanded: '<red>Admin membubarkan tim Anda!</red>'
         success: '<aqua>[name]</aqua><green>tim telah dibubarkan.</green>'
+      disbandall:
+        description: menghapus setiap anggota dan sub-pemilik dari setiap [prefix_island] di dunia ini
+        confirmation: '<red>Ini akan menghapus setiap anggota dan sub-pemilik dari setiap [prefix_island] di dunia ini. Pemain trust dan coop tidak akan terpengaruh. Ketik perintah konfirmasi untuk melanjutkan.</red>'
+        success: '<green>Menghapus </green><aqua>[number]</aqua><green> anggota dari </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: memindai dan memperbaiki keanggotaan lintas pulau dalam database
         scanning: Memindai basis data...
@@ -783,6 +787,8 @@ commands:
       success: '<green>Berhasil mengatur ulang nama pulau Anda.</green>'
     team:
       description: mengelola tim Anda
+      errors:
+        teams-disabled: '<red>Tim dinonaktifkan di dunia ini. Gunakan trust atau coop sebagai gantinya.</red>'
       gui:
         titles:
           team-panel: Manajemen Tim

@@ -665,13 +665,18 @@ public interface WorldSettings extends ConfigObject {
     }
 
     /**
-     * Whether the team subsystem (invite, accept, promote, demote, setowner, kick, leave, admin team add)
-     * is disabled in this world. When {@code true}, every {@code island team *} sub-command except
-     * {@code trust}, {@code coop}, {@code untrust} and {@code uncoop} refuses to run, and members can
-     * no longer be assigned to islands. Trusted and coop relationships are unaffected.
+     * Whether the team subsystem is disabled in this world. When {@code true}, the action commands
+     * that add, remove or reorganise team members refuse to run:
+     * {@code island team invite}, {@code invite accept} (for TEAM invitations),
+     * {@code kick}, {@code leave}, {@code promote}, {@code demote}, {@code setowner}
+     * and the admin {@code team add} command.
      * <p>
-     * Use the admin {@code team disbandall} command to strip pre-existing members from islands when
-     * flipping this on.
+     * Read-only commands ({@code info}, {@code invites}) and trust/coop relationships
+     * ({@code trust}, {@code coop}, {@code untrust}, {@code uncoop}) are unaffected, since
+     * trust/coop are the supported alternative to teams when this flag is on.
+     * <p>
+     * Use the admin {@code team disbandall} command to strip pre-existing members and sub-owners
+     * from islands when flipping this on.
      * @return true if the team subsystem should be disabled for this world; defaults to {@code false}.
      * @since 3.16.0
      */

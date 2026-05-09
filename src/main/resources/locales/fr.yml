@@ -172,6 +172,10 @@ commands:
         use-disband-owner: '<red>Pas propriétaire! Utilisez dissoudre [owner].</red>'
         disbanded: '<red>Admin a dissous votre équipe!</red>'
         success: 'L''équipe de <aqua>[name] </aqua><green>a été dissoute.</green>'
+      disbandall:
+        description: retire tous les membres et sous-propriétaires de chaque [prefix_island] dans ce monde
+        confirmation: '<red>Ceci retirera tous les membres et sous-propriétaires de chaque [prefix_island] dans ce monde. Les joueurs trust et coop ne seront pas affectés. Tape la commande de confirmation pour continuer.</red>'
+        success: '<green>Retiré </green><aqua>[number]</aqua><green> membres de </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: >-
           analyse et corrige l'appartenance à plusieurs îles dans la base de
@@ -817,6 +821,8 @@ commands:
       success: '<green>Le nom de votre île a été réinitialisé.</green>'
     team:
       description: gérer votre équipe
+      errors:
+        teams-disabled: '<red>Les équipes sont désactivées dans ce monde. Utilise trust ou coop à la place.</red>'
       gui:
         titles:
           team-panel: Gestion d'équipe

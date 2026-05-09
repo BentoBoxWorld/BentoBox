@@ -154,6 +154,10 @@ commands:
         use-disband-owner: '<red>TA不是岛主! 请使用disband [owner].</red>'
         disbanded: '<red>管理员解散了你的团队!</red>'
         success: '<aqua>[name]</aqua><green>的团队已被解散.</green>'
+      disbandall:
+        description: 移除该世界中每个 [prefix_islands] 的全部成员和副岛主
+        confirmation: '<red>这将移除该世界中每个 [prefix_island] 的全部成员和副岛主。受信任 (trust) 和合作 (coop) 玩家不受影响。请输入确认命令以继续。</red>'
+        success: '<green>已从 </green><aqua>[islands]</aqua><green> 个 [prefix_islands] 中移除 </green><aqua>[number]</aqua><green> 名成员。</green>'
       fix:
         description: 扫描数据库，并修复跨岛屿成员(某些玩家错误地拥有或归属于多个岛屿, 使用该功能会删除玩家主岛以外的岛屿)
         scanning: 正在扫描数据库...
@@ -711,6 +715,8 @@ commands:
       success: '<green>你的岛屿名称已重置.</green>'
     team:
       description: 管理你的岛屿团队
+      errors:
+        teams-disabled: '<red>该世界已禁用团队。请改用 trust 或 coop。</red>'
       gui:
         titles:
           team-panel: '<color:#EE82EE><bold>岛屿团队管理</bold></color:#EE82EE>'

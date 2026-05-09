@@ -180,6 +180,10 @@ commands:
         use-disband-owner: '<red>Nem tulajdonos! Használd a feloszlatás [owner]-t.</red>'
         disbanded: '<red>Egy adminisztrátor feloszlatta a csapatodat!</red>'
         success: '<aqua>[name]</aqua><green>csapata fel lett oszlatva.</green>'
+      disbandall:
+        description: eltávolít minden tagot és al-tulajdonost minden [prefix_island] szigetről ezen a világon
+        confirmation: '<red>Ez eltávolít minden tagot és al-tulajdonost minden [prefix_island] szigetről ezen a világon. A trust és coop játékosok nem érintettek. Írd be a megerősítő parancsot a folytatáshoz.</red>'
+        success: '<green>Eltávolítva </green><aqua>[number]</aqua><green> tag </green><aqua>[islands]</aqua><green> [prefix_islands]-ról.</green>'
       fix:
         description: átvizsgálja és javítja a [prefix_islands] közötti tagságot az adatbázisban
         scanning: Adatbázis szkennelése...
@@ -811,6 +815,8 @@ commands:
       success: '<green>Sikeresen visszaállította a [prefix_island] nevét.</green>'
     team:
       description: irányítani a csapatát
+      errors:
+        teams-disabled: '<red>A csapatok ezen a világon le vannak tiltva. Használj helyette trust vagy coop parancsot.</red>'
       gui:
         titles:
           team-panel: Csapatkezelés

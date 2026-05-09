@@ -168,6 +168,10 @@ commands:
         use-disband-owner: '<red>No propietario! Usar disolver [owner].</red>'
         disbanded: '<red>Admin disolvió tu equipo!</red>'
         success: 'El equipo de <aqua>[name] ha sido disuelto.</aqua>'
+      disbandall:
+        description: elimina a todos los miembros y subpropietarios de cada [prefix_island] en este mundo
+        confirmation: '<red>Esto eliminará a todos los miembros y subpropietarios de cada [prefix_island] en este mundo. Los jugadores con trust o coop no se verán afectados. Escribe el comando de confirmación para continuar.</red>'
+        success: '<green>Se eliminaron </green><aqua>[number]</aqua><green> miembros de </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: escanea y corrige la membresía entre islas en la base de datos
         scanning: Escaneando la base de datos...
@@ -792,6 +796,8 @@ commands:
       success: '<green>Restablezca correctamente el nombre de su isla.</green>'
     team:
       description: gestiona tu equipo
+      errors:
+        teams-disabled: '<red>Los equipos están deshabilitados en este mundo. Usa trust o coop en su lugar.</red>'
       gui:
         titles:
           team-panel: Gestión del Equipo

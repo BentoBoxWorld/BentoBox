@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -109,7 +110,7 @@ class AdminTeamDisbandAllCommandTest extends CommonTestSetup {
 
         // Scheduler — capture and run runnables on demand for confirmation flow.
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
-        when(scheduler.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(mock(BukkitTask.class));
+        when(scheduler.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(mock(BukkitTask.class));
 
         // Owner + ranks setup
         ownerUUID = uuid;

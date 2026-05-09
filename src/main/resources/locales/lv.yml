@@ -167,6 +167,10 @@ commands:
         use-disband-owner: '<red>Nav īpašnieks! Lieto /[label] disband [owner].</red>'
         disbanded: '<red>Admins izformēja tavu komandu!</red>'
         success: '<aqua>[name]</aqua><green>komanda ir izformēta.</green>'
+      disbandall:
+        description: noņem visus dalībniekus un apakšīpašniekus no katras [prefix_island] šajā pasaulē
+        confirmation: '<red>Tas noņems visus dalībniekus un apakšīpašniekus no katras [prefix_island] šajā pasaulē. Trust un coop spēlētāji netiks ietekmēti. Ieraksti apstiprināšanas komandu, lai turpinātu.</red>'
+        success: '<green>Noņemts </green><aqua>[number]</aqua><green> dalībnieku no </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: skanē un labot [prefix_island] biedru attiecības datubāzē
         scanning: Skenējot datubāzi...
@@ -773,6 +777,8 @@ commands:
       success: '<green>Tavas salas nosaukums atjaunots veiksmīgi.</green>'
     team:
       description: pārvaldīt savu komandu
+      errors:
+        teams-disabled: '<red>Komandas šajā pasaulē ir atspējotas. Tā vietā izmanto trust vai coop.</red>'
       gui:
         titles:
           team-panel: Komandas vadība
