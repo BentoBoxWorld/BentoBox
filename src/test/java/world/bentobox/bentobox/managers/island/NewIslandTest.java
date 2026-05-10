@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -17,6 +19,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.NonNull;
@@ -312,5 +315,37 @@ class NewIslandTest extends CommonTestSetup {
     }
 
     // Removed testBuilderHasIslandFailnoReserve — test was unfinished and expected nonexistent logError call
+
+    /**
+     * Regression test for: Island creation changes the home location of previous island.
+     * <p>
+     * When an island has a spawn point (set during blueprint paste), the home location must
+     * be set directly on that specific island object using {@code setHomeLocation(island, spawn, "")},
+     * NOT via the user-UUID lookup {@code setHomeLocation(user, spawn)} which resolves to the
+     * <em>current primary island</em>. If a second island is created concurrently and becomes
+     * primary before the first island's post-creation task runs, the UUID-based lookup would
+     * incorrectly set the home on the second island instead.
+     */
+    @Test
+    void testBuilderWithSpawnPointSetsHomeOnIslandDirectly() throws Exception {
+        // Make the scheduler execute the runnable immediately so postCreationTask runs inline
+        doAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return null;
+        }).when(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
+
+        // Mock a spawn point being set on the island (e.g., by blueprint paste)
+        Location spawnLoc = mock(Location.class);
+        when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(spawnLoc);
+
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
+
+        // The home must be set directly on the island object (not via user UUID lookup).
+        // Using the island-based overload guarantees the correct island is targeted even when
+        // a concurrent creation has changed the player's primary island.
+        verify(im).setHomeLocation(island, spawnLoc, "");
+        // The user-based overload must never be called during island creation
+        verify(im, never()).setHomeLocation(eq(user), any());
+    }
 
 }

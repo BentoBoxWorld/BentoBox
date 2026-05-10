@@ -170,6 +170,10 @@ commands:
         use-disband-owner: '<red>Nie jesteś liderem! Użyj disband [owner]</red>'
         disbanded: '<red>Administrator rozwiązał Twoją drużyne!</red>'
         success: '<aqua>[name]</aqua><green>''s drużyna została rozwiązana.</green>'
+      disbandall:
+        description: usuwa każdego członka i sub-właściciela z każdej [prefix_island] w tym świecie
+        confirmation: '<red>To usunie każdego członka i sub-właściciela z każdej [prefix_island] w tym świecie. Gracze trust i coop nie zostaną zmienieni. Wpisz polecenie potwierdzenia, aby kontynuować.</red>'
+        success: '<green>Usunięto </green><aqua>[number]</aqua><green> członków z </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: skanuje i naprawia członkostwo [prefix_island] w bazie danych
         scanning: Skanowanie bazy danych...
@@ -186,11 +190,10 @@ commands:
       kick:
         parameters: <gracz z drużyny>
         description: wyrzuć gracza z drużyny
-        cannot-kick-owner: '<red>Nie możesz wyrzucić lidera drużyny. Najpierw wyrzuć członków.</red>'
+        cannot-kick-owner: '<red>Nie możesz wyrzucić właściciela. Użyj </red><yellow>setowner</yellow><red>, aby przenieść własność, lub </red><yellow>disband</yellow><red>, aby rozwiązać drużynę.</red>'
         not-in-team: '<red>Ten gracz nie jest w drużynie.</red>'
         admin-kicked: '<red>Administrator wyrzucił cię z drużyny.</red>'
         success: '<aqua>[name] </aqua><green>został wyrzucony z </green><aqua>[owner]</aqua><green>''s [prefix_island].</green>'
-        success-all: '<aqua>Gracz usunięty ze wszystkich drużyn w tym świecie</aqua>'
       setowner:
         parameters: <gracz>
         description: uczyń gracza liderem wyspy
@@ -200,6 +203,8 @@ commands:
           <green>Czy na pewno chcesz ustawić [name] jako właściciela [prefix_island]</green>
           w [xyz]?
         success: '<aqua>[name]</aqua><green>jest teraz właścicielem tego [prefix_island].</green>'
+        errors:
+          at-max: '<red>[name] posiada już [number] [prefix_islands] - maksimum dozwolone przez ustawienia lub uprawnienia to [max]. Dostosuj jego uprawnienia, aby zezwolić na więcej.</red>'
         extra-islands: >-
           <red>Uwaga: ten gracz posiada teraz [number] wysp. To więcej niż</red>
           dozwolone według ustawień lub uprawnień: [max].
@@ -780,6 +785,8 @@ commands:
       success: '<green>Pomyślnie zresetowano nazwę twojej wyspy.</green>'
     team:
       description: zarządzaj swoją drużyną
+      errors:
+        teams-disabled: '<red>Drużyny są wyłączone w tym świecie. Użyj zamiast tego trust lub coop.</red>'
       gui:
         titles:
           team-panel: Zarządzanie drużyną

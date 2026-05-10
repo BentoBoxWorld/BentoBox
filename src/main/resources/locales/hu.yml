@@ -180,6 +180,10 @@ commands:
         use-disband-owner: '<red>Nem tulajdonos! Használd a feloszlatás [owner]-t.</red>'
         disbanded: '<red>Egy adminisztrátor feloszlatta a csapatodat!</red>'
         success: '<aqua>[name]</aqua><green>csapata fel lett oszlatva.</green>'
+      disbandall:
+        description: eltávolít minden tagot és al-tulajdonost minden [prefix_island] szigetről ezen a világon
+        confirmation: '<red>Ez eltávolít minden tagot és al-tulajdonost minden [prefix_island] szigetről ezen a világon. A trust és coop játékosok nem érintettek. Írd be a megerősítő parancsot a folytatáshoz.</red>'
+        success: '<green>Eltávolítva </green><aqua>[number]</aqua><green> tag </green><aqua>[islands]</aqua><green> [prefix_islands]-ról.</green>'
       fix:
         description: átvizsgálja és javítja a [prefix_islands] közötti tagságot az adatbázisban
         scanning: Adatbázis szkennelése...
@@ -192,11 +196,10 @@ commands:
       kick:
         parameters: <Csapat játékos>
         description: Egy játékos kirúgása a csapatból.
-        cannot-kick-owner: '<red>Nem rúghatod ki a tulajdonost. Először rúgd ki a tagokat.</red>'
+        cannot-kick-owner: '<red>Nem rúghatod ki a tulajdonost. Használd a </red><yellow>setowner</yellow><red> parancsot a tulajdonjog átadásához, vagy a </red><yellow>disband</yellow><red> parancsot a csapat feloszlatásához.</red>'
         not-in-team: '<red>Ez a játékos nem tagja egy csapatnak sem.</red>'
         admin-kicked: '<red>Egy adminisztrátor kirúgott téged a csapatból.</red>'
         success: '<aqua>[name] </aqua><green>ki lett rúgva </green><aqua>[owner]</aqua><green>szigetéről.</green>'
-        success-all: '<aqua>A játékos eltávolítva minden csapatból ebben a világban</aqua>'
       setowner:
         parameters: <Játékosnév>
         description: A [prefix_island] tulajdonjogának átruházása a játékosnak.
@@ -206,6 +209,8 @@ commands:
           <green>Biztos vagy benne, hogy a [name]-t akarod kijelölni a</green>
           [prefix_island] tulajdonosának a [xyz]-nél?
         success: '<aqua>[name]</aqua><green> most a [prefix_island] tulajdonosa.</green>'
+        errors:
+          at-max: '<red>[name] már birtokol [number] [prefix_islands]-t - a beállítások vagy jogosultságok által engedélyezett maximum [max]. Módosítsd a jogosultságát, hogy többet engedélyezz.</red>'
         extra-islands: >-
           <red>Figyelmeztetés: ez a játékos most [number] szigettel rendelkezik.</red>
           Ez több, mint amit a beállítások vagy jogosultságok engednek: [max].
@@ -809,6 +814,8 @@ commands:
       success: '<green>Sikeresen visszaállította a [prefix_island] nevét.</green>'
     team:
       description: irányítani a csapatát
+      errors:
+        teams-disabled: '<red>A csapatok ezen a világon le vannak tiltva. Használj helyette trust vagy coop parancsot.</red>'
       gui:
         titles:
           team-panel: Csapatkezelés

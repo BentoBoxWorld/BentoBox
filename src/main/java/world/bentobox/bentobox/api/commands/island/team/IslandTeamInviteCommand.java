@@ -76,6 +76,10 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (getIWM().isTeamsDisabled(getWorld())) {
+            user.sendMessage("commands.island.team.errors.teams-disabled");
+            return false;
+        }
         UUID playerUUID = user.getUniqueId();
         IslandsManager islandsManager = getIslands();
 

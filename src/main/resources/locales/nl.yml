@@ -174,6 +174,10 @@ commands:
         use-disband-owner: '<red>Geen eigenaar! Gebruik ontbinden [owner].</red>'
         disbanded: '<red>Admin heeft je team ontbonden!</red>'
         success: '<aqua>[name] </aqua><green>''s team is opgeheven.</green>'
+      disbandall:
+        description: verwijdert elk lid en sub-eigenaar van elke [prefix_island] in deze wereld
+        confirmation: '<red>Dit verwijdert elk lid en sub-eigenaar van elke [prefix_island] in deze wereld. Trust- en coop-spelers worden niet beïnvloed. Typ het bevestigingscommando om door te gaan.</red>'
+        success: '<green>Verwijderd </green><aqua>[number]</aqua><green> leden van </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: >-
           scant en repareert het lidmaatschap van meerdere eilanden in de
@@ -188,11 +192,10 @@ commands:
       kick:
         parameters: <teamspeler>
         description: schop een speler uit een team
-        cannot-kick-owner: '<red>Je kunt de eigenaar niet schoppen. Schop leden eerst.</red>'
+        cannot-kick-owner: '<red>Je kunt de eigenaar niet kicken. Gebruik </red><yellow>setowner</yellow><red> om het eigendom over te dragen, of </red><yellow>disband</yellow><red> om het team op te heffen.</red>'
         not-in-team: '<red>Deze speler maakt geen deel uit van een team.</red>'
         admin-kicked: '<red>De admin heeft je uit het team geschopt.</red>'
         success: '<aqua>[name] </aqua><green>is geschopt van </green><aqua>[owner] </aqua><green>''s eiland.</green>'
-        success-all: '<aqua>Speler is van alle teams in deze wereld verwijderd</aqua>'
       setowner:
         parameters: <speler>
         description: draagt het eilandbezit over aan de speler
@@ -202,6 +205,8 @@ commands:
           <green>Weet je zeker dat je [name] als eigenaar van de [prefix_island] bij</green>
           [xyz] wilt instellen?
         success: '<aqua>[name] </aqua><green>is nu de eigenaar van dit eiland.</green>'
+        errors:
+          at-max: '<red>[name] bezit al [number] [prefix_islands] - het maximum toegestaan door instellingen of permissies is [max]. Pas hun permissie aan om meer toe te staan.</red>'
         extra-islands: >-
           <red>Waarschuwing: deze speler bezit nu [number] eilanden. Dit is meer</red>
           dan toegestaan volgens de instellingen of permissies: [max].
@@ -809,6 +814,8 @@ commands:
       success: '<green>Reset je eilandnaam succesvol.</green>'
     team:
       description: beheer je team
+      errors:
+        teams-disabled: '<red>Teams zijn uitgeschakeld in deze wereld. Gebruik in plaats daarvan trust of coop.</red>'
       gui:
         titles:
           team-panel: Teambeheer

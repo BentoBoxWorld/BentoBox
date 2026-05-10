@@ -167,6 +167,10 @@ commands:
         use-disband-owner: '<red>Nav īpašnieks! Lieto /[label] disband [owner].</red>'
         disbanded: '<red>Admins izformēja tavu komandu!</red>'
         success: '<aqua>[name]</aqua><green>komanda ir izformēta.</green>'
+      disbandall:
+        description: noņem visus dalībniekus un apakšīpašniekus no katras [prefix_island] šajā pasaulē
+        confirmation: '<red>Tas noņems visus dalībniekus un apakšīpašniekus no katras [prefix_island] šajā pasaulē. Trust un coop spēlētāji netiks ietekmēti. Ieraksti apstiprināšanas komandu, lai turpinātu.</red>'
+        success: '<green>Noņemts </green><aqua>[number]</aqua><green> dalībnieku no </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: skanē un labot [prefix_island] biedru attiecības datubāzē
         scanning: Skenējot datubāzi...
@@ -181,11 +185,10 @@ commands:
       kick:
         parameters: <komandas spēlētājs>
         description: izmet spēlētāju no komandas
-        cannot-kick-owner: '<red>Nevar izmest īpašnieku kamēr komandā ir citi spēlētāji.</red>'
+        cannot-kick-owner: '<red>Nevar izmest īpašnieku. Izmanto </red><yellow>setowner</yellow><red>, lai nodotu īpašumtiesības, vai </red><yellow>disband</yellow><red>, lai izformētu komandu.</red>'
         not-in-team: '<red>Šis spēlētājs nav komandā.</red>'
         admin-kicked: '<red>Admins tevi izmenta no komandas.</red>'
         success: '<aqua>[name] </aqua><green>tika izmests no </green><aqua>[owner]</aqua><green>salas.</green>'
-        success-all: '<aqua>Spēlētājs noņemts no visām komandām šajā pasaulē</aqua>'
       setowner:
         parameters: <spēlētājs>
         description: iecelt par salas īpašnieku
@@ -195,6 +198,8 @@ commands:
           <green>Vai tiešām vēlies, lai [name] kļūtu par [prefix_island] īpašnieku</green>
           vietā [xyz]?
         success: '<aqua>[name]</aqua><green>tagad ir šīs salas īpašnieks.</green>'
+        errors:
+          at-max: '<red>[name] jau pieder [number] [prefix_islands] - iestatījumos vai atļaujās noteiktais maksimums ir [max]. Pielāgojiet viņa atļauju, lai atļautu vairāk.</red>'
         extra-islands: >-
           <red>Brīdinājums: šim spēlētājam tagad pieder [number] salas. Tas ir</red>
           vairāk nekā atļautais limits pēc iestatījumiem vai atļaujām: [max].
@@ -771,6 +776,8 @@ commands:
       success: '<green>Tavas salas nosaukums atjaunots veiksmīgi.</green>'
     team:
       description: pārvaldīt savu komandu
+      errors:
+        teams-disabled: '<red>Komandas šajā pasaulē ir atspējotas. Tā vietā izmanto trust vai coop.</red>'
       gui:
         titles:
           team-panel: Komandas vadība

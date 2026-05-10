@@ -155,6 +155,10 @@ commands:
         use-disband-owner: '<red>不是隊長!請用 disband [owner]</red>'
         disbanded: '<red>管理員解散了您的隊伍!</red>'
         success: '<aqua>[name] </aqua><green>的島嶼成員已被解散。</green>'
+      disbandall:
+        description: 移除此世界中每個 [prefix_islands] 的所有成員和副島主
+        confirmation: '<red>這將移除此世界中每個 [prefix_island] 的所有成員和副島主。受信任 (trust) 和合作 (coop) 玩家不受影響。請輸入確認命令以繼續。</red>'
+        success: '<green>已從 </green><aqua>[islands]</aqua><green> 個 [prefix_islands] 中移除 </green><aqua>[number]</aqua><green> 名成員。</green>'
       fix:
         description: 掃描數據庫，並修復跨島嶼成員(某些玩家錯誤地擁有或歸屬於多個島嶼)。
         scanning: '<yellow>正在掃描數據庫...</yellow>'
@@ -167,11 +171,10 @@ commands:
       kick:
         parameters: <Team Player>
         description: 從隊伍中踢走指定玩家
-        cannot-kick-owner: '<red>您不能踢走隊長。請先踢走成員</red>'
+        cannot-kick-owner: '<red>無法踢走隊長。請使用 </red><yellow>setowner</yellow><red> 轉讓所有權，或使用 </red><yellow>disband</yellow><red> 解散團隊。</red>'
         not-in-team: '<red>這玩家不在隊伍中。</red>'
         admin-kicked: '<red>管理員將您從隊伍中踢了出來。</red>'
         success: '<green>您已將 </green><aqua>[name] </aqua><green>從 </green><aqua>[owner] </aqua><green>的島嶼裡踢出去。</green>'
-        success-all: '<aqua>玩家已從此世界中的所有隊伍中移除</aqua>'
       setowner:
         parameters: <player>
         description: 將島嶼所有權轉移給指定玩家
@@ -179,6 +182,8 @@ commands:
         must-be-on-island: '<red>您必須在[prefix_island]上設置所有者</red>'
         confirmation: 您確定要設置[name]在[xyz]上成為[prefix_island]的所有者嗎？
         success: '<green>已將</green><aqua>[name]</aqua><green>提升為島主。</green>'
+        errors:
+          at-max: '<red>[name] 已擁有 [number] 個 [prefix_islands] - 設定或權限允許的最大數量為 [max]。請調整其權限以允許更多。</red>'
         extra-islands: 警告：該玩家現在擁有 [number] 個島嶼。這超過了設置或權限所允許的數量：[max]。
       maxsize:
         parameters: <player> <size>
@@ -707,6 +712,8 @@ commands:
       success: '<green>已成功重置島嶼名稱。</green>'
     team:
       description: 管理您的隊伍
+      errors:
+        teams-disabled: '<red>此世界已停用團隊。請改用 trust 或 coop。</red>'
       gui:
         titles:
           team-panel: 團隊管理

@@ -171,6 +171,10 @@ commands:
         use-disband-owner: '<red>Bukan pemilik! Gunakan pembubaran [owner].</red>'
         disbanded: '<red>Admin membubarkan tim Anda!</red>'
         success: '<aqua>[name]</aqua><green>tim telah dibubarkan.</green>'
+      disbandall:
+        description: menghapus setiap anggota dan sub-pemilik dari setiap [prefix_island] di dunia ini
+        confirmation: '<red>Ini akan menghapus setiap anggota dan sub-pemilik dari setiap [prefix_island] di dunia ini. Pemain trust dan coop tidak akan terpengaruh. Ketik perintah konfirmasi untuk melanjutkan.</red>'
+        success: '<green>Menghapus </green><aqua>[number]</aqua><green> anggota dari </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: memindai dan memperbaiki keanggotaan lintas pulau dalam database
         scanning: Memindai basis data...
@@ -183,13 +187,10 @@ commands:
       kick:
         parameters: <pemain tim>
         description: menendang pemain dari tim
-        cannot-kick-owner: >-
-          <red>Anda tidak dapat menendang pemiliknya. Tendang anggota terlebih</red>
-          dahulu.
+        cannot-kick-owner: '<red>Anda tidak dapat menendang pemilik. Gunakan </red><yellow>setowner</yellow><red> untuk mentransfer kepemilikan, atau </red><yellow>disband</yellow><red> untuk membubarkan tim.</red>'
         not-in-team: '<red>Pemain ini tidak ada dalam tim.</red>'
         admin-kicked: '<red>Admin mengeluarkan Anda dari tim.</red>'
         success: '<aqua>[name] </aqua><green>telah diusir dari pulau </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Pemain dihapus dari semua tim di dunia ini</aqua>'
       setowner:
         parameters: <pemain>
         description: mentransfer kepemilikan pulau kepada pemain
@@ -199,6 +200,8 @@ commands:
           <green>Apakah Anda yakin ingin menetapkan [name] sebagai pemilik</green>
           [prefix_island] di [xyz]?
         success: '<aqua>[name]</aqua><green>sekarang adalah pemilik pulau ini.</green>'
+        errors:
+          at-max: '<red>[name] sudah memiliki [number] [prefix_islands] - maksimum yang diizinkan oleh pengaturan atau izin adalah [max]. Sesuaikan izinnya untuk mengizinkan lebih banyak.</red>'
         extra-islands: >-
           <red>Peringatan: pemain ini sekarang memiliki [number] pulau. Ini lebih</red>
           dari yang diizinkan oleh pengaturan atau izin: [max].
@@ -781,6 +784,8 @@ commands:
       success: '<green>Berhasil mengatur ulang nama pulau Anda.</green>'
     team:
       description: mengelola tim Anda
+      errors:
+        teams-disabled: '<red>Tim dinonaktifkan di dunia ini. Gunakan trust atau coop sebagai gantinya.</red>'
       gui:
         titles:
           team-panel: Manajemen Tim

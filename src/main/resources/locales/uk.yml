@@ -157,6 +157,10 @@ commands:
         use-disband-owner: '<red>Ви не власник! Використайте disband [owner].</red>'
         disbanded: '<red>Адмін розпустив вашу команду!</red>'
         success: '<green>Команду </green><aqua>[name]</aqua><green>розформовано.</green>'
+      disbandall:
+        description: видаляє всіх учасників та співвласників з кожного [prefix_island] у цьому світі
+        confirmation: '<red>Це видалить усіх учасників та співвласників з кожного [prefix_island] у цьому світі. Гравці з trust та coop не будуть зачеплені. Введіть команду підтвердження, щоб продовжити.</red>'
+        success: '<green>Видалено </green><aqua>[number]</aqua><green> учасників з </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: сканує і виправляє перехресне членство у [prefix_island] у БД
         scanning: Сканую базу даних...
@@ -169,11 +173,10 @@ commands:
       kick:
         parameters: <team player>
         description: вигнати гравця з команди
-        cannot-kick-owner: '<red>Не можна вигнати власника. Спершу видаліть учасників.</red>'
+        cannot-kick-owner: '<red>Не можна вигнати власника. Використовуйте </red><yellow>setowner</yellow><red>, щоб передати володіння, або </red><yellow>disband</yellow><red>, щоб розпустити команду.</red>'
         not-in-team: '<red>Цей гравець не в команді.</red>'
         admin-kicked: '<red>Адміністратор вигнав вас із команди.</red>'
         success: '<aqua>[name] </aqua><green>вигнано з [prefix_island] гравця </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Гравця видалено з усіх команд у цьому світі</aqua>'
       setowner:
         parameters: <гравець>
         description: передати право власності [prefix_island] гравцю
@@ -181,6 +184,8 @@ commands:
         must-be-on-island: '<red>Ви маєте бути на цьому [prefix_island], щоб призначити власника</red>'
         confirmation: '<green>Ви певні, що хочете зробити [name] власником [prefix_island] на [xyz]?</green>'
         success: '<aqua>[name]</aqua><green>тепер власник цього [prefix_island].</green>'
+        errors:
+          at-max: '<red>[name] вже володіє [number] [prefix_islands] - максимум, дозволений налаштуваннями або правами, дорівнює [max]. Змініть його дозвіл, щоб дозволити більше.</red>'
         extra-islands: '<red>Увага: тепер цей гравець має [number] островів. Це більше ніж дозволено налаштуваннями або пермами: [max].</red>'
       maxsize:
         parameters: <гравець> <size>
@@ -696,6 +701,8 @@ commands:
       success: '<green>Успішно скинуто назву вашого [prefix_island].</green>'
     team:
       description: керування вашою командою
+      errors:
+        teams-disabled: '<red>Команди вимкнені в цьому світі. Використовуйте натомість trust або coop.</red>'
       gui:
         titles:
           team-panel: Керування командою

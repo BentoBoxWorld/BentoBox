@@ -1,11 +1,16 @@
 package world.bentobox.bentobox.hooks;
 
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
+import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
+import net.momirealms.craftengine.core.item.CustomItem;
 import net.momirealms.craftengine.core.util.Key;
 import world.bentobox.bentobox.api.hooks.Hook;
 
@@ -76,5 +81,39 @@ public class CraftEngineHook extends Hook {
      */
     public static boolean placeBlock(Location location, String blockId) {
         return CraftEngineBlocks.place(location, Key.of(blockId), false);
+    }
+
+    /**
+     * Returns an {@link ItemStack} for the CraftEngine custom item with the given namespaced ID.
+     * Useful for rendering the correct icon (texture / model data) and display name in panels and GUIs.
+     *
+     * @param id namespaced ID (e.g. {@code "mynamespace:my_block"})
+     * @return an Optional containing the registered custom item's ItemStack, or empty if not registered
+     */
+    public static Optional<ItemStack> getItemStack(String id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        CustomItem<ItemStack> customItem = CraftEngineItems.byId(Key.of(id));
+        if (customItem == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(customItem.buildItemStack());
+    }
+
+    /**
+     * Returns the namespaced ID (e.g. {@code "mynamespace:my_block"}) of the CraftEngine custom item
+     * represented by the given ItemStack, or {@code null} if it is not a CraftEngine custom item.
+     * Useful for command handlers that need to look up the held item against custom-block configuration.
+     *
+     * @param item the ItemStack to check
+     * @return namespaced item ID or {@code null}
+     */
+    public static String getItemId(ItemStack item) {
+        if (item == null || !CraftEngineItems.isCustomItem(item)) {
+            return null;
+        }
+        Key id = CraftEngineItems.getCustomItemId(item);
+        return id == null ? null : id.asString();
     }
 }

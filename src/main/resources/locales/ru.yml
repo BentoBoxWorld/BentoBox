@@ -174,6 +174,10 @@ commands:
         use-disband-owner: <red>Не владелец! Используйте disband [owner].</red>
         disbanded: <red>Администратор распустил вашу команду!</red>
         success: <green>Команда игрока <aqua>[name] </aqua>была распущена.</green>
+      disbandall:
+        description: удаляет всех участников и со-владельцев со всех [prefix_islands] в этом мире
+        confirmation: '<red>Это удалит всех участников и со-владельцев со всех [prefix_islands] в этом мире. Игроки с trust и coop не будут затронуты. Введите команду подтверждения, чтобы продолжить.</red>'
+        success: '<green>Удалено </green><aqua>[number]</aqua><green> участников с </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: сканирует и исправляет присутствие на более чем 1 острове одновременно
         scanning: Сканируем базу данных...
@@ -187,11 +191,10 @@ commands:
       kick:
         parameters: <игрок команды>
         description: выгнать игрока из команды
-        cannot-kick-owner: <red>Вы не можете выгнать владельца. Сначала выгоните участников.</red>
+        cannot-kick-owner: '<red>Нельзя выгнать владельца. Используйте </red><yellow>setowner</yellow><red>, чтобы передать владение, или </red><yellow>disband</yellow><red>, чтобы распустить команду.</red>'
         not-in-team: <red>Этот игрок не в вашей команде.</red>
         admin-kicked: <red>Администратор выгнал вас из команды.</red>
         success: <green><aqua>[name] </aqua>был выгнан с острова игрока <aqua>[owner]</aqua>.</green>
-        success-all: <aqua>Игрок удалён из всех команд в этом мире</aqua>
       setowner:
         parameters: <игрок>
         description: передает статус владельца между игроками
@@ -201,6 +204,8 @@ commands:
         confirmation: <green>Вы уверены, что хотите сделать [name] владельцем [prefix_island]
           на [xyz]?</green>
         success: <green><aqua>[name] </aqua>теперь является владельцем острова.</green>
+        errors:
+          at-max: '<red>[name] уже владеет [number] [prefix_islands] - максимум, разрешённый настройками или правами, равен [max]. Измените его разрешение, чтобы разрешить больше.</red>'
         extra-islands: '<red>Внимание: у этого игрока теперь есть [number] островов.
           Это больше, чем разрешено настройками или правами: [max].</red>'
       maxsize:
@@ -762,6 +767,8 @@ commands:
       success: <green>Название вашего острова успешно сброшено.</green>
     team:
       description: управляет командой
+      errors:
+        teams-disabled: '<red>Команды отключены в этом мире. Используйте вместо этого trust или coop.</red>'
       gui:
         titles:
           team-panel: Управление командой

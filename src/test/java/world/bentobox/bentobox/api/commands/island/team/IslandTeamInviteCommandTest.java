@@ -169,6 +169,16 @@ class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     }
 
     /**
+     * Refuses to run when teams are disabled in the world.
+     */
+    @Test
+    void testCanExecuteTeamsDisabled() {
+        when(iwm.isTeamsDisabled(any())).thenReturn(true);
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
+        verify(user).sendMessage("commands.island.team.errors.teams-disabled");
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test

@@ -154,6 +154,10 @@ commands:
         use-disband-owner: '<red>TA不是岛主! 请使用disband [owner].</red>'
         disbanded: '<red>管理员解散了你的团队!</red>'
         success: '<aqua>[name]</aqua><green>的团队已被解散.</green>'
+      disbandall:
+        description: 移除该世界中每个 [prefix_islands] 的全部成员和副岛主
+        confirmation: '<red>这将移除该世界中每个 [prefix_island] 的全部成员和副岛主。受信任 (trust) 和合作 (coop) 玩家不受影响。请输入确认命令以继续。</red>'
+        success: '<green>已从 </green><aqua>[islands]</aqua><green> 个 [prefix_islands] 中移除 </green><aqua>[number]</aqua><green> 名成员。</green>'
       fix:
         description: 扫描数据库，并修复跨岛屿成员(某些玩家错误地拥有或归属于多个岛屿, 使用该功能会删除玩家主岛以外的岛屿)
         scanning: 正在扫描数据库...
@@ -166,11 +170,10 @@ commands:
       kick:
         parameters: <团队 玩家>
         description: 将玩家踢出团队
-        cannot-kick-owner: '<red>你不能踢出岛主, 请先踢出团队成员.</red>'
+        cannot-kick-owner: '<red>无法踢出岛主。请使用 </red><yellow>setowner</yellow><red> 转让所有权，或使用 </red><yellow>disband</yellow><red> 解散团队。</red>'
         not-in-team: '<red>该玩家没有团队.</red>'
         admin-kicked: '<red>管理员将你踢出了团队.</red>'
         success: '<green>已将</green><aqua>[name]</aqua><green>从</green><aqua>[owner]</aqua><green>的岛屿里踢出.</green>'
-        success-all: '<aqua>玩家已从这个世界的所有团队中移除</aqua>'
       setowner:
         parameters: <玩家>
         description: 将当前岛屿的岛主设置为指定玩家
@@ -178,6 +181,8 @@ commands:
         must-be-on-island: '<red>你必须在岛屿上才能设置所有者</red>'
         confirmation: '<green>你确定要把[name]设置为[xyz]的岛主吗?</green>'
         success: '<aqua>[name]</aqua><green>已被设置为当前岛屿的岛主.</green>'
+        errors:
+          at-max: '<red>[name] 已拥有 [number] 个 [prefix_islands] - 设置或权限允许的最大数量为 [max]。请调整其权限以允许更多。</red>'
         extra-islands: '<red>警告: 该玩家当前拥有[number]个岛屿, 最多仅可以拥有[max]个岛屿.</red>'
       maxsize:
         parameters: <player> <size>
@@ -709,6 +714,8 @@ commands:
       success: '<green>你的岛屿名称已重置.</green>'
     team:
       description: 管理你的岛屿团队
+      errors:
+        teams-disabled: '<red>该世界已禁用团队。请改用 trust 或 coop。</red>'
       gui:
         titles:
           team-panel: '<color:#EE82EE><bold>岛屿团队管理</bold></color:#EE82EE>'

@@ -172,6 +172,10 @@ commands:
         use-disband-owner: '<red>Pas propriétaire! Utilisez dissoudre [owner].</red>'
         disbanded: '<red>Admin a dissous votre équipe!</red>'
         success: 'L''équipe de <aqua>[name] </aqua><green>a été dissoute.</green>'
+      disbandall:
+        description: retire tous les membres et sous-propriétaires de chaque [prefix_island] dans ce monde
+        confirmation: '<red>Ceci retirera tous les membres et sous-propriétaires de chaque [prefix_island] dans ce monde. Les joueurs trust et coop ne seront pas affectés. Tape la commande de confirmation pour continuer.</red>'
+        success: '<green>Retiré </green><aqua>[number]</aqua><green> membres de </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: >-
           analyse et corrige l'appartenance à plusieurs îles dans la base de
@@ -188,13 +192,10 @@ commands:
       kick:
         parameters: <joueur>
         description: Kicker le joueur de son équipe
-        cannot-kick-owner: >-
-          <red>Vous ne pouvez pas kicker le propriétaire. Kickez d'abord les</red>
-          membres.
+        cannot-kick-owner: '<red>Vous ne pouvez pas exclure le propriétaire. Utilisez </red><yellow>setowner</yellow><red> pour transférer la propriété, ou </red><yellow>disband</yellow><red> pour dissoudre l''équipe.</red>'
         not-in-team: '<red>Ce joueur ne fait pas partie d''une équipe.</red>'
         admin-kicked: '<red>L''administrateur vous a kické de l''équipe.</red>'
         success: '<aqua>[name] </aqua><green>a été kické de l''île de </green><aqua>[owner] </aqua><green>.</green>'
-        success-all: '<aqua>Joueur retiré de toutes les équipes dans ce monde</aqua>'
       setowner:
         parameters: <joueur>
         description: transférer la propriété de l'île au joueur
@@ -204,6 +205,8 @@ commands:
           <green>Êtes-vous sûr de vouloir définir [name] comme propriétaire de</green>
           [prefix_island] à [xyz]?
         success: '<aqua>[name] </aqua><green>est maintenant le propriétaire de cette île.</green>'
+        errors:
+          at-max: '<red>[name] possède déjà [number] [prefix_islands] - le maximum autorisé par les paramètres ou les permissions est [max]. Ajustez sa permission pour en autoriser davantage.</red>'
         extra-islands: >-
           <red>Avertissement : ce joueur possède maintenant [number] îles. C'est</red>
           plus que ce qui est autorisé par les paramètres ou les permissions :
@@ -815,6 +818,8 @@ commands:
       success: '<green>Le nom de votre île a été réinitialisé.</green>'
     team:
       description: gérer votre équipe
+      errors:
+        teams-disabled: '<red>Les équipes sont désactivées dans ce monde. Utilise trust ou coop à la place.</red>'
       gui:
         titles:
           team-panel: Gestion d'équipe

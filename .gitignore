@@ -89,3 +89,4 @@ nb-configuration.xml
 .nb-gradle/
 /BentoBox/
 /placeholder-dump.md
+.claude/worktrees/

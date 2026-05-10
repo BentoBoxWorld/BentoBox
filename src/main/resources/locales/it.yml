@@ -170,6 +170,10 @@ commands:
         use-disband-owner: '<red>Non è un proprietario! Scrivi disband [owner].</red>'
         disbanded: '<red>Un amministratore ha sciolto il tuo team!</red>'
         success: '<green>Il team di </green><aqua>[name]</aqua><green>è stato sciolto.</green>'
+      disbandall:
+        description: rimuove ogni membro e sub-proprietario da ogni [prefix_island] in questo mondo
+        confirmation: '<red>Questo rimuoverà ogni membro e sub-proprietario da ogni [prefix_island] in questo mondo. I giocatori trust e coop non saranno influenzati. Digita il comando di conferma per procedere.</red>'
+        success: '<green>Rimossi </green><aqua>[number]</aqua><green> membri da </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: scansiona e corregge l'appartenenza a [prefix_island] nel database
         scanning: Scansione del database...
@@ -186,11 +190,10 @@ commands:
       kick:
         parameters: <giocatore di squadra>
         description: caccia un player da un team
-        cannot-kick-owner: '<red>Non puoi cacciare il proprietario. Caccia prima i membri.</red>'
+        cannot-kick-owner: '<red>Non puoi cacciare il proprietario. Usa </red><yellow>setowner</yellow><red> per trasferire la proprietà, oppure </red><yellow>disband</yellow><red> per sciogliere la squadra.</red>'
         not-in-team: '<red>Questo player non è in un team.</red>'
         admin-kicked: '<red>Un amministratore ti ha cacciato dal tuo team.</red>'
         success: '<aqua>[name] </aqua><green>è stato cacciato dall''isola di </green><aqua>[owner].</aqua>'
-        success-all: '<aqua>Giocatore rimosso da tutte le squadre in questo mondo</aqua>'
       setowner:
         parameters: <player>
         description: trasferisci il possesso di un'isola ad un player
@@ -200,6 +203,8 @@ commands:
           <green>Sei sicuro di voler impostare [name] come proprietario del</green>
           [prefix_island] a [xyz]?
         success: '<aqua>[name]</aqua><green>è ora il proprietario dell''isola.</green>'
+        errors:
+          at-max: '<red>[name] possiede già [number] [prefix_islands] - il massimo consentito dalle impostazioni o dai permessi è [max]. Modifica i suoi permessi per consentirne di più.</red>'
         extra-islands: >-
           <red>Attenzione: questo giocatore possiede ora [number] isole. Questo è</red>
           più di quanto consentito dalle impostazioni o dai permessi: [max].
@@ -804,6 +809,8 @@ commands:
       success: '<green>Resettato con successo il nome della tua isola.</green>'
     team:
       description: gestisci il tuo team
+      errors:
+        teams-disabled: '<red>I team sono disabilitati in questo mondo. Usa trust o coop al loro posto.</red>'
       gui:
         titles:
           team-panel: Gestione del Team

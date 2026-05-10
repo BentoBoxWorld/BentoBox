@@ -168,6 +168,10 @@ commands:
         use-disband-owner: '<dark_red>Sahibi degilsin. Sahibi </dark_red><light_purple>[owner]</light_purple>'
         disbanded: '<dark_red>Admin takımınızı dağıttı!</dark_red>'
         success: '<light_purple>[name] </light_purple><aqua>takımı dağıtıldı!</aqua>'
+      disbandall:
+        description: bu dünyadaki her [prefix_island] üzerindeki tüm üyeleri ve alt-sahipleri kaldırır
+        confirmation: '<red>Bu, bu dünyadaki her [prefix_island] üzerindeki tüm üyeleri ve alt-sahipleri kaldıracaktır. Trust ve coop oyuncuları etkilenmez. Devam etmek için onay komutunu yaz.</red>'
+        success: '<green></green><aqua>[islands]</aqua><green> [prefix_islands] adasından </green><aqua>[number]</aqua><green> üye kaldırıldı.</green>'
       fix:
         description: Veritabanındaki adalar arası üyeliği tarar ve düzeltir
         scanning: Veritabanı taranıyor ...
@@ -180,11 +184,10 @@ commands:
       kick:
         parameters: <takım oyuncusu>
         description: takımından oyuncu at
-        cannot-kick-owner: '<dark_red>Ada sahibini atamazsın. İlk önce diğer üyeleri at.</dark_red>'
+        cannot-kick-owner: '<dark_red>Ada sahibini atamazsın. Sahipliği devretmek için </dark_red><yellow>setowner</yellow><dark_red>, takımı dağıtmak için </dark_red><yellow>disband</yellow><dark_red> komutunu kullan.</dark_red>'
         not-in-team: '<dark_red>Bu oyunbu bu takımda değil!</dark_red>'
         admin-kicked: '<blue>Admin seni takımından attı!</blue>'
         success: '<light_purple>[name] </light_purple><blue>[owner] </blue><dark_red>adasından atıldı!</dark_red>'
-        success-all: '<aqua>Bu dünyadaki tüm takımlardan oyuncu çıkarıldı</aqua>'
       setowner:
         parameters: <player>
         description: Oyuncuya ada liderligini ver!
@@ -194,6 +197,8 @@ commands:
           <green>[xyz] konumundaki [prefix_island]ın sahibi olarak [name]'i</green>
           ayarlamak istediğinizden emin misiniz?
         success: '<light_purple>[name] </light_purple><aqua>artık adanın sahibi!</aqua>'
+        errors:
+          at-max: '<red>[name] zaten [number] adet [prefix_islands] sahibi - ayarlar veya izinler tarafından izin verilen maksimum [max]. Daha fazlasına izin vermek için iznini ayarla.</red>'
         extra-islands: >-
           <red>Uyarı: bu oyuncunun şimdi [number] adası var. Bu, ayarlar veya</red>
           izinler tarafından izin verilen [max] miktarından fazladır.
@@ -757,6 +762,8 @@ commands:
       success: '<blue>Ada ismini başarıyla sıfırladın.</blue>'
     team:
       description: Takımını yönet!
+      errors:
+        teams-disabled: '<red>Bu dünyada takımlar devre dışı bırakıldı. Onun yerine trust veya coop kullan.</red>'
       gui:
         titles:
           team-panel: Ekip Yönetimi

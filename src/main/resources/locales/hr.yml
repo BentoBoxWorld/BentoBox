@@ -170,6 +170,10 @@ commands:
         use-disband-owner: '<red>Nije vlasnik! Upotrijebi disband [owner].</red>'
         disbanded: '<red>Admin je raspustio vaš tim!</red>'
         success: '<aqua>[name]</aqua><green>tim je raspušten.</green>'
+      disbandall:
+        description: ukloni sve članove i sub-vlasnike sa svakog [prefix_island] u ovom svijetu
+        confirmation: '<red>Ovo će ukloniti sve članove i sub-vlasnike sa svakog [prefix_island] u ovom svijetu. Trust i coop igrači neće biti pogođeni. Upiši naredbu potvrde za nastavak.</red>'
+        success: '<green>Uklonjeno </green><aqua>[number]</aqua><green> članova s </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: skenira i popravlja međuotočno članstvo u bazi podataka
         scanning: Skeniranje baze podataka...
@@ -182,11 +186,10 @@ commands:
       kick:
         parameters: <timski igrač>
         description: šutnuti igrača iz momčadi
-        cannot-kick-owner: '<red>Ne možete šutnuti vlasnika. Prvo udarite članove.</red>'
+        cannot-kick-owner: '<red>Ne možeš izbaciti vlasnika. Koristi </red><yellow>setowner</yellow><red> za prijenos vlasništva ili </red><yellow>disband</yellow><red> za raspuštanje tima.</red>'
         not-in-team: '<red>Ovaj igrač nije u timu.</red>'
         admin-kicked: '<red>Admin vas je izbacio iz tima.</red>'
         success: '<aqua>[name] </aqua><green>je izbačen s otoka </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Igrač uklonjen iz svih timova u ovom svijetu</aqua>'
       setowner:
         parameters: <igrač>
         description: prenosi vlasništvo nad otokom na igrača
@@ -196,6 +199,8 @@ commands:
           <green>Jeste li sigurni da želite postaviti [name] kao vlasnika</green>
           [prefix_island] na [xyz]?
         success: '<aqua>[name]</aqua><green>je sada vlasnik ovog otoka.</green>'
+        errors:
+          at-max: '<red>[name] već posjeduje [number] [prefix_islands] - maksimum dopušten postavkama ili dozvolama je [max]. Prilagodi njegovu dozvolu da omogućiš više.</red>'
         extra-islands: >-
           <red>Upozorenje: ovaj igrač sada posjeduje [number] otoka. To je više od</red>
           dopuštenog prema postavkama ili dozvolama: [max].
@@ -766,6 +771,8 @@ commands:
       success: '<green>Uspješno poništite ime svog otoka.</green>'
     team:
       description: upravljati svojim timom
+      errors:
+        teams-disabled: '<red>Timovi su onemogućeni u ovom svijetu. Koristi trust ili coop umjesto toga.</red>'
       gui:
         titles:
           team-panel: Upravljanje timom

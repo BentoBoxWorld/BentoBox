@@ -169,6 +169,10 @@ commands:
         use-disband-owner: '<red>Không phải chủ! Dùng disband [owner].</red>'
         disbanded: '<red>Quản trị viên đã giải tán đội của bạn!</red>'
         success: '<green>Đội của</green><aqua>[name]</aqua><green>đã bị giải tán.</green>'
+      disbandall:
+        description: xóa mọi thành viên và đồng-chủ sở hữu khỏi mọi [prefix_island] trong thế giới này
+        confirmation: '<red>Điều này sẽ xóa mọi thành viên và đồng-chủ sở hữu khỏi mọi [prefix_island] trong thế giới này. Người chơi trust và coop sẽ không bị ảnh hưởng. Nhập lệnh xác nhận để tiếp tục.</red>'
+        success: '<green>Đã xóa </green><aqua>[number]</aqua><green> thành viên khỏi </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: Quét và sửa thành viên chéo đảo trong cơ sở dữ liệu
         scanning: Đang quét cơ sở dữ liệu...
@@ -183,11 +187,10 @@ commands:
       kick:
         parameters: <người chơi>
         description: đuổi người chơi khỏi đội
-        cannot-kick-owner: '<red>Bạn không thể đuổi chủ. Hãy đuổi thành viên trước.</red>'
+        cannot-kick-owner: '<red>Bạn không thể đuổi chủ sở hữu. Dùng </red><yellow>setowner</yellow><red> để chuyển quyền sở hữu, hoặc </red><yellow>disband</yellow><red> để giải tán đội.</red>'
         not-in-team: '<red>Người chơi này không có trong đội.</red>'
         admin-kicked: '<red>Quản trị viên đã đuổi bạn khỏi đội.</red>'
         success: '<aqua>[name] </aqua><green>đã bị đuổi khỏi đội của </green><aqua>[owner]</aqua><green>.</green>'
-        success-all: '<aqua>Người chơi đã được loại bỏ khỏi tất cả các đội trong thế giới này</aqua>'
       setowner:
         parameters: <người chơi>
         description: Chuyển quyền chủ đảo cho người chơi
@@ -197,6 +200,8 @@ commands:
           <green>Bạn có chắc chắn muốn đặt [name] làm chủ sở hữu của [prefix_island]</green>
           tại [xyz]?
         success: '<aqua>[name]</aqua><green> thành chủ đảo này.</green>'
+        errors:
+          at-max: '<red>[name] đã sở hữu [number] [prefix_islands] - tối đa được phép theo cài đặt hoặc quyền là [max]. Điều chỉnh quyền của họ để cho phép nhiều hơn.</red>'
         extra-islands: >-
           <red>Cảnh báo: người chơi này hiện đang sở hữu [number] hòn đảo. Đây là</red>
           nhiều hơn mức cho phép theo cài đặt hoặc quyền: [max].
@@ -761,6 +766,8 @@ commands:
       success: '<green>Đã đặt lại tên đảo.</green>'
     team:
       description: quản lí đội
+      errors:
+        teams-disabled: '<red>Các đội đã bị vô hiệu hóa trong thế giới này. Sử dụng trust hoặc coop để thay thế.</red>'
       gui:
         titles:
           team-panel: Quản lý Đội Ngũ

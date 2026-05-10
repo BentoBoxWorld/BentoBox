@@ -211,4 +211,19 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         // Add other verifications
         verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
     }
+
+    /**
+     * Recipient already owns the maximum allowed concurrent islands - transfer must be refused.
+     */
+    @Test
+    void testCanExecuteTargetAtConcurrentIslandsCap() {
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.getOwner()).thenReturn(notUUID);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        when(im.getNumberOfConcurrentIslands(eq(uuid), any())).thenReturn(1);
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).sendMessage("commands.admin.team.setowner.errors.at-max", TextVariables.NAME, "tastybento",
+                TextVariables.NUMBER, "1", "[max]", "1");
+    }
 }

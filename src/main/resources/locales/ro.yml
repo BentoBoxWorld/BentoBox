@@ -176,6 +176,10 @@ commands:
         use-disband-owner: '<red>Nu este proprietar! Folosiți disband [owner].</red>'
         disbanded: '<red>Administratorul v-a desființat echipa!</red>'
         success: 'Echipa <aqua>[name] </aqua><green>a fost desființată.</green>'
+      disbandall:
+        description: elimină fiecare membru și sub-proprietar din fiecare [prefix_island] din această lume
+        confirmation: '<red>Aceasta va elimina fiecare membru și sub-proprietar din fiecare [prefix_island] din această lume. Jucătorii trust și coop nu vor fi afectați. Tastează comanda de confirmare pentru a continua.</red>'
+        success: '<green>Eliminat </green><aqua>[number]</aqua><green> membri de pe </green><aqua>[islands]</aqua><green> [prefix_islands].</green>'
       fix:
         description: scanează și remediază apartenența la insulă în baza de date
         scanning: Se scanează baza de date ...
@@ -188,11 +192,10 @@ commands:
       kick:
         parameters: <jucător de echipă>
         description: lovi cu piciorul un jucător dintr-o echipă
-        cannot-kick-owner: '<red>Nu poți da lovitura cu proprietarul. Lovi mai întâi membrii.</red>'
+        cannot-kick-owner: '<red>Nu poți da afară proprietarul. Folosește </red><yellow>setowner</yellow><red> pentru a transfera proprietatea sau </red><yellow>disband</yellow><red> pentru a desființa echipa.</red>'
         not-in-team: '<red>Acest jucător nu face parte dintr-o echipă.</red>'
         admin-kicked: '<red>Administratorul te-a dat afară din echipă.</red>'
         success: '<aqua>[name] </aqua><green>a fost dat afară de pe insula lui </green><aqua>[owner] </aqua><green>.</green>'
-        success-all: '<aqua>Jucător eliminat din toate echipele din această lume</aqua>'
       setowner:
         parameters: <player>
         description: transferă proprietatea insulei către jucător
@@ -200,6 +203,8 @@ commands:
         must-be-on-island: '<red>Trebuie să fii pe insulă pentru a stabili proprietarul</red>'
         confirmation: '<green>Sigur doriți să setați [name] să fie proprietarul insulei la [xyz]?</green>'
         success: '<aqua>[name] </aqua><green>este acum proprietarul acestei insule.</green>'
+        errors:
+          at-max: '<red>[name] deține deja [number] [prefix_islands] - maximul permis de setări sau permisiuni este [max]. Ajustează-i permisiunea pentru a permite mai multe.</red>'
         extra-islands: >-
           <red>Avertisment: acest jucător deține acum [number] insule. Acest lucru</red>
           este mai mult decât permis de setări sau perms: [max].
@@ -791,6 +796,8 @@ commands:
       success: '<green>Resetați cu succes numele insulei.</green>'
     team:
       description: gestionează-ți echipa
+      errors:
+        teams-disabled: '<red>Echipele sunt dezactivate în această lume. Folosește în schimb trust sau coop.</red>'
       gui:
         titles:
           team-panel: Managementul echipei

@@ -148,6 +148,10 @@ commands:
         use-disband-owner: リーダーじゃない！解散を使用 [owner]
         disbanded: 管理者はあなたのチームを解散!
         success: '<aqua>[name]</aqua><green>のチームは解散しました。</green>'
+      disbandall:
+        description: このワールドのすべての [prefix_islands] からメンバーとサブオーナーをすべて取り除きます
+        confirmation: '<red>これはこのワールドのすべての [prefix_island] からメンバーとサブオーナーを取り除きます。trust と coop のプレイヤーは影響を受けません。続行するには確認コマンドを入力してください。</red>'
+        success: '<green></green><aqua>[islands]</aqua><green> 個の [prefix_islands] から </green><aqua>[number]</aqua><green> 人のメンバーを取り除きました。</green>'
       fix:
         description: データベース内のクロスアイランドメンバーシップをスキャンして修正
         scanning: データベースをスキャンしています...
@@ -160,11 +164,10 @@ commands:
       kick:
         parameters: <チームのプレーヤー>
         description: チームからプレーヤーを外す。
-        cannot-kick-owner: '<red>チームリーダーを外すことはできません。まずはメンバーを外してください。</red>'
+        cannot-kick-owner: '<red>オーナーを外すことはできません。所有権を移すには </red><yellow>setowner</yellow><red> を、チームを解散するには </red><yellow>disband</yellow><red> を使用してください。</red>'
         not-in-team: '<red>このプレーヤーはチームに所属していません。</red>'
         admin-kicked: 管理者は、あなたをチームから外しました。
         success: '<aqua>[name]</aqua><green>は</green><aqua>[owner]</aqua><green>の島から追い出されました。</green>'
-        success-all: '<aqua>プレーヤーはこの世界のすべてのチームから削除されました</aqua>'
       setowner:
         parameters: <プレーヤー>
         description: プレーヤーをチームのリーダーにする％
@@ -172,6 +175,8 @@ commands:
         must-be-on-island: '<red>所有者を設定するには、[prefix_island]にいる必要があります</red>'
         confirmation: '<green>[prefix_island]の所有者に[xyz]の所有者になるように[name]を設定したいですか？</green>'
         success: '<aqua>[name]</aqua><green>がこの島の所有者になりました。</green>'
+        errors:
+          at-max: '<red>[name] はすでに [number] 個の [prefix_islands] を所有しています - 設定または権限により許可される最大数は [max] です。さらに許可するには権限を調整してください。</red>'
         extra-islands: '<red>警告：このプレーヤーは現在、[number]島を所有しています。これは、設定またはパーマで許可されている以上のものです：[max]。</red>'
       maxsize:
         parameters: <プレイヤー> <サイズ>
@@ -695,6 +700,8 @@ commands:
       success: '<green>島の名前を正常にリセットしました。</green>'
     team:
       description: チームの管理
+      errors:
+        teams-disabled: '<red>このワールドではチームが無効です。代わりに trust または coop を使用してください。</red>'
       gui:
         titles:
           team-panel: チーム管理
