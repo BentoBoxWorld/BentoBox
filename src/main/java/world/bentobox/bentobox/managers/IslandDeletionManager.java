@@ -1,43 +1,35 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bukkit.Location;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 
 /**
- * Tracks island locations that are currently being deleted so callers
- * (e.g. island-creation placement, register command) can avoid them.
+ * Reports whether an island location is awaiting filesystem-level cleanup
+ * (i.e. the row is still in the DB with {@code deletable = true}, before
+ * {@code PurgeRegionsService} reaps the region files).
+ *
+ * <p>Backed by the live island state rather than a side-channel set, so
+ * it can never drift out of sync with the actual database.
  *
  * @author tastybento
  * @since 1.1
  */
-public class IslandDeletionManager implements Listener {
+public class IslandDeletionManager {
 
-    private final Set<Location> inDeletion;
+    private final BentoBox plugin;
 
     public IslandDeletionManager(BentoBox plugin) {
-        inDeletion = new HashSet<>();
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onIslandDeleted(IslandDeletedEvent e) {
-        inDeletion.remove(e.getDeletedIslandInfo().getLocation());
+        this.plugin = plugin;
     }
 
     /**
      * Check if an island location is in deletion
      * @param location - center of location
-     * @return true if island is in the process of being deleted
+     * @return true if there is an island at this location that is marked deletable
      */
     public boolean inDeletion(Location location) {
-        return inDeletion.contains(location);
+        return plugin.getIslands().getIslandAt(location).map(island -> island.isDeletable()).orElse(false);
     }
 
 }
