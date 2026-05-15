@@ -1,36 +1,24 @@
 package world.bentobox.bentobox.nms;
 
-import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.CraftWorld; // Unversioned import for Paperweight
-import org.bukkit.craftbukkit.block.data.CraftBlockData; // Unversioned import for Paperweight
+import java.util.concurrent.CompletableFuture;
 
-import net.minecraft.core.BlockPos; // New name for BlockPosition
-import net.minecraft.world.level.Level; // New name for World
-import net.minecraft.world.level.chunk.LevelChunk; // New name for Chunk
+import org.bukkit.Chunk;
 
-public class WorldRegeneratorImpl extends CopyWorldRegenerator {
+/**
+ * Pure-Bukkit implementation of {@link WorldRegenerator}.
+ *
+ * <p>Delegates to {@link org.bukkit.World#regenerateChunk(int, int)}, which
+ * is deprecated by Bukkit but still functional in Paper. Used by
+ * {@code CleanSuperFlatListener} to repaint stray superflat chunks loaded
+ * inside an island world when the world was created without the
+ * gamemode's chunk generator.
+ */
+public class WorldRegeneratorImpl implements WorldRegenerator {
 
     @Override
-    public void setBlockInNativeChunk(org.bukkit.Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics) {
-        
-        CraftBlockData craft = (CraftBlockData) blockData;
-        
-        // Unwrap Bukkit World to NMS Level (was World)
-        Level nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
-        
-        // Get the NMS Chunk (LevelChunk)
-        LevelChunk nmsChunk = nmsWorld.getChunk(chunk.getX(), chunk.getZ());
-        
-        // Create the NMS Position (BlockPos)
-        BlockPos bp = new BlockPos((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
-        
-        // Determine the block update flags (1 or 0)
-        int flags = applyPhysics ? 1 : 0;
-        
-        // Setting the block to air before setting to another state prevents some console errors
-        nmsChunk.setBlockState(bp, PasteHandlerImpl.AIR, flags);
-        
-        // Set the desired block state
-        nmsChunk.setBlockState(bp, craft.getState(), flags);
+    @SuppressWarnings({ "deprecation", "removal" })
+    public CompletableFuture<Void> regenerateChunk(Chunk chunk) {
+        chunk.getWorld().regenerateChunk(chunk.getX(), chunk.getZ());
+        return CompletableFuture.completedFuture(null);
     }
 }

@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -25,19 +24,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -239,12 +234,8 @@ class AdminDeleteCommandTest extends CommonTestSetup {
     }
 
     @Test
-    void testDeleteIslandSoftDeleteForNewChunkGeneration() {
+    void testDeleteIslandAlwaysSoftDeletes() {
         AdminDeleteCommand itl = setupForDeletion();
-
-        GameModeAddon gm = mock(GameModeAddon.class);
-        when(gm.isUsesNewChunkGeneration()).thenReturn(true);
-        when(iwm.getAddon(world)).thenReturn(Optional.of(gm));
 
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         itl.execute(user, itl.getLabel(), List.of("tastybento"));
@@ -252,26 +243,6 @@ class AdminDeleteCommandTest extends CommonTestSetup {
 
         verify(im).deleteIsland(eq(island), eq(true), eq(notUUID));
         verify(im, never()).hardDeleteIsland(any());
-    }
-
-    @Test
-    void testDeleteIslandHardDeleteForSimpleGeneration() {
-        AdminDeleteCommand itl = setupForDeletion();
-
-        GameModeAddon gm = mock(GameModeAddon.class);
-        when(gm.isUsesNewChunkGeneration()).thenReturn(false);
-        when(iwm.getAddon(world)).thenReturn(Optional.of(gm));
-
-        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        itl.execute(user, itl.getLabel(), List.of("tastybento"));
-
-        try (MockedConstruction<DeleteIslandChunks> ignored =
-                Mockito.mockConstruction(DeleteIslandChunks.class)) {
-            itl.execute(user, itl.getLabel(), List.of("tastybento"));
-        }
-
-        verify(im).hardDeleteIsland(island);
-        verify(im, never()).deleteIsland(any(), eq(true), any());
     }
 
     private AdminDeleteCommand setupForDeletion() {

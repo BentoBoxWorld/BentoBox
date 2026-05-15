@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.managers;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -10,71 +9,26 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
-import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.IslandDeletion;
-import world.bentobox.bentobox.util.Util;
 
 /**
- * Listens for island deletions and adds them to the database. Removes them when the island is deleted.
+ * Tracks island locations that are currently being deleted so callers
+ * (e.g. island-creation placement, register command) can avoid them.
+ *
  * @author tastybento
  * @since 1.1
  */
 public class IslandDeletionManager implements Listener {
 
-    private final BentoBox plugin;
-    /**
-     * Queue of islands to delete
-     */
-    private final Database<IslandDeletion> handler;
     private final Set<Location> inDeletion;
-    private final IslandChunkDeletionManager islandChunkDeletionManager;
 
     public IslandDeletionManager(BentoBox plugin) {
-        this.plugin = plugin;
-        handler = new Database<>(plugin, IslandDeletion.class);
         inDeletion = new HashSet<>();
-        islandChunkDeletionManager = new IslandChunkDeletionManager(plugin);
-    }
-
-    /**
-     * When BentoBox is fully loaded, load the islands that still need to be deleted and kick them off
-     * @param e BentoBox Ready event
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        // Load list of islands that were mid-deletion and delete them
-        List<IslandDeletion> toBeDeleted = handler.loadObjects();
-        if (!toBeDeleted.isEmpty()) {
-            plugin.log("There are " + toBeDeleted.size() + " islands pending deletion.");
-            toBeDeleted.forEach(di -> {
-                if (di.getLocation() == null || di.getLocation().getWorld() == null) {
-                    plugin.logError("Island queued for deletion refers to a non-existent game world. Skipping...");
-                } else {
-                    plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
-                    inDeletion.add(di.getLocation());
-                    this.islandChunkDeletionManager.add(di);
-                }
-            });
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onIslandDelete(IslandDeleteChunksEvent e) {
-        // Store location
-        inDeletion.add(e.getDeletedIslandInfo().getLocation());
-        // Save to database
-        handler.saveObjectAsync(e.getDeletedIslandInfo());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onIslandDeleted(IslandDeletedEvent e) {
-        // Delete
         inDeletion.remove(e.getDeletedIslandInfo().getLocation());
-        // Delete from database
-        handler.deleteID(e.getDeletedIslandInfo().getUniqueId());
     }
 
     /**
@@ -84,13 +38,6 @@ public class IslandDeletionManager implements Listener {
      */
     public boolean inDeletion(Location location) {
         return inDeletion.contains(location);
-    }
-
-    /**
-     * @return the islandChunkDeletionManager
-     */
-    public IslandChunkDeletionManager getIslandChunkDeletionManager() {
-        return islandChunkDeletionManager;
     }
 
 }

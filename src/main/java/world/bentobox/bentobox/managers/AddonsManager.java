@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,14 +25,9 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
@@ -44,7 +38,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -69,8 +62,6 @@ public class AddonsManager {
     private static final String DEFAULT = ".default";
 
     private static final String GAMEMODE = "[gamemode].";
-
-    private static final @NotNull String BENTOBOX = "/bentobox";
 
     @NonNull
     private final List<Addon> addons;
@@ -340,10 +331,6 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
-                if (gameMode.isUsesNewChunkGeneration()) {
-                    // Create the seed worlds
-                    createSeedWorlds(gameMode);
-                }
                 plugin.getIWM().addGameMode(gameMode);
                 // Save and load blueprints
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
@@ -368,93 +355,6 @@ public class AddonsManager {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
         }
-    }
-
-    /**
-     * Create seed worlds, which are used for deletion
-     */
-    private void createSeedWorlds(GameModeAddon gameMode) {
-        if (gameMode.getOverWorld() != null) {
-            seedWorld(gameMode, gameMode.getOverWorld());
-        }
-        if (gameMode.getNetherWorld() != null) {
-            seedWorld(gameMode, gameMode.getNetherWorld());
-        }
-        if (gameMode.getEndWorld() != null) {
-            seedWorld(gameMode, gameMode.getEndWorld());
-        }
-    }
-
-    /**
-     * Removes the temporary seed worlds on shutdown
-     */
-    public void removeSeedWorlds() {
-        plugin.log("Removing temporary seed worlds...");
-        this.getGameModeAddons().stream().filter(GameModeAddon::isUsesNewChunkGeneration).forEach(gameMode -> {
-            plugin.log("Removing " + gameMode.getDescription().getName());
-            if (gameMode.getOverWorld() != null) {
-                plugin.log("Removing " + gameMode.getOverWorld().getName() + BENTOBOX);
-                removeSeedWorld(gameMode.getOverWorld().getName() + BENTOBOX);
-            }
-            if (gameMode.getNetherWorld() != null) {
-                removeSeedWorld(gameMode.getNetherWorld().getName() + BENTOBOX);
-            }
-            if (gameMode.getEndWorld() != null) {
-                removeSeedWorld(gameMode.getEndWorld().getName() + BENTOBOX);
-            }
-        });
-        plugin.log("Removed temporary seed worlds.");
-    }
-
-    private void removeSeedWorld(String name) {
-        World world = Bukkit.getWorld(name);
-        if (world == null || !world.getName().endsWith(BENTOBOX)) {
-            return;
-        }
-        // Teleport any players out of the world, just in case
-        for (Player player : world.getPlayers()) {
-            player.teleport(Bukkit.getWorlds().getFirst().getSpawnLocation());
-        }
-
-        // Unload the world
-        boolean success = Bukkit.unloadWorld(world, false); // false = do not save
-        if (!success) {
-            plugin.logWarning("Failed to unload seed world: " + world.getName());
-        }
-        // Delete the world folder and everything in it
-        File path = new File(Bukkit.getWorldContainer(), world.getName());
-        this.deleteWorldFolder(path);
-    }
-
-    /**
-     * Recursive delete
-     * @param path path to delete
-     */
-    private void deleteWorldFolder(File path) {
-        if (path.exists()) {
-            File[] files = path.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    deleteWorldFolder(file);
-                }
-            }
-            try {
-                Files.delete(path.toPath());
-            } catch (IOException e) {
-                plugin.logWarning("Failed to delete: " + path.getAbsolutePath());
-            }
-        }
-    }
-
-    private void seedWorld(GameModeAddon gameMode, @NonNull World world) {
-        // Use the Flat type of world because this is a copy and no vanilla creation is required
-        WorldCreator wc = WorldCreator.name(world.getName() + BENTOBOX).type(WorldType.FLAT)
-                .environment(world.getEnvironment()).seed(world.getSeed());
-        World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld()
-                : wc.generator(world.getGenerator()).createWorld();
-        w.setDifficulty(Difficulty.PEACEFUL);
-        // Register seed world
-        plugin.getIWM().addWorld(w, gameMode);
     }
 
     /**
@@ -549,8 +449,6 @@ public class AddonsManager {
         }
         // Unregister all commands
         plugin.getCommandsManager().unregisterCommands();
-        // Delete seed worlds
-        removeSeedWorlds();
         // Clear all maps
         listeners.clear();
         pladdons.clear();
@@ -734,7 +632,7 @@ public class AddonsManager {
     @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
-        String w = worldName.replace("_nether", "").replace("_the_end", "").replace(BENTOBOX, "")
+        String w = worldName.replace("_nether", "").replace("_the_end", "")
                 .toLowerCase(Locale.ENGLISH);
         if (worldNames.containsKey(w) && worldNames.get(w) != null) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);

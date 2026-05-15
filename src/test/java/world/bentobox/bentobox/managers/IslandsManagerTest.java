@@ -105,8 +105,6 @@ class IslandsManagerTest extends CommonTestSetup {
     @Mock
     private IslandDeletionManager deletionManager;
     @Mock
-    private IslandChunkDeletionManager chunkDeletionManager;
-    @Mock
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
     // Database
@@ -329,7 +327,6 @@ class IslandsManagerTest extends CommonTestSetup {
                 Mockito.anyDouble())).thenReturn(collection);
 
         // Deletion Manager
-        when(deletionManager.getIslandChunkDeletionManager()).thenReturn(chunkDeletionManager);
         when(plugin.getIslandDeletionManager()).thenReturn(deletionManager);
 
         // database must be mocked here
