@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Chunk;
 
 /**
- * NMS hook for regenerating chunks. Used by {@code CleanSuperFlatListener}
+ * Hook for regenerating chunks. Used by {@code CleanSuperFlatListener}
  * to repaint stray superflat chunks loaded inside an island world.
  */
 public interface WorldRegenerator {
