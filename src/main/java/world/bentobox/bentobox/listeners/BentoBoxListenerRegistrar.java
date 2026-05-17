@@ -38,7 +38,6 @@ public class BentoBoxListenerRegistrar {
         // Register the plugin itself for any listeners it implements (e.g. MV unregister)
         manager.registerEvents(plugin, plugin);
         islandDeletionManager = new IslandDeletionManager(plugin);
-        manager.registerEvents(islandDeletionManager, plugin);
         chunkPregenManager = new ChunkPregenManager(plugin);
         manager.registerEvents(chunkPregenManager, plugin);
         manager.registerEvents(new PrimaryIslandListener(plugin), plugin);

@@ -119,11 +119,6 @@ public class IslandsManager {
             }
         });
 
-        // Delete island blocks
-        MultiLib.onString(plugin, "bentobox-deleteIsland", id -> {
-            IslandDeletion idd = getGson().fromJson(id, IslandDeletion.class);
-            plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(idd);
-        });
         // List for new islands
         MultiLib.onString(plugin, "bentobox-newIsland", id -> {
             Island island = handler.loadObject(id);
@@ -319,16 +314,12 @@ public class IslandsManager {
      * Hard-deletes an island: fires the pre-delete event, kicks members,
      * nulls the owner, evicts the island from the cache, and removes the
      * DB row. Does <b>not</b> touch world chunks — the caller is
-     * responsible for any physical cleanup (e.g. kicking off
-     * {@link world.bentobox.bentobox.util.DeleteIslandChunks}
-     * to regenerate via the addon's own {@code ChunkGenerator}).
+     * responsible for any physical cleanup.
      *
-     * <p>Used by {@code AdminDeleteCommand} for void/simple-generator
-     * gamemodes where chunks are cheap to repaint and the island should
-     * be fully gone from the database immediately. For
-     * new-chunk-generation gamemodes, use
-     * {@link #deleteIsland(Island, boolean, UUID)} which soft-deletes
-     * and leaves the region-file purge to reap the chunks and row later.
+     * <p>Prefer {@link #deleteIsland(Island, boolean, UUID)} which
+     * soft-deletes (marks the row deletable, keeps it in the DB) and
+     * leaves region-file cleanup to {@code PurgeRegionsService} /
+     * {@code HousekeepingManager}.
      *
      * @param island the island to hard-delete, not null
      * @since 3.15.0

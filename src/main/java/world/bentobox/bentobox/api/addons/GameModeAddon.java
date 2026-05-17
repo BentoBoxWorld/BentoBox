@@ -171,11 +171,14 @@ public abstract class GameModeAddon extends Addon {
     /**
      * Indicates whether this game mode uses the modern {@link ChunkGenerator} API introduced in Minecraft 1.16.
      * <p>
-     * The modern API uses {@code ChunkGenerator#generateNoise}, {@code ChunkGenerator#generateSurface}, etc.,
-     * while the legacy approach uses the deprecated {@link ChunkGenerator#generateChunkData}.
+     * No longer consulted by BentoBox: island chunks are reaped at the
+     * filesystem level by {@code PurgeRegionsService} regardless of which
+     * generator API the gamemode uses. Will be removed in a future release.
      *
      * @return {@code true} if the game mode uses the new chunk generation API, {@code false} otherwise.
+     * @deprecated since 3.16.1, for removal — no consumer remains.
      */
+    @Deprecated(since = "3.16.1", forRemoval = true)
     public boolean isUsesNewChunkGeneration() {
         return false;
     }
