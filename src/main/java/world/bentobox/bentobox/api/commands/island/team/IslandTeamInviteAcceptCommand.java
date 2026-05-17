@@ -177,23 +177,28 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }
-        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+        boolean disallowTeamMemberIslands = getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands();
+        if (disallowTeamMemberIslands) {
             // Remove the player's other islands
             getIslands().removePlayer(getWorld(), user.getUniqueId());
-            // Remove money inventory etc. for leaving
-            cleanPlayer(user);
-        } else {
-            // Apply on-join resets since the player is joining a team island
-            cleanJoiningPlayer(user);
         }
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, user.getUniqueId());
         // Move player to team's island
         getIslands().setPrimaryIsland(user.getUniqueId(), teamIsland);
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
-            if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()) {
+            // Apply on-join (and, where applicable, on-leave) resets after the player has
+            // been teleported to the island world. Running these before the teleport would
+            // clear the player's inventory etc. while they are still in their previous world,
+            // which other plugins (e.g. InvSwitcher) may then save as that world's state.
+            if (disallowTeamMemberIslands) {
+                // Remove money inventory etc. for leaving
+                cleanPlayer(user);
                 // Delete the old islands
                 islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
+            } else {
+                // Apply on-join resets since the player is joining a team island
+                cleanJoiningPlayer(user);
             }
             // Put player back into normal mode
             user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
@@ -203,8 +208,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Util.runCommands(user, ownerName, getIWM().getOnJoinCommands(getWorld()), "join");
 
         });
-        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
-                && getIWM().isTeamJoinDeathReset(getWorld())) {
+        if (disallowTeamMemberIslands && getIWM().isTeamJoinDeathReset(getWorld())) {
             // Reset deaths
             getPlayers().setDeaths(getWorld(), user.getUniqueId(), 0);
         }

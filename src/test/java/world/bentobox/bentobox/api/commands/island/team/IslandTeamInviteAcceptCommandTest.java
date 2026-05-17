@@ -396,6 +396,56 @@ class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
     }
 
     /**
+     * Regression test for the InvSwitcher interaction bug: inventory/XP resets configured by
+     * on-join.reset.* must run AFTER the player has been teleported to the island world, not
+     * before. Running them earlier clears the inventory while the player is still standing in
+     * their previous world, where another plugin (e.g. InvSwitcher) may then save the empty
+     * state as that world's stored inventory and overwrite the player's real items.
+     */
+    @Test
+    void testAcceptTeamInvite_inventoryClearWaitsForTeleport() {
+        // Set up world settings with isOnJoinResetInventory = true (the trigger condition)
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.isOnJoinResetInventory(any())).thenReturn(true);
+        when(iwm.isOnJoinResetXP(any())).thenReturn(true);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+
+        // Set up team island
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(Collections.emptyList());
+
+        // Teleport future is deliberately *not* completed yet so we can observe the order
+        CompletableFuture<Boolean> pendingTeleport = new CompletableFuture<>();
+        when(im.homeTeleportAsync(any(World.class), any(Player.class))).thenReturn(pendingTeleport);
+
+        // Execute
+        c.acceptTeamInvite(user, invite);
+
+        // Before the teleport completes, none of the resets must have run.
+        // Previously these were called synchronously before homeTeleportAsync, which let
+        // them clear the player's inventory while they were still in their old world.
+        verify(inv, never()).clear();
+        verify(mockPlayer, never()).setLevel(0);
+        verify(mockPlayer, never()).setExp(0F);
+        verify(mockPlayer, never()).setTotalExperience(0);
+
+        // Complete the teleport — now the on-join resets are allowed to run
+        pendingTeleport.complete(true);
+
+        verify(inv).clear();
+        verify(mockPlayer).setLevel(0);
+        verify(mockPlayer).setExp(0F);
+        verify(mockPlayer).setTotalExperience(0);
+    }
+
+    /**
      * Test that XP is NOT reset when isOnJoinResetXP is false and isDisallowTeamMemberIslands is false.
      */
     @Test
