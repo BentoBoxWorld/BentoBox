@@ -2,6 +2,7 @@ package world.bentobox.bentobox.hooks;
 
 import java.util.Optional;
 
+import net.momirealms.craftengine.bukkit.item.BukkitItemDefinition;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
-import net.momirealms.craftengine.core.item.CustomItem;
 import net.momirealms.craftengine.core.util.Key;
 import world.bentobox.bentobox.api.hooks.Hook;
 
@@ -94,11 +94,11 @@ public class CraftEngineHook extends Hook {
         if (id == null) {
             return Optional.empty();
         }
-        CustomItem<ItemStack> customItem = CraftEngineItems.byId(Key.of(id));
-        if (customItem == null) {
+        BukkitItemDefinition definition = CraftEngineItems.byId(id);
+        if (definition == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(customItem.buildItemStack());
+        return Optional.ofNullable(definition.buildBukkitItem());
     }
 
     /**
