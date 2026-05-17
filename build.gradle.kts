@@ -108,7 +108,7 @@ val gsonRecordTypeAdapterFactoryVersion = "0.3.0"
 val jdtAnnotationVersion = "2.2.600"
 val multilibVersion = "1.1.13"
 val oraxenVersion = "1.193.1"
-val craftEngineVersion = "0.0.67"
+val craftEngineVersion = "26.5"
 val blueMapApiVersion = "v2.6.2"
 val dynmapApiVersion = "3.4"
 
