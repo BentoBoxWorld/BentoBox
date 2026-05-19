@@ -798,6 +798,15 @@ class IslandTest extends CommonTestSetup {
 
     @Test
     void testSetRange() {
+        // setRange only allows values that disagree with the gamemode's configured
+        // distance-between-islands when the gamemode opts out via
+        // isEnforceEqualRanges()==false. That's the path StrangerRealms uses to grow
+        // claims with team size. Without the opt-out, setRange refuses mismatched
+        // values to prevent silent database corruption (see testSetRangeRefused...).
+        GameModeAddon optOutAddon = mock(GameModeAddon.class);
+        when(optOutAddon.isEnforceEqualRanges()).thenReturn(false);
+        when(iwm.getAddon(any())).thenReturn(Optional.of(optOutAddon));
+
         island.setRange(200);
         assertEquals(200, island.getRange());
     }

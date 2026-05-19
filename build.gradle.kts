@@ -80,7 +80,14 @@ version = finalRevision
 val javaVersion = "21"
 val junitVersion = "5.10.2"
 val mockitoVersion = "5.11.0"
-val mockBukkitVersion = "v1.21-SNAPSHOT"
+// Pin to a concrete JitPack tag rather than the v1.21-SNAPSHOT pointer.
+// SNAPSHOT resolution on JitPack is flaky — it sometimes advertises a
+// timestamped version in maven-metadata.xml whose corresponding .pom 404s,
+// breaking dependency resolution mid-build. Newer tags (>= v4.111) also
+// currently fail to build on JitPack because the project requires a Java 25
+// toolchain that JitPack's default image doesn't have. v4.110.0 is the most
+// recent tag with both POM and JAR available on JitPack.
+val mockBukkitVersion = "v4.110.0"
 val mongodbVersion = "3.12.12"
 val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
