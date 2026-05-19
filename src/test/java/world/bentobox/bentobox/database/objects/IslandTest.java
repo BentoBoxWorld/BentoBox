@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -45,6 +46,7 @@ class IslandTest extends CommonTestSetup {
     private Island island; // real Island under test (shadows the mock in CommonTestSetup)
     private Location center;
     private UUID ownerUUID;
+    private GameModeAddon gameModeAddon;
 
     @Override
     @BeforeEach
@@ -71,6 +73,9 @@ class IslandTest extends CommonTestSetup {
 
         // Create the real Island under test
         island = new Island(center, ownerUUID, 50);
+
+        // GameModeAddon mock for setRange validation tests (used per-test as needed)
+        gameModeAddon = mock(GameModeAddon.class);
     }
 
     @Override
@@ -1188,5 +1193,65 @@ class IslandTest extends CommonTestSetup {
         Location c2 = island.getCenter();
         assertNotSame(c1, c2);
         assertEquals(c1.getBlockX(), c2.getBlockX());
+    }
+
+    // ======================== setRange guarding ========================
+    //
+    // Background: Island.setRange used to accept any value, which let a third-party
+    // addon (StrangerRealms TeamListener) overwrite the range of islands belonging
+    // to other game modes whenever a /<gamemode> team kick or leave fired. On the
+    // next server restart, IslandsManager.load() refused to load those islands
+    // because their stored range no longer matched the configured
+    // distance-between-islands, and BentoBox panic-disabled with
+    // "Island distance mismatch". setRange now refuses to mutate range to a value
+    // inconsistent with the gamemode's configured distance unless the addon opts
+    // out via isEnforceEqualRanges() == false.
+
+    @Test
+    void testSetRangeRefusedWhenMismatchesConfiguredDistance() {
+        // iwm.getIslandDistance(world) -> 100 (set in @BeforeEach)
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gameModeAddon));
+        when(gameModeAddon.isEnforceEqualRanges()).thenReturn(true);
+
+        int originalRange = island.getRange();
+        island.setRange(64); // would corrupt the database — must be rejected
+
+        assertEquals(originalRange, island.getRange(),
+                "setRange must refuse a value that disagrees with the configured distance");
+    }
+
+    @Test
+    void testSetRangeAcceptedWhenAddonOptsOutOfEqualRanges() {
+        // Game mode that legitimately resizes claims (e.g. StrangerRealms).
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gameModeAddon));
+        when(gameModeAddon.isEnforceEqualRanges()).thenReturn(false);
+
+        island.setRange(64);
+
+        assertEquals(64, island.getRange());
+    }
+
+    @Test
+    void testSetRangeAcceptedWhenValueMatchesConfiguredDistance() {
+        // Configured distance is 100 (set in @BeforeEach); island starts at 100.
+        // Setting to the same value is a no-op but still legal.
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gameModeAddon));
+        when(gameModeAddon.isEnforceEqualRanges()).thenReturn(true);
+
+        island.setRange(100);
+
+        assertEquals(100, island.getRange());
+    }
+
+    @Test
+    void testSetRangeAcceptedWhenWorldNotRegistered() {
+        // iwm.getIslandDistance returns 0 when the world isn't keyed in gameModes
+        // (e.g. unit tests, deserialization). In that case we have no authoritative
+        // value to validate against, so the call should pass through.
+        when(iwm.getIslandDistance(any())).thenReturn(0);
+
+        island.setRange(64);
+
+        assertEquals(64, island.getRange());
     }
 }

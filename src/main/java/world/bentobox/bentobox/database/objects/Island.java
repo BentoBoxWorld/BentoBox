@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -1186,10 +1187,35 @@ public class Island implements DataObject, MetaDataAble {
      * @see #setProtectionRange(int)
      */
     public void setRange(int range) {
-        if (this.range != range) {
-            this.range = range;
-            setChanged();
+        if (this.range == range) {
+            return;
         }
+        // Refuse to mutate range to a value that disagrees with the game mode's
+        // configured distance-between-islands. Storing a mismatched range corrupts
+        // the database — on the next restart IslandsManager.load() will reject the
+        // island with "Island distance mismatch" and panic-disable BentoBox.
+        //
+        // Game modes that opt out of the equality check (isEnforceEqualRanges == false,
+        // e.g. claim-based addons that resize on team changes) are allowed any value.
+        // A configured distance of 0 means the world isn't currently registered with
+        // IWM (e.g. unit tests, deserialization), so we also pass through in that case.
+        BentoBox plugin = BentoBox.getInstance();
+        if (plugin != null && world != null && plugin.getIWM() != null) {
+            int configured = plugin.getIWM().getIslandDistance(world);
+            boolean enforce = plugin.getIWM().getAddon(world)
+                    .map(GameModeAddon::isEnforceEqualRanges).orElse(true);
+            if (enforce && configured > 0 && configured != range) {
+                StackTraceElement[] trace = new Throwable().getStackTrace();
+                String caller = trace.length > 1 ? trace[1].toString() : "unknown";
+                plugin.logWarning("Refusing Island.setRange(" + range + ") on island "
+                        + uniqueId + " in world '" + world.getName()
+                        + "': value does not match configured distance-between-islands ("
+                        + configured + "). Caller: " + caller);
+                return;
+            }
+        }
+        this.range = range;
+        setChanged();
     }
 
     /**
