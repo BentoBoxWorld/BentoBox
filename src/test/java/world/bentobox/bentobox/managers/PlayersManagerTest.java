@@ -9,10 +9,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Assertions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import world.bentobox.bentobox.api.events.player.PlayerResetEnderChestEvent;
+import world.bentobox.bentobox.api.events.player.PlayerResetExpEvent;
+import world.bentobox.bentobox.api.events.player.PlayerResetHealthEvent;
+import world.bentobox.bentobox.api.events.player.PlayerResetHungerEvent;
+import world.bentobox.bentobox.api.events.player.PlayerResetInventoryEvent;
+import world.bentobox.bentobox.api.events.player.PlayerResetMoneyEvent;
+import world.bentobox.bentobox.api.events.player.PlayerTamedRemovalEvent;
 
 import java.beans.IntrospectionException;
 import java.io.File;
@@ -682,6 +691,199 @@ class PlayersManagerTest extends CommonTestSetup {
     @Test
     void testSavePlayer() {
         pm.savePlayer(uuid).thenAccept(Assertions::assertTrue);
+    }
+
+    // -----------------------------------------------------------------------
+    // cleanLeavingPlayer – event-cancellation tests
+    // -----------------------------------------------------------------------
+
+    /**
+     * Helper: arrange pim so that any callEvent() for the given event class will
+     * cancel that event before returning.
+     */
+    private <T extends org.bukkit.event.Event> void cancelEventOfType(Class<T> type) {
+        doAnswer(inv -> {
+            Object event = inv.getArgument(0);
+            if (type.isInstance(event)) {
+                ((world.bentobox.bentobox.api.events.player.PlayerBaseEvent) event).setCancelled(true);
+            }
+            return null;
+        }).when(pim).callEvent(any());
+    }
+
+    /**
+     * When a {@link PlayerTamedRemovalEvent} is cancelled the player's tamed
+     * animals must NOT have their owner cleared.
+     */
+    @Test
+    void testCleanLeavingPlayerTamedRemovalCancelled() {
+        cancelEventOfType(PlayerTamedRemovalEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(tamed, never()).setOwner(null);
+    }
+
+    /**
+     * When {@link PlayerTamedRemovalEvent} is NOT cancelled tamed animals ARE
+     * untamed (regression guard for the happy path).
+     */
+    @Test
+    void testCleanLeavingPlayerTamedRemovalNotCancelled() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(tamed).setOwner(null);
+    }
+
+    /**
+     * When a {@link PlayerResetEnderChestEvent} is cancelled the ender chest must
+     * NOT be cleared.
+     */
+    @Test
+    void testCleanLeavingPlayerEnderChestCancelled() {
+        cancelEventOfType(PlayerResetEnderChestEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(inv, never()).clear();
+    }
+
+    /**
+     * When {@link PlayerResetEnderChestEvent} is NOT cancelled the ender chest IS
+     * cleared (regression guard).
+     */
+    @Test
+    void testCleanLeavingPlayerEnderChestNotCancelled() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(inv).clear();
+    }
+
+    /**
+     * When a {@link PlayerResetInventoryEvent} is cancelled the player inventory
+     * must NOT be cleared.
+     */
+    @Test
+    void testCleanLeavingPlayerInventoryCancelled() {
+        when(iwm.isKickedKeepInventory(any())).thenReturn(false);
+        cancelEventOfType(PlayerResetInventoryEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(playerInv, never()).clear();
+    }
+
+    /**
+     * When {@link PlayerResetInventoryEvent} is NOT cancelled (and kick-keep is
+     * off) the inventory IS cleared (regression guard).
+     */
+    @Test
+    void testCleanLeavingPlayerInventoryNotCancelled() {
+        when(iwm.isKickedKeepInventory(any())).thenReturn(false);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(playerInv).clear();
+    }
+
+    /**
+     * When a {@link PlayerResetMoneyEvent} is cancelled the economy withdraw must
+     * NOT be called.
+     */
+    @Test
+    void testCleanLeavingPlayerMoneyCancelled() {
+        cancelEventOfType(PlayerResetMoneyEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(vault, never()).withdraw(any(), any(double.class), any());
+    }
+
+    /**
+     * When {@link PlayerResetMoneyEvent} is NOT cancelled the balance IS withdrawn
+     * (regression guard).
+     */
+    @Test
+    void testCleanLeavingPlayerMoneyNotCancelled() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(vault).withdraw(user, 0D, world);
+    }
+
+    /**
+     * When a {@link PlayerResetHealthEvent} is cancelled health must NOT be reset.
+     */
+    @Test
+    void testCleanLeavingPlayerHealthCancelled() {
+        cancelEventOfType(PlayerResetHealthEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        mockedUtil.verify(() -> Util.resetHealth(p), never());
+    }
+
+    /**
+     * When {@link PlayerResetHealthEvent} is NOT cancelled health IS reset
+     * (regression guard).
+     */
+    @Test
+    void testCleanLeavingPlayerHealthNotCancelled() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        mockedUtil.verify(() -> Util.resetHealth(p));
+    }
+
+    /**
+     * When a {@link PlayerResetHungerEvent} is cancelled food level must NOT be
+     * set.
+     */
+    @Test
+    void testCleanLeavingPlayerHungerCancelled() {
+        cancelEventOfType(PlayerResetHungerEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(p, never()).setFoodLevel(20);
+    }
+
+    /**
+     * When {@link PlayerResetHungerEvent} is NOT cancelled food level IS reset
+     * (regression guard).
+     */
+    @Test
+    void testCleanLeavingPlayerHungerNotCancelled() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(p).setFoodLevel(20);
+    }
+
+    /**
+     * When a {@link PlayerResetExpEvent} is cancelled XP must NOT be reset.
+     */
+    @Test
+    void testCleanLeavingPlayerExpCancelled() {
+        cancelEventOfType(PlayerResetExpEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(p, never()).setLevel(0);
+        verify(p, never()).setExp(0);
+        verify(p, never()).setTotalExperience(0);
+    }
+
+    /**
+     * When {@link PlayerResetExpEvent} is NOT cancelled XP IS reset
+     * (regression guard).
+     */
+    @Test
+    void testCleanLeavingPlayerExpNotCancelled() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        verify(p).setLevel(0);
+        verify(p).setExp(0);
+        verify(p).setTotalExperience(0);
+    }
+
+    /**
+     * Cancelling one event (e.g. ender chest) must not affect other resets
+     * – only the ender chest clear is skipped; inventory, money, health, hunger
+     * and XP proceed normally.
+     */
+    @Test
+    void testCleanLeavingPlayerOnlyEnderChestCancelledOtherActionsStillRun() {
+        when(iwm.isKickedKeepInventory(any())).thenReturn(false);
+        cancelEventOfType(PlayerResetEnderChestEvent.class);
+        pm.cleanLeavingPlayer(world, user, false, island);
+        // Ender chest NOT cleared
+        verify(inv, never()).clear();
+        // Inventory IS cleared
+        verify(playerInv).clear();
+        // Money IS withdrawn
+        verify(vault).withdraw(user, 0D, world);
+        // Health IS reset
+        mockedUtil.verify(() -> Util.resetHealth(p));
+        // Hunger IS reset
+        verify(p).setFoodLevel(20);
+        // XP IS reset
+        verify(p).setTotalExperience(0);
     }
 
 }

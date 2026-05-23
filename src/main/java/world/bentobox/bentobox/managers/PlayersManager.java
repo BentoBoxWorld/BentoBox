@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.events.player.PlayerEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
@@ -344,67 +345,113 @@ public class PlayersManager {
     }
 
     /**
-     * Cleans the player when leaving an island
-     * @param world - island world
-     * @param target - target user
-     * @param kicked - true if player is being kicked
-     * @param island - island being left
+     * Cleans the player when leaving an island.
+     * <p>
+     * For each configurable reset action a cancellable {@link world.bentobox.bentobox.api.events.player.PlayerBaseEvent}
+     * is fired via {@link PlayerEvent#builder()} before the action is executed. If the event is
+     * cancelled by a listener the corresponding action is skipped entirely. The events fired, in order, are:
+     * <ol>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerTamedRemovalEvent} – before untaming the player's animals</li>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerResetEnderChestEvent} – before clearing the ender chest</li>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerResetInventoryEvent} – before clearing the inventory</li>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerResetMoneyEvent} – before withdrawing the player's balance</li>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerResetHealthEvent} – before resetting health</li>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerResetHungerEvent} – before resetting hunger</li>
+     *   <li>{@link world.bentobox.bentobox.api.events.player.PlayerResetExpEvent} – before resetting XP</li>
+     * </ol>
+     *
+     * @param world  the island world
+     * @param target the target user
+     * @param kicked {@code true} if the player is being kicked from the team
+     * @param island the island being left
      * @since 1.15.4
      */
     public void cleanLeavingPlayer(World world, User target, boolean kicked, Island island) {
-        // Execute commands when leaving
+        // Execute on-leave commands unconditionally (not a player-state reset, no event needed)
         String ownerName = this.getName(island.getOwner());
         Util.runCommands(target, ownerName, plugin.getIWM().getOnLeaveCommands(world), "leave");
 
-        // Remove any tamed animals
-        world.getEntitiesByClass(Tameable.class).stream()
-        .filter(Tameable::isTamed)
-        .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
-        .forEach(t -> t.setOwner(null));
+        // Remove any tamed animals – skipped if the TAMED_REMOVAL event is cancelled
+        if (!PlayerEvent.builder()
+                .world(world).island(island).involvedPlayer(target.getUniqueId())
+                .reason(PlayerEvent.Reason.TAMED_REMOVAL).build().isCancelled()) {
+            world.getEntitiesByClass(Tameable.class).stream()
+                    .filter(Tameable::isTamed)
+                    .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
+                    .forEach(t -> t.setOwner(null));
+        }
 
-        // Remove money inventory etc.
+        // Clear ender chest – skipped if the ENDERCHEST_RESET event is cancelled
         if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
-            if (target.isOnline()) {
-                target.getPlayer().getEnderChest().clear();
-            } else {
-                Players p = getPlayer(target.getUniqueId());
-                if (p != null) {
-                    p.addToPendingKick(world);
+            if (!PlayerEvent.builder()
+                    .world(world).island(island).involvedPlayer(target.getUniqueId())
+                    .reason(PlayerEvent.Reason.ENDERCHEST_RESET).build().isCancelled()) {
+                if (target.isOnline()) {
+                    target.getPlayer().getEnderChest().clear();
+                } else {
+                    Players p = getPlayer(target.getUniqueId());
+                    if (p != null) {
+                        p.addToPendingKick(world);
+                    }
                 }
             }
         }
+
+        // Clear inventory – skipped if the INVENTORY_RESET event is cancelled
         if ((kicked && plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world))
                 || (!kicked && plugin.getIWM().isOnLeaveResetInventory(world))) {
-            if (target.isOnline()) {
-                target.getPlayer().getInventory().clear();
-            } else {
-                Players p = getPlayer(target.getUniqueId());
-                if (p != null) {
-                    p.addToPendingKick(world);
+            if (!PlayerEvent.builder()
+                    .world(world).island(island).involvedPlayer(target.getUniqueId())
+                    .reason(PlayerEvent.Reason.INVENTORY_RESET).build().isCancelled()) {
+                if (target.isOnline()) {
+                    target.getPlayer().getInventory().clear();
+                } else {
+                    Players p = getPlayer(target.getUniqueId());
+                    if (p != null) {
+                        p.addToPendingKick(world);
+                    }
                 }
             }
         }
 
+        // Withdraw money – skipped if the MONEY_RESET event is cancelled
         if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world)) {
-            plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
+            if (!PlayerEvent.builder()
+                    .world(world).island(island).involvedPlayer(target.getUniqueId())
+                    .reason(PlayerEvent.Reason.MONEY_RESET).build().isCancelled()) {
+                plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
+            }
         }
-        // Reset the health
+
+        // Reset health – skipped if the HEALTH_RESET event is cancelled
         if (plugin.getIWM().isOnLeaveResetHealth(world) && target.isPlayer()) {
-            Util.resetHealth(target.getPlayer());
+            if (!PlayerEvent.builder()
+                    .world(world).island(island).involvedPlayer(target.getUniqueId())
+                    .reason(PlayerEvent.Reason.HEALTH_RESET).build().isCancelled()) {
+                Util.resetHealth(target.getPlayer());
+            }
         }
 
-        // Reset the hunger
+        // Reset hunger – skipped if the HUNGER_RESET event is cancelled
         if (plugin.getIWM().isOnLeaveResetHunger(world) && target.isPlayer()) {
-            target.getPlayer().setFoodLevel(20);
+            if (!PlayerEvent.builder()
+                    .world(world).island(island).involvedPlayer(target.getUniqueId())
+                    .reason(PlayerEvent.Reason.HUNGER_RESET).build().isCancelled()) {
+                target.getPlayer().setFoodLevel(20);
+            }
         }
 
-        // Reset the XP
+        // Reset XP – skipped if the EXP_RESET event is cancelled
         if (plugin.getIWM().isOnLeaveResetXP(world) && target.isPlayer()) {
-            // Player collected XP (displayed)
-            target.getPlayer().setLevel(0);
-            target.getPlayer().setExp(0);
-            // Player total XP (not displayed)
-            target.getPlayer().setTotalExperience(0);
+            if (!PlayerEvent.builder()
+                    .world(world).island(island).involvedPlayer(target.getUniqueId())
+                    .reason(PlayerEvent.Reason.EXP_RESET).build().isCancelled()) {
+                // Player collected XP (displayed)
+                target.getPlayer().setLevel(0);
+                target.getPlayer().setExp(0);
+                // Player total XP (not displayed)
+                target.getPlayer().setTotalExperience(0);
+            }
         }
     }
 
