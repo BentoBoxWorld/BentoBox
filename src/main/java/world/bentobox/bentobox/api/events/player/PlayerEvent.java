@@ -55,7 +55,7 @@ public class PlayerEvent {
 
         /**
          * @param player - the player involved in the event
-         * @return TeamEventBuilder
+         * @return PlayerEventBuilder
          */
         public PlayerEventBuilder involvedPlayer(UUID player) {
             this.player = player;
