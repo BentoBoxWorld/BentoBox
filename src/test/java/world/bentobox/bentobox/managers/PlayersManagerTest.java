@@ -784,7 +784,7 @@ class PlayersManagerTest extends CommonTestSetup {
     void testCleanLeavingPlayerMoneyCancelled() {
         cancelEventOfType(PlayerResetMoneyEvent.class);
         pm.cleanLeavingPlayer(world, user, false, island);
-        verify(vault, never()).withdraw(any(), any(double.class), any());
+        verify(vault, never()).withdraw(any(), org.mockito.ArgumentMatchers.anyDouble(), any());
     }
 
     /**
