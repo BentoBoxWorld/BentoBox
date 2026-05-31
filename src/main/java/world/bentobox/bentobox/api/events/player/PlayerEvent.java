@@ -46,7 +46,7 @@ public class PlayerEvent {
 
         /**
          * @param reason for the event
-         * @return TeamEventBuilder
+         * @return PlayerEventBuilder
          */
         public PlayerEventBuilder reason(Reason reason) {
             this.reason = reason;
