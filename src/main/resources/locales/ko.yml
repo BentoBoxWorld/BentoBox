@@ -239,6 +239,12 @@ commands:
         unknown-bonus: '<red>이 섬에 id </red><aqua>[id]</aqua><red> 인 보너스 범위가 없습니다!</red>'
         success: '<green></green><aqua>[name]</aqua><green> 님의 섬에서 보너스 범위 </green><aqua>[number]</aqua><green> 을(를) 제거했습니다.</green>'
         success-id: '<green></green><aqua>[name]</aqua><green> 님의 섬에서 보너스 범위 </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) 을(를) 제거했습니다.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: '지정한 id의 보너스 범위를 모든 섬에서 제거합니다 (예: 추가한 애드온을 제거한 후)'
+        none: '<red>id </red><aqua>[id]</aqua><red> 인 보너스 범위를 가진 섬이 없습니다!</red>'
+        warning: '<gold>보너스 범위 </gold><aqua>[id]</aqua><gold> 을(를) </gold><aqua>[number]</aqua><gold> 개의 섬에서 제거합니다.</gold>'
+        success: '<green>보너스 범위 </green><aqua>[id]</aqua><green> 을(를) </green><aqua>[number]</aqua><green> 개의 섬에서 제거했습니다.</green>'
     register:
       parameters: <플레이어>
       description: 플레이어를 당신이 서있는 주인없는섬의 일원으로 추가합니다

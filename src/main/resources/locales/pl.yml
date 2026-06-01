@@ -259,6 +259,12 @@ commands:
         unknown-bonus: '<red>Na tej wyspie nie ma zasięgu bonusowego o id </red><aqua>[id]</aqua><red>!</red>'
         success: '<green>Usunięto </green><aqua>[number]</aqua><green> zasięgu bonusowego z wyspy gracza </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Usunięto zasięg bonusowy </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) z wyspy gracza </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'usuwa zasięg bonusowy o danym id ze wszystkich wysp (np. po usunięciu dodatku, który go dodał)'
+        none: '<red>Żadna wyspa nie ma zasięgu bonusowego o id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>To usunie zasięg bonusowy </gold><aqua>[id]</aqua><gold> z </gold><aqua>[number]</aqua><gold> wysp.</gold>'
+        success: '<green>Usunięto zasięg bonusowy </green><aqua>[id]</aqua><green> z </green><aqua>[number]</aqua><green> wysp.</green>'
     register:
       parameters: <gracz>
       description: zarejestruj gracza na niezamieszkanej wyspie, na której jesteś

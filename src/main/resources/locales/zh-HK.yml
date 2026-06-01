@@ -229,6 +229,12 @@ commands:
         unknown-bonus: '<red>該島嶼上不存在id為</red><aqua>[id]</aqua><red>的獎勵範圍!</red>'
         success: '<green>已從</green><aqua>[name]</aqua><green>的島嶼移除</green><aqua>[number]</aqua><green>的獎勵範圍.</green>'
         success-id: '<green>已從</green><aqua>[name]</aqua><green>的島嶼移除獎勵範圍</green><aqua>[id]</aqua><green>(</green><aqua>[number]</aqua><green>).</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: '從所有島嶼移除指定id的獎勵範圍（例如，在移除新增它的附加元件之後）'
+        none: '<red>沒有任何島嶼擁有id為</red><aqua>[id]</aqua><red>的獎勵範圍!</red>'
+        warning: '<gold>這將從</gold><aqua>[number]</aqua><gold>個島嶼移除獎勵範圍</gold><aqua>[id]</aqua><gold>.</gold>'
+        success: '<green>已從</green><aqua>[number]</aqua><green>個島嶼移除獎勵範圍</green><aqua>[id]</aqua><green>.</green>'
     register:
       parameters: <player>
       description: 將玩家註冊到您當前所在的無人島

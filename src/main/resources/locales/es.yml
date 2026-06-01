@@ -254,6 +254,12 @@ commands:
         unknown-bonus: '<red>¡No existe ningún rango de bonificación con la id </red><aqua>[id]</aqua><red> en esta isla!</red>'
         success: '<green>Se eliminaron </green><aqua>[number]</aqua><green> de rango de bonificación de la isla de </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Se eliminó el rango de bonificación </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) de la isla de </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'elimina un rango de bonificación con esa id de todas las islas (p. ej. tras eliminar el addon que lo añadió)'
+        none: '<red>¡Ninguna isla tiene un rango de bonificación con la id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Esto eliminará el rango de bonificación </gold><aqua>[id]</aqua><gold> de </gold><aqua>[number]</aqua><gold> isla(s).</gold>'
+        success: '<green>Rango de bonificación </green><aqua>[id]</aqua><green> eliminado de </green><aqua>[number]</aqua><green> isla(s).</green>'
     register:
       parameters: <jugador>
       description: registrar jugador en la isla sin dueño en la que estás

@@ -253,6 +253,12 @@ commands:
         unknown-bonus: '<red>Bu adada </red><aqua>[id]</aqua><red> id''li bir bonus menzil yok!</red>'
         success: '<green></green><aqua>[name]</aqua><green> adlı oyuncunun adasından </green><aqua>[number]</aqua><green> bonus menzil kaldırıldı.</green>'
         success-id: '<green></green><aqua>[name]</aqua><green> adlı oyuncunun adasından </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) bonus menzili kaldırıldı.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'belirtilen id''ye sahip bonus menzili tüm adalardan kaldırır (ör. onu ekleyen eklenti kaldırıldıktan sonra)'
+        none: '<red>Hiçbir adada </red><aqua>[id]</aqua><red> id''li bir bonus menzil yok!</red>'
+        warning: '<gold>Bu işlem bonus menzil </gold><aqua>[id]</aqua><gold> öğesini </gold><aqua>[number]</aqua><gold> adadan kaldıracak.</gold>'
+        success: '<green>Bonus menzil </green><aqua>[id]</aqua><green> </green><aqua>[number]</aqua><green> adadan kaldırıldı.</green>'
     register:
       parameters: <player>
       description: Sahipsiz adalara oyuncu ver.

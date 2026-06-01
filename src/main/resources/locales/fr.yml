@@ -272,6 +272,12 @@ commands:
         unknown-bonus: '<red>Il n''existe aucun rayon bonus avec l''id </red><aqua>[id]</aqua><red> sur cette île !</red>'
         success: '<green>Suppression de </green><aqua>[number]</aqua><green> de rayon bonus de l''île de </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Rayon bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) supprimé de l''île de </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'supprime un rayon bonus avec cet id de toutes les îles (par ex. après la suppression de l''addon qui l''a ajouté)'
+        none: '<red>Aucune île n''a de rayon bonus avec l''id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Ceci supprimera le rayon bonus </gold><aqua>[id]</aqua><gold> de </gold><aqua>[number]</aqua><gold> île(s).</gold>'
+        success: '<green>Rayon bonus </green><aqua>[id]</aqua><green> supprimé de </green><aqua>[number]</aqua><green> île(s).</green>'
     register:
       parameters: <joueur>
       description: enregistrer le joueur sur une île sans propriétaire où vous êtes

@@ -256,6 +256,12 @@ commands:
         unknown-bonus: '<red>Ne postoji bonus raspon s id-om </red><aqua>[id]</aqua><red> na ovom otoku!</red>'
         success: '<green>Uklonjeno </green><aqua>[number]</aqua><green> bonus raspona s otoka igrača </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Uklonjen bonus raspon </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) s otoka igrača </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'uklanja bonus raspon s danim id-om sa svih otoka (npr. nakon uklanjanja dodatka koji ga je dodao)'
+        none: '<red>Nijedan otok nema bonus raspon s id-om </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Ovo će ukloniti bonus raspon </gold><aqua>[id]</aqua><gold> s </gold><aqua>[number]</aqua><gold> otoka.</gold>'
+        success: '<green>Uklonjen bonus raspon </green><aqua>[id]</aqua><green> s </green><aqua>[number]</aqua><green> otoka.</green>'
     register:
       parameters: <igrač>
       description: registrirajte igrača na nevlasnički otok na kojem se nalazite

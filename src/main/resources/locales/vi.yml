@@ -256,6 +256,12 @@ commands:
         unknown-bonus: '<red>Không có phạm vi thưởng nào với id </red><aqua>[id]</aqua><red> trên đảo này!</red>'
         success: '<green>Đã xóa </green><aqua>[number]</aqua><green> phạm vi thưởng khỏi đảo của </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Đã xóa phạm vi thưởng </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) khỏi đảo của </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'xóa một phạm vi thưởng có id đó khỏi tất cả các đảo (ví dụ: sau khi gỡ addon đã thêm nó)'
+        none: '<red>Không có đảo nào có phạm vi thưởng với id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Thao tác này sẽ xóa phạm vi thưởng </gold><aqua>[id]</aqua><gold> khỏi </gold><aqua>[number]</aqua><gold> đảo.</gold>'
+        success: '<green>Đã xóa phạm vi thưởng </green><aqua>[id]</aqua><green> khỏi </green><aqua>[number]</aqua><green> đảo.</green>'
     register:
       parameters: <người chơi>
       description: đăng kí người chơi vào đảo không chủ này

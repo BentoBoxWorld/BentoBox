@@ -268,6 +268,12 @@ commands:
         unknown-bonus: '<red>Es gibt keinen Bonusbereich mit der id </red><aqua>[id]</aqua><red> auf dieser Insel!</red>'
         success: '<green>Entfernt: </green><aqua>[number]</aqua><green> an Bonusbereich von der Insel von </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Bonusbereich </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) von der Insel von </green><aqua>[name]</aqua><green> entfernt.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'entfernt einen Bonusbereich mit dieser id von allen Inseln (z. B. nach dem Entfernen des Addons, das ihn hinzugefügt hat)'
+        none: '<red>Keine Insel hat einen Bonusbereich mit der id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Dies entfernt den Bonusbereich </gold><aqua>[id]</aqua><gold> von </gold><aqua>[number]</aqua><gold> Insel(n).</gold>'
+        success: '<green>Bonusbereich </green><aqua>[id]</aqua><green> von </green><aqua>[number]</aqua><green> Insel(n) entfernt.</green>'
     register:
       parameters: <spieler>
       description: Spieler auf freier Insel registrieren, auf der du dich befindest

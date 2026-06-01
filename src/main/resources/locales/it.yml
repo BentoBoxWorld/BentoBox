@@ -263,6 +263,12 @@ commands:
         unknown-bonus: '<red>Non esiste alcun raggio bonus con id </red><aqua>[id]</aqua><red> su quest''isola!</red>'
         success: '<green>Rimossi </green><aqua>[number]</aqua><green> di raggio bonus dall''isola di </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Raggio bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) rimosso dall''isola di </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'rimuove un raggio bonus con quell''id da tutte le isole (ad es. dopo aver rimosso l''addon che lo ha aggiunto)'
+        none: '<red>Nessuna isola ha un raggio bonus con id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Questo rimuoverà il raggio bonus </gold><aqua>[id]</aqua><gold> da </gold><aqua>[number]</aqua><gold> isola/e.</gold>'
+        success: '<green>Raggio bonus </green><aqua>[id]</aqua><green> rimosso da </green><aqua>[number]</aqua><green> isola/e.</green>'
     register:
       parameters: <giocatore>
       description: registra il giocatore nell'isola senza proprietario sulla quale sei

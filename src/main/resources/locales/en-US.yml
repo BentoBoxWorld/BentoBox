@@ -228,6 +228,12 @@ commands:
         unknown-bonus: '<red>There is no bonus range with id </red><aqua>[id]</aqua><red> on this [prefix_island]!</red>'
         success: '<green>Removed </green><aqua>[number]</aqua><green> of bonus range from </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
         success-id: '<green>Removed bonus range </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) from </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
+      purgebonus:
+        parameters: <id>
+        description: removes a bonus range id from every [prefix_island] (e.g. after removing the addon that added it)
+        none: '<red>No [prefix_island] has a bonus range with id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>This will remove bonus range </gold><aqua>[id]</aqua><gold> from </gold><aqua>[number]</aqua><gold> island(s).</gold>'
+        success: '<green>Removed bonus range </green><aqua>[id]</aqua><green> from </green><aqua>[number]</aqua><green> island(s).</green>'
     register:
       parameters: <player>
       description: register player to unowned [prefix_island] you are on

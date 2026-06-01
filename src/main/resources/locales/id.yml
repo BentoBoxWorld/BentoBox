@@ -257,6 +257,12 @@ commands:
         unknown-bonus: '<red>Tidak ada rentang bonus dengan id </red><aqua>[id]</aqua><red> di pulau ini!</red>'
         success: '<green>Menghapus </green><aqua>[number]</aqua><green> rentang bonus dari pulau </green><aqua>[name]</aqua><green>.</green>'
         success-id: '<green>Menghapus rentang bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) dari pulau </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'menghapus rentang bonus dengan id tersebut dari semua pulau (mis. setelah menghapus addon yang menambahkannya)'
+        none: '<red>Tidak ada pulau yang memiliki rentang bonus dengan id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Ini akan menghapus rentang bonus </gold><aqua>[id]</aqua><gold> dari </gold><aqua>[number]</aqua><gold> pulau.</gold>'
+        success: '<green>Rentang bonus </green><aqua>[id]</aqua><green> dihapus dari </green><aqua>[number]</aqua><green> pulau.</green>'
     register:
       parameters: <pemain>
       description: daftarkan pemain ke pulau tak berpemilik tempat Anda berada
