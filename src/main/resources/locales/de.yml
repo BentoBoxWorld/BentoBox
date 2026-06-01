@@ -261,6 +261,13 @@ commands:
         success: >-
           <green>Erfolgreich reduziert </green><aqua>[name]</aqua><green>'s geschützten Bereich der Insel</green>
           um<aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<spieler> [id]'
+        description: 'entfernt Bonusbereiche von der Insel (alle oder einen per id)'
+        no-bonus: '<red>Diese Insel hat keine Bonusbereiche zum Entfernen!</red>'
+        unknown-bonus: '<red>Es gibt keinen Bonusbereich mit der id </red><aqua>[id]</aqua><red> auf dieser Insel!</red>'
+        success: '<green>Entfernt: </green><aqua>[number]</aqua><green> an Bonusbereich von der Insel von </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Bonusbereich </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) von der Insel von </green><aqua>[name]</aqua><green> entfernt.</green>'
     register:
       parameters: <spieler>
       description: Spieler auf freier Insel registrieren, auf der du dich befindest

@@ -256,6 +256,13 @@ commands:
         success: >-
           <green>Diminuito  il raggio di protezione della isola di </green><aqua>[name]</aqua><green>al</green>
           raggio di <aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<giocatore> [id]'
+        description: 'rimuove i raggi bonus dall''isola (tutti o uno per id)'
+        no-bonus: '<red>Quest''isola non ha raggi bonus da rimuovere!</red>'
+        unknown-bonus: '<red>Non esiste alcun raggio bonus con id </red><aqua>[id]</aqua><red> su quest''isola!</red>'
+        success: '<green>Rimossi </green><aqua>[number]</aqua><green> di raggio bonus dall''isola di </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Raggio bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) rimosso dall''isola di </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <giocatore>
       description: registra il giocatore nell'isola senza proprietario sulla quale sei

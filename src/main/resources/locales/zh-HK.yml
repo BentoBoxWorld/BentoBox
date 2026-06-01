@@ -222,6 +222,13 @@ commands:
         description: 減少島嶼保護範圍
         parameters: <player> <range>
         success: '<green>已將 </green><aqua>[name]</aqua><green>的島嶼保護範圍減少到 </green><aqua>[total] </aqua><gray>（</gray><aqua>+[number]</aqua><gray>）</gray><green>。</green>'
+      removebonus:
+        parameters: '<player> [id]'
+        description: '移除島嶼的獎勵範圍（全部，或按id移除一個）'
+        no-bonus: '<red>該島嶼沒有可移除的獎勵範圍!</red>'
+        unknown-bonus: '<red>該島嶼上不存在id為</red><aqua>[id]</aqua><red>的獎勵範圍!</red>'
+        success: '<green>已從</green><aqua>[name]</aqua><green>的島嶼移除</green><aqua>[number]</aqua><green>的獎勵範圍.</green>'
+        success-id: '<green>已從</green><aqua>[name]</aqua><green>的島嶼移除獎勵範圍</green><aqua>[id]</aqua><green>(</green><aqua>[number]</aqua><green>).</green>'
     register:
       parameters: <player>
       description: 將玩家註冊到您當前所在的無人島

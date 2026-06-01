@@ -221,6 +221,13 @@ commands:
         parameters: <player> <range> [[prefix_island] location]
         success: '<green>Successfully decreased </green><aqua>[name]</aqua><green>''s [prefix_island] protected
           range to </green><aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
+      removebonus:
+        parameters: <player> [id]
+        description: removes bonus ranges from the [prefix_island] (all, or one by id)
+        no-bonus: '<red>This [prefix_island] has no bonus ranges to remove!</red>'
+        unknown-bonus: '<red>There is no bonus range with id </red><aqua>[id]</aqua><red> on this [prefix_island]!</red>'
+        success: '<green>Removed </green><aqua>[number]</aqua><green> of bonus range from </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
+        success-id: '<green>Removed bonus range </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) from </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
     register:
       parameters: <player>
       description: register player to unowned [prefix_island] you are on

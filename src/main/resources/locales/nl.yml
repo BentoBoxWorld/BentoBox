@@ -257,6 +257,13 @@ commands:
         success: >-
           <green>Succesvol verkleind </green><aqua>[name] </aqua><green>'s beschermde eilandbereik naar </green><aqua></aqua>
           [total] <gray>(</gray><aqua>- [number]</aqua><gray>) </gray><green>.</green>
+      removebonus:
+        parameters: '<speler> [id]'
+        description: 'verwijdert bonusbereiken van het eiland (alle of één op id)'
+        no-bonus: '<red>Dit eiland heeft geen bonusbereiken om te verwijderen!</red>'
+        unknown-bonus: '<red>Er is geen bonusbereik met id </red><aqua>[id]</aqua><red> op dit eiland!</red>'
+        success: '<green>Verwijderd: </green><aqua>[number]</aqua><green> aan bonusbereik van het eiland van </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Bonusbereik </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) verwijderd van het eiland van </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <speler>
       description: registreer speler op het eiland waar je je bevindt

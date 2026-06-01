@@ -255,6 +255,13 @@ commands:
         success: >-
           <green>Scăderea cu succes a zonei protejate de </green><aqua>[name] </aqua><green>la </green><aqua>[total]</aqua>
           <gray>(</gray><aqua>- [number] </aqua><gray>) </gray><green>.</green>
+      removebonus:
+        parameters: '<jucător> [id]'
+        description: 'elimină razele bonus de pe insulă (toate sau una după id)'
+        no-bonus: '<red>Această insulă nu are raze bonus de eliminat!</red>'
+        unknown-bonus: '<red>Nu există nicio rază bonus cu id-ul </red><aqua>[id]</aqua><red> pe această insulă!</red>'
+        success: '<green>Eliminat </green><aqua>[number]</aqua><green> din raza bonus de pe insula lui </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Raza bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) eliminată de pe insula lui </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <player>
       description: înregistrează jucătorul pe insula neproprietată pe care te afli

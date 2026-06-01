@@ -247,6 +247,13 @@ commands:
         success: >-
           <green>Disminuyó exitosamente </green><aqua>[name] </aqua><green>rango protegido de la isla a </green><aqua></aqua>
           [total] <gray>(</gray><aqua>- [number] </aqua><gray>) </gray><green>.</green>
+      removebonus:
+        parameters: '<jugador> [id]'
+        description: 'elimina rangos de bonificación de la isla (todos, o uno por id)'
+        no-bonus: '<red>¡Esta isla no tiene rangos de bonificación que eliminar!</red>'
+        unknown-bonus: '<red>¡No existe ningún rango de bonificación con la id </red><aqua>[id]</aqua><red> en esta isla!</red>'
+        success: '<green>Se eliminaron </green><aqua>[number]</aqua><green> de rango de bonificación de la isla de </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Se eliminó el rango de bonificación </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) de la isla de </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <jugador>
       description: registrar jugador en la isla sin dueño en la que estás

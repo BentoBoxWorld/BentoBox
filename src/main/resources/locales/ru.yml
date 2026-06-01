@@ -250,6 +250,13 @@ commands:
         parameters: <игрок> <радиус>
         success: <green>Радиус острова игрока <aqua>[name] </aqua>успешно уменьшен
           до </green> <aqua>[total] </aqua><gray>(<aqua>-[number]</aqua>)</gray>.</green>
+      removebonus:
+        parameters: '<игрок> [id]'
+        description: 'удаляет бонусные радиусы с острова (все или один по id)'
+        no-bonus: '<red>На этом острове нет бонусных радиусов для удаления!</red>'
+        unknown-bonus: '<red>На этом острове нет бонусного радиуса с id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Удалено </green><aqua>[number]</aqua><green> бонусного радиуса с острова игрока </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Бонусный радиус </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) удалён с острова игрока </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <игрок>
       description: регистрирует игрока на острове без владельца, на котором вы находитесь

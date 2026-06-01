@@ -224,6 +224,13 @@ commands:
         description: зменшити діапазон захисту [prefix_island]
         parameters: <гравець> <range> [[prefix_island] location]
         success: '<green>Успішно зменшено діапазон захисту [prefix_island] </green><aqua>[name]</aqua><green>до </green><aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
+      removebonus:
+        parameters: '<гравець> [id]'
+        description: 'видаляє бонусні радіуси з острова (усі або один за id)'
+        no-bonus: '<red>На цьому острові немає бонусних радіусів для видалення!</red>'
+        unknown-bonus: '<red>На цьому острові немає бонусного радіуса з id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Видалено </green><aqua>[number]</aqua><green> бонусного радіуса з острова гравця </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Бонусний радіус </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) видалено з острова гравця </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <гравець>
       description: зареєструвати гравця на безхазяйному [prefix_island], на якому ви стоїте

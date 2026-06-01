@@ -232,6 +232,13 @@ commands:
         success: >-
           <green>성공적으로 </green><aqua>[name]</aqua><green>의 섬의 보호범위를 줄였습니다 </green><aqua>토탈 : [total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray></gray>
           )<green>.</green>
+      removebonus:
+        parameters: '<player> [id]'
+        description: '섬에서 보너스 범위를 제거합니다 (전체 또는 id로 하나)'
+        no-bonus: '<red>이 섬에는 제거할 보너스 범위가 없습니다!</red>'
+        unknown-bonus: '<red>이 섬에 id </red><aqua>[id]</aqua><red> 인 보너스 범위가 없습니다!</red>'
+        success: '<green></green><aqua>[name]</aqua><green> 님의 섬에서 보너스 범위 </green><aqua>[number]</aqua><green> 을(를) 제거했습니다.</green>'
+        success-id: '<green></green><aqua>[name]</aqua><green> 님의 섬에서 보너스 범위 </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) 을(를) 제거했습니다.</green>'
     register:
       parameters: <플레이어>
       description: 플레이어를 당신이 서있는 주인없는섬의 일원으로 추가합니다

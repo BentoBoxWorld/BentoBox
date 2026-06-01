@@ -246,6 +246,13 @@ commands:
         success: >-
           <green>Raio de proteção da ilha de </green><aqua>[name]</aqua><green>reduzido para </green><aqua>[total] </aqua><gray></gray>
           (<aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<jogador> [id]'
+        description: 'remove os alcances bônus da ilha (todos ou um por id)'
+        no-bonus: '<red>Esta ilha não tem alcances bônus para remover!</red>'
+        unknown-bonus: '<red>Não existe nenhum alcance bônus com o id </red><aqua>[id]</aqua><red> nesta ilha!</red>'
+        success: '<green>Removido </green><aqua>[number]</aqua><green> de alcance bônus da ilha de </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Alcance bônus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) removido da ilha de </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <jogador>
       description: registrar jogador para a ilha sem dono em que você está

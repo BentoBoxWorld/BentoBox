@@ -263,6 +263,13 @@ commands:
         success: >-
           <green>Sikeresen csökkentette </green><aqua>[name]</aqua><green>[prefix_island] védett tartományát </green><aqua></aqua>
           [total] <gray>-re (</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<játékos> [id]'
+        description: 'eltávolítja a bónusz hatótávolságokat a szigetről (mindet, vagy egyet id alapján)'
+        no-bonus: '<red>Ezen a szigeten nincs eltávolítható bónusz hatótávolság!</red>'
+        unknown-bonus: '<red>Nincs ilyen id-jű bónusz hatótávolság </red><aqua>[id]</aqua><red> ezen a szigeten!</red>'
+        success: '<green>Eltávolítva </green><aqua>[number]</aqua><green> bónusz hatótávolság </green><aqua>[name]</aqua><green> szigetéről.</green>'
+        success-id: '<green>Eltávolítva a(z) </green><aqua>[id]</aqua><green> bónusz hatótávolság (</green><aqua>[number]</aqua><green>) </green><aqua>[name]</aqua><green> szigetéről.</green>'
     register:
       parameters: <játékos>
       description: regisztrálj játékost egy ismeretlen szigetre, amelyen tartózkodsz

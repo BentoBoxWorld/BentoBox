@@ -221,6 +221,13 @@ commands:
         description: 减少岛屿保护范围
         parameters: <player> <range> [island location]
         success: '<green>玩家</green><aqua>[name]</aqua><green>的岛屿保护范围已减少至</green><aqua>[total]</aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
+      removebonus:
+        parameters: '<player> [id]'
+        description: '移除岛屿的奖励范围（全部，或按id移除一个）'
+        no-bonus: '<red>该岛屿没有可移除的奖励范围!</red>'
+        unknown-bonus: '<red>该岛屿上不存在id为</red><aqua>[id]</aqua><red>的奖励范围!</red>'
+        success: '<green>已从</green><aqua>[name]</aqua><green>的岛屿移除</green><aqua>[number]</aqua><green>的奖励范围.</green>'
+        success-id: '<green>已从</green><aqua>[name]</aqua><green>的岛屿移除奖励范围</green><aqua>[id]</aqua><green>(</green><aqua>[number]</aqua><green>).</green>'
     register:
       parameters: <玩家>
       description: 将玩家认领到当前的无主岛屿

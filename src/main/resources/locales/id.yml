@@ -250,6 +250,13 @@ commands:
         success: >-
           <green>Berhasil menurunkan jangkauan perlindungan pulau </green><aqua>[name]</aqua><green></green>
           menjadi <aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<pemain> [id]'
+        description: 'menghapus rentang bonus dari pulau (semua, atau satu berdasarkan id)'
+        no-bonus: '<red>Pulau ini tidak memiliki rentang bonus untuk dihapus!</red>'
+        unknown-bonus: '<red>Tidak ada rentang bonus dengan id </red><aqua>[id]</aqua><red> di pulau ini!</red>'
+        success: '<green>Menghapus </green><aqua>[number]</aqua><green> rentang bonus dari pulau </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Menghapus rentang bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) dari pulau </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <pemain>
       description: daftarkan pemain ke pulau tak berpemilik tempat Anda berada

@@ -249,6 +249,13 @@ commands:
         success: >-
           <green>Đã giảm khu vực bảo vệ đảo của </green><aqua>[name]</aqua><green>xuống </green><aqua>[total] </aqua><gray>(</gray><aqua></aqua>
           -'[number]<gray>)</gray><green>.</green>'
+      removebonus:
+        parameters: '<người chơi> [id]'
+        description: 'xóa các phạm vi thưởng khỏi đảo (tất cả hoặc một theo id)'
+        no-bonus: '<red>Đảo này không có phạm vi thưởng nào để xóa!</red>'
+        unknown-bonus: '<red>Không có phạm vi thưởng nào với id </red><aqua>[id]</aqua><red> trên đảo này!</red>'
+        success: '<green>Đã xóa </green><aqua>[number]</aqua><green> phạm vi thưởng khỏi đảo của </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Đã xóa phạm vi thưởng </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) khỏi đảo của </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <người chơi>
       description: đăng kí người chơi vào đảo không chủ này

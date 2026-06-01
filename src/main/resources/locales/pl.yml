@@ -252,6 +252,13 @@ commands:
         success: >-
           <green>Pomyślnie pomniejszono obszar ochrony wyspy gracza </green><aqua>[name]</aqua><green>na</green>
           <aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<gracz> [id]'
+        description: 'usuwa zasięgi bonusowe z wyspy (wszystkie lub jeden po id)'
+        no-bonus: '<red>Ta wyspa nie ma zasięgów bonusowych do usunięcia!</red>'
+        unknown-bonus: '<red>Na tej wyspie nie ma zasięgu bonusowego o id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Usunięto </green><aqua>[number]</aqua><green> zasięgu bonusowego z wyspy gracza </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Usunięto zasięg bonusowy </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) z wyspy gracza </green><aqua>[name]</aqua><green>.</green>'
     register:
       parameters: <gracz>
       description: zarejestruj gracza na niezamieszkanej wyspie, na której jesteś
