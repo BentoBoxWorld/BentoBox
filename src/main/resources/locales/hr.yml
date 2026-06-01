@@ -262,6 +262,9 @@ commands:
         none: '<red>Nijedan otok nema bonus raspon s id-om </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Ovo će ukloniti bonus raspon </gold><aqua>[id]</aqua><gold> s </gold><aqua>[number]</aqua><gold> otoka.</gold>'
         success: '<green>Uklonjen bonus raspon </green><aqua>[id]</aqua><green> s </green><aqua>[number]</aqua><green> otoka.</green>'
+        confirm: '<gold>Ponovno pokrenite naredbu s </gold><aqua>confirm</aqua><gold> za potvrdu.</gold>'
+        in-progress: '<red>Čišćenje bonus raspona već je u tijeku. Pričekajte.</red>'
+        failed: '<red>Skeniranje otoka nije uspjelo. Provjerite konzolu.</red>'
     register:
       parameters: <igrač>
       description: registrirajte igrača na nevlasnički otok na kojem se nalazite

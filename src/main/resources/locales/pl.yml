@@ -265,6 +265,9 @@ commands:
         none: '<red>Żadna wyspa nie ma zasięgu bonusowego o id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>To usunie zasięg bonusowy </gold><aqua>[id]</aqua><gold> z </gold><aqua>[number]</aqua><gold> wysp.</gold>'
         success: '<green>Usunięto zasięg bonusowy </green><aqua>[id]</aqua><green> z </green><aqua>[number]</aqua><green> wysp.</green>'
+        confirm: '<gold>Uruchom polecenie ponownie z </gold><aqua>confirm</aqua><gold>, aby kontynuować.</gold>'
+        in-progress: '<red>Czyszczenie zasięgów bonusowych już trwa. Proszę czekać.</red>'
+        failed: '<red>Nie udało się przeskanować wysp. Sprawdź konsolę.</red>'
     register:
       parameters: <gracz>
       description: zarejestruj gracza na niezamieszkanej wyspie, na której jesteś

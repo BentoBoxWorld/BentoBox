@@ -254,6 +254,9 @@ commands:
         none: '<red>Žádný ostrov nemá bonusový rozsah s id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Tímto odeberete bonusový rozsah </gold><aqua>[id]</aqua><gold> z </gold><aqua>[number]</aqua><gold> ostrovů.</gold>'
         success: '<green>Odebrán bonusový rozsah </green><aqua>[id]</aqua><green> z </green><aqua>[number]</aqua><green> ostrovů.</green>'
+        confirm: '<gold>Spusťte příkaz znovu s </gold><aqua>confirm</aqua><gold> pro potvrzení.</gold>'
+        in-progress: '<red>Čištění bonusových rozsahů již probíhá. Počkejte prosím.</red>'
+        failed: '<red>Skenování ostrovů selhalo. Zkontrolujte konzoli.</red>'
     register:
       parameters: <Player>
       description: registrovat hráče na nevlastněný ostrov, na kterém se nacházíš

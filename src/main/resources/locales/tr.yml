@@ -259,6 +259,9 @@ commands:
         none: '<red>Hiçbir adada </red><aqua>[id]</aqua><red> id''li bir bonus menzil yok!</red>'
         warning: '<gold>Bu işlem bonus menzil </gold><aqua>[id]</aqua><gold> öğesini </gold><aqua>[number]</aqua><gold> adadan kaldıracak.</gold>'
         success: '<green>Bonus menzil </green><aqua>[id]</aqua><green> </green><aqua>[number]</aqua><green> adadan kaldırıldı.</green>'
+        confirm: '<gold>Devam etmek için komutu </gold><aqua>confirm</aqua><gold> ile tekrar çalıştırın.</gold>'
+        in-progress: '<red>Zaten bir bonus menzil temizliği çalışıyor. Lütfen bekleyin.</red>'
+        failed: '<red>Adalar taranamadı. Konsolu kontrol edin.</red>'
     register:
       parameters: <player>
       description: Sahipsiz adalara oyuncu ver.

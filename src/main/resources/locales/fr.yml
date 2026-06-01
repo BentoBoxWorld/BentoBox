@@ -278,6 +278,9 @@ commands:
         none: '<red>Aucune île n''a de rayon bonus avec l''id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Ceci supprimera le rayon bonus </gold><aqua>[id]</aqua><gold> de </gold><aqua>[number]</aqua><gold> île(s).</gold>'
         success: '<green>Rayon bonus </green><aqua>[id]</aqua><green> supprimé de </green><aqua>[number]</aqua><green> île(s).</green>'
+        confirm: '<gold>Relancez la commande avec </gold><aqua>confirm</aqua><gold> pour continuer.</gold>'
+        in-progress: '<red>Une purge des rayons bonus est déjà en cours. Veuillez patienter.</red>'
+        failed: '<red>Échec de l''analyse des îles. Consultez la console.</red>'
     register:
       parameters: <joueur>
       description: enregistrer le joueur sur une île sans propriétaire où vous êtes

@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,16 +57,13 @@ class AdminRangePurgeBonusCommandTest extends CommonTestSetup {
 
         Util.setPlugin(plugin);
 
-        // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings - confirmation time of 0 seconds
         Settings s = mock(Settings.class);
         when(s.getConfirmationTime()).thenReturn(0);
         when(plugin.getSettings()).thenReturn(s);
 
-        // Player
         Player p = mock(Player.class);
         when(user.isOp()).thenReturn(false);
         User.setPlugin(plugin);
@@ -73,14 +71,15 @@ class AdminRangePurgeBonusCommandTest extends CommonTestSetup {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
 
-        // Parent command has no aliases and a known top label (needed for confirmation matching)
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getWorld()).thenReturn(world);
         when(ac.getTopLabel()).thenReturn("bsb");
 
-        // Island cache - two islands carry the "Upgrades" bonus, island2 also has "Other"
+        // Two islands in this world carry the "Upgrades" bonus; island2 also has "Other"
         when(island.getWorld()).thenReturn(world);
         when(island2.getWorld()).thenReturn(world);
+        when(island.getUniqueId()).thenReturn("island1");
+        when(island2.getUniqueId()).thenReturn("island2");
         when(island.getBonusRangeRecord("Upgrades")).thenReturn(Optional.of(new BonusRangeRecord("Upgrades", 50, "")));
         when(island2.getBonusRangeRecord("Upgrades")).thenReturn(Optional.of(new BonusRangeRecord("Upgrades", 50, "")));
         when(island.getBonusRangeRecord("Ghost")).thenReturn(Optional.empty());
@@ -91,8 +90,9 @@ class AdminRangePurgeBonusCommandTest extends CommonTestSetup {
                 .thenReturn(new ArrayList<>(List.of(new BonusRangeRecord("Upgrades", 50, ""),
                         new BonusRangeRecord("Other", 10, ""))));
 
-        when(islandCache.getIslands(world)).thenReturn(List.of(island, island2));
         when(islandCache.getCachedIslands()).thenReturn(List.of(island, island2));
+        when(im.getIslandById("island1")).thenReturn(Optional.of(island));
+        when(im.getIslandById("island2")).thenReturn(Optional.of(island2));
         when(im.getIslandCache()).thenReturn(islandCache);
 
         command = new AdminRangePurgeBonusCommand(ac);
@@ -105,37 +105,68 @@ class AdminRangePurgeBonusCommandTest extends CommonTestSetup {
     }
 
     @Test
-    void testCanExecuteWrongArgs() {
+    void testCanExecuteNoArgs() {
         assertFalse(command.canExecute(user, "purgebonus", Collections.emptyList()));
     }
 
     @Test
-    void testCanExecuteNoMatchingIslands() {
-        assertFalse(command.canExecute(user, "purgebonus", List.of("Ghost")));
-        verify(user).sendMessage("commands.admin.range.purgebonus.none", "[id]", "Ghost");
+    void testCanExecuteTooManyArgs() {
+        assertFalse(command.canExecute(user, "purgebonus", List.of("Upgrades", "now", "extra")));
     }
 
     @Test
-    void testCanExecuteSuccess() {
+    void testCanExecuteBadSecondArg() {
+        assertFalse(command.canExecute(user, "purgebonus", List.of("Upgrades", "yes")));
+    }
+
+    @Test
+    void testCanExecuteValidId() {
         assertTrue(command.canExecute(user, "purgebonus", List.of("Upgrades")));
     }
 
     @Test
-    void testExecuteAsksConfirmationDoesNotPurgeYet() {
-        assertTrue(command.canExecute(user, "purgebonus", List.of("Upgrades")));
-        assertTrue(command.execute(user, "purgebonus", List.of("Upgrades")));
-        verify(island, never()).clearBonusRange(any());
-        verify(island2, never()).clearBonusRange(any());
-        verify(user).sendMessage("commands.admin.range.purgebonus.warning", "[id]", "Upgrades", "[number]", "2");
+    void testCanExecuteValidConfirm() {
+        assertTrue(command.canExecute(user, "purgebonus", List.of("Upgrades", "confirm")));
     }
 
     @Test
-    void testPurgeClearsMatchingIslands() {
-        assertTrue(command.canExecute(user, "purgebonus", List.of("Upgrades")));
-        command.purge(user, "Upgrades");
+    void testCanExecuteRejectedWhileInPurge() {
+        command.inPurge = true;
+        assertFalse(command.canExecute(user, "purgebonus", List.of("Upgrades")));
+        verify(user).sendMessage("commands.admin.range.purgebonus.in-progress");
+    }
+
+    @Test
+    void testFindIslandIds() {
+        List<String> ids = command.findIslandIds(List.of(island, island2), "Upgrades");
+        assertEquals(List.of("island1", "island2"), ids);
+        assertTrue(command.findIslandIds(List.of(island, island2), "Ghost").isEmpty());
+    }
+
+    @Test
+    void testConfirmAppliesPurge() {
+        // Arrange a pending confirmation as the async scan would have done
+        command.toBeConfirmed = true;
+        command.pendingId = "Upgrades";
+        command.pendingIslandIds = List.of("island1", "island2");
+
+        assertTrue(command.execute(user, "purgebonus", List.of("Upgrades", "confirm")));
+
         verify(island, times(1)).clearBonusRange("Upgrades");
         verify(island2, times(1)).clearBonusRange("Upgrades");
         verify(user).sendMessage("commands.admin.range.purgebonus.success", "[id]", "Upgrades", "[number]", "2");
+        // Pending state cleared
+        assertFalse(command.toBeConfirmed);
+    }
+
+    @Test
+    void testApplyPurgeSkipsIslandsNoLongerCarryingBonus() {
+        // island2 no longer has the bonus by the time we apply
+        when(island2.getBonusRangeRecord("Upgrades")).thenReturn(Optional.empty());
+        command.applyPurge(user, "Upgrades", List.of("island1", "island2"));
+        verify(island, times(1)).clearBonusRange("Upgrades");
+        verify(island2, never()).clearBonusRange("Upgrades");
+        verify(user).sendMessage("commands.admin.range.purgebonus.success", "[id]", "Upgrades", "[number]", "1");
     }
 
     @Test
@@ -150,5 +181,12 @@ class AdminRangePurgeBonusCommandTest extends CommonTestSetup {
         List<String> ids = command.tabComplete(user, "purgebonus", List.of("Up")).orElse(Collections.emptyList());
         assertTrue(ids.contains("Upgrades"));
         assertFalse(ids.contains("Other"));
+    }
+
+    @Test
+    void testTabCompleteSecondArgSuggestsConfirm() {
+        List<String> opts = command.tabComplete(user, "purgebonus", List.of("Upgrades", ""))
+                .orElse(Collections.emptyList());
+        assertTrue(opts.contains("confirm"));
     }
 }

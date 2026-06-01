@@ -235,6 +235,9 @@ commands:
         none: '<red>沒有任何島嶼擁有id為</red><aqua>[id]</aqua><red>的獎勵範圍!</red>'
         warning: '<gold>這將從</gold><aqua>[number]</aqua><gold>個島嶼移除獎勵範圍</gold><aqua>[id]</aqua><gold>.</gold>'
         success: '<green>已從</green><aqua>[number]</aqua><green>個島嶼移除獎勵範圍</green><aqua>[id]</aqua><green>.</green>'
+        confirm: '<gold>請附帶</gold><aqua>confirm</aqua><gold>再次執行該命令以繼續.</gold>'
+        in-progress: '<red>獎勵範圍清除已在進行中, 請稍候.</red>'
+        failed: '<red>掃描島嶼失敗, 請檢查主控台.</red>'
     register:
       parameters: <player>
       description: 將玩家註冊到您當前所在的無人島

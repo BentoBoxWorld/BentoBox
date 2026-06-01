@@ -260,6 +260,9 @@ commands:
         none: '<red>¡Ninguna isla tiene un rango de bonificación con la id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Esto eliminará el rango de bonificación </gold><aqua>[id]</aqua><gold> de </gold><aqua>[number]</aqua><gold> isla(s).</gold>'
         success: '<green>Rango de bonificación </green><aqua>[id]</aqua><green> eliminado de </green><aqua>[number]</aqua><green> isla(s).</green>'
+        confirm: '<gold>Vuelve a ejecutar el comando con </gold><aqua>confirm</aqua><gold> para continuar.</gold>'
+        in-progress: '<red>Ya hay una purga de rangos de bonificación en curso. Espera.</red>'
+        failed: '<red>No se pudieron escanear las islas. Revisa la consola.</red>'
     register:
       parameters: <jugador>
       description: registrar jugador en la isla sin dueño en la que estás

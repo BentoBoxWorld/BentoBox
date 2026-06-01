@@ -245,6 +245,9 @@ commands:
         none: '<red>id </red><aqua>[id]</aqua><red> 인 보너스 범위를 가진 섬이 없습니다!</red>'
         warning: '<gold>보너스 범위 </gold><aqua>[id]</aqua><gold> 을(를) </gold><aqua>[number]</aqua><gold> 개의 섬에서 제거합니다.</gold>'
         success: '<green>보너스 범위 </green><aqua>[id]</aqua><green> 을(를) </green><aqua>[number]</aqua><green> 개의 섬에서 제거했습니다.</green>'
+        confirm: '<gold>계속하려면 </gold><aqua>confirm</aqua><gold> 을(를) 붙여 명령어를 다시 실행하세요.</gold>'
+        in-progress: '<red>보너스 범위 제거가 이미 실행 중입니다. 잠시 기다려 주세요.</red>'
+        failed: '<red>섬 검색에 실패했습니다. 콘솔을 확인하세요.</red>'
     register:
       parameters: <플레이어>
       description: 플레이어를 당신이 서있는 주인없는섬의 일원으로 추가합니다

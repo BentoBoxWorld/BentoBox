@@ -270,6 +270,9 @@ commands:
         none: '<red>Geen enkel eiland heeft een bonusbereik met id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Dit verwijdert bonusbereik </gold><aqua>[id]</aqua><gold> van </gold><aqua>[number]</aqua><gold> eiland(en).</gold>'
         success: '<green>Bonusbereik </green><aqua>[id]</aqua><green> verwijderd van </green><aqua>[number]</aqua><green> eiland(en).</green>'
+        confirm: '<gold>Voer de opdracht opnieuw uit met </gold><aqua>confirm</aqua><gold> om door te gaan.</gold>'
+        in-progress: '<red>Er loopt al een bonusbereik-opschoning. Even geduld.</red>'
+        failed: '<red>Kon eilanden niet scannen. Controleer de console.</red>'
     register:
       parameters: <speler>
       description: registreer speler op het eiland waar je je bevindt

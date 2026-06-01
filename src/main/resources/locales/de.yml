@@ -274,6 +274,9 @@ commands:
         none: '<red>Keine Insel hat einen Bonusbereich mit der id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Dies entfernt den Bonusbereich </gold><aqua>[id]</aqua><gold> von </gold><aqua>[number]</aqua><gold> Insel(n).</gold>'
         success: '<green>Bonusbereich </green><aqua>[id]</aqua><green> von </green><aqua>[number]</aqua><green> Insel(n) entfernt.</green>'
+        confirm: '<gold>Führe den Befehl erneut mit </gold><aqua>confirm</aqua><gold> aus, um fortzufahren.</gold>'
+        in-progress: '<red>Eine Bonusbereich-Bereinigung läuft bereits. Bitte warten.</red>'
+        failed: '<red>Inseln konnten nicht gescannt werden. Prüfe die Konsole.</red>'
     register:
       parameters: <spieler>
       description: Spieler auf freier Insel registrieren, auf der du dich befindest

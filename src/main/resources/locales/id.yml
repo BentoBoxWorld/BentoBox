@@ -263,6 +263,9 @@ commands:
         none: '<red>Tidak ada pulau yang memiliki rentang bonus dengan id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Ini akan menghapus rentang bonus </gold><aqua>[id]</aqua><gold> dari </gold><aqua>[number]</aqua><gold> pulau.</gold>'
         success: '<green>Rentang bonus </green><aqua>[id]</aqua><green> dihapus dari </green><aqua>[number]</aqua><green> pulau.</green>'
+        confirm: '<gold>Jalankan lagi perintah dengan </gold><aqua>confirm</aqua><gold> untuk melanjutkan.</gold>'
+        in-progress: '<red>Pembersihan rentang bonus sedang berjalan. Mohon tunggu.</red>'
+        failed: '<red>Gagal memindai pulau. Periksa konsol.</red>'
     register:
       parameters: <pemain>
       description: daftarkan pemain ke pulau tak berpemilik tempat Anda berada

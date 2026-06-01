@@ -262,6 +262,9 @@ commands:
         none: '<red>Không có đảo nào có phạm vi thưởng với id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Thao tác này sẽ xóa phạm vi thưởng </gold><aqua>[id]</aqua><gold> khỏi </gold><aqua>[number]</aqua><gold> đảo.</gold>'
         success: '<green>Đã xóa phạm vi thưởng </green><aqua>[id]</aqua><green> khỏi </green><aqua>[number]</aqua><green> đảo.</green>'
+        confirm: '<gold>Chạy lại lệnh với </gold><aqua>confirm</aqua><gold> để tiếp tục.</gold>'
+        in-progress: '<red>Đã có một tiến trình xóa phạm vi thưởng đang chạy. Vui lòng đợi.</red>'
+        failed: '<red>Không thể quét các đảo. Kiểm tra bảng điều khiển.</red>'
     register:
       parameters: <người chơi>
       description: đăng kí người chơi vào đảo không chủ này

@@ -263,6 +263,9 @@ commands:
         none: '<red>Nevienai salai nav bonusa diapazona ar id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Šis noņems bonusa diapazonu </gold><aqua>[id]</aqua><gold> no </gold><aqua>[number]</aqua><gold> salām.</gold>'
         success: '<green>Bonusa diapazons </green><aqua>[id]</aqua><green> noņemts no </green><aqua>[number]</aqua><green> salām.</green>'
+        confirm: '<gold>Lai turpinātu, palaidiet komandu vēlreiz ar </gold><aqua>confirm</aqua><gold>.</gold>'
+        in-progress: '<red>Bonusa diapazonu tīrīšana jau notiek. Lūdzu, uzgaidiet.</red>'
+        failed: '<red>Neizdevās skenēt salas. Pārbaudiet konsoli.</red>'
     register:
       parameters: <spēlētājs>
       description: >-

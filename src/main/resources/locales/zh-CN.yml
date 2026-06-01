@@ -234,6 +234,9 @@ commands:
         none: '<red>没有任何岛屿拥有id为</red><aqua>[id]</aqua><red>的奖励范围!</red>'
         warning: '<gold>这将从</gold><aqua>[number]</aqua><gold>个岛屿移除奖励范围</gold><aqua>[id]</aqua><gold>.</gold>'
         success: '<green>已从</green><aqua>[number]</aqua><green>个岛屿移除奖励范围</green><aqua>[id]</aqua><green>.</green>'
+        confirm: '<gold>请附带</gold><aqua>confirm</aqua><gold>再次执行该命令以继续.</gold>'
+        in-progress: '<red>奖励范围清除已在进行中, 请稍候.</red>'
+        failed: '<red>扫描岛屿失败, 请检查控制台.</red>'
     register:
       parameters: <玩家>
       description: 将玩家认领到当前的无主岛屿

@@ -259,6 +259,9 @@ commands:
         none: '<red>Nenhuma ilha tem um alcance bônus com o id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Isto removerá o alcance bônus </gold><aqua>[id]</aqua><gold> de </gold><aqua>[number]</aqua><gold> ilha(s).</gold>'
         success: '<green>Alcance bônus </green><aqua>[id]</aqua><green> removido de </green><aqua>[number]</aqua><green> ilha(s).</green>'
+        confirm: '<gold>Execute o comando novamente com </gold><aqua>confirm</aqua><gold> para prosseguir.</gold>'
+        in-progress: '<red>Uma limpeza de alcances bônus já está em andamento. Aguarde.</red>'
+        failed: '<red>Falha ao escanear as ilhas. Verifique o console.</red>'
     register:
       parameters: <jogador>
       description: registrar jogador para a ilha sem dono em que você está

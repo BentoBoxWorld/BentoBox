@@ -269,6 +269,9 @@ commands:
         none: '<red>Nessuna isola ha un raggio bonus con id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Questo rimuoverà il raggio bonus </gold><aqua>[id]</aqua><gold> da </gold><aqua>[number]</aqua><gold> isola/e.</gold>'
         success: '<green>Raggio bonus </green><aqua>[id]</aqua><green> rimosso da </green><aqua>[number]</aqua><green> isola/e.</green>'
+        confirm: '<gold>Esegui di nuovo il comando con </gold><aqua>confirm</aqua><gold> per procedere.</gold>'
+        in-progress: '<red>È già in corso una rimozione dei raggi bonus. Attendi.</red>'
+        failed: '<red>Scansione delle isole non riuscita. Controlla la console.</red>'
     register:
       parameters: <giocatore>
       description: registra il giocatore nell'isola senza proprietario sulla quale sei

@@ -237,6 +237,9 @@ commands:
         none: '<red>На жодному острові немає бонусного радіуса з id </red><aqua>[id]</aqua><red>!</red>'
         warning: '<gold>Це видалить бонусний радіус </gold><aqua>[id]</aqua><gold> з </gold><aqua>[number]</aqua><gold> острова(ів).</gold>'
         success: '<green>Бонусний радіус </green><aqua>[id]</aqua><green> видалено з </green><aqua>[number]</aqua><green> острова(ів).</green>'
+        confirm: '<gold>Запустіть команду знову з </gold><aqua>confirm</aqua><gold>, щоб продовжити.</gold>'
+        in-progress: '<red>Очищення бонусних радіусів уже виконується. Будь ласка, зачекайте.</red>'
+        failed: '<red>Не вдалося просканувати острови. Перевірте консоль.</red>'
     register:
       parameters: <гравець>
       description: зареєструвати гравця на безхазяйному [prefix_island], на якому ви стоїте

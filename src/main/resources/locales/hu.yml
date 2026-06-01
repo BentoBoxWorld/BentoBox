@@ -276,6 +276,9 @@ commands:
         none: '<red>Egyetlen szigetnek sincs </red><aqua>[id]</aqua><red> id-jű bónusz hatótávolsága!</red>'
         warning: '<gold>Ez eltávolítja a(z) </gold><aqua>[id]</aqua><gold> bónusz hatótávolságot </gold><aqua>[number]</aqua><gold> szigetről.</gold>'
         success: '<green>A(z) </green><aqua>[id]</aqua><green> bónusz hatótávolság eltávolítva </green><aqua>[number]</aqua><green> szigetről.</green>'
+        confirm: '<gold>Futtasd újra a parancsot a </gold><aqua>confirm</aqua><gold> kapcsolóval a megerősítéshez.</gold>'
+        in-progress: '<red>Egy bónusz hatótávolság tisztítás már fut. Kérlek várj.</red>'
+        failed: '<red>A szigetek beolvasása sikertelen. Ellenőrizd a konzolt.</red>'
     register:
       parameters: <játékos>
       description: regisztrálj játékost egy ismeretlen szigetre, amelyen tartózkodsz

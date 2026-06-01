@@ -228,6 +228,9 @@ commands:
         none: '<red>id </red><aqua>[id]</aqua><red> のボーナス範囲を持つ島はありません！</red>'
         warning: '<gold>ボーナス範囲 </gold><aqua>[id]</aqua><gold> を </gold><aqua>[number]</aqua><gold> 個の島から削除します。</gold>'
         success: '<green>ボーナス範囲 </green><aqua>[id]</aqua><green> を </green><aqua>[number]</aqua><green> 個の島から削除しました。</green>'
+        confirm: '<gold>続行するには、コマンドに </gold><aqua>confirm</aqua><gold> を付けて再実行してください。</gold>'
+        in-progress: '<red>ボーナス範囲の削除がすでに実行中です。お待ちください。</red>'
+        failed: '<red>島のスキャンに失敗しました。コンソールを確認してください。</red>'
     register:
       parameters: <プレーヤー>
       description: あなたがいる未所有の島にプレーヤーを登録する。
