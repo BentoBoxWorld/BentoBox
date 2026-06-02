@@ -232,6 +232,22 @@ commands:
         success: >-
           <green>성공적으로 </green><aqua>[name]</aqua><green>의 섬의 보호범위를 줄였습니다 </green><aqua>토탈 : [total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray></gray>
           )<green>.</green>
+      removebonus:
+        parameters: '<player> [id]'
+        description: '섬에서 보너스 범위를 제거합니다 (전체 또는 id로 하나)'
+        no-bonus: '<red>이 섬에는 제거할 보너스 범위가 없습니다!</red>'
+        unknown-bonus: '<red>이 섬에 id </red><aqua>[id]</aqua><red> 인 보너스 범위가 없습니다!</red>'
+        success: '<green></green><aqua>[name]</aqua><green> 님의 섬에서 보너스 범위 </green><aqua>[number]</aqua><green> 을(를) 제거했습니다.</green>'
+        success-id: '<green></green><aqua>[name]</aqua><green> 님의 섬에서 보너스 범위 </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) 을(를) 제거했습니다.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: '지정한 id의 보너스 범위를 모든 섬에서 제거합니다 (예: 추가한 애드온을 제거한 후)'
+        none: '<red>id </red><aqua>[id]</aqua><red> 인 보너스 범위를 가진 섬이 없습니다!</red>'
+        warning: '<gold>보너스 범위 </gold><aqua>[id]</aqua><gold> 을(를) </gold><aqua>[number]</aqua><gold> 개의 섬에서 제거합니다.</gold>'
+        success: '<green>보너스 범위 </green><aqua>[id]</aqua><green> 을(를) </green><aqua>[number]</aqua><green> 개의 섬에서 제거했습니다.</green>'
+        confirm: '<gold>계속하려면 </gold><aqua>confirm</aqua><gold> 을(를) 붙여 명령어를 다시 실행하세요.</gold>'
+        in-progress: '<red>보너스 범위 제거가 이미 실행 중입니다. 잠시 기다려 주세요.</red>'
+        failed: '<red>섬 검색에 실패했습니다. 콘솔을 확인하세요.</red>'
     register:
       parameters: <플레이어>
       description: 플레이어를 당신이 서있는 주인없는섬의 일원으로 추가합니다

@@ -250,6 +250,22 @@ commands:
         success: >-
           <green>Veiksmīgi samazināts </green><aqua>[name]</aqua><green>salas aizsardzības rādiuss līdz </green><aqua></aqua>
           [total] <gray>(</gray><aqua>+[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<spēlētājs> [id]'
+        description: 'noņem bonusa diapazonus no salas (visus vai vienu pēc id)'
+        no-bonus: '<red>Šai salai nav noņemamu bonusa diapazonu!</red>'
+        unknown-bonus: '<red>Šajā salā nav bonusa diapazona ar id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Noņemti </green><aqua>[number]</aqua><green> bonusa diapazoni no </green><aqua>[name]</aqua><green> salas.</green>'
+        success-id: '<green>Noņemts bonusa diapazons </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) no </green><aqua>[name]</aqua><green> salas.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'noņem bonusa diapazonu ar doto id no visām salām (piem., pēc papildinājuma, kas to pievienoja, noņemšanas)'
+        none: '<red>Nevienai salai nav bonusa diapazona ar id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Šis noņems bonusa diapazonu </gold><aqua>[id]</aqua><gold> no </gold><aqua>[number]</aqua><gold> salām.</gold>'
+        success: '<green>Bonusa diapazons </green><aqua>[id]</aqua><green> noņemts no </green><aqua>[number]</aqua><green> salām.</green>'
+        confirm: '<gold>Lai turpinātu, palaidiet komandu vēlreiz ar </gold><aqua>confirm</aqua><gold>.</gold>'
+        in-progress: '<red>Bonusa diapazonu tīrīšana jau notiek. Lūdzu, uzgaidiet.</red>'
+        failed: '<red>Neizdevās skenēt salas. Pārbaudiet konsoli.</red>'
     register:
       parameters: <spēlētājs>
       description: >-

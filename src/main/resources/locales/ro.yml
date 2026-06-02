@@ -255,6 +255,22 @@ commands:
         success: >-
           <green>Scăderea cu succes a zonei protejate de </green><aqua>[name] </aqua><green>la </green><aqua>[total]</aqua>
           <gray>(</gray><aqua>- [number] </aqua><gray>) </gray><green>.</green>
+      removebonus:
+        parameters: '<jucător> [id]'
+        description: 'elimină razele bonus de pe insulă (toate sau una după id)'
+        no-bonus: '<red>Această insulă nu are raze bonus de eliminat!</red>'
+        unknown-bonus: '<red>Nu există nicio rază bonus cu id-ul </red><aqua>[id]</aqua><red> pe această insulă!</red>'
+        success: '<green>Eliminat </green><aqua>[number]</aqua><green> din raza bonus de pe insula lui </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Raza bonus </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) eliminată de pe insula lui </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'elimină o rază bonus cu acel id de pe toate insulele (de ex. după eliminarea addonului care a adăugat-o)'
+        none: '<red>Nicio insulă nu are o rază bonus cu id-ul </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Aceasta va elimina raza bonus </gold><aqua>[id]</aqua><gold> de pe </gold><aqua>[number]</aqua><gold> insulă(e).</gold>'
+        success: '<green>Raza bonus </green><aqua>[id]</aqua><green> eliminată de pe </green><aqua>[number]</aqua><green> insulă(e).</green>'
+        confirm: '<gold>Rulează comanda din nou cu </gold><aqua>confirm</aqua><gold> pentru a continua.</gold>'
+        in-progress: '<red>O curățare a razelor bonus este deja în curs. Te rugăm să aștepți.</red>'
+        failed: '<red>Scanarea insulelor a eșuat. Verifică consola.</red>'
     register:
       parameters: <player>
       description: înregistrează jucătorul pe insula neproprietată pe care te afli

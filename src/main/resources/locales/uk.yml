@@ -224,6 +224,22 @@ commands:
         description: зменшити діапазон захисту [prefix_island]
         parameters: <гравець> <range> [[prefix_island] location]
         success: '<green>Успішно зменшено діапазон захисту [prefix_island] </green><aqua>[name]</aqua><green>до </green><aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
+      removebonus:
+        parameters: '<гравець> [id]'
+        description: 'видаляє бонусні радіуси з острова (усі або один за id)'
+        no-bonus: '<red>На цьому острові немає бонусних радіусів для видалення!</red>'
+        unknown-bonus: '<red>На цьому острові немає бонусного радіуса з id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Видалено </green><aqua>[number]</aqua><green> бонусного радіуса з острова гравця </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Бонусний радіус </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) видалено з острова гравця </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'видаляє бонусний радіус із вказаним id з усіх островів (наприклад, після видалення аддона, що його додав)'
+        none: '<red>На жодному острові немає бонусного радіуса з id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Це видалить бонусний радіус </gold><aqua>[id]</aqua><gold> з </gold><aqua>[number]</aqua><gold> острова(ів).</gold>'
+        success: '<green>Бонусний радіус </green><aqua>[id]</aqua><green> видалено з </green><aqua>[number]</aqua><green> острова(ів).</green>'
+        confirm: '<gold>Запустіть команду знову з </gold><aqua>confirm</aqua><gold>, щоб продовжити.</gold>'
+        in-progress: '<red>Очищення бонусних радіусів уже виконується. Будь ласка, зачекайте.</red>'
+        failed: '<red>Не вдалося просканувати острови. Перевірте консоль.</red>'
     register:
       parameters: <гравець>
       description: зареєструвати гравця на безхазяйному [prefix_island], на якому ви стоїте

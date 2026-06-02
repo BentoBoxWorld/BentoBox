@@ -249,6 +249,22 @@ commands:
         success: >-
           <green>Uspješno je smanjio </green><aqua>[name]</aqua><green>zaštićeni domet otoka na </green><aqua>[total]</aqua>
           <gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<igrač> [id]'
+        description: 'uklanja bonus raspone s otoka (sve ili jedan po id-u)'
+        no-bonus: '<red>Ovaj otok nema bonus raspone za uklanjanje!</red>'
+        unknown-bonus: '<red>Ne postoji bonus raspon s id-om </red><aqua>[id]</aqua><red> na ovom otoku!</red>'
+        success: '<green>Uklonjeno </green><aqua>[number]</aqua><green> bonus raspona s otoka igrača </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Uklonjen bonus raspon </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) s otoka igrača </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'uklanja bonus raspon s danim id-om sa svih otoka (npr. nakon uklanjanja dodatka koji ga je dodao)'
+        none: '<red>Nijedan otok nema bonus raspon s id-om </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Ovo će ukloniti bonus raspon </gold><aqua>[id]</aqua><gold> s </gold><aqua>[number]</aqua><gold> otoka.</gold>'
+        success: '<green>Uklonjen bonus raspon </green><aqua>[id]</aqua><green> s </green><aqua>[number]</aqua><green> otoka.</green>'
+        confirm: '<gold>Ponovno pokrenite naredbu s </gold><aqua>confirm</aqua><gold> za potvrdu.</gold>'
+        in-progress: '<red>Čišćenje bonus raspona već je u tijeku. Pričekajte.</red>'
+        failed: '<red>Skeniranje otoka nije uspjelo. Provjerite konzolu.</red>'
     register:
       parameters: <igrač>
       description: registrirajte igrača na nevlasnički otok na kojem se nalazite

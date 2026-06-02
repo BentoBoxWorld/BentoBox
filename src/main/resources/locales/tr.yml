@@ -246,6 +246,22 @@ commands:
         success: >-
           <light_purple>[name] </light_purple><gold>koruma alanı </gold><green>-[number] </green><gold>azaltıldı. </gold><gold>Toplam alan</gold>
           <dark_purple>[total]</dark_purple>
+      removebonus:
+        parameters: '<oyuncu> [id]'
+        description: 'adadan bonus menzilleri kaldırır (tümü veya id ile biri)'
+        no-bonus: '<red>Bu adada kaldırılacak bonus menzil yok!</red>'
+        unknown-bonus: '<red>Bu adada </red><aqua>[id]</aqua><red> id''li bir bonus menzil yok!</red>'
+        success: '<green></green><aqua>[name]</aqua><green> adlı oyuncunun adasından </green><aqua>[number]</aqua><green> bonus menzil kaldırıldı.</green>'
+        success-id: '<green></green><aqua>[name]</aqua><green> adlı oyuncunun adasından </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) bonus menzili kaldırıldı.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'belirtilen id''ye sahip bonus menzili tüm adalardan kaldırır (ör. onu ekleyen eklenti kaldırıldıktan sonra)'
+        none: '<red>Hiçbir adada </red><aqua>[id]</aqua><red> id''li bir bonus menzil yok!</red>'
+        warning: '<gold>Bu işlem bonus menzil </gold><aqua>[id]</aqua><gold> öğesini </gold><aqua>[number]</aqua><gold> adadan kaldıracak.</gold>'
+        success: '<green>Bonus menzil </green><aqua>[id]</aqua><green> </green><aqua>[number]</aqua><green> adadan kaldırıldı.</green>'
+        confirm: '<gold>Devam etmek için komutu </gold><aqua>confirm</aqua><gold> ile tekrar çalıştırın.</gold>'
+        in-progress: '<red>Zaten bir bonus menzil temizliği çalışıyor. Lütfen bekleyin.</red>'
+        failed: '<red>Adalar taranamadı. Konsolu kontrol edin.</red>'
     register:
       parameters: <player>
       description: Sahipsiz adalara oyuncu ver.

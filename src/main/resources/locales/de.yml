@@ -261,6 +261,22 @@ commands:
         success: >-
           <green>Erfolgreich reduziert </green><aqua>[name]</aqua><green>'s geschützten Bereich der Insel</green>
           um<aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<spieler> [id]'
+        description: 'entfernt Bonusbereiche von der Insel (alle oder einen per id)'
+        no-bonus: '<red>Diese Insel hat keine Bonusbereiche zum Entfernen!</red>'
+        unknown-bonus: '<red>Es gibt keinen Bonusbereich mit der id </red><aqua>[id]</aqua><red> auf dieser Insel!</red>'
+        success: '<green>Entfernt: </green><aqua>[number]</aqua><green> an Bonusbereich von der Insel von </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Bonusbereich </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) von der Insel von </green><aqua>[name]</aqua><green> entfernt.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'entfernt einen Bonusbereich mit dieser id von allen Inseln (z. B. nach dem Entfernen des Addons, das ihn hinzugefügt hat)'
+        none: '<red>Keine Insel hat einen Bonusbereich mit der id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Dies entfernt den Bonusbereich </gold><aqua>[id]</aqua><gold> von </gold><aqua>[number]</aqua><gold> Insel(n).</gold>'
+        success: '<green>Bonusbereich </green><aqua>[id]</aqua><green> von </green><aqua>[number]</aqua><green> Insel(n) entfernt.</green>'
+        confirm: '<gold>Führe den Befehl erneut mit </gold><aqua>confirm</aqua><gold> aus, um fortzufahren.</gold>'
+        in-progress: '<red>Eine Bonusbereich-Bereinigung läuft bereits. Bitte warten.</red>'
+        failed: '<red>Inseln konnten nicht gescannt werden. Prüfe die Konsole.</red>'
     register:
       parameters: <spieler>
       description: Spieler auf freier Insel registrieren, auf der du dich befindest

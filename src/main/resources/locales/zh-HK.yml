@@ -222,6 +222,22 @@ commands:
         description: 減少島嶼保護範圍
         parameters: <player> <range>
         success: '<green>已將 </green><aqua>[name]</aqua><green>的島嶼保護範圍減少到 </green><aqua>[total] </aqua><gray>（</gray><aqua>+[number]</aqua><gray>）</gray><green>。</green>'
+      removebonus:
+        parameters: '<player> [id]'
+        description: '移除島嶼的獎勵範圍（全部，或按id移除一個）'
+        no-bonus: '<red>該島嶼沒有可移除的獎勵範圍!</red>'
+        unknown-bonus: '<red>該島嶼上不存在id為</red><aqua>[id]</aqua><red>的獎勵範圍!</red>'
+        success: '<green>已從</green><aqua>[name]</aqua><green>的島嶼移除</green><aqua>[number]</aqua><green>的獎勵範圍.</green>'
+        success-id: '<green>已從</green><aqua>[name]</aqua><green>的島嶼移除獎勵範圍</green><aqua>[id]</aqua><green>(</green><aqua>[number]</aqua><green>).</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: '從所有島嶼移除指定id的獎勵範圍（例如，在移除新增它的附加元件之後）'
+        none: '<red>沒有任何島嶼擁有id為</red><aqua>[id]</aqua><red>的獎勵範圍!</red>'
+        warning: '<gold>這將從</gold><aqua>[number]</aqua><gold>個島嶼移除獎勵範圍</gold><aqua>[id]</aqua><gold>.</gold>'
+        success: '<green>已從</green><aqua>[number]</aqua><green>個島嶼移除獎勵範圍</green><aqua>[id]</aqua><green>.</green>'
+        confirm: '<gold>請附帶</gold><aqua>confirm</aqua><gold>再次執行該命令以繼續.</gold>'
+        in-progress: '<red>獎勵範圍清除已在進行中, 請稍候.</red>'
+        failed: '<red>掃描島嶼失敗, 請檢查主控台.</red>'
     register:
       parameters: <player>
       description: 將玩家註冊到您當前所在的無人島

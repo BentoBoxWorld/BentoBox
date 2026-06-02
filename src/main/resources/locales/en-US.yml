@@ -221,6 +221,22 @@ commands:
         parameters: <player> <range> [[prefix_island] location]
         success: '<green>Successfully decreased </green><aqua>[name]</aqua><green>''s [prefix_island] protected
           range to </green><aqua>[total] </aqua><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>'
+      removebonus:
+        parameters: <player> [id]
+        description: removes bonus ranges from the [prefix_island] (all, or one by id)
+        no-bonus: '<red>This [prefix_island] has no bonus ranges to remove!</red>'
+        unknown-bonus: '<red>There is no bonus range with id </red><aqua>[id]</aqua><red> on this [prefix_island]!</red>'
+        success: '<green>Removed </green><aqua>[number]</aqua><green> of bonus range from </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
+        success-id: '<green>Removed bonus range </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) from </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
+      purgebonus:
+        parameters: <id>
+        description: removes a bonus range id from every [prefix_island] (e.g. after removing the addon that added it)
+        none: '<red>No [prefix_island] has a bonus range with id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>This will remove bonus range </gold><aqua>[id]</aqua><gold> from </gold><aqua>[number]</aqua><gold> island(s).</gold>'
+        success: '<green>Removed bonus range </green><aqua>[id]</aqua><green> from </green><aqua>[number]</aqua><green> island(s).</green>'
+        confirm: '<gold>Run the command again with </gold><aqua>confirm</aqua><gold> to proceed.</gold>'
+        in-progress: '<red>A bonus range purge is already running. Please wait.</red>'
+        failed: '<red>Failed to scan islands. Check the console.</red>'
     register:
       parameters: <player>
       description: register player to unowned [prefix_island] you are on

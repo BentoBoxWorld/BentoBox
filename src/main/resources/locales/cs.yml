@@ -241,6 +241,22 @@ commands:
         success: >-
           <green>Úspěšně zmenšena chráněná oblast ostrova hráče </green><aqua>[name]</aqua><green>na </green><aqua></aqua>
           [total] <gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>.</green>
+      removebonus:
+        parameters: '<hráč> [id]'
+        description: 'odebere bonusové rozsahy z ostrova (všechny nebo jeden podle id)'
+        no-bonus: '<red>Tento ostrov nemá žádné bonusové rozsahy k odebrání!</red>'
+        unknown-bonus: '<red>Na tomto ostrově neexistuje bonusový rozsah s id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Odebráno </green><aqua>[number]</aqua><green> z bonusového rozsahu ostrova hráče </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Odebrán bonusový rozsah </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) z ostrova hráče </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'odebere bonusový rozsah s daným id ze všech ostrovů (např. po odebrání addonu, který jej přidal)'
+        none: '<red>Žádný ostrov nemá bonusový rozsah s id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Tímto odeberete bonusový rozsah </gold><aqua>[id]</aqua><gold> z </gold><aqua>[number]</aqua><gold> ostrovů.</gold>'
+        success: '<green>Odebrán bonusový rozsah </green><aqua>[id]</aqua><green> z </green><aqua>[number]</aqua><green> ostrovů.</green>'
+        confirm: '<gold>Spusťte příkaz znovu s </gold><aqua>confirm</aqua><gold> pro potvrzení.</gold>'
+        in-progress: '<red>Čištění bonusových rozsahů již probíhá. Počkejte prosím.</red>'
+        failed: '<red>Skenování ostrovů selhalo. Zkontrolujte konzoli.</red>'
     register:
       parameters: <Player>
       description: registrovat hráče na nevlastněný ostrov, na kterém se nacházíš
