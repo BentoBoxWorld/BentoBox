@@ -117,6 +117,16 @@ panel:
   # Added since 1.16.0.
   # /!\ In order to apply the changes made to this option, you must restart your server. Reloading BentoBox or the server won't work.
   ticks-between-calls: 10
+dynmap:
+  # Toggle whether BentoBox shows a marker (house icon) on Dynmap at the center of every island.
+  # On worlds with many tightly-packed islands these icons can flood the map. Set to false to hide them.
+  # /!\ Restart the server or use /bbox reload after changing this for it to take effect.
+  # Added since 3.17.1.
+  island-markers: true
+  # Toggle whether BentoBox draws the protected area border box of every island on Dynmap.
+  # /!\ Restart the server or use /bbox reload after changing this for it to take effect.
+  # Added since 3.17.1.
+  island-areas: true
 logs:
   # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
   # It can be spammy if there are a lot of superflat chunks to regenerate.
