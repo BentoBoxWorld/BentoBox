@@ -21,7 +21,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -162,7 +164,7 @@ class ItemFrameListenerTest extends CommonTestSetup  {
     @Test
     void testOnItemFrameDamageHangingBreakByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(entity, enderman);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(entity, enderman, mock(DamageSource.class), RemoveCause.ENTITY);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
     }

@@ -23,6 +23,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Projectile;
@@ -176,7 +177,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
     }
@@ -190,7 +191,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mockPlayer, mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -204,7 +205,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.EXPLOSION;
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mock(Creeper.class), cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, mock(Creeper.class), mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
     }
@@ -219,7 +220,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
         when(arrow.getShooter()).thenReturn(mock(Skeleton.class));
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
     }
@@ -235,7 +236,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
         when(arrow.getShooter()).thenReturn(mockPlayer);
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -251,7 +252,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
         when(arrow.getShooter()).thenReturn(mockPlayer);
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -342,7 +343,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.MINECART);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(DamageSource.class), mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
@@ -356,7 +357,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.MINECART);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(DamageSource.class), mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -371,7 +372,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.ACACIA_BOAT);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(DamageSource.class), mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -386,7 +387,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         when(vehicle.getType()).thenReturn(EntityType.TRIDENT);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(DamageSource.class), mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -400,7 +401,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mockPlayer, 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(DamageSource.class), mockPlayer, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
@@ -412,7 +413,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
     void testOnVehicleDamageEventNotPlayer() {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
-        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(Creeper.class), 10);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, mock(DamageSource.class), mock(Creeper.class), 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
     }
