@@ -49,40 +49,17 @@ class UtilTest extends CommonTestSetup {
     }
 
     /**
-     * Sulfur Cube (Minecraft 26.2) is slime-like but passive. When the SULFUR_CUBE entity type is
-     * present, {@link Util#isPassiveEntity(org.bukkit.entity.Entity)} must classify it as passive
-     * and {@link Util#isHostileEntity(org.bukkit.entity.Entity)} must not treat it as hostile,
-     * even though it implements {@link Slime}.
-     * <p>
-     * The 26.2 EntityType constant does not exist in the test API, so an existing slime-like type
-     * (MAGMA_CUBE) is injected into Util's resolved SULFUR_CUBE field as a stand-in.
+     * Sulfur Cube (Minecraft 26.2) is slime-like but passive:
+     * {@link Util#isPassiveEntity(org.bukkit.entity.Entity)} must classify it as passive and
+     * {@link Util#isHostileEntity(org.bukkit.entity.Entity)} must not treat it as hostile, even
+     * though it implements {@link Slime}.
      */
     @Test
-    void testSulfurCubeClassifiedAsPassiveNotHostile() throws Exception {
-        EntityType standIn = EntityType.MAGMA_CUBE;
-        Object previous = getStaticField(Util.class, "SULFUR_CUBE");
-        setStaticField(Util.class, "SULFUR_CUBE", standIn);
-        try {
-            Slime sulfurCube = mock(Slime.class);
-            when(sulfurCube.getType()).thenReturn(standIn);
-            assertTrue(Util.isPassiveEntity(sulfurCube));
-            assertFalse(Util.isHostileEntity(sulfurCube));
-        } finally {
-            setStaticField(Util.class, "SULFUR_CUBE", previous);
-        }
-    }
-
-    private static Object getStaticField(Class<?> clazz, String name) throws Exception {
-        java.lang.reflect.Field f = clazz.getDeclaredField(name);
-        f.setAccessible(true);
-        return f.get(null);
-    }
-
-    @SuppressWarnings("java:S3011")
-    private static void setStaticField(Class<?> clazz, String name, Object value) throws Exception {
-        java.lang.reflect.Field f = clazz.getDeclaredField(name);
-        f.setAccessible(true);
-        f.set(null, value);
+    void testSulfurCubeClassifiedAsPassiveNotHostile() {
+        Slime sulfurCube = mock(Slime.class);
+        when(sulfurCube.getType()).thenReturn(EntityType.SULFUR_CUBE);
+        assertTrue(Util.isPassiveEntity(sulfurCube));
+        assertFalse(Util.isHostileEntity(sulfurCube));
     }
 
     // ---- blockFaceToFloat ----

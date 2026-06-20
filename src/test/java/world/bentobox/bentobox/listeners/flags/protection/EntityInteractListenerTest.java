@@ -399,66 +399,38 @@ class EntityInteractListenerTest extends CommonTestSetup {
 
     /**
      * Giving a block to a Sulfur Cube (Minecraft 26.2) for it to absorb is treated as placing a
-     * block and must be blocked by the PLACE_BLOCKS flag when not allowed. The 26.2 EntityType
-     * constant is absent in the test API, so MAGMA_CUBE is injected as a stand-in for SULFUR_CUBE.
+     * block and must be blocked by the PLACE_BLOCKS flag when not allowed.
      */
     @Test
-    void testOnPlayerInteractEntitySulfurCubeBlockAbsorptionNotAllowed() throws Exception {
-        EntityType standIn = EntityType.MAGMA_CUBE;
-        Object previous = getStaticField(EntityInteractListener.class, "SULFUR_CUBE");
-        setStaticField(EntityInteractListener.class, "SULFUR_CUBE", standIn);
-        try {
-            clickedEntity = mock(Entity.class);
-            when(clickedEntity.getLocation()).thenReturn(location);
-            when(clickedEntity.getType()).thenReturn(standIn);
-            ItemStack block = mock(ItemStack.class);
-            when(block.getType()).thenReturn(Material.STONE);
-            when(inv.getItemInMainHand()).thenReturn(block);
-            PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
-            eil.onPlayerInteractEntity(e);
-            verify(notifier).notify(any(), eq("protection.protected"));
-            assertTrue(e.isCancelled());
-        } finally {
-            setStaticField(EntityInteractListener.class, "SULFUR_CUBE", previous);
-        }
+    void testOnPlayerInteractEntitySulfurCubeBlockAbsorptionNotAllowed() {
+        clickedEntity = mock(Entity.class);
+        when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.SULFUR_CUBE);
+        ItemStack block = mock(ItemStack.class);
+        when(block.getType()).thenReturn(Material.STONE);
+        when(inv.getItemInMainHand()).thenReturn(block);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
+        eil.onPlayerInteractEntity(e);
+        verify(notifier).notify(any(), eq("protection.protected"));
+        assertTrue(e.isCancelled());
     }
 
     /**
      * Giving a block to a Sulfur Cube is allowed when the island permits PLACE_BLOCKS.
      */
     @Test
-    void testOnPlayerInteractEntitySulfurCubeBlockAbsorptionAllowed() throws Exception {
+    void testOnPlayerInteractEntitySulfurCubeBlockAbsorptionAllowed() {
         when(island.isAllowed(any(User.class), any())).thenReturn(true);
-        EntityType standIn = EntityType.MAGMA_CUBE;
-        Object previous = getStaticField(EntityInteractListener.class, "SULFUR_CUBE");
-        setStaticField(EntityInteractListener.class, "SULFUR_CUBE", standIn);
-        try {
-            clickedEntity = mock(Entity.class);
-            when(clickedEntity.getLocation()).thenReturn(location);
-            when(clickedEntity.getType()).thenReturn(standIn);
-            ItemStack block = mock(ItemStack.class);
-            when(block.getType()).thenReturn(Material.STONE);
-            when(inv.getItemInMainHand()).thenReturn(block);
-            PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
-            eil.onPlayerInteractEntity(e);
-            verify(notifier, never()).notify(any(), eq("protection.protected"));
-            assertFalse(e.isCancelled());
-        } finally {
-            setStaticField(EntityInteractListener.class, "SULFUR_CUBE", previous);
-        }
-    }
-
-    private static Object getStaticField(Class<?> clazz, String name) throws Exception {
-        java.lang.reflect.Field f = clazz.getDeclaredField(name);
-        f.setAccessible(true);
-        return f.get(null);
-    }
-
-    @SuppressWarnings("java:S3011")
-    private static void setStaticField(Class<?> clazz, String name, Object value) throws Exception {
-        java.lang.reflect.Field f = clazz.getDeclaredField(name);
-        f.setAccessible(true);
-        f.set(null, value);
+        clickedEntity = mock(Entity.class);
+        when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.SULFUR_CUBE);
+        ItemStack block = mock(ItemStack.class);
+        when(block.getType()).thenReturn(Material.STONE);
+        when(inv.getItemInMainHand()).thenReturn(block);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
+        eil.onPlayerInteractEntity(e);
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+        assertFalse(e.isCancelled());
     }
 
 }
