@@ -206,6 +206,11 @@ public class BentoBox extends JavaPlugin implements Listener {
         // Enable addons
         addonsManager.enableAddons();
 
+        // Addons may register a Vault economy provider during their onEnable (e.g. InvSwitcher),
+        // after the early Vault hook already failed for lack of any economy. Retry now so getVault()
+        // reflects an economy an addon has since provided.
+        hookRegistrar.registerVaultHookIfNeeded();
+
         // Register default gamemode placeholders
         addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
 

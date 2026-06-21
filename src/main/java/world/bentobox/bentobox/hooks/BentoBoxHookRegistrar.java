@@ -37,6 +37,22 @@ public class BentoBoxHookRegistrar {
     }
 
     /**
+     * Re-attempts the Vault economy hook after addons have been enabled.
+     * <p>
+     * BentoBox hooks Vault during {@link #registerEarlyHooks()}, before addons are enabled. An addon
+     * may register a Vault economy provider in its own {@code onEnable()} (e.g. InvSwitcher, which
+     * provides per-world balances), after that early attempt already failed for lack of any economy.
+     * A failed hook is discarded by {@link HooksManager}, so {@link BentoBox#getVault()} would stay
+     * empty even though an economy now exists. This gives the now-present economy a chance to be
+     * picked up. No-op if Vault is already hooked.
+     */
+    public void registerVaultHookIfNeeded() {
+        if (plugin.getVault().isEmpty()) {
+            hooksManager.registerHook(new VaultHook());
+        }
+    }
+
+    /**
      * Registers world-manager hooks (Multiverse variants) that load after BentoBox worlds.
      * Must be called after {@code islandWorldManager.registerWorldsToMultiverse()} is ready.
      */
