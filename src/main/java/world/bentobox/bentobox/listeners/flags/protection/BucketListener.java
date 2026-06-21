@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
@@ -12,6 +13,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+
+import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -23,6 +26,15 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 public class BucketListener extends FlagListener {
+
+    /**
+     * The Sulfur Cube entity type (Minecraft 26.2), resolved at runtime so the code still
+     * compiles against earlier API versions. {@code null} when absent. Non-final so tests can
+     * inject a stand-in type (the JVM constant-folds {@code static final} fields).
+     */
+    @SuppressWarnings("java:S3008") // non-final by design; see Javadoc (test injection)
+    private static EntityType SULFUR_CUBE = Enums.getIfPresent(EntityType.class, "SULFUR_CUBE")
+            .orNull();
 
     /**
      * Prevents emptying of buckets
@@ -72,6 +84,12 @@ public class BucketListener extends FlagListener {
             e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
         {
             this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.AXOLOTL_SCOOPING);
+        }
+        else if (SULFUR_CUBE != null && e.getRightClicked().getType() == SULFUR_CUBE &&
+            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BUCKET))
+        {
+            // Sulfur Cube (26.2) is picked up with an empty bucket
+            this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BUCKET);
         }
     }
 

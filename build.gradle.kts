@@ -3,7 +3,7 @@
  * 
  * This build script configures the compilation, testing, packaging, and publishing
  * of the BentoBox Minecraft plugin. It handles:
- * - Java 21 compilation with proper module access
+ * - Java 25 compilation with proper module access
  * - Multi-repository dependency resolution
  * - JAR shading and minimization
  * - Test execution with JUnit 5
@@ -29,7 +29,9 @@ plugins {
     id("com.gradleup.shadow") version "9.3.0"
 
     // Paperweight UserDev - simplifies development against PaperMC with proper mappings and reobfuscation
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    // 2.0.0-SNAPSHOT (from Paper's repo, via pluginManagement in settings.gradle.kts) is required:
+    // all 26.x dev bundles are data version 8, which released paperweight (<= beta.21) cannot read.
+    id("io.papermc.paperweight.userdev") version "2.0.0-SNAPSHOT"
     
     // Sonarcube
     id("org.sonarqube") version "7.2.1.6560"
@@ -46,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.17.1"
+val buildVersion = "3.18.0"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -77,23 +79,25 @@ version = finalRevision
 // DEPENDENCY VERSIONS
 // ============================================================================
 // Centralized version management for all external dependencies
-val javaVersion = "21"
+// Minecraft 26.1+ dev bundles and the 26.2 paper-api are Java 25 artifacts, so BentoBox now
+// compiles to Java 25 bytecode. Addons that compile against BentoBox must also move to Java 25.
+val javaVersion = "25"
 val junitVersion = "5.10.2"
 val mockitoVersion = "5.11.0"
-// Pin to a concrete JitPack tag rather than the v1.21-SNAPSHOT pointer.
-// SNAPSHOT resolution on JitPack is flaky — it sometimes advertises a
-// timestamped version in maven-metadata.xml whose corresponding .pom 404s,
-// breaking dependency resolution mid-build. Newer tags (>= v4.111) also
-// currently fail to build on JitPack because the project requires a Java 25
-// toolchain that JitPack's default image doesn't have. v4.110.0 is the most
-// recent tag with both POM and JAR available on JitPack.
-val mockBukkitVersion = "v4.110.0"
+// MockBukkit's modern, per-Minecraft-version artifacts are published to Paper's Maven repo
+// under org.mockbukkit.mockbukkit (see the testImplementation coordinate below). The closest
+// available to Paper 26.2 is the 26.1.2 line (no 26.2 build exists yet); 4.113.2 is the latest.
+val mockBukkitVersion = "4.113.2"
 val mongodbVersion = "3.12.12"
 val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
 val postgresqlVersion = "42.2.18"
 val hikaricpVersion = "5.0.1"
-val paperVersion = "1.21.11-R0.1-SNAPSHOT"
+// Compile against the latest stable 26.1.2 dev bundle. This is the newest Paper API that has a
+// matching MockBukkit release (mockbukkit-v26.1.2); MockBukkit does not yet support 26.2's new
+// registries. Minecraft 26.2 is still fully supported at runtime (see ServerCompatibility and
+// the Modrinth game-versions list); 26.2-only blocks/entities are accessed via Enums.getIfPresent.
+val paperVersion = "26.1.2.build.72-stable"
 val bstatsVersion = "3.0.0"
 val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
@@ -145,7 +149,7 @@ extra["revision"] = finalRevision
 // ============================================================================
 // Configures Java compiler and toolchain settings
 java {
-    // Use Java 21 toolchain for compilation (enforced regardless of JVM running Gradle)
+    // Use Java 25 toolchain for compilation (enforced regardless of JVM running Gradle)
     toolchain {
         languageVersion = JavaLanguageVersion.of(javaVersion)
     }
@@ -157,7 +161,7 @@ tasks.withType<JavaCompile> {
     // Suppress all deprecation and removal warnings during compilation
     options.compilerArgs.addAll(listOf("-Xlint:-deprecation", "-Xlint:-removal"))
     // Set explicit Java release version for Eclipse compatibility
-    options.release.set(21)
+    options.release.set(25)
 }
 
 tasks.compileTestJava {
@@ -166,7 +170,7 @@ tasks.compileTestJava {
     // Suppress all deprecation and removal warnings during compilation
     options.compilerArgs.addAll(listOf("-Xlint:-deprecation", "-Xlint:-removal"))
     // Set explicit Java release version for Eclipse compatibility
-    options.release.set(21)
+    options.release.set(25)
 }
 
 
@@ -218,7 +222,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
-    testImplementation("com.github.MockBukkit:MockBukkit:$mockBukkitVersion")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.1.2:$mockBukkitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testImplementation("io.papermc.paper:paper-api:$paperVersion")
     testImplementation("com.github.MilkBowl:VaultAPI:$vaultVersion")
@@ -287,7 +291,7 @@ dependencies {
 paperweight {
     addServerDependencyTo = configurations.named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).map { setOf(it) }
   javaLauncher = javaToolchains.launcherFor {
-        // Use the project's configured Java version for paperweight tools (needs Java 21+)
+        // Minecraft 26.1+ dev bundles require Java 25 to run the paperclip patch step.
         languageVersion = JavaLanguageVersion.of(javaVersion)
   }
 }
@@ -391,7 +395,7 @@ tasks.test {
     // Use JUnit Platform (required for JUnit 5)
     useJUnitPlatform()
 
-    // Enable Java 21 preview features and dynamic agent loading
+    // Enable Java preview features and dynamic agent loading
     jvmArgs("--enable-preview", "-XX:+EnableDynamicAgentLoading")
     
     // Add --add-opens: Required for Java 21+ to allow reflection access to restricted modules

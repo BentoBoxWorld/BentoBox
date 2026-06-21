@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BentoBox is a Bukkit/Paper library plugin (Java 21) that provides the core platform for island-style Minecraft games (SkyBlock, AcidIsland, etc.) via an extensible addon system.
+BentoBox is a Bukkit/Paper library plugin (Java 25) that provides the core platform for island-style Minecraft games (SkyBlock, AcidIsland, etc.) via an extensible addon system.
 
 ## Build Commands
 

@@ -229,11 +229,13 @@ class LocalesManagerTest  extends CommonTestSetup {
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
 
-        // Unsorted
+        // Unsorted - only verify both locales are present, not their order. The unsorted order
+        // comes from File.listFiles(), which is not guaranteed and varies by OS/filesystem.
         List<Locale> localeList = lm.getAvailableLocales(false);
-        assertEquals(Locale.FRANCE, localeList.getFirst());
-        assertEquals(Locale.US, localeList.get(1));
-        // Sorted
+        assertEquals(2, localeList.size());
+        assertTrue(localeList.contains(Locale.FRANCE));
+        assertTrue(localeList.contains(Locale.US));
+        // Sorted - order is deterministic, the en-US default comes first
         localeList = lm.getAvailableLocales(true);
         assertEquals(Locale.US, localeList.getFirst());
         assertEquals(Locale.FRANCE, localeList.get(1));
