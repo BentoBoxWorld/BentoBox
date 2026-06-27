@@ -69,9 +69,14 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, args.getFirst());
             return false;
         }
-        // Refuse if the recipient is already at their concurrent-islands cap (#2908).
+        // Refuse if the recipient would exceed their concurrent-islands cap by gaining this island (#2908).
+        // If the target is already a member of this island it is already counted, so discount it -
+        // otherwise a member whose only island is this one is wrongly blocked at the limit (#2996).
         User target = User.getInstance(targetUUID);
         int num = this.getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld());
+        if (island.inTeam(targetUUID)) {
+            num--;
+        }
         int max = target.getPermissionValue(
                 this.getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number",
                 this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
