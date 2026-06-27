@@ -13,6 +13,8 @@ import static org.mockito.Mockito.when;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -246,5 +248,72 @@ class BucketListenerTest extends CommonTestSetup {
         assertTrue(e.isCancelled());
 
         verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * A Sulfur Cube (Minecraft 26.2) is picked up with an empty bucket; this is blocked by the
+     * BUCKET flag when not allowed. The 26.2 EntityType constant is absent in the test API, so
+     * MAGMA_CUBE is injected as a stand-in for SULFUR_CUBE.
+     */
+    @Test
+    void testOnSulfurCubeBucketingNotAllowed() throws Exception {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        EntityType standIn = EntityType.MAGMA_CUBE;
+        Object previous = getStaticField(BucketListener.class, "SULFUR_CUBE");
+        setStaticField(BucketListener.class, "SULFUR_CUBE", standIn);
+        try {
+            Entity cube = mock(Entity.class);
+            when(cube.getLocation()).thenReturn(location);
+            when(cube.getType()).thenReturn(standIn);
+            PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, cube);
+            PlayerInventory inv = mock(PlayerInventory.class);
+            ItemStack item = mock(ItemStack.class);
+            when(item.getType()).thenReturn(Material.BUCKET);
+            when(inv.getItemInMainHand()).thenReturn(item);
+            when(mockPlayer.getInventory()).thenReturn(inv);
+            l.onTropicalFishScooping(e);
+            assertTrue(e.isCancelled());
+            verify(notifier).notify(any(), eq("protection.protected"));
+        } finally {
+            setStaticField(BucketListener.class, "SULFUR_CUBE", previous);
+        }
+    }
+
+    /**
+     * Bucketing a Sulfur Cube is allowed when the island permits the BUCKET flag.
+     */
+    @Test
+    void testOnSulfurCubeBucketingAllowed() throws Exception {
+        EntityType standIn = EntityType.MAGMA_CUBE;
+        Object previous = getStaticField(BucketListener.class, "SULFUR_CUBE");
+        setStaticField(BucketListener.class, "SULFUR_CUBE", standIn);
+        try {
+            Entity cube = mock(Entity.class);
+            when(cube.getLocation()).thenReturn(location);
+            when(cube.getType()).thenReturn(standIn);
+            PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, cube);
+            PlayerInventory inv = mock(PlayerInventory.class);
+            ItemStack item = mock(ItemStack.class);
+            when(item.getType()).thenReturn(Material.BUCKET);
+            when(inv.getItemInMainHand()).thenReturn(item);
+            when(mockPlayer.getInventory()).thenReturn(inv);
+            l.onTropicalFishScooping(e);
+            assertFalse(e.isCancelled());
+        } finally {
+            setStaticField(BucketListener.class, "SULFUR_CUBE", previous);
+        }
+    }
+
+    private static Object getStaticField(Class<?> clazz, String name) throws Exception {
+        java.lang.reflect.Field f = clazz.getDeclaredField(name);
+        f.setAccessible(true);
+        return f.get(null);
+    }
+
+    @SuppressWarnings("java:S3011")
+    private static void setStaticField(Class<?> clazz, String name, Object value) throws Exception {
+        java.lang.reflect.Field f = clazz.getDeclaredField(name);
+        f.setAccessible(true);
+        f.set(null, value);
     }
 }

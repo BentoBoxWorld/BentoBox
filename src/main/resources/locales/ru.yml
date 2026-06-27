@@ -250,6 +250,22 @@ commands:
         parameters: <игрок> <радиус>
         success: <green>Радиус острова игрока <aqua>[name] </aqua>успешно уменьшен
           до </green> <aqua>[total] </aqua><gray>(<aqua>-[number]</aqua>)</gray>.</green>
+      removebonus:
+        parameters: '<игрок> [id]'
+        description: 'удаляет бонусные радиусы с острова (все или один по id)'
+        no-bonus: '<red>На этом острове нет бонусных радиусов для удаления!</red>'
+        unknown-bonus: '<red>На этом острове нет бонусного радиуса с id </red><aqua>[id]</aqua><red>!</red>'
+        success: '<green>Удалено </green><aqua>[number]</aqua><green> бонусного радиуса с острова игрока </green><aqua>[name]</aqua><green>.</green>'
+        success-id: '<green>Бонусный радиус </green><aqua>[id]</aqua><green> (</green><aqua>[number]</aqua><green>) удалён с острова игрока </green><aqua>[name]</aqua><green>.</green>'
+      purgebonus:
+        parameters: '<id>'
+        description: 'удаляет бонусный радиус с указанным id со всех островов (например, после удаления аддона, который его добавил)'
+        none: '<red>Ни на одном острове нет бонусного радиуса с id </red><aqua>[id]</aqua><red>!</red>'
+        warning: '<gold>Это удалит бонусный радиус </gold><aqua>[id]</aqua><gold> с </gold><aqua>[number]</aqua><gold> остров(ов).</gold>'
+        success: '<green>Бонусный радиус </green><aqua>[id]</aqua><green> удалён с </green><aqua>[number]</aqua><green> остров(ов).</green>'
+        confirm: '<gold>Запустите команду снова с </gold><aqua>confirm</aqua><gold>, чтобы продолжить.</gold>'
+        in-progress: '<red>Очистка бонусных радиусов уже выполняется. Пожалуйста, подождите.</red>'
+        failed: '<red>Не удалось просканировать острова. Проверьте консоль.</red>'
     register:
       parameters: <игрок>
       description: регистрирует игрока на острове без владельца, на котором вы находитесь

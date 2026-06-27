@@ -121,20 +121,24 @@ public class DynmapHook extends MapHook implements Listener {
             existingArea.deleteMarker();
         }
         // Point marker at island center for the label/icon
-        markerSet.createMarker(id, label, worldName,
-                island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ(),
-                markerAPI.getMarkerIcon("default"), true);
+        if (plugin.getSettings().isDynmapIslandMarkers()) {
+            markerSet.createMarker(id, label, worldName,
+                    island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ(),
+                    markerAPI.getMarkerIcon("default"), true);
+        }
         // Area marker showing the protected island border
-        double[] xCorners = { island.getMinProtectedX(), island.getMaxProtectedX(),
-                island.getMaxProtectedX(), island.getMinProtectedX() };
-        double[] zCorners = { island.getMinProtectedZ(), island.getMinProtectedZ(),
-                island.getMaxProtectedZ(), island.getMaxProtectedZ() };
-        AreaMarker area = markerSet.createAreaMarker(id + "_area", label, false, worldName,
-                xCorners, zCorners, true);
-        if (area != null) {
-            area.setRangeY(w.getMaxHeight(), w.getMinHeight());
-            area.setLineStyle(2, 0.8, 0x3388FF);
-            area.setFillStyle(0.15, 0x3388FF);
+        if (plugin.getSettings().isDynmapIslandAreas()) {
+            double[] xCorners = { island.getMinProtectedX(), island.getMaxProtectedX(),
+                    island.getMaxProtectedX(), island.getMinProtectedX() };
+            double[] zCorners = { island.getMinProtectedZ(), island.getMinProtectedZ(),
+                    island.getMaxProtectedZ(), island.getMaxProtectedZ() };
+            AreaMarker area = markerSet.createAreaMarker(id + "_area", label, false, worldName,
+                    xCorners, zCorners, true);
+            if (area != null) {
+                area.setRangeY(w.getMaxHeight(), w.getMinHeight());
+                area.setLineStyle(2, 0.8, 0x3388FF);
+                area.setFillStyle(0.15, 0x3388FF);
+            }
         }
     }
 

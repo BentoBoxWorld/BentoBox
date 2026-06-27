@@ -187,6 +187,18 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "panel.ticks-between-calls", since = "1.16.0", needsRestart = true)
     private long ticksBetweenCalls = 10;
 
+    /* DYNMAP */
+    @ConfigComment("Toggle whether BentoBox shows a marker (house icon) on Dynmap at the center of every island.")
+    @ConfigComment("On worlds with many tightly-packed islands these icons can flood the map. Set to false to hide them.")
+    @ConfigComment("/!\\ Restart the server or use /bbox reload after changing this for it to take effect.")
+    @ConfigEntry(path = "dynmap.island-markers", since = "3.17.1")
+    private boolean dynmapIslandMarkers = true;
+
+    @ConfigComment("Toggle whether BentoBox draws the protected area border box of every island on Dynmap.")
+    @ConfigComment("/!\\ Restart the server or use /bbox reload after changing this for it to take effect.")
+    @ConfigEntry(path = "dynmap.island-areas", since = "3.17.1")
+    private boolean dynmapIslandAreas = true;
+
     /*
      * Logs
      */
@@ -980,6 +992,46 @@ public class Settings implements ConfigObject {
      */
     public void setTicksBetweenCalls(long ticksBetweenCalls) {
         this.ticksBetweenCalls = ticksBetweenCalls;
+    }
+
+    /**
+     * Whether BentoBox shows a marker (house icon) on Dynmap at the center of every island.
+     *
+     * @return true if island markers should be shown
+     * @since 3.17.1
+     */
+    public boolean isDynmapIslandMarkers() {
+        return dynmapIslandMarkers;
+    }
+
+    /**
+     * Sets whether BentoBox shows a marker (house icon) on Dynmap at the center of every island.
+     *
+     * @param dynmapIslandMarkers whether island markers should be shown
+     * @since 3.17.1
+     */
+    public void setDynmapIslandMarkers(boolean dynmapIslandMarkers) {
+        this.dynmapIslandMarkers = dynmapIslandMarkers;
+    }
+
+    /**
+     * Whether BentoBox draws the protected area border box of every island on Dynmap.
+     *
+     * @return true if island area boxes should be drawn
+     * @since 3.17.1
+     */
+    public boolean isDynmapIslandAreas() {
+        return dynmapIslandAreas;
+    }
+
+    /**
+     * Sets whether BentoBox draws the protected area border box of every island on Dynmap.
+     *
+     * @param dynmapIslandAreas whether island area boxes should be drawn
+     * @since 3.17.1
+     */
+    public void setDynmapIslandAreas(boolean dynmapIslandAreas) {
+        this.dynmapIslandAreas = dynmapIslandAreas;
     }
 
     /**

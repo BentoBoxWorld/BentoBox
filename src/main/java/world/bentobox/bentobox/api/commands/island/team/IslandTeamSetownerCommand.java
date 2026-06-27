@@ -98,10 +98,13 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }
-        // Refuse if the recipient is already at their concurrent-islands cap.
+        // Refuse if the recipient would exceed their concurrent-islands cap by gaining this island.
         // Without this check, ownership transfer bypasses the limit set in IslandCreateCommand (#2908).
+        // The target is already a member of this island, so it is already included in their
+        // concurrent-island count - discount it, otherwise a member whose only island is this one is
+        // wrongly blocked once the limit is reached (#2996).
         User target = User.getInstance(targetUUID);
-        int num = getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld());
+        int num = getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld()) - 1;
         int max = target.getPermissionValue(
                 getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number",
                 getIWM().getWorldSettings(getWorld()).getConcurrentIslands());

@@ -211,6 +211,30 @@ class DynmapHookTest extends CommonTestSetup {
     }
 
     @Test
+    void testIslandMarkersDisabledNoPointMarker() {
+        plugin.getSettings().setDynmapIslandMarkers(false);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        // No house icon, but the area box is still drawn
+        verify(markerSet, never()).createMarker(anyString(), anyString(), anyString(),
+                anyDouble(), anyDouble(), anyDouble(), any(MarkerIcon.class), anyBoolean());
+        verify(markerSet).createAreaMarker(eq(uuid.toString() + "_area"), eq("tastybento"), eq(false),
+                eq("bskyblock_world"), any(double[].class), any(double[].class), eq(true));
+    }
+
+    @Test
+    void testIslandAreasDisabledNoAreaMarker() {
+        plugin.getSettings().setDynmapIslandAreas(false);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        // House icon still placed, but no area box
+        verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
+                eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
+        verify(markerSet, never()).createAreaMarker(anyString(), anyString(), anyBoolean(), anyString(),
+                any(double[].class), any(double[].class), anyBoolean());
+    }
+
+    @Test
     void testAreaMarkerYRangeSetToWorldHeight() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
         hookAndReady();

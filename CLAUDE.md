@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BentoBox is a Bukkit/Paper library plugin (Java 21) that provides the core platform for island-style Minecraft games (SkyBlock, AcidIsland, etc.) via an extensible addon system.
+BentoBox is a Bukkit/Paper library plugin (Java 25) that provides the core platform for island-style Minecraft games (SkyBlock, AcidIsland, etc.) via an extensible addon system.
 
 ## Build Commands
 
@@ -143,7 +143,16 @@ A template like `<green>[description]</green>` looks harmless but is a trap. Tra
 - The Gradle build uses the Paper `userdev` plugin and Shadow plugin to produce a fat/shaded JAR at `build/libs/BentoBox-{version}.jar`.
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
 - Java preview features are enabled for both compilation and test execution.
-- Local builds produce version `{buildVersion}-LOCAL-SNAPSHOT` (current: `3.14.2-LOCAL-SNAPSHOT`); CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version. The authoritative version is `buildVersion` in `build.gradle.kts`.
+- Local builds produce version `{buildVersion}-LOCAL-SNAPSHOT` (current: `3.18.0-LOCAL-SNAPSHOT`); CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version. The authoritative version is `buildVersion` in `build.gradle.kts`.
+
+### Minecraft 26.x / Java 25 toolchain
+
+Supporting Minecraft 26.x forced a chain of build changes — keep these in mind before touching versions in `build.gradle.kts`:
+
+- **Java 25.** The 26.x `paper-api` is Java 25 bytecode and its Gradle metadata requires consumers to target Java 25, so BentoBox now compiles to Java 25 (`javaVersion = "25"`, `options.release = 25`). **Addons that compile against BentoBox must also move to Java 25.**
+- **paperweight `2.0.0-SNAPSHOT`.** All 26.x dev bundles are dev-bundle *data version 8*, which no released paperweight (`<= 2.0.0-beta.21`) can read. The snapshot is resolved via a `pluginManagement` block in `settings.gradle.kts` pointing at Paper's repo. The paperweight tool launcher is pinned to Java 25 (the 26.1+ paperclip patch step requires it). Revisit once a stable paperweight reads data-version-8 bundles.
+- **Compile target vs. runtime support.** `paperVersion` is the latest **stable 26.1.2** dev bundle, not 26.2 — because MockBukkit has no 26.2 build and its registry mock throws on 26.2's new `minecraft:sulfur_cube_archetype` registry. Minecraft **26.2 is supported at runtime** (see `ServerCompatibility` and the Modrinth `game-versions` list); 26.2-only blocks/entities are referenced via `Enums.getIfPresent(...)` by name, never a compile-time symbol. The forward "compile against literal 26.2" work is parked in a draft PR until MockBukkit ships a 26.2 build.
+- **MockBukkit coordinate.** Tests use `org.mockbukkit.mockbukkit:mockbukkit-v26.1.2:<ver>` (from Paper's repo), which **must match `paperVersion`'s MC line** — a mismatched MockBukkit fails every test at init with `InternalDataLoadException` (it validates the live API's registries against its bundled per-version data). When bumping the MC version, bump both together.
 
 ## Dependency Source Lookup
 

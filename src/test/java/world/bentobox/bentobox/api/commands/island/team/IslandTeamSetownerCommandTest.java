@@ -240,7 +240,9 @@ class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
     }
 
     /**
-     * Recipient already owns the maximum allowed concurrent islands - transfer must be refused.
+     * Recipient already owns the maximum allowed concurrent islands besides the one being
+     * transferred - transfer must be refused. The target is a member of the island being
+     * transferred (so it is already counted), plus owns {@code max} other islands (#2996).
      */
     @Test
     void testCanExecuteTargetAtConcurrentIslandsCap() {
@@ -248,9 +250,32 @@ class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
         mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(null);
         when(pm.getUUID(anyString())).thenReturn(target);
         when(island.inTeam(any())).thenReturn(true);
-        when(im.getNumberOfConcurrentIslands(eq(target), any())).thenReturn(3);
+        // max is 3; target is a member of this island (counted) plus owns 3 others = 4 total
+        when(im.getNumberOfConcurrentIslands(eq(target), any())).thenReturn(4);
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
+    }
+
+    /**
+     * Transferring ownership to a member whose only island is the one being transferred must be
+     * allowed even when the concurrent-island limit has been reached. The island is already
+     * counted in the target's concurrent total because they are a member of it, so the transfer
+     * does not give them a new island (#2996).
+     */
+    @Test
+    void testCanExecuteTargetIsMemberOfOnlyThisIslandAtLimit() {
+        // World limit of 1 island
+        WorldSettings ws = mock(WorldSettings.class);
+        when(ws.getConcurrentIslands()).thenReturn(1);
+        when(iwm.getWorldSettings(world)).thenReturn(ws);
+        UUID target = UUID.randomUUID();
+        // Offline so getPermissionValue returns the world default (1)
+        mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(null);
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(island.inTeam(any())).thenReturn(true);
+        // The target's only island is the one being transferred (already counted as a member)
+        when(im.getNumberOfConcurrentIslands(eq(target), any())).thenReturn(1);
+        assertTrue(its.canExecute(user, "", List.of("tastybento")));
     }
 
     /**

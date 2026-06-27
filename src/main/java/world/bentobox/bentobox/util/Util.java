@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Enums;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -33,6 +35,7 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Monster;
@@ -82,6 +85,18 @@ public class Util {
      * The section sign character used for legacy color codes, replacing ChatColor.COLOR_CHAR.
      */
     private static final String COLOR_CHAR = "\u00A7";
+
+    /**
+     * The Sulfur Cube entity type (Minecraft 26.2), resolved at runtime so the code still
+     * compiles against earlier API versions where the constant does not exist. {@code null}
+     * when absent, in which case the {@code ==} comparisons against it are simply false.
+     * Intentionally non-final: assigned once at class load, but left non-final so tests can
+     * inject a stand-in type (the JVM constant-folds {@code static final} fields, defeating
+     * reflective injection).
+     */
+    @SuppressWarnings("java:S3008") // non-final by design; see Javadoc (test injection)
+    private static EntityType SULFUR_CUBE = Enums.getIfPresent(EntityType.class, "SULFUR_CUBE")
+            .orNull();
 
     /**
      * Use standard color code definition: {@code &<hex>}.
@@ -426,8 +441,11 @@ public class Util {
         // Most of hostile mobs extends Monster.
         // PufferFish is a unique fix.
 
-        return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
-                entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
+        // Sulfur Cube (26.2) is slime-like but passive, so it must not be treated as hostile
+        // even if it implements Slime at runtime.
+        return (entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
+                entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish)
+                && (SULFUR_CUBE == null || entity.getType() != SULFUR_CUBE);
     }
 
 
@@ -456,8 +474,10 @@ public class Util {
         boolean isCopperGolem = entity.getType().name().equals("COPPER_GOLEM");
         // And the sniffer
         boolean isSniffer = entity.getType().name().equals("SNIFFER");
+        // And the Sulfur Cube (26.2): slime-like but passive
+        boolean isSulfurCube = SULFUR_CUBE != null && entity.getType() == SULFUR_CUBE;
 
-        return isPassiveByClass || isPassiveWaterMob || isCopperGolem || isSniffer;
+        return isPassiveByClass || isPassiveWaterMob || isCopperGolem || isSniffer || isSulfurCube;
     }
 
     public static boolean isTamableEntity(Entity entity) {
