@@ -22,7 +22,7 @@ jobs:
       java_version: "25"                 # BentoBox compiles to Java 25 (Minecraft 26.x); reusable workflow defaults to 21
       hangar_slug: ""
       curseforge_id: "1512488"
-      game_versions: "26.1.2,26.1.1,26.1,1.21.11,1.21.10,1.21.9,1.21.8,1.21.7,1.21.6"
+      game_versions: "26.2,26.1.2,26.1.1,26.1,1.21.11,1.21.10,1.21.9,1.21.8,1.21.7,1.21.6,1.21.5"
       version: ${{ inputs.version }}     # empty on release events -> falls back to the release tag
     secrets:
       HANGAR_API_KEY: ${{ secrets.HANGAR_API_KEY }}
