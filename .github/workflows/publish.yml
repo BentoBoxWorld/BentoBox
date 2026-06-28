@@ -2,7 +2,7 @@
 # CurseForge-first rollout. Hangar left blank; add its slug later to enable Hangar.
 # Includes workflow_dispatch so you can manually (re)publish a given version.
 
-name: Publish release
+name: Publish release to CurseForge
 
 on:
   release:
@@ -18,6 +18,7 @@ jobs:
   publish:
     uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@master
     with:
+      build_tool: "gradle"
       hangar_slug: ""
       curseforge_id: "1512488"
       game_versions: "26.1.2,26.1.1,26.1,1.21.11,1.21.10,1.21.9,1.21.8,1.21.7,1.21.6"
