@@ -16,7 +16,7 @@ on:
 
 jobs:
   publish:
-    uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@main
+    uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@master
     with:
       hangar_slug: ""
       curseforge_id: "1512488"
