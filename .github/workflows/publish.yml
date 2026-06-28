@@ -1,0 +1,19 @@
+# BentoBox — .github/workflows/publish.yml
+# CurseForge-first rollout. Hangar left blank; add its slug later to enable Hangar.
+
+name: Publish release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@main
+    with:
+      hangar_slug: ""
+      curseforge_id: "1512488"
+      game_versions: "26.1.2,26.1.1,26.1,1.21.11,1.21.10,1.21.9,1.21.8,1.21.7,1.21.6"
+    secrets:
+      HANGAR_API_KEY: ${{ secrets.HANGAR_API_KEY }}
+      CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
