@@ -1,0 +1,32 @@
+name: CF version debug (temporary)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect CurseForge game versions and types
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl -fsS -H "X-Api-Token: ${CURSEFORGE_TOKEN}" \
+            "https://minecraft.curseforge.com/api/game/version-types" > types.json
+          curl -fsS -H "X-Api-Token: ${CURSEFORGE_TOKEN}" \
+            "https://minecraft.curseforge.com/api/game/versions" > versions.json
+
+          echo "=== version-types (id  slug  name) ==="
+          jq -r '.[] | "\(.id)\t\(.slug)\t\(.name)"' types.json | sort -n
+
+          echo "=== type ids present in versions.json (count) ==="
+          jq -r '.[].gameVersionTypeID' versions.json | sort -n | uniq -c | sort -rn
+
+          for n in "1.21.11" "1.21.5" "26.1.2" "26.2"; do
+            echo "=== entries named $n ==="
+            jq -r --arg n "$n" '.[] | select(.name==$n) | "id=\(.id) typeId=\(.gameVersionTypeID)"' versions.json
+          done
+
+          echo "=== names that look like loaders (Bukkit/Spigot/Paper/Purpur) ==="
+          jq -r '.[] | select(.name|test("Bukkit|Spigot|Paper|Purpur|Folia";"i")) | "id=\(.id) typeId=\(.gameVersionTypeID) name=\(.name)"' versions.json
