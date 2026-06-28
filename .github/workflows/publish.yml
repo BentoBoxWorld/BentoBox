@@ -19,7 +19,8 @@ jobs:
     uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@master
     with:
       build_tool: "gradle"
-      java_version: "25"                 # BentoBox compiles to Java 25 (Minecraft 26.x); reusable workflow defaults to 21
+      use_release_asset: "true"          # publish the jar attached to the GitHub release; don't rebuild (immune to dependency-repo outages)
+      java_version: "25"                 # only used as a fallback if use_release_asset is turned off; BentoBox compiles to Java 25 (Minecraft 26.x)
       hangar_slug: ""
       curseforge_id: "1512488"
       game_versions: "26.2,26.1.2,26.1.1,26.1,1.21.11,1.21.10,1.21.9,1.21.8,1.21.7,1.21.6,1.21.5"
