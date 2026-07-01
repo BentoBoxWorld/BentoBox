@@ -342,7 +342,7 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
         String[] lines = legacy.split("\n", -1);
         assertEquals(2, lines.length, "expected two lines: " + legacy);
         for (String line : lines) {
-            assertTrue(line.startsWith("§7"),
+            assertTrue(line.startsWith("\u00A77"),
                     "each line should start with the gray colour code: " + line);
         }
     }
