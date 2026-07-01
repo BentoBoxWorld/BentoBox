@@ -196,15 +196,44 @@ repositories {
     maven("https://repo.onarandombox.com/multiverse-releases") { name = "Multiverse-Releases" }
     maven("https://repo.onarandombox.com/multiverse-snapshots") { name = "Multiverse-Snapshots" }
     maven("https://mvn.lumine.io/repository/maven-public/") { name = "Lumine-Releases" } // Mythic mobs
-    maven("https://repo.clojars.org/") { name = "Clojars" }
-    maven("https://repo.fancyplugins.de/releases") { name = "FancyPlugins-Releases" }
-    maven("https://repo.pyr.lol/snapshots") { name = "Pyr-Snapshots" }
     maven("https://maven.devs.beer/") { name = "MatteoDev" }
-    maven("https://repo.mikeprimm.com/") { name = "Dynmap" }
     maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
-    maven("https://repo.momirealms.net/releases/") { name = "MomiRealms" } // CraftEngine custom block plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
+
+    // Vendor-specific repositories scoped to the exact groups they host.
+    // Without exclusiveContent, Gradle queries every repo in order for every
+    // artifact; a fragile host (e.g. fancyplugins returning HTTP 520) that is
+    // queried for a group it does NOT host aborts resolution before the real
+    // repo is reached. Scoping guarantees each group resolves only from its
+    // authoritative source and these hosts are never queried for anything else.
+    exclusiveContent {
+        forRepository { maven("https://repo.mikeprimm.com/") { name = "Dynmap" } }
+        filter { includeGroup("us.dynmap") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://repo.momirealms.net/releases/") { name = "MomiRealms" } } // CraftEngine custom block plugin
+        filter { includeGroup("net.momirealms") }
+    }
+    exclusiveContent {
+        // FancyNpcs/FancyHolograms moved off repo.fancyplugins.de (now offline)
+        // to repo.fancyinnovations.com per the FancyInnovations API docs.
+        forRepository { maven("https://repo.fancyinnovations.com/releases") { name = "FancyInnovations-Releases" } }
+        filter { includeGroup("de.oliver") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://repo.pyr.lol/snapshots") { name = "Pyr-Snapshots" } }
+        filter { includeGroup("lol.pyr") }
+    }
+    // MultiLib (com.github.puregero:multilib) is published to Clojars per the
+    // MultiLib docs (github.com/MultiPaper/MultiLib). Its com.github.* group is
+    // claimed by jitpack, which 404s it, so scope the group exclusively to
+    // Clojars: MultiLib resolves from Clojars instead of falling through to a
+    // jitpack 404, and Clojars is never queried for the vendor groups above.
+    exclusiveContent {
+        forRepository { maven("https://repo.clojars.org/") { name = "Clojars" } }
+        filter { includeGroup("com.github.puregero") }
+    }
 }
 
 
