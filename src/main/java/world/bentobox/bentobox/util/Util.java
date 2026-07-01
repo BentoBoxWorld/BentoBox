@@ -1433,7 +1433,7 @@ public class Util {
         String content = getComponentContent(component);
         if (!content.isEmpty()) {
             emitStyleTransition(sb, effective, state);
-            sb.append(content);
+            appendContentWithNewlineStyleCarry(sb, content, state);
         }
         for (Component child : component.children()) {
             appendComponentLegacy(sb, child, effective, state);
@@ -1529,6 +1529,65 @@ public class Util {
             state.obfuscated = true;
         }
         state.isFresh = false;
+    }
+
+    /**
+     * Appends text content to the legacy output, re-emitting the currently active color and
+     * decorations after every newline. Legacy lore/text is split on {@code \n} downstream (each
+     * line becomes a separate tooltip line), and a color/format code only applies until the end of
+     * its line — so without re-stating the active style, every line after the first would render in
+     * the default color. Vanilla clears decorations when a color code is emitted, so the color is
+     * written first, then any active decorations.
+     *
+     * @param sb output buffer
+     * @param content text that may contain newlines
+     * @param state the currently active emitted style
+     */
+    private static void appendContentWithNewlineStyleCarry(StringBuilder sb, String content, EmittedState state) {
+        if (content.indexOf('\n') < 0) {
+            sb.append(content);
+            return;
+        }
+
+        String active = activeStyleCodes(state);
+        int start = 0;
+        int idx;
+        while ((idx = content.indexOf('\n', start)) >= 0) {
+            sb.append(content, start, idx).append('\n');
+            sb.append(active);
+            start = idx + 1;
+        }
+        sb.append(content, start, content.length());
+    }
+
+    /**
+     * Builds the legacy code sequence that restates the currently active style (color followed by
+     * any active decorations), so it can be re-applied at the start of a new line.
+     *
+     * @param state the currently active emitted style
+     * @return the legacy §-code sequence, or an empty string if nothing is active
+     */
+    private static String activeStyleCodes(EmittedState state) {
+        StringBuilder codes = new StringBuilder();
+        if (state.color != null) {
+            codes.append(legacyColorCode(state.color));
+        }
+        if (state.bold) {
+            codes.append(COLOR_CHAR).append('l');
+        }
+        if (state.italic) {
+            codes.append(COLOR_CHAR).append('o');
+        }
+        if (state.underlined) {
+            codes.append(COLOR_CHAR).append('n');
+        }
+        if (state.strikethrough) {
+            codes.append(COLOR_CHAR).append('m');
+        }
+        if (state.obfuscated) {
+            codes.append(COLOR_CHAR).append('k');
+        }
+        return codes.toString();
     }
 
     private static String legacyColorCode(TextColor color) {

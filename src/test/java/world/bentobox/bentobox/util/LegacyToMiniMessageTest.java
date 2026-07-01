@@ -327,4 +327,40 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
         assertNotNull(color, "Expected a colour");
         assertEquals(0x238af0, color.value());
     }
+
+    /**
+     * Multi-line text is split on '\n' downstream (each line becomes a separate lore/tooltip line),
+     * and a colour code only applies to the end of its line. componentToLegacy must therefore
+     * re-state the active colour after every newline, or every line after the first renders in the
+     * default colour. This is the "second line loses its colour" GUI bug.
+     */
+    @Test
+    void testColourCarriesAcrossNewlines() {
+        Component comp = Util.parseMiniMessage("<gray>Displays a list of\nfree challenges");
+        String legacy = Util.componentToLegacy(comp);
+
+        String[] lines = legacy.split("\n", -1);
+        assertEquals(2, lines.length, "expected two lines: " + legacy);
+        for (String line : lines) {
+            assertTrue(line.startsWith("\u00A77"),
+                    "each line should start with the gray colour code: " + line);
+        }
+    }
+
+    /**
+     * Both the colour and any active decorations must be re-stated after a newline, with the colour
+     * emitted first (a colour code clears decorations in vanilla), then the decorations.
+     */
+    @Test
+    void testColourAndBoldCarryAcrossNewlines() {
+        Component comp = Util.parseMiniMessage("<gold><bold>Line one\nLine two");
+        String legacy = Util.componentToLegacy(comp);
+
+        String[] lines = legacy.split("\n", -1);
+        assertEquals(2, lines.length, "expected two lines: " + legacy);
+        for (String line : lines) {
+            assertTrue(line.startsWith("\u00A76\u00A7l"),
+                    "each line should restate gold then bold: " + line);
+        }
+    }
 }
