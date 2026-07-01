@@ -359,7 +359,7 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
         String[] lines = legacy.split("\n", -1);
         assertEquals(2, lines.length, "expected two lines: " + legacy);
         for (String line : lines) {
-            assertTrue(line.startsWith("§6§l"),
+            assertTrue(line.startsWith("\u00A76\u00A7l"),
                     "each line should restate gold then bold: " + line);
         }
     }
