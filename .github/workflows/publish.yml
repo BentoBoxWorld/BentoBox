@@ -1,0 +1,30 @@
+# BentoBox — .github/workflows/publish.yml
+# CurseForge-first rollout. Hangar left blank; add its slug later to enable Hangar.
+# Includes workflow_dispatch so you can manually (re)publish a given version.
+
+name: Publish release to CurseForge
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 3.18.0)"
+        required: true
+        type: string
+
+jobs:
+  publish:
+    uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@71bf927bce32586216baa6995f21852d944b98b9 # master
+    with:
+      build_tool: "gradle"
+      use_release_asset: "true"          # publish the jar attached to the GitHub release; don't rebuild (immune to dependency-repo outages)
+      java_version: "25"                 # only used as a fallback if use_release_asset is turned off; BentoBox compiles to Java 25 (Minecraft 26.x)
+      hangar_slug: "bentobox"            # Hangar project slug (hangar.papermc.io/BentoBoxWorld/bentobox)
+      curseforge_id: "1512488"
+      game_versions: "26.2,26.1.2,26.1.1,26.1,1.21.11,1.21.10,1.21.9,1.21.8,1.21.7,1.21.6,1.21.5"
+      version: ${{ inputs.version }}     # empty on release events -> falls back to the release tag
+    secrets:
+      HANGAR_API_KEY: ${{ secrets.HANGAR_API_KEY }}
+      CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
