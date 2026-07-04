@@ -223,7 +223,6 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
         when(Util.getUUID("victim")).thenReturn(notUUID);
         when(im.getIsland(any(), eq(notUUID))).thenReturn(island);
-        when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
         when(island.getOwner()).thenReturn(notUUID);
 
         List<String> args = List.of("tastybento", "victim");
@@ -267,6 +266,21 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         when(im.getIsland(any(), eq(notUUID))).thenReturn(null);
 
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "victim")));
+        verify(user).sendMessage("general.errors.player-has-no-island");
+    }
+
+    /**
+     * The named player's active island is a team island they do not own - must not be transferred.
+     */
+    @Test
+    void testCanExecuteIslandOwnerNotActualOwner() {
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        when(Util.getUUID("member")).thenReturn(notUUID);
+        // getIsland() resolves an island owned by someone else (a team island the player belongs to)
+        when(im.getIsland(any(), eq(notUUID))).thenReturn(island);
+        when(island.getOwner()).thenReturn(UUID.randomUUID());
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "member")));
         verify(user).sendMessage("general.errors.player-has-no-island");
     }
 

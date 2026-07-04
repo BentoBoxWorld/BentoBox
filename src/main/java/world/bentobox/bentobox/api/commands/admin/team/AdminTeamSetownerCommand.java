@@ -69,7 +69,10 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
                 return false;
             }
             island = getIslands().getIsland(getWorld(), islandOwnerUUID);
-            if (island == null || !getIslands().hasIsland(getWorld(), islandOwnerUUID)) {
+            // getIsland() returns the player's active/primary island, which may be a team island
+            // they only belong to. Require that they actually own it, so we never transfer the
+            // wrong island out from under its real owner.
+            if (island == null || !islandOwnerUUID.equals(island.getOwner())) {
                 user.sendMessage("general.errors.player-has-no-island");
                 return false;
             }
@@ -170,12 +173,9 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        // args[0] = label, [1] = new owner, [2] = current island owner
-        if (args.size() == 2 || args.size() == 3) {
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
-            List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-            return Optional.of(Util.tabLimit(options, lastArg));
-        }
-        return Optional.empty();
+        // Both positions - the new owner and the current island owner - are player names
+        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        return Optional.of(Util.tabLimit(options, lastArg));
     }
 }
