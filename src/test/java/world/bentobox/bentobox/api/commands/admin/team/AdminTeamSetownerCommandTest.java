@@ -72,6 +72,7 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         User.getInstance(mockPlayer);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
+        when(user.isPlayer()).thenReturn(true);
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
@@ -141,7 +142,8 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
     void testSetup() {
         assertEquals("commands.admin.team.setowner.description", itl.getDescription());
         assertEquals("commands.admin.team.setowner.parameters", itl.getParameters());
-        assertTrue(itl.isOnlyPlayer());
+        // No longer only-player: the console can name the island explicitly
+        assertFalse(itl.isOnlyPlayer());
         assertEquals("mod.team.setowner", itl.getPermission());
     }
 
@@ -210,6 +212,76 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         itl.changeOwner(user);
         // Add other verifications
         verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
+    }
+
+    /**
+     * The console names the island's current owner explicitly - no location and no confirmation.
+     */
+    @Test
+    void testExecuteConsoleWithIslandOwnerArg() {
+        when(user.isPlayer()).thenReturn(false);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        when(Util.getUUID("victim")).thenReturn(notUUID);
+        when(im.getIsland(any(), eq(notUUID))).thenReturn(island);
+        when(island.getOwner()).thenReturn(notUUID);
+
+        List<String> args = List.of("tastybento", "victim");
+        assertTrue(itl.canExecute(user, itl.getLabel(), args));
+        assertTrue(itl.execute(user, itl.getLabel(), args));
+        // No confirmation prompt for the console - the transfer happens immediately
+        verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
+    }
+
+    /**
+     * The console must name the island - it cannot rely on a standing location.
+     */
+    @Test
+    void testCanExecuteConsoleNoIslandArg() {
+        when(user.isPlayer()).thenReturn(false);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+        verify(user).sendMessage("commands.admin.team.setowner.specify-island");
+    }
+
+    /**
+     * Named island owner is unknown.
+     */
+    @Test
+    void testCanExecuteUnknownIslandOwner() {
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        when(Util.getUUID("ghost")).thenReturn(null);
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "ghost")));
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "ghost");
+    }
+
+    /**
+     * Named island owner has no island.
+     */
+    @Test
+    void testCanExecuteIslandOwnerHasNoIsland() {
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        when(Util.getUUID("victim")).thenReturn(notUUID);
+        when(im.getIsland(any(), eq(notUUID))).thenReturn(null);
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "victim")));
+        verify(user).sendMessage("general.errors.player-has-no-island");
+    }
+
+    /**
+     * The named player's active island is a team island they do not own - must not be transferred.
+     */
+    @Test
+    void testCanExecuteIslandOwnerNotActualOwner() {
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        when(Util.getUUID("member")).thenReturn(notUUID);
+        // getIsland() resolves an island owned by someone else (a team island the player belongs to)
+        when(im.getIsland(any(), eq(notUUID))).thenReturn(island);
+        when(island.getOwner()).thenReturn(UUID.randomUUID());
+
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "member")));
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
     /**

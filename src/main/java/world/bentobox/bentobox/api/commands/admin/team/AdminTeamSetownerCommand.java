@@ -40,30 +40,55 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
         setPermission("mod.team.setowner");
         setParametersHelp("commands.admin.team.setowner.parameters");
         setDescription("commands.admin.team.setowner.description");
-        this.setOnlyPlayer(true);
+        // Not only-player: the island can be named explicitly (second arg) so this runs from the
+        // console too, which lets automation (e.g. Skript) transfer ownership.
+        this.setOnlyPlayer(false);
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        // If args are not right, show help
-        if (args.size() != 1) {
+        // Syntax: <new owner> [current island owner]
+        if (args.isEmpty() || args.size() > 2) {
             showHelp(this, user);
             return false;
         }
 
-        // Get target
+        // Get the new owner
         targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
-        // Check that user is on an island
-        Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
-        if (opIsland.isEmpty()) {
-            user.sendMessage("commands.admin.team.setowner.must-be-on-island");
-            return false;
+
+        // Work out which island to transfer
+        if (args.size() == 2) {
+            // Island named by its current owner - location independent, so this works from the console
+            UUID islandOwnerUUID = Util.getUUID(args.get(1));
+            if (islandOwnerUUID == null) {
+                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
+                return false;
+            }
+            island = getIslands().getIsland(getWorld(), islandOwnerUUID);
+            // getIsland() returns the player's active/primary island, which may be a team island
+            // they only belong to. Require that they actually own it, so we never transfer the
+            // wrong island out from under its real owner.
+            if (island == null || !islandOwnerUUID.equals(island.getOwner())) {
+                user.sendMessage("general.errors.player-has-no-island");
+                return false;
+            }
+        } else {
+            // No island named - use the one the player is standing on. This requires an in-game player.
+            if (!user.isPlayer()) {
+                user.sendMessage("commands.admin.team.setowner.specify-island");
+                return false;
+            }
+            Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
+            if (opIsland.isEmpty()) {
+                user.sendMessage("commands.admin.team.setowner.must-be-on-island");
+                return false;
+            }
+            island = opIsland.get();
         }
-        island = opIsland.get();
         previousOwnerUUID = island.getOwner();
         if (targetUUID.equals(previousOwnerUUID)) {
             user.sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, args.getFirst());
@@ -92,6 +117,12 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         Objects.requireNonNull(island);
         Objects.requireNonNull(targetUUID);
+
+        // The console (e.g. Skript automation) cannot answer a confirmation prompt, so transfer at once.
+        if (!user.isPlayer()) {
+            changeOwner(user);
+            return true;
+        }
 
         this.askConfirmation(user, user.getTranslation("commands.admin.team.setowner.confirmation", TextVariables.NAME,
                 args.getFirst(), TextVariables.XYZ, Util.xyz(island.getCenter().toVector())), () -> changeOwner(user));
@@ -142,6 +173,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        // Both positions - the new owner and the current island owner - are player names
         String lastArg = !args.isEmpty() ? args.getLast() : "";
         List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         return Optional.of(Util.tabLimit(options, lastArg));
