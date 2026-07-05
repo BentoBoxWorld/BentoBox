@@ -1114,6 +1114,12 @@ protection:
       description: Abilita/disabilita interazione
       name: Letti
       hint: Uso dei letti disabilitato
+    BED_ANCHOR_RESPAWN:
+      name: Rinascita letto/ancora
+      description: |-
+        <green>I giocatori rinascono in un letto valido o</green>
+        <green>un'ancora di rinascita se si trova su un'isola</green>
+        <green>di cui sono membri.</green>
     BOAT:
       name: Barche
       description: Abilita/disabilita interazione con barche

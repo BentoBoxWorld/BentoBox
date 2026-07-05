@@ -1005,6 +1005,12 @@ protection:
       description: Перемикає взаємодію
       name: Ліжка
       hint: Використання ліжка вимкнено
+    BED_ANCHOR_RESPAWN:
+      name: Відродження біля ліжка/якоря
+      description: |-
+        <green>Гравці відроджуються біля дійсного ліжка</green>
+        <green>або якоря відродження, якщо він на острові,</green>
+        <green>членами якого вони є.</green>
     BOAT:
       name: Човни
       description: |-

@@ -1088,6 +1088,12 @@ protection:
       description: Przełącz interakcje
       name: Łóżka
       hint: Używanie łóżka jest wyłączone.
+    BED_ANCHOR_RESPAWN:
+      name: Odradzanie przy łóżku/kotwicy
+      description: |-
+        <green>Gracze odradzają się przy prawidłowym łóżku</green>
+        <green>lub kotwicy odrodzenia, jeśli znajduje się na wyspie,</green>
+        <green>której są członkami.</green>
     BOAT:
       name: Łódki
       description: Przełącz używanie łódek

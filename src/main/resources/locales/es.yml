@@ -1105,6 +1105,12 @@ protection:
       description: Interacción de camas
       name: Camas
       hint: Uso de camas desactivado
+    BED_ANCHOR_RESPAWN:
+      name: Reaparición en cama/ancla
+      description: |-
+        <green>Los jugadores reaparecen en una cama válida</green>
+        <green>o un ancla de reaparición si está en una isla</green>
+        <green>de la que son miembros.</green>
     BOAT:
       name: Botes
       description: Interacción de Botes

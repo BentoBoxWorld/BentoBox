@@ -11,12 +11,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -40,7 +43,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -529,103 +535,137 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * Respawns not caused by the end exit portal (e.g. death) are ignored.
      */
     @Test
-    void testOnPlayerExitPortalPlayerAlreadyProcessed() {
-        // Create the event
-        @SuppressWarnings("deprecation")
-        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
+    void testOnPlayerExitPortalNotEndPortalReason() {
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false, false, false,
+                PlayerRespawnEvent.RespawnReason.DEATH);
 
-        // Execute the method
         ptl.onPlayerExitPortal(event);
 
-        // Verify that no changes occurred to the event
         assertSame(location, event.getRespawnLocation());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * End portal respawns from non-BentoBox worlds are left to the server.
+     */
     @Test
     void testOnPlayerExitPortalNotBentoBoxWorld() {
-        // Mock teleportOrigin with a world not in BentoBox
-        UUID playerId = mockPlayer.getUniqueId();
-        ptl.getTeleportOrigin().put(playerId, world);
-
-        // Mock the world not being a BentoBox world
+        when(mockPlayer.getWorld()).thenReturn(world);
         when(Util.getWorld(world)).thenReturn(null);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false, false, false,
+                PlayerRespawnEvent.RespawnReason.END_PORTAL);
 
-        // Create the event
-        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
-
-        // Execute the method
         ptl.onPlayerExitPortal(event);
 
-        // Verify that no changes occurred to the event
         assertSame(location, event.getRespawnLocation());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * A player with an island is routed to their safe home, and any stale
+     * teleport origin entry is cleaned up.
+     */
     @Test
-    void testOnPlayerExitPortalIslandExistsRespawnInsideProtection() {
-        // Set up teleportOrigin with a valid world
+    void testOnPlayerExitPortalRoutesToSafeHome() {
         UUID playerId = mockPlayer.getUniqueId();
         ptl.getTeleportOrigin().put(playerId, world);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(im.getIsland(eq(world), eq(playerId))).thenReturn(island);
+        Location home = mock(Location.class);
+        when(home.getWorld()).thenReturn(world);
+        when(home.clone()).thenReturn(home);
+        when(im.getSafeRespawnLocation(eq(world), eq(playerId))).thenReturn(home);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false, false, false,
+                PlayerRespawnEvent.RespawnReason.END_PORTAL);
 
-        // Create the event
-        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
-
-        // Execute the method
         ptl.onPlayerExitPortal(event);
 
-        // Verify that the respawn location remains unchanged
-        assertSame(location, event.getRespawnLocation());
+        // Player routed to their island home, not the server spawn
+        assertSame(home, event.getRespawnLocation());
+        // Stale teleport origin entry cleaned up
+        assertNull(ptl.getTeleportOrigin().get(playerId));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * When no safe home can be resolved, the respawn is anchored at the island
+     * protection center and SafeSpotTeleport is scheduled.
+     */
     @Test
-    void testOnPlayerExitPortalIslandExistsRespawnOutsideProtection() {
-        // Set up teleportOrigin with a valid world
+    void testOnPlayerExitPortalNoSafeHomeSchedulesSafeSpotTeleport() {
         UUID playerId = mockPlayer.getUniqueId();
-        ptl.getTeleportOrigin().put(playerId, world);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(im.getIsland(eq(world), eq(playerId))).thenReturn(island);
+        when(im.getSafeRespawnLocation(eq(world), eq(playerId))).thenReturn(null);
+        Location protectionCenter = mock(Location.class);
+        when(protectionCenter.getWorld()).thenReturn(world);
+        when(protectionCenter.clone()).thenReturn(protectionCenter);
+        when(island.getProtectionCenter()).thenReturn(protectionCenter);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false, false, false,
+                PlayerRespawnEvent.RespawnReason.END_PORTAL);
 
-        // Create the event
-        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
-
-        // Execute the method
         ptl.onPlayerExitPortal(event);
 
-        // Verify that the respawn location was updated to the island spawn point
-        assertSame(location, event.getRespawnLocation());
+        assertSame(protectionCenter, event.getRespawnLocation());
+        verify(sch).runTask(eq(plugin), any(Runnable.class));
     }
 
-    @Test
-    void testOnPlayerExitPortalIslandExistsNoSpawnPoint() {
-        // Set up teleportOrigin with a valid world
-        UUID playerId = mockPlayer.getUniqueId();
-        ptl.getTeleportOrigin().put(playerId, world);
-
-
-        // Create the event
-        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
-
-        // Execute the method
-        ptl.onPlayerExitPortal(event);
-
-        // Verify that the respawn location was updated to the island's protection center
-        assertSame(location, event.getRespawnLocation());
-    }
-
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * A player without an island is sent to the world spawn location.
+     */
     @Test
     void testOnPlayerExitPortalNoIsland() {
-        // Set up teleportOrigin with a valid world
         UUID playerId = mockPlayer.getUniqueId();
-        ptl.getTeleportOrigin().put(playerId, world);
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(im.getIsland(eq(world), eq(playerId))).thenReturn(null);
+        // No spawn island; world spawn (location) is safe
+        when(im.isSafeLocation(location)).thenReturn(true);
+        Location from = mock(Location.class);
+        when(from.getWorld()).thenReturn(world);
+        when(from.clone()).thenReturn(from);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, from, false, false, false,
+                PlayerRespawnEvent.RespawnReason.END_PORTAL);
 
-        // Create the event
-        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false);
-
-        // Execute the method
         ptl.onPlayerExitPortal(event);
 
         // Verify that the respawn location was updated to the world spawn location
         assertSame(location, event.getRespawnLocation());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerExitPortal(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * A valid bed spawn on an island the player is a member of is honored.
+     */
+    @Test
+    void testOnPlayerExitPortalBedSpawnHonored() {
+        UUID playerId = mockPlayer.getUniqueId();
+        when(mockPlayer.getWorld()).thenReturn(world);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        // World settings for the BED_ANCHOR_RESPAWN flag check (default: enabled)
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        when(ws.getWorldFlags()).thenReturn(new HashMap<>());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        // Bed is on an island the player is a member of
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
+        PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, true, false, false,
+                PlayerRespawnEvent.RespawnReason.END_PORTAL);
+
+        ptl.onPlayerExitPortal(event);
+
+        // Bed spawn honored - location unchanged and no rerouting attempted
+        assertSame(location, event.getRespawnLocation());
+        verify(im, never()).getSafeRespawnLocation(any(), any());
+    }
 
 }

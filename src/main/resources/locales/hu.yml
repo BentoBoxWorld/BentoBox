@@ -1123,6 +1123,12 @@ protection:
       description: Interakció váltása
       name: Ágyak
       hint: Ágyhasználat tiltva
+    BED_ANCHOR_RESPAWN:
+      name: Ágy/horgony újraszületés
+      description: |-
+        <green>A játékosok érvényes ágynál vagy</green>
+        <green>újjáéledési horgonynál születnek újra, ha az olyan</green>
+        <green>szigeten van, amelynek tagjai.</green>
     BOAT:
       name: Csónakok
       description: |-

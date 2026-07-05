@@ -1064,6 +1064,12 @@ protection:
       description: Přepnout interakce
       name: Postele
       hint: Použití postele zakázáno
+    BED_ANCHOR_RESPAWN:
+      name: Respawn u postele/kotvy
+      description: |-
+        <green>Hráči se oživí u platné postele</green>
+        <green>nebo kotvy oživení, pokud je na ostrově,</green>
+        <green>jehož jsou členy.</green>
     BOAT:
       name: Lodě
       description: Přepnout interakce lodí

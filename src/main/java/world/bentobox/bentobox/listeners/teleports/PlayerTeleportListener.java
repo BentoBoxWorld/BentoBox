@@ -33,8 +33,10 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 
 /**
@@ -152,46 +154,64 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
 
 
     /**
-     * Player respawn event is triggered when player enters exit portal at the end.
-     * This will take over respawn mechanism and place player on island.
+     * Player respawn event is triggered when player enters the exit portal in the end.
+     * This will take over the respawn mechanism and place the player back on their island
+     * instead of the server's default spawn. Valid bed or respawn anchor spawns on an
+     * island the player is a member of are honored if the
+     * {@link world.bentobox.bentobox.lists.Flags#BED_ANCHOR_RESPAWN} world setting allows it.
      * @param event player respawn event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerExitPortal(PlayerRespawnEvent event)
     {
-        if (!this.teleportOrigin.containsKey(event.getPlayer().getUniqueId()))
+        if (!PlayerRespawnEvent.RespawnReason.END_PORTAL.equals(event.getRespawnReason()))
         {
-            // Player is already processed.
+            // Only handle respawns caused by entering the end exit portal.
             return;
         }
 
-        World fromWorld = this.teleportOrigin.get(event.getPlayer().getUniqueId());
-        World overWorld = Util.getWorld(fromWorld);
+        // The player is still in the end world when this event fires.
+        World overWorld = Util.getWorld(event.getPlayer().getWorld());
 
         if (overWorld == null || !this.plugin.getIWM().inWorld(overWorld))
         {
-            // Not teleporting from/to bentobox worlds.
+            // Not exiting the end of a bentobox world.
+            return;
+        }
+
+        // No longer needed for routing; clean up so a stale entry cannot linger.
+        this.teleportOrigin.remove(event.getPlayer().getUniqueId());
+
+        if (IslandRespawnListener.keepVanillaSpawn(this.plugin, event, overWorld))
+        {
+            // Vanilla resolved a bed/anchor spawn on an island the player is a member of.
             return;
         }
 
         this.getIsland(overWorld, event.getPlayer()).ifPresentOrElse(island -> {
-            if (!island.onIsland(event.getRespawnLocation()))
+            // Route to the player's home, the same way ISLAND_RESPAWN does after death.
+            Location respawnLocation =
+                    this.plugin.getIslands().getSafeRespawnLocation(overWorld, event.getPlayer().getUniqueId());
+
+            if (respawnLocation != null)
             {
-                // If respawn location is outside island protection range, change location to the
-                // spawn in overworld or home location.
-                Location location = island.getSpawnPoint(World.Environment.NORMAL);
-
-                if (location == null)
-                {
-                    // No spawn point. Rare thing. Well, use island protection center.
-                    location = island.getProtectionCenter();
-                }
-
-                event.setRespawnLocation(location);
+                event.setRespawnLocation(respawnLocation);
+            }
+            else
+            {
+                // Anchor the respawn at the island center so the player does not appear at
+                // the server spawn, then schedule SafeSpotTeleport to find a truly safe spot.
+                event.setRespawnLocation(island.getProtectionCenter());
+                Bukkit.getScheduler().runTask(this.plugin, () ->
+                        new SafeSpotTeleport.Builder(this.plugin)
+                                .entity(event.getPlayer())
+                                .island(island)
+                                .cancelIfFail(true)
+                                .build());
             }
         },
                 () -> {
-                    // Player does not an island. Try to get spawn island, and if that fails, use world spawn point.
+                    // Player does not have an island. Try to get spawn island, and if that fails, use world spawn point.
                     // If spawn point is not safe, do nothing. Let server handle it.
 
                     Location spawnLocation = this.getSpawnLocation(overWorld);

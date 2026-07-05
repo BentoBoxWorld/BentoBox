@@ -1043,6 +1043,12 @@ protection:
       description: Toggle interaction
       name: Beds
       hint: Bed use disabled
+    BED_ANCHOR_RESPAWN:
+      name: Bed/anchor respawn
+      description: |-
+        <green>Respawn players at a valid bed or</green>
+        <green>respawn anchor if it is on an island</green>
+        <green>they are a member of.</green>
     BOAT:
       name: Boats
       description: |-

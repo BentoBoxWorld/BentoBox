@@ -1126,6 +1126,12 @@ protection:
       description: Wissel interactie
       name: Bedden
       hint: Bedgebruik is uitgeschakeld
+    BED_ANCHOR_RESPAWN:
+      name: Bed-/anker-respawn
+      description: |-
+        <green>Spelers respawnen bij een geldig bed</green>
+        <green>of herrijzenisanker als het op een eiland staat</green>
+        <green>waarvan ze lid zijn.</green>
     BOAT:
       name: Boten
       description: |-

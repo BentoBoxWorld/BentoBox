@@ -593,6 +593,17 @@ public final class Flags {
             .listener(new IslandRespawnListener()).defaultSetting(true).build();
 
     /**
+     * If enabled (default), a valid bed or respawn anchor spawn point is honored when a
+     * player respawns, as long as it is on an island the player is at least a member of
+     * in the same game mode. If disabled, players are always sent to their island home
+     * when {@link #ISLAND_RESPAWN} applies. Also honored when players return through the
+     * end exit portal.
+     * @since 3.19.0
+     */
+    public static final Flag BED_ANCHOR_RESPAWN = new Flag.Builder("BED_ANCHOR_RESPAWN", Material.RED_BED)
+            .type(Type.WORLD_SETTING).defaultSetting(true).build();
+
+    /**
      * If disabled, prevents redstone from operating on islands whose members are offline.
      * @see OfflineRedstoneListener
      */

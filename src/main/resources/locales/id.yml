@@ -1096,6 +1096,12 @@ protection:
       description: Alihkan interaksi
       name: Tempat tidur
       hint: Penggunaan tempat tidur dinonaktifkan
+    BED_ANCHOR_RESPAWN:
+      name: Muncul kembali di kasur/jangkar
+      description: |-
+        <green>Pemain muncul kembali di kasur atau</green>
+        <green>jangkar kebangkitan yang valid jika berada di pulau</green>
+        <green>tempat mereka menjadi anggota.</green>
     BOAT:
       name: Perahu
       description: |-

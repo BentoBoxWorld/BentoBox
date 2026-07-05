@@ -1131,6 +1131,12 @@ protection:
       description: Interaktion umschalten
       name: Betten
       hint: Bettennutzung deaktiviert
+    BED_ANCHOR_RESPAWN:
+      name: Bett-/Anker-Respawn
+      description: |-
+        <green>Spieler respawnen an einem gültigen Bett</green>
+        <green>oder Respawn-Anker, wenn er auf einer Insel steht,</green>
+        <green>deren Mitglied sie sind.</green>
     BOAT:
       name: Boote
       description: Umschalten der Boots-Interaktionen
