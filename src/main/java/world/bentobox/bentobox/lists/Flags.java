@@ -26,6 +26,7 @@ import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.protection.ExplosionListener;
 import world.bentobox.bentobox.listeners.flags.protection.FireListener;
+import world.bentobox.bentobox.listeners.flags.protection.FishingListener;
 import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
 import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
@@ -219,6 +220,17 @@ public final class Flags {
      * @since 1.21
      */
     public static final Flag AXOLOTL_SCOOPING = new Flag.Builder("AXOLOTL_SCOOPING", Material.AXOLOTL_BUCKET).build();
+
+    // Fishing
+    /**
+     * Prevents players from fishing with a fishing rod.
+     * Defaults to {@link RanksManager#VISITOR_RANK} so fishing stays allowed unless an admin
+     * or island owner restricts it.
+     * @since 3.19.0
+     * @see FishingListener
+     */
+    public static final Flag FISHING = new Flag.Builder("FISHING", Material.FISHING_ROD)
+            .defaultRank(RanksManager.VISITOR_RANK).listener(new FishingListener()).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new Flag.Builder("CHORUS_FRUIT", Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
