@@ -429,6 +429,22 @@ class DefaultPasteUtilTest extends CommonTestSetup {
     }
 
     @Test
+    void testSpawnBlueprintEntitySpawnFailureLogsWarningAndReturnsFalse() {
+        // Hanging entities (item frames, paintings) throw IllegalArgumentException when they
+        // have nothing to attach to - this must not propagate and kill the rest of the batch
+        when(blueprintEntity.getType()).thenReturn(EntityType.ITEM_FRAME);
+        when(world.spawnEntity(any(), any(EntityType.class)))
+                .thenThrow(new IllegalArgumentException("Cannot spawn hanging entity"));
+        mockedUtil.when(() -> Util.xyz(any())).thenReturn("1,2,3");
+
+        boolean result = DefaultPasteUtil.spawnBlueprintEntity(blueprintEntity, location, island);
+
+        assertFalse(result);
+        verify(plugin).logWarning(anyString());
+        verify(blueprintEntity, never()).configureEntity(any());
+    }
+
+    @Test
     void testSpawnBlueprintEntityNoHooksForMythicMobsFallsThrough() {
         // getMythicMobsRecord is non-null but MythicMobs hook is absent → Bukkit spawn
         BlueprintEntity.MythicMobRecord mythicMobRecord =

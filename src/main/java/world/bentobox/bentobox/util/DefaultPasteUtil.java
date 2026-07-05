@@ -224,7 +224,15 @@ public class DefaultPasteUtil {
             // Nothing
             return false;
         }
-        Entity e = location.getWorld().spawnEntity(location, k.getType());
+        Entity e;
+        try {
+            e = location.getWorld().spawnEntity(location, k.getType());
+        } catch (IllegalArgumentException ex) {
+            // Hanging entities (item frames, paintings) cannot spawn without a block to attach to
+            plugin.logWarning("Could not paste entity " + k.getType() + " at "
+                    + Util.xyz(location.toVector()) + ": " + ex.getMessage());
+            return false;
+        }
         applyCustomName(e, k, island);
         k.configureEntity(e);
 
