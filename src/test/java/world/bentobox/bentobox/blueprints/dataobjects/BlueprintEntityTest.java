@@ -5,24 +5,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.Rotation;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
@@ -58,6 +66,10 @@ class BlueprintEntityTest extends CommonTestSetup {
     private Display display;
     @Mock
     private World mockWorld;
+    @Mock
+    private ItemFrame itemFrame;
+    @Mock
+    private Painting painting;
 
     private BlueprintEntity blueprint;
 
@@ -85,6 +97,8 @@ class BlueprintEntityTest extends CommonTestSetup {
         when(horse.getStyle()).thenReturn(Horse.Style.WHITE_DOTS);
         when(horse.getLocation()).thenReturn(location);
         when(cow.getLocation()).thenReturn(location);
+        when(itemFrame.getLocation()).thenReturn(location);
+        when(painting.getLocation()).thenReturn(location);
 
         blueprint = new BlueprintEntity();
         when(display.getType()).thenReturn(EntityType.PLAYER);
@@ -285,6 +299,97 @@ class BlueprintEntityTest extends CommonTestSetup {
     void testFireTicks() {
         blueprint.setFireTicks(20);
         assertEquals(20, blueprint.getFireTicks());
+    }
+
+    @Test
+    void testSerializeItemFrame() {
+        ItemStack item = new ItemStack(Material.DIAMOND);
+        when(itemFrame.getType()).thenReturn(EntityType.ITEM_FRAME);
+        when(itemFrame.getItem()).thenReturn(item);
+        when(itemFrame.getRotation()).thenReturn(Rotation.CLOCKWISE);
+        when(itemFrame.isFixed()).thenReturn(true);
+        when(itemFrame.isVisible()).thenReturn(false);
+        when(itemFrame.getItemDropChance()).thenReturn(0.5F);
+        when(itemFrame.getFacing()).thenReturn(BlockFace.EAST);
+
+        BlueprintEntity localBlueprint = new BlueprintEntity(itemFrame);
+
+        assertEquals(BlockFace.EAST, localBlueprint.getFacing());
+        assertNotNull(localBlueprint.getItemFrame());
+        assertEquals(item, localBlueprint.getItemFrame().item());
+        assertEquals(Rotation.CLOCKWISE, localBlueprint.getItemFrame().rotation());
+        assertTrue(localBlueprint.getItemFrame().isFixed());
+        assertFalse(localBlueprint.getItemFrame().isVisible());
+        assertEquals(0.5F, localBlueprint.getItemFrame().dropChance());
+    }
+
+    @Test
+    void testConfigureEntityWithItemFrame() {
+        ItemStack item = new ItemStack(Material.DIAMOND);
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.ITEM_FRAME);
+        localBlueprint.setFacing(BlockFace.SOUTH);
+        localBlueprint.setItemFrame(new BlueprintEntity.ItemFrameRec(item, Rotation.FLIPPED, true, false, 0.25F));
+
+        localBlueprint.configureEntity(itemFrame);
+
+        verify(itemFrame).setFacingDirection(BlockFace.SOUTH, true);
+        verify(itemFrame).setItem(item);
+        verify(itemFrame).setRotation(Rotation.FLIPPED);
+        verify(itemFrame).setFixed(true);
+        verify(itemFrame).setVisible(false);
+        verify(itemFrame).setItemDropChance(0.25F);
+    }
+
+    @Test
+    void testConfigureEntityWithItemFrameNoStoredData() {
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.ITEM_FRAME);
+
+        localBlueprint.configureEntity(itemFrame);
+
+        // No facing or frame record stored (e.g. legacy blueprint) - nothing applied
+        verify(itemFrame, never()).setFacingDirection(any(), anyBoolean());
+        verify(itemFrame, never()).setItem(any());
+    }
+
+    @Test
+    void testSerializePainting() {
+        Art art = Registry.ART.get(NamespacedKey.minecraft("wanderer"));
+        assertNotNull(art);
+        when(painting.getType()).thenReturn(EntityType.PAINTING);
+        when(painting.getFacing()).thenReturn(BlockFace.NORTH);
+        when(painting.getArt()).thenReturn(art);
+
+        BlueprintEntity localBlueprint = new BlueprintEntity(painting);
+
+        assertEquals(BlockFace.NORTH, localBlueprint.getFacing());
+        assertEquals("minecraft:wanderer", localBlueprint.getPaintingArt());
+    }
+
+    @Test
+    void testConfigureEntityWithPainting() {
+        Art art = Registry.ART.get(NamespacedKey.minecraft("wanderer"));
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+        localBlueprint.setFacing(BlockFace.WEST);
+        localBlueprint.setPaintingArt("minecraft:wanderer");
+
+        localBlueprint.configureEntity(painting);
+
+        verify(painting).setFacingDirection(BlockFace.WEST, true);
+        verify(painting).setArt(art, true);
+    }
+
+    @Test
+    void testConfigureEntityWithPaintingUnknownArt() {
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+        localBlueprint.setPaintingArt("minecraft:does_not_exist");
+
+        localBlueprint.configureEntity(painting);
+
+        verify(painting, never()).setArt(any(), anyBoolean());
     }
 
     @Test
