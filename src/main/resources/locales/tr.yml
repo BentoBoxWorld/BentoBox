@@ -1059,6 +1059,12 @@ protection:
       description: Yatak kullanımı değiş.
       name: Yatak
       hint: Yatağı kapalıda kullan.
+    BED_ANCHOR_RESPAWN:
+      name: Yatak/çapa canlanması
+      description: |-
+        <green>Oyuncular, üyesi oldukları bir adada</green>
+        <green>bulunan geçerli bir yatakta veya canlanma</green>
+        <green>çapasında canlanır.</green>
     BOAT:
       name: Tekne
       description: Tekne kullanımı değiş.

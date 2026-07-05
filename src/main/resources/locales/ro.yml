@@ -1111,6 +1111,12 @@ protection:
       description: Comutați interacțiunea
       name: Paturi
       hint: Utilizarea patului este dezactivată
+    BED_ANCHOR_RESPAWN:
+      name: Respawn la pat/ancoră
+      description: |-
+        <green>Jucătorii reapar la un pat valid sau</green>
+        <green>o ancoră de reapariție dacă se află pe o insulă</green>
+        <green>ai cărei membri sunt.</green>
     BOAT:
       name: Bărci
       description: |-

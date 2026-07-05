@@ -1078,6 +1078,12 @@ protection:
       description: Uključi/isključi interakciju
       name: Kreveti
       hint: Korištenje kreveta onemogućeno
+    BED_ANCHOR_RESPAWN:
+      name: Respawn kod kreveta/sidra
+      description: |-
+        <green>Igrači se ponovno pojavljuju kod valjanog kreveta</green>
+        <green>ili sidra za oživljavanje ako se nalazi na otoku</green>
+        <green>čiji su članovi.</green>
     BOAT:
       name: Čamci
       description: |-

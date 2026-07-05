@@ -1094,6 +1094,12 @@ protection:
       description: Alternar interação
       name: Camas
       hint: Uso da cama desativado
+    BED_ANCHOR_RESPAWN:
+      name: Reaparecimento em cama/âncora
+      description: |-
+        <green>Os jogadores reaparecem numa cama válida</green>
+        <green>ou âncora de reaparecimento se estiver numa ilha</green>
+        <green>da qual são membros.</green>
     BOAT:
       name: Barcos
       description: |-

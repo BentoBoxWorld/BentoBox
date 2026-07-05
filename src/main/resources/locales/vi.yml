@@ -1069,6 +1069,12 @@ protection:
       description: Bật/Tắt tương tác
       name: Giường
       hint: Đã tắt dùng giường
+    BED_ANCHOR_RESPAWN:
+      name: Hồi sinh tại giường/neo
+      description: |-
+        <green>Người chơi hồi sinh tại giường hoặc</green>
+        <green>neo hồi sinh hợp lệ nếu nó nằm trên đảo</green>
+        <green>mà họ là thành viên.</green>
     BOAT:
       name: Thuyền
       description: |-

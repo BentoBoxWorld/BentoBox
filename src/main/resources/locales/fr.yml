@@ -1124,6 +1124,12 @@ protection:
       description: Autoriser l'utilisation des lits
       name: Lits
       hint: vous ne pouvez pas utiliser les lits
+    BED_ANCHOR_RESPAWN:
+      name: Réapparition lit/ancre
+      description: |-
+        <green>Les joueurs réapparaissent à un lit valide</green>
+        <green>ou une ancre de réapparition si situé sur une île</green>
+        <green>dont ils sont membres.</green>
     BOAT:
       name: Bateaux
       description: Autoriser l'interaction avec les bateaux

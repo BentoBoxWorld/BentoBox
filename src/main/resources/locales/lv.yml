@@ -1085,6 +1085,12 @@ protection:
       description: Pārslēdz izmantošanu
       name: Gultas
       hint: Gultas lietošana atslēgta
+    BED_ANCHOR_RESPAWN:
+      name: Atdzimšana pie gultas/enkura
+      description: |-
+        <green>Spēlētāji atdzimst pie derīgas gultas</green>
+        <green>vai atdzimšanas enkura, ja tas atrodas uz salas,</green>
+        <green>kuras dalībnieki viņi ir.</green>
     BOAT:
       name: Laivas
       description: Pārslēdz laivas izmantošanu

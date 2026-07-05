@@ -26,11 +26,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+
+import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
@@ -48,9 +49,6 @@ class IslandRespawnListenerTest extends CommonTestSetup {
 
     @Mock
     private Location safeLocation;
-
-    @Mock
-    private Location islandCenter;
 
     @Override
     @BeforeEach
@@ -97,6 +95,7 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         when(im.getPrimaryIsland(any(), any())).thenReturn(island);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.isSafeLocation(safeLocation)).thenReturn(true);
+        when(im.getSafeRespawnLocation(eq(world), any(UUID.class))).thenReturn(safeLocation);
 
         User.setPlugin(plugin);
         User.getInstance(mockPlayer);
@@ -249,64 +248,8 @@ class IslandRespawnListenerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
-     * When the home location is not safe but one block above is safe, the player
-     * should respawn one block above the home.
-     */
-    @Test
-    void testOnPlayerRespawnUnsafeHomeOneAboveSafe() {
-        // Die
-        List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
-        IslandRespawnListener l = new IslandRespawnListener();
-        l.onPlayerDeath(e);
-        // Has island
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        // Make clone().add() return the same mock (simulating one block above)
-        when(safeLocation.add(any(Vector.class))).thenReturn(safeLocation);
-        // Home is unsafe on first check, but safe on subsequent checks (one block above)
-        when(im.isSafeLocation(safeLocation)).thenReturn(false, true);
-        // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
-        l.onPlayerRespawn(ev);
-        // Player should respawn at lPlusOne (which is same mock object as safeLocation after clone/add)
-        assertEquals(safeLocation, ev.getRespawnLocation());
-    }
-
-    /**
-     * Test method for
-     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
-     * When the home location and one block above are both unsafe, the player should
-     * respawn at a safe location found on the island center.
-     */
-    @Test
-    void testOnPlayerRespawnUnsafeHomeFallsBackToIslandCenter() {
-        // Die
-        List<ItemStack> drops = new ArrayList<>();
-        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
-        IslandRespawnListener l = new IslandRespawnListener();
-        l.onPlayerDeath(e);
-        // Has island
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        // Home and one-above are both unsafe
-        when(im.isSafeLocation(safeLocation)).thenReturn(false);
-        // Island center is available and safe
-        when(islandCenter.getWorld()).thenReturn(world);
-        when(islandCenter.clone()).thenReturn(islandCenter);
-        when(islandCenter.add(any(Vector.class))).thenReturn(islandCenter);
-        when(im.getIslandLocation(eq(world), any(UUID.class))).thenReturn(islandCenter);
-        when(im.isSafeLocation(islandCenter)).thenReturn(true);
-        // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
-        l.onPlayerRespawn(ev);
-        // Player should respawn at island center (or an offset from it)
-        assertEquals(islandCenter, ev.getRespawnLocation());
-    }
-
-    /**
-     * Test method for
-     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
-     * When the home location is unsafe and no safe location can be found on the island,
-     * and the player has no island, the respawn location should remain unchanged.
+     * When no safe respawn location can be resolved and the player has no island,
+     * the respawn location should remain unchanged.
      */
     @Test
     void testOnPlayerRespawnUnsafeHomeNoSafeIslandLocation() {
@@ -317,9 +260,8 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         l.onPlayerDeath(e);
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        // Home is unsafe, no island location, and getIsland returns null (no island)
-        when(im.isSafeLocation(safeLocation)).thenReturn(false);
-        when(im.getIslandLocation(eq(world), any(UUID.class))).thenReturn(null);
+        // No safe respawn location can be resolved, and getIsland returns null (no island)
+        when(im.getSafeRespawnLocation(eq(world), any(UUID.class))).thenReturn(null);
         when(im.getIsland(any(World.class), any(User.class))).thenReturn(null);
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
@@ -332,8 +274,8 @@ class IslandRespawnListenerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
-     * When all quick sync checks fail but the player has an island, the respawn
-     * location should be set to the island protection center and SafeSpotTeleport
+     * When no safe respawn location can be resolved but the player has an island, the
+     * respawn location should be set to the island protection center and SafeSpotTeleport
      * should be scheduled to find a truly safe spot after respawn.
      */
     @Test
@@ -345,13 +287,8 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         l.onPlayerDeath(e);
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        // Home, one-above, and center offsets are all unsafe
-        when(im.isSafeLocation(safeLocation)).thenReturn(false);
-        when(safeLocation.add(any(Vector.class))).thenReturn(safeLocation);
-        when(islandCenter.clone()).thenReturn(islandCenter);
-        when(islandCenter.add(any(Vector.class))).thenReturn(islandCenter);
-        when(im.getIslandLocation(eq(world), any(UUID.class))).thenReturn(islandCenter);
-        when(im.isSafeLocation(islandCenter)).thenReturn(false);
+        // No safe respawn location can be resolved
+        when(im.getSafeRespawnLocation(eq(world), any(UUID.class))).thenReturn(null);
         // Player has an island for SafeSpotTeleport fallback
         when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
         Location protectionCenter = mock(Location.class);
@@ -365,6 +302,107 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         assertEquals(protectionCenter, ev.getRespawnLocation());
         // SafeSpotTeleport should be scheduled to run on next tick
         verify(sch).runTask(eq(plugin), any(Runnable.class));
+    }
+
+    /**
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * A valid bed spawn on an island the player is a member of should be honored:
+     * the respawn location is left untouched and respawn commands still run.
+     */
+    @Test
+    void testOnPlayerRespawnBedSpawnOnOwnIslandHonored() {
+        // Die
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+        // Bed location is on an island the player is a member of
+        UUID playerId = mockPlayer.getUniqueId();
+        when(location.getWorld()).thenReturn(world);
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
+        // Respawn with a bed spawn
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, true, false, false, RespawnReason.DEATH);
+        l.onPlayerRespawn(ev);
+        // Bed spawn honored - location unchanged
+        assertSame(location, ev.getRespawnLocation());
+        // Respawn commands still run
+        mockedUtil.verify(() -> Util.runCommands(any(User.class), anyString(), eq(Collections.emptyList()), eq("respawn")));
+    }
+
+    /**
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * A valid respawn anchor spawn on an island the player is a member of should be honored.
+     */
+    @Test
+    void testOnPlayerRespawnAnchorSpawnOnOwnIslandHonored() {
+        // Die
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+        // Anchor location is on an island the player is a member of
+        UUID playerId = mockPlayer.getUniqueId();
+        when(location.getWorld()).thenReturn(world);
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
+        // Respawn with an anchor spawn
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, true, false, RespawnReason.DEATH);
+        l.onPlayerRespawn(ev);
+        // Anchor spawn honored - location unchanged
+        assertSame(location, ev.getRespawnLocation());
+    }
+
+    /**
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * A bed spawn on an island the player is NOT a member of (e.g. a bed placed while
+     * visiting) should not be honored - the player is sent to their island home.
+     */
+    @Test
+    void testOnPlayerRespawnBedSpawnNotMemberIgnored() {
+        // Die
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+        // Bed location is on an island but the player is not a member
+        when(location.getWorld()).thenReturn(world);
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
+        // Respawn with a bed spawn
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, true, false, false, RespawnReason.DEATH);
+        l.onPlayerRespawn(ev);
+        // Bed spawn NOT honored - player sent to island home
+        assertEquals(safeLocation, ev.getRespawnLocation());
+    }
+
+    /**
+     * Test method for
+     * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * When the BED_ANCHOR_RESPAWN world setting is disabled, bed spawns are ignored and
+     * the player is always sent to their island home.
+     */
+    @Test
+    void testOnPlayerRespawnBedSpawnFlagDisabled() {
+        Flags.BED_ANCHOR_RESPAWN.setSetting(world, false);
+        // Die
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+        // Bed location is on an island the player is a member of
+        UUID playerId = mockPlayer.getUniqueId();
+        when(location.getWorld()).thenReturn(world);
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
+        // Respawn with a bed spawn
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, true, false, false, RespawnReason.DEATH);
+        l.onPlayerRespawn(ev);
+        // Bed spawn NOT honored because the world setting is disabled
+        assertEquals(safeLocation, ev.getRespawnLocation());
     }
 }
 

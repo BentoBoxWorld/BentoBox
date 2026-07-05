@@ -12,9 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -26,7 +23,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * Handles respawning back on island
- * 
+ *
  * @author tastybento
  *
  */
@@ -36,7 +33,7 @@ public class IslandRespawnListener extends FlagListener {
 
     /**
      * Tag players who die in island space and have an island
-     * 
+     *
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -56,8 +53,10 @@ public class IslandRespawnListener extends FlagListener {
     }
 
     /**
-     * Place players back on their island if respawn on island is true and active
-     * 
+     * Place players back on their island if respawn on island is true and active.
+     * Valid bed or respawn anchor spawns on an island the player is a member of are
+     * honored if the {@link Flags#BED_ANCHOR_RESPAWN} world setting allows it.
+     *
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL)
@@ -74,38 +73,28 @@ public class IslandRespawnListener extends FlagListener {
         World w = Util.getWorld(world);
         String ownerName = e.getPlayer().getName();
         if (w != null) {
-            Location respawnLocation = getIslands().getHomeLocation(world, e.getPlayer().getUniqueId());
-            if (respawnLocation != null && !getIslands().isSafeLocation(respawnLocation)) {
-                // Home location is not safe (e.g. the block was removed).
-                // Try one block above first (covers slabs, stairs, etc.)
-                Location lPlusOne = respawnLocation.clone().add(new Vector(0, 1, 0));
-                if (getIslands().isSafeLocation(lPlusOne)) {
-                    respawnLocation = lPlusOne;
-                } else {
-                    // Quick sync checks near the island center
-                    respawnLocation = getSafeIslandLocation(world, e.getPlayer().getUniqueId());
-                }
-            }
             Island island = getIslands().getIsland(w, User.getInstance(e.getPlayer()));
             if (island != null) {
                 ownerName = getPlugin().getPlayers().getName(island.getOwner());
             }
-            if (respawnLocation != null && getIslands().isSafeLocation(respawnLocation)) {
-                e.setRespawnLocation(respawnLocation);
-            } else if (island != null) {
-                // Final fallback: anchor the respawn at the island center so the player
-                // does not appear at world spawn (0,0), then immediately schedule
-                // SafeSpotTeleport to relocate them to the nearest truly safe spot.
-                e.setRespawnLocation(island.getProtectionCenter());
-                Player player = e.getPlayer();
-                Island finalIsland = island;
-                Bukkit.getScheduler().runTask(getPlugin(), () ->
-                        new SafeSpotTeleport.Builder(getPlugin())
-                                .entity(player)
-                                .island(finalIsland)
-                                .cancelIfFail(true)
-                                .build()
-                );
+            if (!keepVanillaSpawn(getPlugin(), e, w)) {
+                Location respawnLocation = getIslands().getSafeRespawnLocation(world, e.getPlayer().getUniqueId());
+                if (respawnLocation != null) {
+                    e.setRespawnLocation(respawnLocation);
+                } else if (island != null) {
+                    // Final fallback: anchor the respawn at the island center so the player
+                    // does not appear at world spawn (0,0), then immediately schedule
+                    // SafeSpotTeleport to relocate them to the nearest truly safe spot.
+                    e.setRespawnLocation(island.getProtectionCenter());
+                    Player player = e.getPlayer();
+                    Bukkit.getScheduler().runTask(getPlugin(), () ->
+                            new SafeSpotTeleport.Builder(getPlugin())
+                                    .entity(player)
+                                    .island(island)
+                                    .cancelIfFail(true)
+                                    .build()
+                    );
+                }
             }
         }
         // Run respawn commands, if any
@@ -113,33 +102,33 @@ public class IslandRespawnListener extends FlagListener {
     }
 
     /**
-     * Tries quick synchronous checks for a safe respawn location near the island
-     * center. Used as an intermediate fallback when the player's home location is
-     * not safe (e.g. the home block was removed). If none of these quick spots work,
-     * the caller should use {@link SafeSpotTeleport} for a comprehensive async scan.
+     * Checks whether the vanilla-resolved respawn location should be kept instead of
+     * sending the player to their island home. It is kept when it comes from a bed or
+     * respawn anchor, the {@link Flags#BED_ANCHOR_RESPAWN} world setting is enabled,
+     * and the bed/anchor is in the same game mode on an island the player is at least
+     * a member of.
      *
-     * @param world - the island world
-     * @param uuid  - the player's UUID
-     * @return a safe location near the island center, or {@code null} if none found
+     * @param plugin - plugin
+     * @param e - the respawn event, carrying the vanilla-resolved respawn location
+     * @param w - the game mode's overworld
+     * @return true if the vanilla respawn location should be honored
+     * @since 3.19.0
      */
-    @Nullable
-    private Location getSafeIslandLocation(@NonNull World world, @NonNull UUID uuid) {
-        Location islandLoc = getIslands().getIslandLocation(world, uuid);
-        if (islandLoc == null) {
-            return null;
+    public static boolean keepVanillaSpawn(BentoBox plugin, PlayerRespawnEvent e, World w) {
+        if (!e.isBedSpawn() && !e.isAnchorSpawn()) {
+            return false;
         }
-        // Try a default offset from the island center (same offsets used by getAsyncSafeHomeLocation)
-        Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
-        if (getIslands().isSafeLocation(dl)) {
-            return dl;
+        if (!Flags.BED_ANCHOR_RESPAWN.isSetForWorld(w)) {
+            return false;
         }
-        // Try directly above the island center at a safe height
-        dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
-        if (getIslands().isSafeLocation(dl)) {
-            return dl;
+        Location loc = e.getRespawnLocation();
+        if (!w.equals(Util.getWorld(loc.getWorld()))) {
+            return false; // bed/anchor is in a different game mode or a non-game world
         }
-        // No quick sync spot found; SafeSpotTeleport will do the comprehensive scan
-        return null;
+        // Only honor spawns inside an island's protected area, consistent with other location checks
+        return plugin.getIslands().getProtectedIslandAt(loc)
+                .map(i -> i.getMemberSet().contains(e.getPlayer().getUniqueId()))
+                .orElse(false);
     }
 
 }

@@ -1005,6 +1005,11 @@ protection:
       description: 切換 床交互/使用權
       name: '<green><bold>使用床</bold></green>'
       hint: '<red>已被禁止使用床</red>'
+    BED_ANCHOR_RESPAWN:
+      name: '<green><bold>床/重生錨重生</bold></green>'
+      description: |-
+        <gray>如果有效的床或重生錨位於</gray>
+        <gray>玩家所屬的島嶼上，則在該處重生</gray>
     BOAT:
       name: '<green><bold>使用船隻</bold></green>'
       description: 切換 船隻交互/使用權

@@ -919,8 +919,49 @@ public class IslandsManager {
     }
 
     /**
+     * Get a safe location on the player's island for respawning. Tries the player's
+     * home location first, then one block above it (covers slabs, stairs, etc.), then
+     * quick spots near the island center. All checks are synchronous. If nothing safe
+     * is found, returns {@code null} and callers should fall back to
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport} for a comprehensive
+     * async scan.
+     *
+     * @param world - the island world
+     * @param uuid  - the player's UUID
+     * @return a safe respawn location on the player's island, or {@code null} if none found
+     * @since 3.19.0
+     */
+    @Nullable
+    public Location getSafeRespawnLocation(@NonNull World world, @NonNull UUID uuid) {
+        Location home = getHomeLocation(world, uuid);
+        if (home != null) {
+            if (isSafeLocation(home)) {
+                return home;
+            }
+            // Try one block above the home (covers slabs, stairs, etc.)
+            Location above = home.clone().add(new Vector(0, 1, 0));
+            if (isSafeLocation(above)) {
+                return above;
+            }
+        }
+        // Quick sync checks near the island center - same offsets used by getAsyncSafeHomeLocation
+        Location islandLoc = getIslandLocation(world, uuid);
+        if (islandLoc != null) {
+            Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
+            if (isSafeLocation(dl)) {
+                return dl;
+            }
+            dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
+            if (isSafeLocation(dl)) {
+                return dl;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get the named home location for user in world
-     * 
+     *
      * @param world - world
      * @param user  - user
      * @param name  - name of home, or blank for default

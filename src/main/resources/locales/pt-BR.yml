@@ -1087,6 +1087,12 @@ protection:
       description: Permitir interação
       name: Camas
       hint: Uso de camas desabilitado
+    BED_ANCHOR_RESPAWN:
+      name: Renascimento em cama/âncora
+      description: |-
+        <green>Jogadores renascem em uma cama válida</green>
+        <green>ou âncora de renascimento se estiver em uma ilha</green>
+        <green>da qual são membros.</green>
     BOAT:
       name: Barcos
       description: Permitir colocação, quebra e uso de barcos.

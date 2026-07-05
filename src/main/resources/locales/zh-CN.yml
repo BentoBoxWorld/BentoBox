@@ -1010,6 +1010,9 @@ protection:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用床</color:#FAFAD2>'
       name: '<aqua><bold>床</bold></aqua>'
       hint: 禁止使用床
+    BED_ANCHOR_RESPAWN:
+      name: '<aqua><bold>床/重生锚重生</bold></aqua>'
+      description: '<color:#FAFAD2>如果有效的床或重生锚位于玩家所属的岛屿上，则在该处重生</color:#FAFAD2>'
     BOAT:
       name: '<aqua><bold>船</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>放置、破坏或进入船</color:#FAFAD2>'
