@@ -1324,6 +1324,10 @@ protection:
       description: |-
         <green>Ateşin yanındaki bloklara</green>
         <green>saçılmasını ayarlar.</green>
+    FISHING:
+      name: Balık tutma
+      description: Olta ile balık tutmaya izin ver
+      hint: Balık tutma kapalı
     FISH_SCOOPING:
       name: Kovayla balık tutma.
       description: Kovayla balık almasını değiş.

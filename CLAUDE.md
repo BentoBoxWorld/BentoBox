@@ -142,6 +142,7 @@ A template like `<green>[description]</green>` looks harmless but is a trap. Tra
 
 - The Gradle build uses the Paper `userdev` plugin and Shadow plugin to produce a fat/shaded JAR at `build/libs/BentoBox-{version}.jar`.
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
+- Locale translations are produced with Claude, not GitLocalize. When a key is added to `en-US.yml`, translate it into every other `src/main/resources/locales/*.yml` file in the same PR, preserving each file's existing style (e.g. the MiniMessage-tagged names in `zh-CN.yml` / `zh-HK.yml`).
 - Java preview features are enabled for both compilation and test execution.
 - Local builds produce version `{buildVersion}-LOCAL-SNAPSHOT` (current: `3.18.1-LOCAL-SNAPSHOT`); CI builds append `-b{BUILD_NUMBER}-SNAPSHOT`; `origin/master` builds produce the bare version. The authoritative version is `buildVersion` in `build.gradle.kts`.
 

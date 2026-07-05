@@ -1399,6 +1399,10 @@ protection:
       description: |-
         <green>Basculer si le feu peut se propager</green>
         <green>aux blocs voisins ou non.</green>
+    FISHING:
+      name: Pêche
+      description: Autoriser la pêche avec une canne à pêche
+      hint: Pêche désactivée
     FISH_SCOOPING:
       name: Pêche à la source
       description: Autoriser la capture de poissons avec un seau

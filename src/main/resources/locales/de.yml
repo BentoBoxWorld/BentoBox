@@ -1408,6 +1408,10 @@ protection:
       description: |-
         <green>Umschalten, ob Feuer sich</green>
         <green>auf nahe gelegene Blöcke ausbreiten kann oder nicht.</green>
+    FISHING:
+      name: Angeln
+      description: Erlaubt das Angeln mit einer Angel
+      hint: Angeln deaktiviert
     FISH_SCOOPING:
       name: Fische fangen
       description: Erlaubt das Fangen von Fischen mit einem Eimer

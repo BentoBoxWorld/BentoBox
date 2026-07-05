@@ -1359,6 +1359,10 @@ protection:
     FIRE_SPREAD:
       name: Rozprzestrzenianie ognia
       description: Przełącz rozprzestrzenianie
+    FISHING:
+      name: Wędkowanie
+      description: Zezwól na wędkowanie za pomocą wędki
+      hint: Wędkowanie jest wyłączone
     FISH_SCOOPING:
       name: Zbieranie ryb wiadrem
       description: Zezwól na zbieranie ryb za pomocą wiadra

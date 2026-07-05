@@ -1330,6 +1330,10 @@ protection:
       description: |-
         <green>Toggle whether fire can spread</green>
         <green>to nearby blocks or not.</green>
+    FISHING:
+      name: Fishing
+      description: Allow fishing with a fishing rod
+      hint: Fishing disabled
     FISH_SCOOPING:
       name: Fish Scooping
       description: Allow scooping of fishes using a bucket

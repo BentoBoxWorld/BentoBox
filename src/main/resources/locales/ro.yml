@@ -1395,6 +1395,10 @@ protection:
       description: |-
         <green>Comutați dacă focul se poate răspândi</green>
         <green>la blocurile din apropiere sau nu.</green>
+    FISHING:
+      name: Pescuit
+      description: Permiteți pescuitul cu o undiță
+      hint: Pescuitul este dezactivat
     FISH_SCOOPING:
       name: Scooping de pește
       description: Permiteți scoaterea peștilor folosind o găleată

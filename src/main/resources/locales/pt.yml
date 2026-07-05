@@ -1381,6 +1381,10 @@ protection:
       description: |-
         <green>Alternar se o fogo pode se espalhar</green>
         <green>para blocos próximos ou não.</green>
+    FISHING:
+      name: Pesca
+      description: Permitir pescar com uma cana de pesca
+      hint: Pesca desativada
     FISH_SCOOPING:
       name: Escavação de peixe
       description: Permitir escavar peixes usando um balde

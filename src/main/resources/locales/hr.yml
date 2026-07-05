@@ -1365,6 +1365,10 @@ protection:
       description: |-
         <green>Uključivanje/isključivanje može li se vatra proširiti</green>
         <green>u obližnje blokove ili ne.</green>
+    FISHING:
+      name: Pecanje
+      description: Omogućuje pecanje štapom za pecanje
+      hint: Pecanje onemogućeno
     FISH_SCOOPING:
       name: Grabljenje ribe
       description: Omogućuje vađenje ribe pomoću kante

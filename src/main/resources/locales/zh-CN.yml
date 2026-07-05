@@ -1270,6 +1270,10 @@ protection:
     FIRE_SPREAD:
       name: '<aqua><bold>火势蔓延</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>火势蔓延到附近的方块</color:#FAFAD2>'
+    FISHING:
+      name: '<aqua><bold>钓鱼</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用钓鱼竿钓鱼</color:#FAFAD2>'
+      hint: 禁止钓鱼
     FISH_SCOOPING:
       name: '<aqua><bold>捕捞鱼</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>用水桶捕捞鱼</color:#FAFAD2>'
