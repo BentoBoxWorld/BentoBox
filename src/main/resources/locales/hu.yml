@@ -1410,6 +1410,10 @@ protection:
       description: |-
         <green>Kapcsolja be, hogy a tűz továbbterjedhet-e</green>
         <green>a közeli blokkokra vagy sem.</green>
+    FISHING:
+      name: Horgászat
+      description: Engedélyezi a horgászbottal való horgászatot
+      hint: Horgászat letiltva
     FISH_SCOOPING:
       name: Hal befogás vödörrel
       description: Engedje meg a halak vödörrel való befogását

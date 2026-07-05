@@ -1289,6 +1289,10 @@ protection:
       description: |-
         <green>Перемикає, чи може вогонь</green>
         <green>поширюватися на сусідні блоки.</green>
+    FISHING:
+      name: Риболовля
+      description: Дозволити риболовлю вудкою
+      hint: Риболовлю вимкнено
     FISH_SCOOPING:
       name: Вилов риб
       description: Дозволити вилов риб відром

@@ -1364,6 +1364,10 @@ protection:
         <green>Pārslēdz vai uguns var</green>
         <green>izplatīties uz blakusesošajiem</green>
         <green>blokiem.</green>
+    FISHING:
+      name: Makšķerēšana
+      description: Atļauj makšķerēšanu ar makšķeri
+      hint: Makšķerēšana nav atļauta
     FISH_SCOOPING:
       name: Zivju iesmelšana
       description: Pārslēdz iespēju zivis iesmelt spaiņos

@@ -1410,6 +1410,10 @@ protection:
       description: |-
         <green>Omschakelen of vuur zich kan verspreiden</green>
         <green>naar nabijgelegen blokken of niet.</green>
+    FISHING:
+      name: Vissen
+      description: Sta vissen met een hengel toe
+      hint: Vissen is uitgeschakeld
     FISH_SCOOPING:
       name: Vis scheppen
       description: Sta het scheppen van vissen toe met een emmer

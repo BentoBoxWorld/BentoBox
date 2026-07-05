@@ -1259,6 +1259,10 @@ protection:
     FIRE_SPREAD:
       name: 延焼
       description: 火の広がりをトグル
+    FISHING:
+      name: 釣り
+      description: 釣り竿での釣りを許可
+      hint: 釣り無効
     FISH_SCOOPING:
       name: 魚すくい
       description: バケツを使用して魚をすくい取る

@@ -1286,6 +1286,10 @@ protection:
       description: |-
         <green>불이 가까운 블럭으로</green>
         <green>번질것인지 설정.</green>
+    FISHING:
+      name: 낚시
+      description: 낚싯대로 낚시하는 것을 허용합니다
+      hint: 낚시 비활성화
     FISH_SCOOPING:
       name: 물고기 양동이
       description: 양동이를 사용하여 물고기를 떠 다닐 수 있습니다

@@ -1387,6 +1387,10 @@ protection:
       description: |-
         <green>Scegli se il fuoco può espandersi</green>
         <green>ai blocchi vicini oppure no.</green>
+    FISHING:
+      name: Pesca
+      description: Permetti la pesca con una canna da pesca
+      hint: Pesca disabilitata
     FISH_SCOOPING:
       name: Raccolta di pesci
       description: Permetti la raccolta dei pesci utilizzando un secchio

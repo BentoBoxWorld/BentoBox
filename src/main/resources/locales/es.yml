@@ -1379,6 +1379,10 @@ protection:
       description: |-
         <green>Modificar si el fuego puede exparcirse</green>
         <green>a bloques cercanos o no.</green>
+    FISHING:
+      name: Pesca
+      description: Permitir pescar con una caña de pescar
+      hint: Pesca deshabilitada
     FISH_SCOOPING:
       name: Recolección de pescado
       description: Permitir Recolección de pescado usando un balde

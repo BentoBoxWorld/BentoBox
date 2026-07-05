@@ -1273,6 +1273,10 @@ protection:
     FIRE_SPREAD:
       name: 火焰蔓延
       description: 切換火焰能否蔓延
+    FISHING:
+      name: '<green><bold>釣魚</bold></green>'
+      description: 允許/禁止 使用魚竿釣魚
+      hint: '<red>已被禁止釣魚</red>'
     FISH_SCOOPING:
       name: '<green><bold>捕魚</bold></green>'
       description: 允許/禁止 用水桶捕魚

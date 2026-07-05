@@ -1383,6 +1383,10 @@ protection:
       description: |-
         <green>Beralih apakah api dapat menyebar</green>
         <green>ke blok terdekat atau tidak.</green>
+    FISHING:
+      name: Memancing
+      description: Izinkan memancing menggunakan pancing
+      hint: Memancing dinonaktifkan
     FISH_SCOOPING:
       name: Menyendoki Ikan
       description: Biarkan menyendok ikan menggunakan ember

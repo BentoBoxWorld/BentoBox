@@ -1353,6 +1353,10 @@ protection:
       description: |-
         <green>Bật/Tắt việc lửa có thể</green>
         <green>lan ra các khối bên cạnh.</green>
+    FISHING:
+      name: Câu cá
+      description: Cho phép câu cá bằng cần câu
+      hint: Đã tắt câu cá
     FISH_SCOOPING:
       name: Bắt cá
       description: Cho phép bắt cá bằng xô

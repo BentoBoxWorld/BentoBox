@@ -1411,6 +1411,10 @@ protection:
       description: |-
         <green>Переключает распространение огня</green>
         <green>на близлежащие блоки</green>
+    FISHING:
+      name: Рыбалка
+      description: Разрешает рыбалку удочкой
+      hint: Рыбалка запрещена
     FISH_SCOOPING:
       name: Сбор рыбы
       description: Переключает сбор рыбы ведром
