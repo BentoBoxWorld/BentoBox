@@ -125,7 +125,8 @@ public class IslandRespawnListener extends FlagListener {
         if (!w.equals(Util.getWorld(loc.getWorld()))) {
             return false; // bed/anchor is in a different game mode or a non-game world
         }
-        return plugin.getIslands().getIslandAt(loc)
+        // Only honor spawns inside an island's protected area, consistent with other location checks
+        return plugin.getIslands().getProtectedIslandAt(loc)
                 .map(i -> i.getMemberSet().contains(e.getPlayer().getUniqueId()))
                 .orElse(false);
     }

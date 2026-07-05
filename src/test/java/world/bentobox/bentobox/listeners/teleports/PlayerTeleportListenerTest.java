@@ -576,11 +576,11 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.getTeleportOrigin().put(playerId, world);
         when(mockPlayer.getWorld()).thenReturn(world);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(im.getIsland(eq(world), eq(playerId))).thenReturn(island);
+        when(im.getIsland(world, playerId)).thenReturn(island);
         Location home = mock(Location.class);
         when(home.getWorld()).thenReturn(world);
         when(home.clone()).thenReturn(home);
-        when(im.getSafeRespawnLocation(eq(world), eq(playerId))).thenReturn(home);
+        when(im.getSafeRespawnLocation(world, playerId)).thenReturn(home);
         PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, false, false, false,
                 PlayerRespawnEvent.RespawnReason.END_PORTAL);
 
@@ -602,8 +602,8 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         UUID playerId = mockPlayer.getUniqueId();
         when(mockPlayer.getWorld()).thenReturn(world);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(im.getIsland(eq(world), eq(playerId))).thenReturn(island);
-        when(im.getSafeRespawnLocation(eq(world), eq(playerId))).thenReturn(null);
+        when(im.getIsland(world, playerId)).thenReturn(island);
+        when(im.getSafeRespawnLocation(world, playerId)).thenReturn(null);
         Location protectionCenter = mock(Location.class);
         when(protectionCenter.getWorld()).thenReturn(world);
         when(protectionCenter.clone()).thenReturn(protectionCenter);
@@ -626,7 +626,7 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         UUID playerId = mockPlayer.getUniqueId();
         when(mockPlayer.getWorld()).thenReturn(world);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(im.getIsland(eq(world), eq(playerId))).thenReturn(null);
+        when(im.getIsland(world, playerId)).thenReturn(null);
         // No spawn island; world spawn (location) is safe
         when(im.isSafeLocation(location)).thenReturn(true);
         Location from = mock(Location.class);
@@ -656,7 +656,7 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         when(ws.getWorldFlags()).thenReturn(new HashMap<>());
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
         // Bed is on an island the player is a member of
-        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
         PlayerRespawnEvent event = new PlayerRespawnEvent(mockPlayer, location, true, false, false,
                 PlayerRespawnEvent.RespawnReason.END_PORTAL);

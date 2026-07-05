@@ -320,7 +320,7 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         // Bed location is on an island the player is a member of
         UUID playerId = mockPlayer.getUniqueId();
         when(location.getWorld()).thenReturn(world);
-        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
         // Respawn with a bed spawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, true, false, false, RespawnReason.DEATH);
@@ -346,7 +346,7 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         // Anchor location is on an island the player is a member of
         UUID playerId = mockPlayer.getUniqueId();
         when(location.getWorld()).thenReturn(world);
-        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
         // Respawn with an anchor spawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, true, false, RespawnReason.DEATH);
@@ -370,7 +370,7 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         l.onPlayerDeath(e);
         // Bed location is on an island but the player is not a member
         when(location.getWorld()).thenReturn(world);
-        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(UUID.randomUUID()));
         // Respawn with a bed spawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, true, false, false, RespawnReason.DEATH);
@@ -396,7 +396,7 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         // Bed location is on an island the player is a member of
         UUID playerId = mockPlayer.getUniqueId();
         when(location.getWorld()).thenReturn(world);
-        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
         // Respawn with a bed spawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, true, false, false, RespawnReason.DEATH);
