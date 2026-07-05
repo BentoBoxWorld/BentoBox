@@ -37,6 +37,7 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Painting;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -426,6 +427,21 @@ class DefaultPasteUtilTest extends CommonTestSetup {
 
         // No owner available; name is used as-is
         verify(e).customName(Component.text("Lonely Boss"));
+    }
+
+    @Test
+    void testSpawnBlueprintEntityPaintingUsesSpawnPainting() {
+        when(blueprintEntity.getType()).thenReturn(EntityType.PAINTING);
+        Painting p = mock(Painting.class);
+        when(blueprintEntity.spawnPainting(location)).thenReturn(p);
+
+        boolean result = DefaultPasteUtil.spawnBlueprintEntity(blueprintEntity, location, island);
+
+        assertTrue(result);
+        // Paintings must go through the anchor-correcting pre-spawn path, not spawnEntity
+        verify(blueprintEntity).spawnPainting(location);
+        verify(world, never()).spawnEntity(any(), any(EntityType.class));
+        verify(blueprintEntity).configureEntity(p);
     }
 
     @Test

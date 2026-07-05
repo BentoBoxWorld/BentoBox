@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
@@ -39,6 +40,8 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -379,6 +382,114 @@ class BlueprintEntityTest extends CommonTestSetup {
 
         verify(painting).setFacingDirection(BlockFace.WEST, true);
         verify(painting).setArt(art, true);
+    }
+
+    /**
+     * Stub mockWorld.spawn to run the pre-spawn consumer on the painting mock and return it.
+     */
+    private void stubPaintingSpawn() {
+        when(mockWorld.spawn(any(Location.class), eq(Painting.class),
+                ArgumentMatchers.<Consumer<? super Painting>>any())).thenAnswer(inv -> {
+                    Consumer<Painting> consumer = inv.getArgument(2);
+                    consumer.accept(painting);
+                    return painting;
+                });
+    }
+
+    private Location capturePaintingSpawnLocation() {
+        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
+        verify(mockWorld).spawn(captor.capture(), eq(Painting.class),
+                ArgumentMatchers.<Consumer<? super Painting>>any());
+        return captor.getValue();
+    }
+
+    @Test
+    void testSpawnPaintingEvenSizeFacingSouthShiftsAnchorWestAndDown() {
+        stubPaintingSpawn();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+        localBlueprint.setFacing(BlockFace.SOUTH);
+        localBlueprint.setPaintingArt("minecraft:bust"); // 2 wide x 2 high
+
+        Painting result = localBlueprint.spawnPainting(new Location(mockWorld, 10.5, 64.0, 20.5));
+
+        assertEquals(painting, result);
+        Location anchor = capturePaintingSpawnLocation();
+        // Facing SOUTH: center is half a block towards EAST (+x), so anchor is one block west
+        assertEquals(9.5, anchor.getX());
+        // Even height: center is half a block up, so anchor is one block down
+        assertEquals(63.0, anchor.getY());
+        assertEquals(20.5, anchor.getZ());
+        verify(painting).setFacingDirection(BlockFace.SOUTH, true);
+        verify(painting).setArt(Registry.ART.get(NamespacedKey.minecraft("bust")), true);
+    }
+
+    @Test
+    void testSpawnPaintingEvenSizeFacingNorthOnlyShiftsDown() {
+        stubPaintingSpawn();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+        localBlueprint.setFacing(BlockFace.NORTH);
+        localBlueprint.setPaintingArt("minecraft:bust"); // 2 wide x 2 high
+
+        localBlueprint.spawnPainting(new Location(mockWorld, 10.5, 64.0, 20.5));
+
+        Location anchor = capturePaintingSpawnLocation();
+        // Facing NORTH: center is half a block towards WEST (-x), still in the anchor block
+        assertEquals(10.5, anchor.getX());
+        assertEquals(63.0, anchor.getY());
+        assertEquals(20.5, anchor.getZ());
+    }
+
+    @Test
+    void testSpawnPaintingEvenWidthFacingWestShiftsAnchorNorth() {
+        stubPaintingSpawn();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+        localBlueprint.setFacing(BlockFace.WEST);
+        localBlueprint.setPaintingArt("minecraft:pool"); // 2 wide x 1 high
+
+        localBlueprint.spawnPainting(new Location(mockWorld, 10.5, 64.0, 20.5));
+
+        Location anchor = capturePaintingSpawnLocation();
+        assertEquals(10.5, anchor.getX());
+        // Odd height: no vertical shift
+        assertEquals(64.0, anchor.getY());
+        // Facing WEST: center is half a block towards SOUTH (+z), so anchor is one block north
+        assertEquals(19.5, anchor.getZ());
+    }
+
+    @Test
+    void testSpawnPaintingOddSizeNoAnchorShift() {
+        stubPaintingSpawn();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+        localBlueprint.setFacing(BlockFace.SOUTH);
+        localBlueprint.setPaintingArt("minecraft:kebab"); // 1 wide x 1 high
+
+        localBlueprint.spawnPainting(new Location(mockWorld, 10.5, 64.0, 20.5));
+
+        Location anchor = capturePaintingSpawnLocation();
+        assertEquals(10.5, anchor.getX());
+        assertEquals(64.0, anchor.getY());
+        assertEquals(20.5, anchor.getZ());
+    }
+
+    @Test
+    void testSpawnPaintingLegacyBlueprintNoArtNoFacing() {
+        stubPaintingSpawn();
+        BlueprintEntity localBlueprint = new BlueprintEntity();
+        localBlueprint.setType(EntityType.PAINTING);
+
+        localBlueprint.spawnPainting(new Location(mockWorld, 10.5, 64.0, 20.5));
+
+        // No stored data: spawn at the stored block, nothing forced
+        Location anchor = capturePaintingSpawnLocation();
+        assertEquals(10.5, anchor.getX());
+        assertEquals(64.0, anchor.getY());
+        assertEquals(20.5, anchor.getZ());
+        verify(painting, never()).setFacingDirection(any(), anyBoolean());
+        verify(painting, never()).setArt(any(), anyBoolean());
     }
 
     @Test
