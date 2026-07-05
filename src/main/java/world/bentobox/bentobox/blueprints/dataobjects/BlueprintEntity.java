@@ -340,14 +340,63 @@ public class BlueprintEntity {
     }
 
     private void setPainting(Painting painting) {
-        if (paintingArt == null) {
-            return;
-        }
-        NamespacedKey key = NamespacedKey.fromString(paintingArt);
-        Art art = key == null ? null : Registry.ART.get(key);
+        Art art = getPaintingArtwork();
         if (art != null) {
             painting.setArt(art, true);
         }
+    }
+
+    /**
+     * @return the stored painting art resolved from the registry, or null if none is stored
+     *         or the key is unknown on this server
+     */
+    private Art getPaintingArtwork() {
+        if (paintingArt == null) {
+            return null;
+        }
+        NamespacedKey key = NamespacedKey.fromString(paintingArt);
+        return key == null ? null : Registry.ART.get(key);
+    }
+
+    /**
+     * Spawns a painting with the stored art and facing applied before the entity is added
+     * to the world, at the anchor block the painting originally hung from.
+     * <p>
+     * A painting's entity location is the center of its bounding box. For even block
+     * widths the center sits half a block towards the counter-clockwise side of the
+     * facing, and for even block heights half a block up - in both cases outside the
+     * anchor block Minecraft hangs the painting from. Spawning at the stored entity block
+     * would shift the painting, so the anchor is recomputed here from the art dimensions.
+     *
+     * @param location center of the block the painting entity location was copied in
+     * @return the spawned painting
+     * @since 3.18.1
+     */
+    public Painting spawnPainting(Location location) {
+        Art art = getPaintingArtwork();
+        Location anchor = location.clone();
+        if (art != null) {
+            if (art.getBlockHeight() % 2 == 0) {
+                anchor.subtract(0, 1, 0);
+            }
+            if (art.getBlockWidth() % 2 == 0) {
+                // Only the facings whose counter-clockwise side points along a positive
+                // axis (SOUTH -> EAST, WEST -> SOUTH) push the center into the next block
+                if (facing == BlockFace.SOUTH) {
+                    anchor.subtract(1, 0, 0);
+                } else if (facing == BlockFace.WEST) {
+                    anchor.subtract(0, 0, 1);
+                }
+            }
+        }
+        return location.getWorld().spawn(anchor, Painting.class, p -> {
+            if (facing != null) {
+                p.setFacingDirection(facing, true);
+            }
+            if (art != null) {
+                p.setArt(art, true);
+            }
+        });
     }
 
     /**
