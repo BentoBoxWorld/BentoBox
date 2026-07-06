@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -69,15 +71,25 @@ class BlueMapHookTest extends CommonTestSetup {
     private MockedStatic<BlueMapAPI> mockedBlueMapAPI;
     private BlueMapHook hook;
     private Map<String, MarkerSet> mapMarkerSets;
+    private Consumer<BlueMapAPI> onEnableConsumer;
+    private Consumer<BlueMapAPI> onDisableConsumer;
 
     @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        // BlueMapAPI static mock
+        // BlueMapAPI static mock. hook() registers onEnable/onDisable callbacks rather than
+        // calling getInstance(); capture them so tests can simulate BlueMap (re)loading.
         mockedBlueMapAPI = Mockito.mockStatic(BlueMapAPI.class);
-        mockedBlueMapAPI.when(BlueMapAPI::getInstance).thenReturn(Optional.of(blueMapAPI));
+        mockedBlueMapAPI.when(() -> BlueMapAPI.onEnable(any())).thenAnswer(inv -> {
+            onEnableConsumer = inv.getArgument(0);
+            return null;
+        });
+        mockedBlueMapAPI.when(() -> BlueMapAPI.onDisable(any())).thenAnswer(inv -> {
+            onDisableConsumer = inv.getArgument(0);
+            return null;
+        });
 
         // BlueMap world/map chain
         mapMarkerSets = new HashMap<>();
@@ -123,12 +135,25 @@ class BlueMapHookTest extends CommonTestSetup {
     }
 
     /**
-     * Calls hook() then fires BentoBoxReadyEvent to trigger island marker population,
+     * Calls hook(), simulates BlueMap becoming available, then fires BentoBoxReadyEvent,
      * mirroring the real startup sequence.
      */
     private void hookAndReady() {
         hook.hook();
+        simulateBlueMapEnable();
         hook.onBentoBoxReady(mock(BentoBoxReadyEvent.class));
+    }
+
+    /** Simulates BlueMap's API becoming available (initial load or after a reload). */
+    private void simulateBlueMapEnable() {
+        onEnableConsumer.accept(blueMapAPI);
+    }
+
+    /** Simulates BlueMap tearing down its API (as happens at the start of a reload). */
+    private void simulateBlueMapDisable() {
+        if (onDisableConsumer != null) {
+            onDisableConsumer.accept(blueMapAPI);
+        }
     }
 
     @AfterEach
@@ -146,9 +171,12 @@ class BlueMapHookTest extends CommonTestSetup {
     }
 
     @Test
-    void testHookFailsWhenBlueMapNotPresent() {
-        mockedBlueMapAPI.when(BlueMapAPI::getInstance).thenReturn(Optional.empty());
-        assertFalse(hook.hook());
+    void testHookRegistersLifecycleCallbacks() {
+        // hook() succeeds by registering with BlueMap's lifecycle; it no longer fails just
+        // because BlueMap's API is not loaded at hook time (that was the startup race).
+        assertTrue(hook.hook());
+        mockedBlueMapAPI.verify(() -> BlueMapAPI.onEnable(any()));
+        mockedBlueMapAPI.verify(() -> BlueMapAPI.onDisable(any()));
     }
 
     @Test
@@ -160,7 +188,32 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testBentoBoxReadyCallsRegisterGameMode() {
         hookAndReady();
-        verify(im).getIslands(overWorld);
+        verify(im, atLeastOnce()).getIslands(overWorld);
+    }
+
+    /**
+     * Regression test for the reported bug: island markers disappeared after "/bluemap reload"
+     * and did not return until a full server restart. A reload discards BlueMap's maps (and
+     * their marker sets) and re-enables the API with fresh, empty maps. The hook must re-attach
+     * its markers via the onEnable callback.
+     */
+    @Test
+    void testMarkersSurviveBlueMapReload() {
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        assertNotNull(mapMarkerSets.get("BSkyBlock"));
+
+        // Simulate /bluemap reload: BlueMap disables, then re-enables with a brand new,
+        // empty marker-set map on the freshly rebuilt map.
+        Map<String, MarkerSet> freshMapSets = new HashMap<>();
+        when(blueMapMap.getMarkerSets()).thenReturn(freshMapSets);
+        simulateBlueMapDisable();
+        simulateBlueMapEnable();
+
+        // The island marker set and its markers must be re-attached to the new map.
+        assertTrue(freshMapSets.containsKey("BSkyBlock"));
+        assertNotNull(freshMapSets.get("BSkyBlock").get(uuid.toString()));
+        assertNotNull(freshMapSets.get("BSkyBlock").get(uuid.toString() + "_area"));
     }
 
     // ---- getPluginName() / getFailureCause() ----
@@ -400,6 +453,7 @@ class BlueMapHookTest extends CommonTestSetup {
     @Test
     void testGetBlueMapAPI() {
         hook.hook();
+        simulateBlueMapEnable();
         assertEquals(blueMapAPI, hook.getBlueMapAPI());
     }
 
@@ -423,6 +477,7 @@ class BlueMapHookTest extends CommonTestSetup {
     void testCreateMarkerSet() {
         when(blueMapAPI.getMaps()).thenReturn(List.of(blueMapMap));
         hook.hook();
+        simulateBlueMapEnable();
         hook.createMarkerSet("warps.markers", "Warps");
         // Should be attached to the BlueMap map
         assertTrue(mapMarkerSets.containsKey("warps.markers"));

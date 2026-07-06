@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.hooks;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,16 +52,47 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @Override
     public boolean hook() {
-        if (BlueMapAPI.getInstance().isPresent()) {
-            api = BlueMapAPI.getInstance().get();
-        } else {
-            return false;
-        }
+        // Register with BlueMap's own lifecycle instead of grabbing the API once. BlueMap
+        // invokes the onEnable callback immediately if its API is already loaded, and again
+        // every time BlueMap (re)loads - crucially, after a "/bluemap reload", which discards
+        // BlueMap's maps and their marker sets. Re-populating from the callback means our
+        // island markers survive a reload instead of vanishing until the next server restart.
+        // A one-shot getInstance() in hook() was also racy at startup: if BlueMap had not
+        // finished loading yet, the hook silently produced no markers.
+        BlueMapAPI.onEnable(loadedApi -> {
+            this.api = loadedApi;
+            populateAll();
+        });
+        BlueMapAPI.onDisable(disabledApi -> this.api = null);
         // Listen for island events and BentoBoxReadyEvent to populate island markers
         // after islands are loaded (map hooks register before addons enable, so islands
         // are not yet loaded at hook time)
         Bukkit.getPluginManager().registerEvents(this, plugin);
         return true;
+    }
+
+    /**
+     * (Re)creates and attaches every known marker set to BlueMap. Called whenever BlueMap's
+     * API becomes available (including after a reload) and once islands have loaded. Safe to
+     * call repeatedly - marker creation is idempotent.
+     */
+    private void populateAll() {
+        if (api == null) {
+            return;
+        }
+        // Rebuild island markers for every game mode and re-attach the sets to their worlds
+        Set<String> gameModeNames = new HashSet<>();
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> {
+            gameModeNames.add(addon.getWorldSettings().getFriendlyName());
+            registerGameMode(addon);
+        });
+        // Re-attach any addon-created marker sets (created via createMarkerSet) to all maps,
+        // since a BlueMap reload drops them from the freshly built maps too
+        markerSets.forEach((id, markerSet) -> {
+            if (!gameModeNames.contains(id)) {
+                api.getMaps().forEach(map -> map.getMarkerSets().put(id, markerSet));
+            }
+        });
     }
 
     /**
@@ -269,8 +302,10 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        // Now that islands are loaded, populate markers for all game modes
-        plugin.getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
+        // Islands are now loaded. If BlueMap enabled before this point its onEnable callback
+        // ran against an empty island cache, so populate again now. No-op if BlueMap's API is
+        // not yet available - its onEnable callback will populate once it is.
+        populateAll();
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
