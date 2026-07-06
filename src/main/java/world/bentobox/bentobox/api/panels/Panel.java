@@ -145,7 +145,11 @@ public class Panel implements HeadRequester, InventoryHolder {
      * @since 3.19.0
      */
     protected boolean tryRefreshInPlace(String name, Map<Integer, PanelItem> items, int size) {
-        if (inventory == null || !Objects.equals(this.name, name) || inventory.getSize() != fixSize(size)) {
+        // Compute the target size from the *incoming* items (matching makePanel, which sets
+        // this.items before calling fixSize) so that an auto-sized (size==0) refresh whose new
+        // contents need a different inventory size correctly falls back to a full reopen.
+        if (inventory == null || !Objects.equals(this.name, name)
+                || inventory.getSize() != fixSize(size, items.size())) {
             return false;
         }
         this.items = items;
@@ -170,9 +174,13 @@ public class Panel implements HeadRequester, InventoryHolder {
     }
 
     private int fixSize(int size) {
+        return fixSize(size, items.size());
+    }
+
+    private int fixSize(int size, int itemCount) {
         // If size is undefined (0) then use the number of items
         if (size == 0) {
-            size = items.size();
+            size = itemCount;
         }
         if (size > 0) {
             // Make sure size is a multiple of 9 and is 54 max.

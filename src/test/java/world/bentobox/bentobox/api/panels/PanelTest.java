@@ -346,4 +346,32 @@ class PanelTest extends CommonTestSetup {
         assertFalse(p.tryRefreshInPlace(name, items, 19));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#tryRefreshInPlace(String, Map, int)}.
+     * With auto-size (size == 0) the target size must be derived from the <b>incoming</b> items,
+     * exactly like makePanel. If the refreshed contents would compute to a different inventory
+     * size, an in-place refresh cannot represent that and must decline - otherwise the new items
+     * would overflow the stale, smaller inventory.
+     */
+    @Test
+    void testTryRefreshInPlaceAutoSizeDifferentSizeReturnsFalse() {
+        ItemStack itemStack = mock(ItemStack.class);
+        PanelItem item = mock(PanelItem.class);
+        when(item.getItem()).thenReturn(itemStack);
+
+        // Built from 1 item with size == 0 -> fixSize(0) == 9
+        Map<Integer, PanelItem> oneItem = new HashMap<>();
+        oneItem.put(0, item);
+        when(inv.getSize()).thenReturn(9);
+        Panel p = new Panel(name, oneItem, 0, user, listener);
+
+        // Refreshed contents fill 10 slots -> fixSize(0) == 18, differing from the existing 9.
+        // Computed from the incoming items (not the old this.items), so this must decline.
+        Map<Integer, PanelItem> tenItems = new HashMap<>();
+        for (int i = 0; i < 10; i++) {
+            tenItems.put(i, item);
+        }
+        assertFalse(p.tryRefreshInPlace(name, tenItems, 0));
+    }
+
 }
