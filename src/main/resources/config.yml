@@ -137,6 +137,25 @@ bluemap:
   # /!\ Restart the server or use /bbox reload after changing this for it to take effect.
   # Added since 3.18.1.
   island-areas: true
+  # Path to a custom icon for the island POI marker, relative to BlueMap's web root
+  # (e.g. "assets/island.png" or "assets/island.svg"). Leave blank to use BlueMap's default POI icon.
+  # Added since 3.18.1.
+  marker-icon: ''
+  # Pixel anchor of the custom icon - the point of the image that sits on the island location.
+  # Ignored when marker-icon is blank.
+  marker-icon-anchor-x: 25
+  marker-icon-anchor-y: 45
+  # Distance range (in blocks) within which the island POI marker is visible on the map.
+  # The defaults effectively mean "always visible".
+  marker-min-distance: 0.0
+  marker-max-distance: 10000000.0
+  # Colour and styling of the protected-area rectangle. Colours are hex strings, e.g. '#3388FF'.
+  area-line-color: '#3388FF'
+  area-fill-color: '#3388FF'
+  # Fill opacity, 0.0 (transparent) to 1.0 (opaque).
+  area-fill-opacity: 0.15
+  # Border line width in pixels.
+  area-line-width: 2
 logs:
   # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
   # It can be spammy if there are a lot of superflat chunks to regenerate.

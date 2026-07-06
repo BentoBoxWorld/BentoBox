@@ -21,6 +21,7 @@ import de.bluecolored.bluemap.api.markers.POIMarker;
 import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import de.bluecolored.bluemap.api.math.Shape;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
@@ -138,29 +139,65 @@ public class BlueMapHook extends MapHook implements Listener {
     }
 
     private void setMarker(MarkerSet markerSet, Island island) {
+        Settings settings = plugin.getSettings();
         String label = getIslandLabel(island);
         String id = island.getUniqueId();
 
         // Point marker at island center for the label/icon
-        if (plugin.getSettings().isBluemapIslandMarkers()) {
-            POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
+        if (settings.isBluemapIslandMarkers()) {
+            POIMarker.Builder builder = POIMarker.builder().label(label).listed(true)
                     .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
-                    .build();
-            markerSet.put(id, marker);
+                    .minDistance(settings.getBluemapMarkerMinDistance())
+                    .maxDistance(settings.getBluemapMarkerMaxDistance());
+            String icon = settings.getBluemapMarkerIcon();
+            if (icon != null && !icon.isBlank()) {
+                builder.icon(icon, settings.getBluemapMarkerIconAnchorX(), settings.getBluemapMarkerIconAnchorY());
+            } else {
+                builder.defaultIcon();
+            }
+            markerSet.put(id, builder.build());
         }
         // Shape marker showing the protected island border
-        if (plugin.getSettings().isBluemapIslandAreas()) {
+        if (settings.isBluemapIslandAreas()) {
             ShapeMarker area = ShapeMarker.builder()
                     .label(label)
                     .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
                             island.getMaxProtectedX(), island.getMaxProtectedZ()),
                             (float) island.getCenter().getY())
-                    .lineColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255))
-                    .fillColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255, 0.15f))
-                    .lineWidth(2)
+                    .lineColor(parseHexColor(settings.getBluemapAreaLineColor(), 1.0f))
+                    .fillColor(parseHexColor(settings.getBluemapAreaFillColor(),
+                            (float) settings.getBluemapAreaFillOpacity()))
+                    .lineWidth(settings.getBluemapAreaLineWidth())
                     .build();
             markerSet.put(id + "_area", area);
         }
+    }
+
+    /**
+     * Parses a {@code #RRGGBB} (or {@code RRGGBB}) hex string into a BlueMap colour with the
+     * given alpha. Falls back to the default island blue (51, 136, 255) if the string is null
+     * or malformed, so a bad config value never stops markers from rendering.
+     * @param hex hex colour string
+     * @param alpha alpha channel, 0.0 to 1.0
+     * @return the parsed colour
+     */
+    private de.bluecolored.bluemap.api.math.Color parseHexColor(String hex, float alpha) {
+        if (hex != null) {
+            String h = hex.startsWith("#") ? hex.substring(1) : hex;
+            if (h.length() == 6) {
+                try {
+                    int r = Integer.parseInt(h.substring(0, 2), 16);
+                    int g = Integer.parseInt(h.substring(2, 4), 16);
+                    int b = Integer.parseInt(h.substring(4, 6), 16);
+                    return new de.bluecolored.bluemap.api.math.Color(r, g, b, alpha);
+                } catch (NumberFormatException e) {
+                    plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Using default.");
+                }
+            } else {
+                plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Expected #RRGGBB. Using default.");
+            }
+        }
+        return new de.bluecolored.bluemap.api.math.Color(51, 136, 255, alpha);
     }
 
     private String getIslandLabel(Island island) {

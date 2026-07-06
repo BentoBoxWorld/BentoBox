@@ -35,6 +35,7 @@ import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.BlueMapWorld;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
+import de.bluecolored.bluemap.api.markers.POIMarker;
 import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -271,6 +272,60 @@ class BlueMapHookTest extends CommonTestSetup {
         // POI pin still placed, but no area shape
         assertNotNull(ms.get(uuid.toString()));
         assertNull(ms.get(uuid.toString() + "_area"));
+    }
+
+    @Test
+    void testCustomMarkerIconApplied() {
+        plugin.getSettings().setBluemapMarkerIcon("assets/island.png");
+        plugin.getSettings().setBluemapMarkerIconAnchorX(30);
+        plugin.getSettings().setBluemapMarkerIconAnchorY(60);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        POIMarker pin = (POIMarker) mapMarkerSets.get("BSkyBlock").get(uuid.toString());
+        assertEquals("assets/island.png", pin.getIconAddress());
+        assertEquals(30, pin.getAnchor().getX());
+        assertEquals(60, pin.getAnchor().getY());
+    }
+
+    @Test
+    void testMarkerDistanceRangeApplied() {
+        plugin.getSettings().setBluemapMarkerMinDistance(15.0);
+        plugin.getSettings().setBluemapMarkerMaxDistance(5000.0);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        POIMarker pin = (POIMarker) mapMarkerSets.get("BSkyBlock").get(uuid.toString());
+        assertEquals(15.0, pin.getMinDistance());
+        assertEquals(5000.0, pin.getMaxDistance());
+    }
+
+    @Test
+    void testAreaStyleCustomised() {
+        plugin.getSettings().setBluemapAreaLineColor("#FF0000");
+        plugin.getSettings().setBluemapAreaFillColor("#00FF00");
+        plugin.getSettings().setBluemapAreaFillOpacity(0.5);
+        plugin.getSettings().setBluemapAreaLineWidth(4);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        ShapeMarker area = (ShapeMarker) mapMarkerSets.get("BSkyBlock").get(uuid.toString() + "_area");
+        assertEquals(255, area.getLineColor().getRed());
+        assertEquals(0, area.getLineColor().getGreen());
+        assertEquals(0, area.getLineColor().getBlue());
+        assertEquals(0, area.getFillColor().getRed());
+        assertEquals(255, area.getFillColor().getGreen());
+        assertEquals(0.5f, area.getFillColor().getAlpha());
+        assertEquals(4, area.getLineWidth());
+    }
+
+    @Test
+    void testMalformedAreaColorFallsBackToDefault() {
+        plugin.getSettings().setBluemapAreaLineColor("not-a-colour");
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        ShapeMarker area = (ShapeMarker) mapMarkerSets.get("BSkyBlock").get(uuid.toString() + "_area");
+        // Falls back to the default island blue (51, 136, 255) instead of throwing
+        assertEquals(51, area.getLineColor().getRed());
+        assertEquals(136, area.getLineColor().getGreen());
+        assertEquals(255, area.getLineColor().getBlue());
     }
 
     @Test
