@@ -71,6 +71,10 @@ public class IslandTeamGUI {
     private static final String MEMBER_NAME_REF = "commands.island.team.gui.buttons.member.name";
     /** Locale key for the (customisable) member button rank line. Placeholder: [rank]. */
     private static final String MEMBER_DESC_REF = "commands.island.team.gui.buttons.member.description";
+    /** Locale key for the (customisable) suffix appended to an offline member's name. Placeholder: [last_seen]. */
+    private static final String MEMBER_LAST_SEEN_REF = "commands.island.team.gui.buttons.member.last-seen";
+    /** Placeholder replaced with the formatted last-seen suffix in the member button name. */
+    private static final String LAST_SEEN = "[last_seen]";
 
     /** The user viewing the GUI */
     private final User user;
@@ -433,22 +437,36 @@ public class IslandTeamGUI {
         // Fall back to the raw rank name if the key is absent (e.g. an older custom locale file).
         String rankName = user.getTranslation(rankRef);
         desc.addFirst(translateOr(MEMBER_DESC_REF, rankName, TextVariables.RANK, rankName));
-        if (member.isOnline()) {
-            return new PanelItemBuilder().icon(member.getName())
-                    .name(translateOr(MEMBER_NAME_REF, member.getDisplayName(), TextVariables.NAME, member.getName(),
-                            TextVariables.DISPLAY_NAME, member.getDisplayName()))
-                    .description(desc)
-                    .clickHandler(
-                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
-                    .build();
-        } else {
-            // Offline player: the name keeps its last-seen status (see the member-layout locale keys)
-            return new PanelItemBuilder().icon(member.getName())
-                    .name(offlinePlayerStatus(Bukkit.getOfflinePlayer(member.getUniqueId()))).description(desc)
-                    .clickHandler(
-                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
-                    .build();
+        // The name is styled through the same customisable member.name key whether the member is
+        // online or offline, so admins get one consistent format. Offline members (member rank or
+        // above) get a last-seen suffix via the [last_seen] placeholder; online members and
+        // trusted-or-below members get an empty suffix.
+        String lastSeenSuffix = lastSeenSuffix(is, member);
+        return new PanelItemBuilder().icon(member.getName())
+                .name(translateOr(MEMBER_NAME_REF, member.getDisplayName() + lastSeenSuffix, TextVariables.NAME,
+                        member.getName(), TextVariables.DISPLAY_NAME, member.getDisplayName(), LAST_SEEN,
+                        lastSeenSuffix))
+                .description(desc)
+                .clickHandler(
+                        (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
+                .build();
+    }
+
+    /**
+     * Builds the last-seen suffix shown after an offline member's name in the team GUI. Returns an
+     * empty string for online members and for members ranked trusted or below (who have no last-seen
+     * status), otherwise the formatted, customisable {@link #MEMBER_LAST_SEEN_REF} suffix.
+     *
+     * @param is     the island being viewed
+     * @param member the member whose button is being built
+     * @return the suffix to append to the member's name, or an empty string
+     */
+    private String lastSeenSuffix(Island is, User member) {
+        if (member.isOnline() || !is.getMemberSet(RanksManager.MEMBER_RANK, true).contains(member.getUniqueId())) {
+            return "";
         }
+        String lastSeen = lastSeen(Bukkit.getOfflinePlayer(member.getUniqueId()));
+        return translateOr(MEMBER_LAST_SEEN_REF, "", LAST_SEEN, lastSeen);
     }
 
     /**

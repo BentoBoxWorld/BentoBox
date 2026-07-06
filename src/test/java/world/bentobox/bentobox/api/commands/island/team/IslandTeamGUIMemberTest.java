@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,8 @@ class IslandTeamGUIMemberTest extends RanksManagerTestSetup {
     private static final int SLOT_FIRST_MEMBER = 10;
     private static final String MEMBER_NAME_REF = "commands.island.team.gui.buttons.member.name";
     private static final String MEMBER_DESC_REF = "commands.island.team.gui.buttons.member.description";
+    private static final String MEMBER_LAST_SEEN_REF = "commands.island.team.gui.buttons.member.last-seen";
+    private static final String LAST_SEEN_LAYOUT_REF = "commands.island.team.info.last-seen.layout";
 
     @Mock
     private IslandTeamCommand itc;
@@ -158,5 +162,37 @@ class IslandTeamGUIMemberTest extends RanksManagerTestSetup {
         when(lm.get(any(), eq(MEMBER_DESC_REF))).thenReturn(MEMBER_DESC_REF);
 
         assertEquals("Owner", buildMemberButton().getDescription().get(0));
+    }
+
+    @Test
+    void testMemberButtonName_offlineMemberUsesSameNameKeyWithLastSeenSuffix() {
+        // The offline member's name must come from the same customisable member.name key (issue #3011
+        // follow-up), with the last-seen status supplied through the [last_seen] placeholder.
+        when(mockPlayer.isOnline()).thenReturn(false);
+        // Member rank or above -> a last-seen status is shown
+        when(island.getMemberSet(MEMBER_RANK, true)).thenReturn(ImmutableSet.of(uuid));
+
+        OfflinePlayer offline = mock(OfflinePlayer.class);
+        when(offline.getUniqueId()).thenReturn(uuid);
+        when(offline.getName()).thenReturn("tastybento");
+        when(offline.getLastSeen()).thenReturn(System.currentTimeMillis());
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(uuid)).thenReturn(offline);
+
+        when(lm.get(any(), eq(MEMBER_NAME_REF))).thenReturn("Member: [display_name][last_seen]");
+        when(lm.get(any(), eq(MEMBER_LAST_SEEN_REF))).thenReturn(" ([last_seen])");
+        when(lm.get(any(), eq(LAST_SEEN_LAYOUT_REF))).thenReturn("recently");
+
+        assertEquals("Member: Bento (recently)", buildMemberButton().getName());
+    }
+
+    @Test
+    void testMemberButtonName_offlineTrustedMemberHasNoLastSeenSuffix() {
+        // Trusted or below -> no last-seen status, so the [last_seen] suffix is empty
+        when(mockPlayer.isOnline()).thenReturn(false);
+        when(island.getMemberSet(MEMBER_RANK, true)).thenReturn(ImmutableSet.of());
+
+        when(lm.get(any(), eq(MEMBER_NAME_REF))).thenReturn("Member: [display_name][last_seen]");
+
+        assertEquals("Member: Bento", buildMemberButton().getName());
     }
 }

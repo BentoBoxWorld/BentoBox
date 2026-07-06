@@ -798,10 +798,12 @@ commands:
               <green>seninle aynı dünyada olmaları</green>
               <green>gerekir.</green>
           member:
-            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
-            name: '[display_name]'
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
             # First line of a member's description (their rank). Placeholder: [rank].
             description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Sol Tıkla</aqua>'
