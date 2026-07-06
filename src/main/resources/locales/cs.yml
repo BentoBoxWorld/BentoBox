@@ -796,6 +796,11 @@ commands:
               <green>Hráči musí být ve</green>
               <green>stejném světě jako ty,</green>
               <green>aby se zobrazili v seznamu.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Levý klik</aqua>'
@@ -901,6 +906,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift + levý klik</aqua>'
               trust: '<green>důvěřovat hráči</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nemůžeš pozvat sám sebe!</red>'
           cooldown: '<red>Tohoto hráče nemůžeš pozvat dalších [number] sekund</red>'

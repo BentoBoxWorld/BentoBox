@@ -811,6 +811,11 @@ commands:
               <green>Spēlētājiem jābūt tajā</green>
               <green>pašā pasaulē kā jums, lai tiktu</green>
               <green>parādīti sarakstā.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Kreiso klikšķi</aqua>'
@@ -916,6 +921,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Nospiediet kreiso peli, turot uz sānu</aqua>'
               trust: '<green>, lai uzticētu spēlētāju</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Tu nevari ielūgt pats sevi!</red>'
           cooldown: '<red>Tu nevari sūtīt ielūgumu šim spēlētājam vēl [number] sekundes</red>'

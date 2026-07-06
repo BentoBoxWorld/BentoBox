@@ -748,6 +748,11 @@ commands:
             description: |
               <green>玩家必须和你在一个世界(维度)</green>
               <green>才会显示在列表中</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>左键</aqua>'
@@ -855,6 +860,12 @@ commands:
               trust: |-
                 <green>将TA以</green><aqua>可信玩家</aqua><green>身份拉入团队</green>
                 <red>可信玩家拥有永久权限</red>
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>你不能邀请自己!</red>'
           cooldown: '<red>邀请冷却中, </red><aqua>[number]</aqua><red>秒后才能再次发出邀请.</red>'

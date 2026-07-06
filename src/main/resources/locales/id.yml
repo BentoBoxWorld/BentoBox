@@ -819,6 +819,11 @@ commands:
               <green>Pemain harus berada di</green>
               <green>dunia yang sama dengan Anda</green>
               <green>untuk ditampilkan di daftar.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Klik Kiri</aqua>'
@@ -928,6 +933,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Tekan Kiri Sambil Menahan Shift</aqua>'
               trust: '<green>untuk mempercayai pemain</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Anda tidak dapat mengundang diri sendiri!</red>'
           cooldown: >-

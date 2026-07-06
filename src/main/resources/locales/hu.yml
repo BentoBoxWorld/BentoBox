@@ -850,6 +850,11 @@ commands:
               hogy
 
               <green>megjelenjenek a listában.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Bal Kattintás</aqua>'
@@ -959,6 +964,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Balra átugrás kattintás</aqua>'
               trust: '<green>egy játékos megbízásához</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nem hívhatod meg magad!</red>'
           cooldown: '<red>Nem hívhatja meg ezt a személyt további [number] másodpercig.</red>'

@@ -820,6 +820,11 @@ commands:
               <green>Gracze muszą być w tej samej</green>
               <green>rzeczywistości co ty, aby</green>
               <green>być wyświetleni na liście.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Lewy Klik</aqua>'
@@ -925,6 +930,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Przesuń lewy przycisk myszy</aqua>'
               trust: '<green>, aby ufać graczowi</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nie możesz zaprosić samego siebie!</red>'
           cooldown: '<red>Nie możesz zaprosić tej osoby przez [number] sekund.</red>'

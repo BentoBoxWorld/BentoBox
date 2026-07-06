@@ -801,6 +801,11 @@ commands:
               <green>Người chơi phải ở trong cùng</green>
               <green>thế giới với bạn để được</green>
               <green>hiển thị trong danh sách.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Nhấp Chuột Trái</aqua>'
@@ -906,6 +911,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Nhấn Shift + Click Trái</aqua>'
               trust: '<green>để tin tưởng một người chơi</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Bạn không thể mời chính bạn!</red>'
           cooldown: '<red>Bạn không thể mời người đó trong [number] giây.</red>'

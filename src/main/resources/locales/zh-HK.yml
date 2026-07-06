@@ -747,6 +747,11 @@ commands:
               <green>玩家必須在</green>
               <green>和你相同的世界</green>
               <green>才會顯示在列表中。</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>左點擊</aqua>'
@@ -850,6 +855,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift+左鍵點擊</aqua>'
               trust: '<green>信任玩家</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>您不能邀請您自己!</red>'
           cooldown: '<red>您必須在 [number] 秒後才能邀請這個人</red>'
