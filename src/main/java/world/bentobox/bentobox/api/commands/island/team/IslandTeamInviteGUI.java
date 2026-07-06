@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +33,11 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
 public class IslandTeamInviteGUI {
+
+    /** Locale key for the (customisable) prospect button name. Placeholders: [name], [display_name]. */
+    private static final String PROSPECT_NAME_REF = "commands.island.team.invite.gui.buttons.member.name";
+    /** Locale key for an optional (customisable) prospect description line. Placeholders: [name], [display_name]. */
+    private static final String PROSPECT_DESC_REF = "commands.island.team.invite.gui.buttons.member.description";
 
     private final IslandTeamInviteCommand itic;
     private final IslandTeamCommand itc;
@@ -197,16 +203,26 @@ public class IslandTeamInviteGUI {
     }
 
     private PanelItem getProspect(Player player, ItemTemplateRecord template) {
+        // Customisable prospect name ([name] / [display_name] placeholders; defaults to the display name)
+        String name = user.getTranslation(PROSPECT_NAME_REF, TextVariables.NAME, player.getName(), "[display_name]",
+                player.getDisplayName());
         // Check if the prospect has already been invited
         if (this.itc.isInvited(player.getUniqueId())
                 && user.getUniqueId().equals(this.itc.getInvite(player.getUniqueId()).getInviter())) {
-            return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
+            return new PanelItemBuilder().icon(player.getName()).name(name)
                     .description(user.getTranslation("commands.island.team.invite.gui.button.already-invited")).build();
         }
-        List<String> desc = template.actions().stream().map(ar -> user
+        List<String> desc = new ArrayList<>();
+        // Optional customisable description line, shown before the action tips when set (blank by default)
+        String descLine = user.getTranslation(PROSPECT_DESC_REF, TextVariables.NAME, player.getName(),
+                "[display_name]", player.getDisplayName());
+        if (!descLine.isBlank() && !descLine.equals(PROSPECT_DESC_REF)) {
+            desc.add(descLine);
+        }
+        template.actions().stream().map(ar -> user
                 .getTranslation("commands.island.team.invite.gui.tips." + ar.clickType().name() + ".name")
-                + " " + user.getTranslation(ar.tooltip())).toList();
-        return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName()).description(desc)
+                + " " + user.getTranslation(ar.tooltip())).forEach(desc::add);
+        return new PanelItemBuilder().icon(player.getName()).name(name).description(desc)
                 .clickHandler(
                         (panel, user, clickType, clickSlot) -> clickHandler(user, clickType, player,
                                 template.actions()))

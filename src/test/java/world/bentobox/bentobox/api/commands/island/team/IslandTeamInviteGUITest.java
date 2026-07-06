@@ -406,6 +406,35 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     }
 
     @Test
+    void testProspectName_comesFromCustomisableLocaleKey() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+
+        gui.build(user);
+
+        Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
+        PanelItem item = panel.getItems().get(SLOT_FIRST_PROSPECT);
+        assertNotNull(item);
+        // Name is now sourced from the member.name locale key rather than the hardcoded display name
+        assertEquals("commands.island.team.invite.gui.buttons.member.name", item.getName());
+    }
+
+    @Test
+    void testProspectDescription_blankMemberDescriptionAddsNoStrayLine() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+
+        gui.build(user);
+
+        Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
+        PanelItem item = panel.getItems().get(SLOT_FIRST_PROSPECT);
+        assertNotNull(item);
+        // Only the three action tips (invite/coop/trust) — no member.description line when it is blank
+        assertEquals(3, item.getDescription().size());
+        assertFalse(item.getDescription().stream()
+                .anyMatch(l -> l.contains("buttons.member.description")),
+                "A blank member.description key must not leak into the lore");
+    }
+
+    @Test
     void testProspectUnknownClickType_isIgnored() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
 

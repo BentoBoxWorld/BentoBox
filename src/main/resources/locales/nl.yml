@@ -849,6 +849,11 @@ commands:
               <green>Spelers moeten zich in de</green>
               <green>dezelfde wereld als jij bevinden</green>
               <green>om in de lijst te worden weergegeven.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Linker Klik</aqua>'
@@ -958,6 +963,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift Links Klikken</aqua>'
               trust: '<green>om een speler te vertrouwen</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Je kunt jezelf niet uitnodigen!</red>'
           cooldown: >-

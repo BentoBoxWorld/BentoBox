@@ -844,6 +844,11 @@ commands:
               <green>I giocatori devono essere nel</green>
               <green>stesso mondo di te per essere</green>
               <green>mostrati nella lista.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Clic Sinistro</aqua>'
@@ -949,6 +954,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Clicca sinistro mentre tieni premuto Shift</aqua>'
               trust: '<green>per fidarti di un giocatore</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Non puoi invitare te stesso!</red>'
           cooldown: '<red>Non potrai invitare quella persona per altri [number] secondi</red>'

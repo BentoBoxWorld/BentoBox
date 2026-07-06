@@ -67,6 +67,10 @@ public class IslandTeamGUI {
 
     private static final String NAME = ".name";
     private static final String TIPS = "commands.island.team.gui.tips.";
+    /** Locale key for the (customisable) member button name. Placeholders: [name], [display_name]. */
+    private static final String MEMBER_NAME_REF = "commands.island.team.gui.buttons.member.name";
+    /** Locale key for the (customisable) member button rank line. Placeholder: [rank]. */
+    private static final String MEMBER_DESC_REF = "commands.island.team.gui.buttons.member.description";
 
     /** The user viewing the GUI */
     private final User user;
@@ -406,15 +410,18 @@ public class IslandTeamGUI {
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
         }
+        // Rank line, styled through a customisable locale key ([rank] placeholder), shown first
+        desc.addFirst(user.getTranslation(MEMBER_DESC_REF, TextVariables.RANK, user.getTranslation(rankRef)));
         if (member.isOnline()) {
-            desc.addFirst(user.getTranslation(rankRef));
-            return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName()).description(desc)
+            return new PanelItemBuilder().icon(member.getName())
+                    .name(user.getTranslation(MEMBER_NAME_REF, TextVariables.NAME, member.getName(), "[display_name]",
+                            member.getDisplayName()))
+                    .description(desc)
                     .clickHandler(
                             (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
                     .build();
         } else {
-            // Offline player
-            desc.addFirst(user.getTranslation(rankRef));
+            // Offline player: the name keeps its last-seen status (see the member-layout locale keys)
             return new PanelItemBuilder().icon(member.getName())
                     .name(offlinePlayerStatus(Bukkit.getOfflinePlayer(member.getUniqueId()))).description(desc)
                     .clickHandler(

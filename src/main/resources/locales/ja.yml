@@ -735,6 +735,11 @@ commands:
               <green>プレイヤーはにいる必要があります</green>
               <green>あなたと同じ世界</green>
               <green>リストに示されています。</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>左クリック</aqua>'
@@ -836,6 +841,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>左クリックをシフトします</aqua>'
               trust: '<green>プレーヤーを信頼するために</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: 自分から誘うことはできない!
           cooldown: その人を別の [number]秒に招待することはできません

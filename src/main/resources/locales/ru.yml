@@ -802,6 +802,11 @@ commands:
               <green>Игроки должны находиться в</green>
               <green>том же мире, что и вы, чтобы</green>
               <green>отображаться в списке.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: <aqua>ЛКМ</aqua>
@@ -912,6 +917,12 @@ commands:
             SHIFT_LEFT:
               name: <aqua>Shift + ЛКМ</aqua>
               trust: <green>доверять игроку</green>
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: <red>Вы не можете пригласить самого себя!</red>
           cooldown: <red>Вы не можете пригласить этого игрока в течение [number] секунд.</red>

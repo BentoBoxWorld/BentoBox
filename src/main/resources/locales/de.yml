@@ -847,6 +847,11 @@ commands:
               <green>Spieler müssen sich in</green>
               <green>deiner Welt befinden, um</green>
               <green>in der Liste angezeigt zu werden.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Linksklick</aqua>'
@@ -962,6 +967,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Umschalttaste Linksklick</aqua>'
               trust: '<green>einem Spieler vertrauen</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Du kannst dich nicht selbst einladen!</red>'
           cooldown: >-

@@ -831,6 +831,11 @@ commands:
               <green>Jucătorii trebuie să fie în</green>
               și aceeași lume ca și tine să fii
               <green>arătat în listă.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name].
+            name: '[display_name]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
         tips:
           LEFT:
             name: '<aqua>Faceți clic stânga</aqua>'
@@ -946,6 +951,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift Click stânga</aqua>'
               trust: '<green>a avea încredere într-un jucător</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nu vă puteți invita!</red>'
           cooldown: '<red>Nu puteți invita acea persoană pentru încă [number] de secunde.</red>'
