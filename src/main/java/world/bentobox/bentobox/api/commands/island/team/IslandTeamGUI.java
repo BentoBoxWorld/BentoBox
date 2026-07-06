@@ -136,7 +136,7 @@ public class IslandTeamGUI {
             return this.getBlankBorder();
         }
         PanelItemBuilder builder = new PanelItemBuilder();
-        builder.icon(Material.PLAYER_HEAD);
+        applyIcon(builder, template, Material.PLAYER_HEAD);
         builder.name(user.getTranslation("commands.island.team.gui.buttons.invite.name"));
         builder.description(user.getTranslation("commands.island.team.gui.buttons.invite.description"));
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
@@ -160,7 +160,7 @@ public class IslandTeamGUI {
         }
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.name(user.getTranslation("commands.island.team.gui.buttons.rank-filter.name"));
-        builder.icon(Material.AMETHYST_SHARD);
+        applyIcon(builder, template, Material.AMETHYST_SHARD);
         // Create description
         createDescription(builder);
         createClickHandler(builder, template.actions());
@@ -333,8 +333,27 @@ public class IslandTeamGUI {
             return getBlankBorder();
         }
 
-        return builder.icon(user.getName()).name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
+        // Use the template icon if the admin has set one, otherwise show the viewer's head.
+        if (template.icon() != null) {
+            builder.icon(template.icon().clone());
+        } else {
+            builder.icon(user.getName());
+        }
+        return builder.name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
                 .description(showMembers()).build();
+    }
+
+    /**
+     * Applies the icon for a button. If the panel template defines an {@code icon:}
+     * for this button it is used (allowing server admins to customise it via
+     * {@code team_panel.yml}); otherwise the supplied default material is used.
+     *
+     * @param builder  the panel item builder
+     * @param template the template record for this button
+     * @param fallback the default material to use when the template has no icon
+     */
+    private void applyIcon(PanelItemBuilder builder, ItemTemplateRecord template, Material fallback) {
+        builder.icon(template.icon() != null ? template.icon().clone() : new ItemStack(fallback));
     }
 
     private PanelItem getBlankBorder() {
