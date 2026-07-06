@@ -26,6 +26,10 @@ team_panel:
       1:
         # The data section is a key-value list of data relavent for this button. It is interpreted by the code implemented the panel.
         # The convention is to specify the type and the panel tab that will open if pressed. These are Enums in the code.
+        # Icon shown for this button. If omitted, the viewer's own player head is used.
+        # Set this to any material (e.g. PAPER, BOOK) to override it. Note: a
+        # material here replaces the viewer head with a plain, unowned icon.
+        #icon: PAPER
         data:
           type: STATUS
         # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
@@ -39,6 +43,9 @@ team_panel:
             tooltip: commands.island.team.gui.tips.click-to-view
       3:
         # Rank filter
+        # Icon shown for this button. If omitted, AMETHYST_SHARD is used.
+        # Set this to any material (e.g. HOPPER) to override it.
+        icon: AMETHYST_SHARD
         data:
           type: RANK
           name: commands.island.team.gui.buttons.rank-filter
@@ -63,6 +70,9 @@ team_panel:
             tooltip: commands.island.team.gui.tips.SHIFT_RIGHT.reject
       7:
         # Invite button
+        # Icon shown for this button. If omitted, PLAYER_HEAD is used.
+        # Set this to any material to override it.
+        icon: PLAYER_HEAD
         data:
           type: INVITE
           name: commands.island.team.gui.buttons.invite
