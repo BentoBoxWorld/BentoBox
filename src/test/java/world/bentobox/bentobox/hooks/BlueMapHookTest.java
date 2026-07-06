@@ -250,6 +250,30 @@ class BlueMapHookTest extends CommonTestSetup {
     }
 
     @Test
+    void testIslandMarkersDisabledNoPointMarker() {
+        plugin.getSettings().setBluemapIslandMarkers(false);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        MarkerSet ms = mapMarkerSets.get("BSkyBlock");
+        assertNotNull(ms);
+        // No POI pin, but the area shape is still drawn
+        assertNull(ms.get(uuid.toString()));
+        assertNotNull(ms.get(uuid.toString() + "_area"));
+    }
+
+    @Test
+    void testIslandAreasDisabledNoAreaMarker() {
+        plugin.getSettings().setBluemapIslandAreas(false);
+        when(im.getIslands(overWorld)).thenReturn(List.of(island));
+        hookAndReady();
+        MarkerSet ms = mapMarkerSets.get("BSkyBlock");
+        assertNotNull(ms);
+        // POI pin still placed, but no area shape
+        assertNotNull(ms.get(uuid.toString()));
+        assertNull(ms.get(uuid.toString() + "_area"));
+    }
+
+    @Test
     void testRegisterGameModeUnownedIslandIgnored() {
         Island unowned = mock(Island.class);
         when(unowned.getOwner()).thenReturn(null);

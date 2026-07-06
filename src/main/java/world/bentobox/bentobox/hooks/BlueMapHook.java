@@ -142,21 +142,25 @@ public class BlueMapHook extends MapHook implements Listener {
         String id = island.getUniqueId();
 
         // Point marker at island center for the label/icon
-        POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
-                .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
-                .build();
-        markerSet.put(id, marker);
+        if (plugin.getSettings().isBluemapIslandMarkers()) {
+            POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
+                    .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
+                    .build();
+            markerSet.put(id, marker);
+        }
         // Shape marker showing the protected island border
-        ShapeMarker area = ShapeMarker.builder()
-                .label(label)
-                .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
-                        island.getMaxProtectedX(), island.getMaxProtectedZ()),
-                        (float) island.getCenter().getY())
-                .lineColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255))
-                .fillColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255, 0.15f))
-                .lineWidth(2)
-                .build();
-        markerSet.put(id + "_area", area);
+        if (plugin.getSettings().isBluemapIslandAreas()) {
+            ShapeMarker area = ShapeMarker.builder()
+                    .label(label)
+                    .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
+                            island.getMaxProtectedX(), island.getMaxProtectedZ()),
+                            (float) island.getCenter().getY())
+                    .lineColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255))
+                    .fillColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255, 0.15f))
+                    .lineWidth(2)
+                    .build();
+            markerSet.put(id + "_area", area);
+        }
     }
 
     private String getIslandLabel(Island island) {

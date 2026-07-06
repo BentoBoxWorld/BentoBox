@@ -127,6 +127,16 @@ dynmap:
   # /!\ Restart the server or use /bbox reload after changing this for it to take effect.
   # Added since 3.17.1.
   island-areas: true
+bluemap:
+  # Toggle whether BentoBox shows a marker (pin) on BlueMap at the center of every island.
+  # Set to false if you manage your own island markers and don't want BentoBox's layer.
+  # /!\ Restart the server or use /bbox reload after changing this for it to take effect.
+  # Added since 3.18.1.
+  island-markers: true
+  # Toggle whether BentoBox draws the protected area border box of every island on BlueMap.
+  # /!\ Restart the server or use /bbox reload after changing this for it to take effect.
+  # Added since 3.18.1.
+  island-areas: true
 logs:
   # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
   # It can be spammy if there are a lot of superflat chunks to regenerate.

@@ -199,6 +199,18 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "dynmap.island-areas", since = "3.17.1")
     private boolean dynmapIslandAreas = true;
 
+    /* BLUEMAP */
+    @ConfigComment("Toggle whether BentoBox shows a marker (pin) on BlueMap at the center of every island.")
+    @ConfigComment("Set to false if you manage your own island markers and don't want BentoBox's layer.")
+    @ConfigComment("/!\\ Restart the server or use /bbox reload after changing this for it to take effect.")
+    @ConfigEntry(path = "bluemap.island-markers", since = "3.18.1")
+    private boolean bluemapIslandMarkers = true;
+
+    @ConfigComment("Toggle whether BentoBox draws the protected area border box of every island on BlueMap.")
+    @ConfigComment("/!\\ Restart the server or use /bbox reload after changing this for it to take effect.")
+    @ConfigEntry(path = "bluemap.island-areas", since = "3.18.1")
+    private boolean bluemapIslandAreas = true;
+
     /*
      * Logs
      */
@@ -1032,6 +1044,46 @@ public class Settings implements ConfigObject {
      */
     public void setDynmapIslandAreas(boolean dynmapIslandAreas) {
         this.dynmapIslandAreas = dynmapIslandAreas;
+    }
+
+    /**
+     * Whether BentoBox shows a marker (pin) on BlueMap at the center of every island.
+     *
+     * @return true if island markers should be shown
+     * @since 3.18.1
+     */
+    public boolean isBluemapIslandMarkers() {
+        return bluemapIslandMarkers;
+    }
+
+    /**
+     * Sets whether BentoBox shows a marker (pin) on BlueMap at the center of every island.
+     *
+     * @param bluemapIslandMarkers whether island markers should be shown
+     * @since 3.18.1
+     */
+    public void setBluemapIslandMarkers(boolean bluemapIslandMarkers) {
+        this.bluemapIslandMarkers = bluemapIslandMarkers;
+    }
+
+    /**
+     * Whether BentoBox draws the protected area border box of every island on BlueMap.
+     *
+     * @return true if island area boxes should be drawn
+     * @since 3.18.1
+     */
+    public boolean isBluemapIslandAreas() {
+        return bluemapIslandAreas;
+    }
+
+    /**
+     * Sets whether BentoBox draws the protected area border box of every island on BlueMap.
+     *
+     * @param bluemapIslandAreas whether island area boxes should be drawn
+     * @since 3.18.1
+     */
+    public void setBluemapIslandAreas(boolean bluemapIslandAreas) {
+        this.bluemapIslandAreas = bluemapIslandAreas;
     }
 
     /**
