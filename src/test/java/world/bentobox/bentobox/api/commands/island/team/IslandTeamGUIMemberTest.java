@@ -2,11 +2,10 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,8 +31,8 @@ import world.bentobox.bentobox.managers.CommandsManager;
 
 /**
  * Tests for the member button in {@link IslandTeamGUI}, verifying its name and
- * rank line come from customisable locale keys rather than being hardcoded.
- * See issue #3009.
+ * rank line come from customisable locale keys (with a fallback when the keys
+ * are missing). See issue #3009.
  *
  * <p>Panel slot layout derived from team_panel.yml: the first member button is
  * at row 2, column 2 → slot 10.
@@ -41,6 +40,8 @@ import world.bentobox.bentobox.managers.CommandsManager;
 class IslandTeamGUIMemberTest extends RanksManagerTestSetup {
 
     private static final int SLOT_FIRST_MEMBER = 10;
+    private static final String MEMBER_NAME_REF = "commands.island.team.gui.buttons.member.name";
+    private static final String MEMBER_DESC_REF = "commands.island.team.gui.buttons.member.description";
 
     @Mock
     private IslandTeamCommand itc;
@@ -91,7 +92,14 @@ class IslandTeamGUIMemberTest extends RanksManagerTestSetup {
 
         // The single member is the viewer, and is online
         when(mockPlayer.isOnline()).thenReturn(true);
-        when(mockPlayer.getDisplayName()).thenReturn("tastybento");
+        when(mockPlayer.getName()).thenReturn("tastybento");
+        when(mockPlayer.getDisplayName()).thenReturn("Bento");
+
+        // Concrete locale values so the panel renders real strings, and we can verify placeholder substitution.
+        when(rm.getRank(OWNER_RANK)).thenReturn("ranks.owner");
+        when(lm.get(any(), eq("ranks.owner"))).thenReturn("Owner");
+        when(lm.get(any(), eq(MEMBER_NAME_REF))).thenReturn("Member: [display_name]");
+        when(lm.get(any(), eq(MEMBER_DESC_REF))).thenReturn("Rank: [rank]");
 
         user = User.getInstance(mockPlayer);
 
@@ -110,34 +118,45 @@ class IslandTeamGUIMemberTest extends RanksManagerTestSetup {
 
     private void copyPanelYaml(String resource, File dest) throws IOException {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(resource)) {
-            if (in != null) {
-                Files.copy(in, dest.toPath());
-            }
+            assertNotNull(in, "Missing test fixture on the classpath: " + resource);
+            Files.copy(in, dest.toPath());
         }
     }
 
-    @Test
-    void testMemberButtonName_comesFromCustomisableLocaleKey() {
+    private PanelItem buildMemberButton() {
         new IslandTeamGUI(plugin, itc, user, island).build();
-
         Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
         assertNotNull(panel);
         PanelItem item = panel.getItems().get(SLOT_FIRST_MEMBER);
         assertNotNull(item, "Expected a member button at slot " + SLOT_FIRST_MEMBER);
-        // Online member name now comes from the member.name locale key, not the hardcoded display name
-        assertEquals("commands.island.team.gui.buttons.member.name", item.getName());
+        return item;
     }
 
     @Test
-    void testMemberButtonDescription_rankLineComesFromCustomisableLocaleKey() {
-        new IslandTeamGUI(plugin, itc, user, island).build();
+    void testMemberButtonName_rendersFromLocaleKeyWithPlaceholder() {
+        // member.name = "Member: [display_name]" → [display_name] substituted with the member's display name
+        assertEquals("Member: Bento", buildMemberButton().getName());
+    }
 
-        Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
-        assertNotNull(panel);
-        PanelItem item = panel.getItems().get(SLOT_FIRST_MEMBER);
-        assertNotNull(item, "Expected a member button at slot " + SLOT_FIRST_MEMBER);
-        assertFalse(item.getDescription().isEmpty(), "Member description should have a rank line");
-        // The rank line is routed through the customisable member.description key
-        assertEquals("commands.island.team.gui.buttons.member.description", item.getDescription().get(0));
+    @Test
+    void testMemberButtonDescription_rankLineRendersFromLocaleKeyWithPlaceholder() {
+        // member.description = "Rank: [rank]" → [rank] substituted with the resolved rank name
+        assertEquals("Rank: Owner", buildMemberButton().getDescription().get(0));
+    }
+
+    @Test
+    void testMemberButtonName_fallsBackToDisplayNameWhenKeyMissing() {
+        // Simulate an older/custom locale that lacks the key: getTranslation echoes the reference back
+        when(lm.get(any(), eq(MEMBER_NAME_REF))).thenReturn(MEMBER_NAME_REF);
+
+        assertEquals("Bento", buildMemberButton().getName());
+    }
+
+    @Test
+    void testMemberButtonDescription_fallsBackToRankNameWhenKeyMissing() {
+        // Simulate an older/custom locale that lacks the key: rank line falls back to the raw rank name
+        when(lm.get(any(), eq(MEMBER_DESC_REF))).thenReturn(MEMBER_DESC_REF);
+
+        assertEquals("Owner", buildMemberButton().getDescription().get(0));
     }
 }

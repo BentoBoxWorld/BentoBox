@@ -203,9 +203,13 @@ public class IslandTeamInviteGUI {
     }
 
     private PanelItem getProspect(Player player, ItemTemplateRecord template) {
-        // Customisable prospect name ([name] / [display_name] placeholders; defaults to the display name)
-        String name = user.getTranslation(PROSPECT_NAME_REF, TextVariables.NAME, player.getName(), "[display_name]",
-                player.getDisplayName());
+        // Customisable prospect name ([name] / [display_name] placeholders; defaults to the display name).
+        // getTranslation echoes the reference back when the key is missing, so fall back to the display name.
+        String name = user.getTranslation(PROSPECT_NAME_REF, TextVariables.NAME, player.getName(),
+                TextVariables.DISPLAY_NAME, player.getDisplayName());
+        if (name.equals(PROSPECT_NAME_REF)) {
+            name = player.getDisplayName();
+        }
         // Check if the prospect has already been invited
         if (this.itc.isInvited(player.getUniqueId())
                 && user.getUniqueId().equals(this.itc.getInvite(player.getUniqueId()).getInviter())) {
@@ -213,9 +217,10 @@ public class IslandTeamInviteGUI {
                     .description(user.getTranslation("commands.island.team.invite.gui.button.already-invited")).build();
         }
         List<String> desc = new ArrayList<>();
-        // Optional customisable description line, shown before the action tips when set (blank by default)
+        // Optional customisable description line, shown before the action tips when set (blank by default,
+        // and skipped when the key is missing so an older locale file does not leak the raw key).
         String descLine = user.getTranslation(PROSPECT_DESC_REF, TextVariables.NAME, player.getName(),
-                "[display_name]", player.getDisplayName());
+                TextVariables.DISPLAY_NAME, player.getDisplayName());
         if (!descLine.isBlank() && !descLine.equals(PROSPECT_DESC_REF)) {
             desc.add(descLine);
         }

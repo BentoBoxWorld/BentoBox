@@ -406,21 +406,38 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     }
 
     @Test
-    void testProspectName_comesFromCustomisableLocaleKey() {
+    void testProspectName_rendersFromLocaleKeyWithPlaceholder() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
+        // member.name = "Invite [display_name]" → placeholder substituted with the prospect's display name
+        when(lm.get(any(), eq("commands.island.team.invite.gui.buttons.member.name")))
+                .thenReturn("Invite [display_name]");
 
         gui.build(user);
 
         Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
         PanelItem item = panel.getItems().get(SLOT_FIRST_PROSPECT);
         assertNotNull(item);
-        // Name is now sourced from the member.name locale key rather than the hardcoded display name
-        assertEquals("commands.island.team.invite.gui.buttons.member.name", item.getName());
+        assertEquals("Invite target", item.getName());
+    }
+
+    @Test
+    void testProspectName_fallsBackToDisplayNameWhenKeyMissing() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        // Locale returns the reference for a missing key -> code must fall back to the display name
+
+        gui.build(user);
+
+        Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
+        PanelItem item = panel.getItems().get(SLOT_FIRST_PROSPECT);
+        assertNotNull(item);
+        assertEquals("target", item.getName());
     }
 
     @Test
     void testProspectDescription_blankMemberDescriptionAddsNoStrayLine() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
+        // Explicitly make the description key resolve to an empty string
+        when(lm.get(any(), eq("commands.island.team.invite.gui.buttons.member.description"))).thenReturn("");
 
         gui.build(user);
 

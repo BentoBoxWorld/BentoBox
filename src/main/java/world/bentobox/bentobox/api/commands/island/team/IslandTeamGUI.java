@@ -410,12 +410,14 @@ public class IslandTeamGUI {
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
         }
-        // Rank line, styled through a customisable locale key ([rank] placeholder), shown first
-        desc.addFirst(user.getTranslation(MEMBER_DESC_REF, TextVariables.RANK, user.getTranslation(rankRef)));
+        // Rank line, styled through a customisable locale key ([rank] placeholder), shown first.
+        // Fall back to the raw rank name if the key is absent (e.g. an older custom locale file).
+        String rankName = user.getTranslation(rankRef);
+        desc.addFirst(translateOr(MEMBER_DESC_REF, rankName, TextVariables.RANK, rankName));
         if (member.isOnline()) {
             return new PanelItemBuilder().icon(member.getName())
-                    .name(user.getTranslation(MEMBER_NAME_REF, TextVariables.NAME, member.getName(), "[display_name]",
-                            member.getDisplayName()))
+                    .name(translateOr(MEMBER_NAME_REF, member.getDisplayName(), TextVariables.NAME, member.getName(),
+                            TextVariables.DISPLAY_NAME, member.getDisplayName()))
                     .description(desc)
                     .clickHandler(
                             (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
@@ -428,6 +430,22 @@ public class IslandTeamGUI {
                             (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
                     .build();
         }
+    }
+
+    /**
+     * Translates {@code reference}, falling back to {@code fallback} when the key is
+     * missing from the locale. {@link User#getTranslation} echoes the reference back
+     * when a key is absent, so an older or customised locale file that lacks the new
+     * keys would otherwise show the raw key string in the GUI.
+     *
+     * @param reference the locale key
+     * @param fallback  value to use when the key is missing
+     * @param variables placeholder replacement pairs
+     * @return the translated (and substituted) string, or the fallback
+     */
+    private String translateOr(String reference, String fallback, String... variables) {
+        String translation = user.getTranslation(reference, variables);
+        return translation.equals(reference) ? fallback : translation;
     }
 
     /**
