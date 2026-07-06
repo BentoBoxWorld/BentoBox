@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.api.panels;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -281,6 +283,67 @@ class PanelTest extends CommonTestSetup {
     void testGetName() {
         Panel p = new Panel(name, items, 10, null, listener);
         assertEquals(name, p.getName());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#tryRefreshInPlace(String, Map, int)}.
+     * A same-title, same-size refresh must update the existing inventory in place: it must not
+     * create a new inventory nor re-open the panel (which would fire the InventoryClose/Open cascade).
+     */
+    @Test
+    void testTryRefreshInPlaceSuccess() {
+        ItemStack itemStack = mock(ItemStack.class);
+        PanelItem item = mock(PanelItem.class);
+        when(item.getItem()).thenReturn(itemStack);
+        // fixSize(10) == 18
+        when(inv.getSize()).thenReturn(18);
+
+        Panel p = new Panel(name, items, 10, user, listener);
+
+        Map<Integer, PanelItem> newItems = new HashMap<>();
+        newItems.put(0, item);
+
+        boolean result = p.tryRefreshInPlace(name, newItems, 10);
+
+        assertTrue(result);
+        // Items map is swapped for the new one
+        assertSame(newItems, p.getItems());
+        // The inventory was NOT re-created and the panel was NOT re-opened: exactly the single
+        // create/open from construction.
+        mockedBukkit.verify(() -> Bukkit.createInventory(eq(null), anyInt(),
+                any(net.kyori.adventure.text.Component.class)), times(1));
+        verify(player, times(1)).openInventory(any(Inventory.class));
+        // Slot 0 gets the new item; the remaining slots of the existing inventory are cleared
+        verify(inv).setItem(0, itemStack);
+        verify(inv).setItem(17, null);
+        // Listener setup runs again after the in-place refresh (once on construct, once on refresh)
+        verify(listener, times(2)).setup();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#tryRefreshInPlace(String, Map, int)}.
+     * A title change (e.g. switching tab in a tabbed panel) cannot be reflected in place, so the
+     * method must decline and let the caller re-open.
+     */
+    @Test
+    void testTryRefreshInPlaceNameChangeReturnsFalse() {
+        when(inv.getSize()).thenReturn(18);
+        Panel p = new Panel(name, items, 10, user, listener);
+
+        assertFalse(p.tryRefreshInPlace("a-different-title", items, 10));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#tryRefreshInPlace(String, Map, int)}.
+     * A size change cannot be reflected in place, so the method must decline.
+     */
+    @Test
+    void testTryRefreshInPlaceSizeChangeReturnsFalse() {
+        when(inv.getSize()).thenReturn(18);
+        Panel p = new Panel(name, items, 10, user, listener);
+
+        // fixSize(19) == 27, which differs from the existing inventory size of 18
+        assertFalse(p.tryRefreshInPlace(name, items, 19));
     }
 
 }

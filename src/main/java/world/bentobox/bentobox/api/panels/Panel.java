@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.panels;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
@@ -117,6 +118,55 @@ public class Panel implements HeadRequester, InventoryHolder {
         this.user = user;
         if (user != null)
             this.open(user);
+    }
+
+    /**
+     * Attempts to refresh the panel's contents <b>in place</b>, updating the items of the
+     * already-open inventory instead of creating and re-opening a new one.
+     * <p>
+     * Re-opening an inventory ({@link Bukkit#createInventory} + {@code player.openInventory})
+     * fires the full {@code InventoryClose}/{@code InventoryOpen} event cascade across every
+     * plugin on the server and resends the entire window to the client. When a panel is only
+     * refreshing its contents (e.g. a tabbed panel cycling its display mode or paging) and the
+     * title and size are unchanged, that reopen is wasteful — spam-clicking such a panel can
+     * measurably raise MSPT. In that case we simply update the item in each slot, which sends
+     * only cheap per-slot packets.
+     * <p>
+     * This is only possible when an inventory already exists (the panel is open), the title
+     * ({@link #name}) is unchanged, and the computed size matches the current inventory. If any
+     * of those differ (notably a title change, which the client can only pick up on a reopen),
+     * the caller must fall back to {@link #makePanel}.
+     *
+     * @param name  the panel/title name for the refreshed panel
+     * @param items the new items keyed by slot
+     * @param size  the requested panel size (pre-{@link #fixSize})
+     * @return {@code true} if the panel was refreshed in place, {@code false} if the caller must
+     *         re-open the panel via {@link #makePanel}
+     * @since 3.19.0
+     */
+    protected boolean tryRefreshInPlace(String name, Map<Integer, PanelItem> items, int size) {
+        if (inventory == null || !Objects.equals(this.name, name) || inventory.getSize() != fixSize(size)) {
+            return false;
+        }
+        this.items = items;
+        int invSize = inventory.getSize();
+        for (int i = 0; i < invSize && i < 54; i++) {
+            PanelItem pi = items.get(i);
+            if (pi == null) {
+                inventory.setItem(i, null);
+            } else {
+                inventory.setItem(i, pi.getItem());
+                // Get player head async
+                if (pi.isPlayerHead()) {
+                    HeadGetter.getHead(pi, this);
+                }
+            }
+        }
+        // Mirror makePanel: run listener setup after the contents are updated
+        if (listener != null) {
+            listener.setup();
+        }
+        return true;
     }
 
     private int fixSize(int size) {
