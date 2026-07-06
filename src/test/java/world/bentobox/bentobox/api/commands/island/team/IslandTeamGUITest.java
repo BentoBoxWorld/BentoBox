@@ -99,9 +99,8 @@ class IslandTeamGUITest extends RanksManagerTestSetup {
 
     private void copyPanelYaml(String resource, File dest) throws IOException {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(resource)) {
-            if (in != null) {
-                Files.copy(in, dest.toPath());
-            }
+            assertNotNull(in, "Missing test fixture on the classpath: " + resource);
+            Files.copy(in, dest.toPath());
         }
     }
 

@@ -27,8 +27,9 @@ team_panel:
         # The data section is a key-value list of data relavent for this button. It is interpreted by the code implemented the panel.
         # The convention is to specify the type and the panel tab that will open if pressed. These are Enums in the code.
         # Icon shown for this button. If omitted, the viewer's own player head is used.
-        # Set this to any material (e.g. PAPER, BOOK) to override it.
-        #icon: PLAYER_HEAD
+        # Set this to any material (e.g. PAPER, BOOK) to override it. Note: a
+        # material here replaces the viewer head with a plain, unowned icon.
+        #icon: PAPER
         data:
           type: STATUS
         # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
