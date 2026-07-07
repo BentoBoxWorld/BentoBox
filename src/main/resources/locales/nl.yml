@@ -201,6 +201,7 @@ commands:
         description: draagt het eilandbezit over aan de speler
         already-owner: '<red>[name] is al de eigenaar van dit eiland!</red>'
         must-be-on-island: '<red>Je moet op de [prefix_island] zijn om de eigenaar in te stellen</red>'
+        specify-island: '<red>Ga op de [prefix_island] staan en voer dit in-game uit, of noem de huidige eigenaar van het eiland: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Weet je zeker dat je [name] als eigenaar van de [prefix_island] bij</green>
           [xyz] wilt instellen?

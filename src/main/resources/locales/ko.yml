@@ -184,6 +184,7 @@ commands:
         description: 섬의 주인권한을 플레이어에게 넘깁니다
         already-owner: '<red>[name] 은 이미 이 섬의 주인입니다!</red>'
         must-be-on-island: '<red>주인의 설정을 하려면 [prefix_island]에 있어야 합니다.</red>'
+        specify-island: '<red>[prefix_island] 위에 서서 게임 내에서 실행하거나, 섬의 현재 소유자를 지정하세요: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: '<green>정말로 [xyz]에 있는 [prefix_island]의 소유자를 [name]으로 설정하시겠습니까?</green>'
         success: '<aqua>[name]</aqua><green> 은 이제 이 섬의 주인입니다.</green>'
         errors:

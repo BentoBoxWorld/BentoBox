@@ -199,6 +199,7 @@ commands:
         description: transfere o dono da ilha para o jogador
         already-owner: '<red>[name] já é o dono desta ilha!</red>'
         must-be-on-island: '<red>Você deve estar na [prefix_island] para definir o proprietário</red>'
+        specify-island: '<red>Fique na [prefix_island] e execute isto no jogo, ou indique o proprietário atual da ilha: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Você tem certeza de que deseja definir [name] como o proprietário</green>
           da [prefix_island] em [xyz]?

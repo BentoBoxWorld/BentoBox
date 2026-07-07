@@ -195,6 +195,7 @@ commands:
         description: prenosi vlasništvo nad otokom na igrača
         already-owner: '<red>[name] je već vlasnik ovog otoka!</red>'
         must-be-on-island: '<red>Morate biti na [prefix_island] da biste postavili vlasnika</red>'
+        specify-island: '<red>Stanite na [prefix_island] i pokrenite ovo u igri, ili navedite trenutnog vlasnika otoka: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Jeste li sigurni da želite postaviti [name] kao vlasnika</green>
           [prefix_island] na [xyz]?

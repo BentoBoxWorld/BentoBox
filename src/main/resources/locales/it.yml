@@ -199,6 +199,7 @@ commands:
         description: trasferisci il possesso di un'isola ad un player
         already-owner: '<red>[name] è già il proprietario dell''isola!</red>'
         must-be-on-island: '<red>Devi essere su [prefix_island] per impostare il proprietario</red>'
+        specify-island: '<red>Posizionati su [prefix_island] ed esegui questo comando in gioco, oppure indica l''attuale proprietario dell''isola: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Sei sicuro di voler impostare [name] come proprietario del</green>
           [prefix_island] a [xyz]?

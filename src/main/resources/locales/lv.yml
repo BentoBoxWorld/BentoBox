@@ -194,6 +194,7 @@ commands:
         description: iecelt par salas īpašnieku
         already-owner: '<red>[name] jau ir salas īpašnieks!</red>'
         must-be-on-island: '<red>Tev jābūt uz [prefix_island], lai iestatītu īpašnieku.</red>'
+        specify-island: '<red>Nostājies uz [prefix_island] un izpildi to spēlē, vai nosauc salas pašreizējo īpašnieku: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Vai tiešām vēlies, lai [name] kļūtu par [prefix_island] īpašnieku</green>
           vietā [xyz]?

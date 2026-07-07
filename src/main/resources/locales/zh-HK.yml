@@ -180,6 +180,7 @@ commands:
         description: 將島嶼所有權轉移給指定玩家
         already-owner: '<red>[name]本身已經是島主！</red>'
         must-be-on-island: '<red>您必須在[prefix_island]上設置所有者</red>'
+        specify-island: '<red>站在[prefix_island]上並在遊戲中執行此命令，或指定島嶼的當前擁有者: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: 您確定要設置[name]在[xyz]上成為[prefix_island]的所有者嗎？
         success: '<green>已將</green><aqua>[name]</aqua><green>提升為島主。</green>'
         errors:

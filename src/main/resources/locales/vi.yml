@@ -196,6 +196,7 @@ commands:
         description: Chuyển quyền chủ đảo cho người chơi
         already-owner: '<red>[name] đã là chủ đảo này!</red>'
         must-be-on-island: '<red>Bạn phải ở [prefix_island] để thiết lập chủ sở hữu</red>'
+        specify-island: '<red>Đứng trên [prefix_island] và chạy lệnh này trong game, hoặc nêu tên chủ sở hữu hiện tại của đảo: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Bạn có chắc chắn muốn đặt [name] làm chủ sở hữu của [prefix_island]</green>
           tại [xyz]?

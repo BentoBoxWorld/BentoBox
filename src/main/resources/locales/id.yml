@@ -196,6 +196,7 @@ commands:
         description: mentransfer kepemilikan pulau kepada pemain
         already-owner: '<red>[name] sudah menjadi pemilik pulau ini!</red>'
         must-be-on-island: '<red>Anda harus berada di [prefix_island] untuk menetapkan pemiliknya.</red>'
+        specify-island: '<red>Berdirilah di [prefix_island] dan jalankan ini di dalam game, atau sebutkan pemilik pulau saat ini: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Apakah Anda yakin ingin menetapkan [name] sebagai pemilik</green>
           [prefix_island] di [xyz]?

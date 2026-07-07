@@ -193,6 +193,7 @@ commands:
         description: Oyuncuya ada liderligini ver!
         already-owner: '<light_purple>[name] </light_purple><dark_red>zaten ada sahibi!</dark_red>'
         must-be-on-island: '<red>Sahibi ayarlamak için [prefix_island] üzerinde olmalısın</red>'
+        specify-island: '<red>[prefix_island] üzerinde dur ve bunu oyun içinde çalıştır, ya da adanın mevcut sahibini belirt: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>[xyz] konumundaki [prefix_island]ın sahibi olarak [name]'i</green>
           ayarlamak istediğinizden emin misiniz?

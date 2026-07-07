@@ -187,6 +187,7 @@ commands:
         description: předat vlastnictví ostrova hráči
         already-owner: '<red>[name] již je vlastníkem ostrova!</red>'
         must-be-on-island: '<red>Musíte být na [prefix_island], abyste nastavili majitele</red>'
+        specify-island: '<red>Postavte se na [prefix_island] a spusťte to ve hře, nebo uveďte současného vlastníka ostrova: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Jste si jisti, že chcete nastavit [name], aby se stal vlastníkem</green>
           [prefix_island] na [xyz]?

@@ -201,6 +201,7 @@ commands:
         description: transferă proprietatea insulei către jucător
         already-owner: '<red>[name] este deja proprietarul acestei insule!</red>'
         must-be-on-island: '<red>Trebuie să fii pe insulă pentru a stabili proprietarul</red>'
+        specify-island: '<red>Stai pe [prefix_island] și rulează asta în joc, sau numește proprietarul actual al insulei: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: '<green>Sigur doriți să setați [name] să fie proprietarul insulei la [xyz]?</green>'
         success: '<aqua>[name] </aqua><green>este acum proprietarul acestei insule.</green>'
         errors:

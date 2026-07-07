@@ -201,6 +201,7 @@ commands:
         already-owner: <red>[name] уже является владельцем острова!</red>
         must-be-on-island: <red>Вы должны быть на [prefix_island], чтобы установить
           владельца</red>
+        specify-island: '<red>Встаньте на [prefix_island] и выполните это в игре, или назовите текущего владельца острова: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: <green>Вы уверены, что хотите сделать [name] владельцем [prefix_island]
           на [xyz]?</green>
         success: <green><aqua>[name] </aqua>теперь является владельцем острова.</green>

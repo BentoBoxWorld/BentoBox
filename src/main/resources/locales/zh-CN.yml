@@ -179,6 +179,7 @@ commands:
         description: 将当前岛屿的岛主设置为指定玩家
         already-owner: '<red>[name]已经是当前岛屿的岛主了!</red>'
         must-be-on-island: '<red>你必须在岛屿上才能设置所有者</red>'
+        specify-island: '<red>站在[prefix_island]上并在游戏中运行此命令，或指定岛屿的当前所有者: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: '<green>你确定要把[name]设置为[xyz]的岛主吗?</green>'
         success: '<aqua>[name]</aqua><green>已被设置为当前岛屿的岛主.</green>'
         errors:

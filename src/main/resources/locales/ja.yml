@@ -173,6 +173,7 @@ commands:
         description: プレーヤーをチームのリーダーにする％
         already-owner: '<red>プレイヤーはすでにリーダーです!</red>'
         must-be-on-island: '<red>所有者を設定するには、[prefix_island]にいる必要があります</red>'
+        specify-island: '<red>[prefix_island]の上に立ってゲーム内でこれを実行するか、島の現在の所有者を指定してください: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: '<green>[prefix_island]の所有者に[xyz]の所有者になるように[name]を設定したいですか？</green>'
         success: '<aqua>[name]</aqua><green>がこの島の所有者になりました。</green>'
         errors:

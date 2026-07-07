@@ -45,6 +45,11 @@ public class BlueMapHook extends MapHook implements Listener {
      * One marker set per game mode; key is the friendly name of the game mode.
      */
     private final Map<String, MarkerSet> markerSets = new HashMap<>();
+    /**
+     * Invalid colour strings already logged, so a single bad config value does not spam the log
+     * once per island (and again on every reload).
+     */
+    private final Set<String> loggedInvalidColors = new HashSet<>();
 
     public BlueMapHook() {
         super("BlueMap", Material.MAP);
@@ -156,6 +161,10 @@ public class BlueMapHook extends MapHook implements Listener {
                 builder.defaultIcon();
             }
             markerSet.put(id, builder.build());
+        } else {
+            // Setting disabled (possibly after a /bbox reload) - drop any stale marker so the
+            // marker set reflects the current config instead of leaving pins visible.
+            markerSet.remove(id);
         }
         // Shape marker showing the protected island border
         if (settings.isBluemapIslandAreas()) {
@@ -170,6 +179,9 @@ public class BlueMapHook extends MapHook implements Listener {
                     .lineWidth(settings.getBluemapAreaLineWidth())
                     .build();
             markerSet.put(id + "_area", area);
+        } else {
+            // As above - remove any stale border marker when the setting is off.
+            markerSet.remove(id + "_area");
         }
     }
 
@@ -191,13 +203,26 @@ public class BlueMapHook extends MapHook implements Listener {
                     int b = Integer.parseInt(h.substring(4, 6), 16);
                     return new de.bluecolored.bluemap.api.math.Color(r, g, b, alpha);
                 } catch (NumberFormatException e) {
-                    plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Using default.");
+                    logInvalidColor(hex, "Invalid BlueMap colour in config: '" + hex + "'. Using default.");
                 }
             } else {
-                plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Expected #RRGGBB. Using default.");
+                logInvalidColor(hex,
+                        "Invalid BlueMap colour in config: '" + hex + "'. Expected #RRGGBB. Using default.");
             }
         }
         return new de.bluecolored.bluemap.api.math.Color(51, 136, 255, alpha);
+    }
+
+    /**
+     * Logs an invalid-colour warning only the first time a given value is seen, so one bad config
+     * entry cannot spam the log once per island and again on every reload.
+     * @param hex the offending colour string
+     * @param message the message to log
+     */
+    private void logInvalidColor(String hex, String message) {
+        if (loggedInvalidColors.add(hex)) {
+            plugin.logError(message);
+        }
     }
 
     private String getIslandLabel(Island island) {

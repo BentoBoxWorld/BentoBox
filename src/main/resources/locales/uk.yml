@@ -182,6 +182,7 @@ commands:
         description: передати право власності [prefix_island] гравцю
         already-owner: '<red>[name] уже власник цього [prefix_island]!</red>'
         must-be-on-island: '<red>Ви маєте бути на цьому [prefix_island], щоб призначити власника</red>'
+        specify-island: '<red>Станьте на [prefix_island] і виконайте це у грі, або вкажіть поточного власника острова: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: '<green>Ви певні, що хочете зробити [name] власником [prefix_island] на [xyz]?</green>'
         success: '<aqua>[name]</aqua><green>тепер власник цього [prefix_island].</green>'
         errors:

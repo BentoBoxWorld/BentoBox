@@ -199,6 +199,7 @@ commands:
         description: uczyń gracza liderem wyspy
         already-owner: '<red>Gracz jest już liderem!</red>'
         must-be-on-island: '<red>Musisz być na [prefix_island], aby ustawić właściciela</red>'
+        specify-island: '<red>Stań na [prefix_island] i wykonaj to w grze, albo podaj obecnego właściciela wyspy: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Czy na pewno chcesz ustawić [name] jako właściciela [prefix_island]</green>
           w [xyz]?

@@ -205,6 +205,7 @@ commands:
         description: A [prefix_island] tulajdonjogának átruházása a játékosnak.
         already-owner: '<red>[name] már a szigetnek a tulajdonosa!</red>'
         must-be-on-island: '<red>A [prefix_island] területen kell lenned a tulajdonos beállításához.</red>'
+        specify-island: '<red>Állj a [prefix_island] területére és futtasd ezt a játékban, vagy add meg a sziget jelenlegi tulajdonosát: </red><yellow>setowner <player> <island owner></yellow>'
         confirmation: >-
           <green>Biztos vagy benne, hogy a [name]-t akarod kijelölni a</green>
           [prefix_island] tulajdonosának a [xyz]-nél?
