@@ -473,6 +473,20 @@ class IslandsManagerTest extends CommonTestSetup {
 
     /**
      * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#undeleteIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    void testUndeleteIslandClearsFlags() {
+        Island island = islandsManager.createIsland(location, UUID.randomUUID());
+        island.setDeleted(true);
+        island.setDeletable(true);
+        islandsManager.undeleteIsland(island);
+        assertFalse(island.isDeleted());
+        assertFalse(island.isDeletable());
+    }
+
+    /**
+     * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIslandCount()}.
      */
     @Test

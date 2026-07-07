@@ -269,13 +269,18 @@ commands:
       reserved-island: '<dark_purple>[xyz] </dark_purple><blue>koordinatlarındaki ada oyuncuya ayrıldı.</blue>'
       already-owned: '<dark_red>Bu ada zaten sahipli!</dark_red>'
       no-island-here: '<dark_red>Burda ada yok. Olusturmak icin kabul et!</dark_red>'
-      in-deletion: '<dark_red>Ada şuanda siliniyor daha sonra tekrar dene!</dark_red>'
+      in-deletion: '<gold>Bu ada silinmeyi bekliyor. Kaydetmek silmeyi iptal eder. Onaylamak
+        için komutu tekrar gir.</gold>'
       cannot-make-island: >-
         <dark_purple>Buraya ada yerleştirilemiyor. Lütfen detaylı bilgi için konsola</dark_purple>
         bakınız!
       island-is-spawn: >-
         <gold>Başlangıç adası, buna emin misiniz ?Kabul etmek için komutu tekrar</gold>
         girin!
+    undelete:
+      description: üzerinde bulunduğun sahipsiz [prefix_island] üzerindeki bekleyen silme durumunu kaldırır
+      not-in-deletion: '<red>Bu [prefix_island] silinmeyi beklemiyor.</red>'
+      undeleted-island: '<green>[xyz] konumundaki [prefix_island] üzerindeki silme durumu kaldırıldı. Artık sahipsiz.</green>'
     unregister:
       parameters: <sahip> [x,y,z]
       description: Oyuncuyu adadan siler ama ada silinmez.
@@ -566,8 +571,8 @@ commands:
     world:
       description: Dünya ayarlarını yönet"
     delete:
-      parameters: <oyuncu>
-      description: Oyuncunun adasını siler.
+      parameters: '[oyuncu]'
+      description: 'Oyuncunun adasını siler veya oyuncu belirtilmezse üzerinde bulunduğun adayı siler.'
       cannot-delete-owner: '<dark_red>Silmeden önce adadaki herkesi at.</dark_red>'
       deleted-island: '<yellow>[xyz] </yellow><aqua>kordinatlarındaki ada başarıyla silindi</aqua>'
     deletehomes:

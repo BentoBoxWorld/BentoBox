@@ -55,12 +55,9 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
-        // Check if this spot is still being deleted
+        // Check if this spot is being deleted
         closestIsland = Util.getClosestIsland(user.getLocation());
-        if (getPlugin().getIslandDeletionManager().inDeletion(closestIsland)) {
-            user.sendMessage("commands.admin.register.in-deletion");
-            return false;
-        }
+        boolean inDeletion = getPlugin().getIslandDeletionManager().inDeletion(closestIsland);
         // Check if island is owned
         Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
         if (opIsland.isEmpty()) {
@@ -72,6 +69,12 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         island = opIsland.get();
         if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.register.already-owned");
+            return false;
+        }
+        // Island is pending deletion - registering it will cancel the deletion, so confirm first
+        if (inDeletion) {
+            askConfirmation(user, user.getTranslation("commands.admin.register.in-deletion"),
+                    () -> register(user, args.getFirst()));
             return false;
         }
         // Check if island is spawn
@@ -129,8 +132,9 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         if (island.isSpawn()) {
             getIslands().clearSpawn(island.getWorld());
         }
-        // Remove deletion status if it has been assigned.
-        island.setDeleted(false);
+        // Remove deletion status if it has been assigned so the island is not
+        // reaped by the region-file purge and stays owned by the new player.
+        getIslands().undeleteIsland(island);
         user.sendMessage("commands.admin.register.registered-island", TextVariables.XYZ,
                 Util.xyz(island.getCenter().toVector()), TextVariables.NAME, targetName);
         user.sendMessage("general.success");

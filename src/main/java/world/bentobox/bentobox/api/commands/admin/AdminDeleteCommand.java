@@ -38,8 +38,8 @@ public class AdminDeleteCommand extends ConfirmableCommand {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
-            this.showHelp(this, user);
-            return false;
+            // No player named - delete the island the admin is standing on
+            return canExecuteStandingOn(user);
         }
         // Convert name to a UUID
         targetUUID = Util.getUUID(args.getFirst());
@@ -90,6 +90,41 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             // This is the only island they have so, no need to specify it
             island = null;
         }
+        return true;
+    }
+
+    /**
+     * Handles the no-argument form: delete the island the admin is standing on.
+     * Sets {@link #island} and {@link #targetUUID} on success so
+     * {@link #execute(User, String, List)} deletes just that island after
+     * confirmation.
+     *
+     * @param user the admin running the command
+     * @return true if there is a deletable island here, false otherwise
+     */
+    private boolean canExecuteStandingOn(User user) {
+        // Location-based deletion only makes sense for an in-game player
+        if (!user.isPlayer()) {
+            this.showHelp(this, user);
+            return false;
+        }
+        if (!getWorld().equals(user.getWorld())) {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
+        Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
+        if (opIsland.isEmpty()) {
+            user.sendMessage("general.errors.not-on-island");
+            return false;
+        }
+        island = opIsland.get();
+        // Do not orphan a team - its members have to be kicked first
+        if (island.hasTeam()) {
+            user.sendMessage("commands.admin.delete.cannot-delete-owner");
+            return false;
+        }
+        // The involved player for the deletion event is the island owner, if any
+        targetUUID = island.getOwner();
         return true;
     }
 

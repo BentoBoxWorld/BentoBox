@@ -279,11 +279,16 @@ commands:
       reserved-island: '<green>Riservata la isola in  [xyz] per un giocatore.</green>'
       already-owned: '<red>L''isola è già posseduta da un''altro giocatore!</red>'
       no-island-here: '<red>Non ci sono isole qua. Conferma il comando per crearne una.</red>'
-      in-deletion: '<red>Lo spazio di quest''isola sta venendo eliminato. Prova più tardi.</red>'
+      in-deletion: '<gold>Quest''isola è in attesa di eliminazione. Registrarla annullerà
+        l''eliminazione. Inserisci di nuovo il comando per confermare.</gold>'
       cannot-make-island: >-
         <red>Qui non possono essere piazzate isole. Guarda la console per</red>
         controllare possibili errori.
       island-is-spawn: '<gold>La isola è uno spawn. Sei sicuro? Rifai il comando per confermare.</gold>'
+    undelete:
+      description: rimuove lo stato di eliminazione in sospeso dall'[prefix_island] senza proprietario su cui ti trovi
+      not-in-deletion: '<red>Quest''[prefix_island] non è in attesa di eliminazione.</red>'
+      undeleted-island: '<green>Stato di eliminazione rimosso dall''[prefix_island] a [xyz]. Ora è senza proprietario.</green>'
     unregister:
       parameters: <proprietario> [x,y,z]
       description: dissocia un proprietario dall'isola, ma mantenendo i blocchi dell'isola
@@ -594,8 +599,8 @@ commands:
     world:
       description: Gestisci le impostazioni del mondo
     delete:
-      parameters: <player>
-      description: elimina l'isola di un giocatore
+      parameters: '[player]'
+      description: 'elimina l''isola di un giocatore, o l''isola su cui ti trovi se non viene indicato un giocatore'
       cannot-delete-owner: >-
         <red>Tutti i membri di un'isola devono essere cacciati, prima di eliminare</red>
         l'isola.

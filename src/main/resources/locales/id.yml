@@ -273,13 +273,18 @@ commands:
       reserved-island: '<green>Pulau yang dilindungi di [xyz] untuk [name].</green>'
       already-owned: '<red>Pulau sudah dimiliki oleh pemain lain!</red>'
       no-island-here: '<red>Tidak ada pulau di sini. Konfirmasikan untuk membuatnya.</red>'
-      in-deletion: '<red>Ruang pulau ini sedang dihapus. Coba nanti.</red>'
+      in-deletion: '<gold>Pulau ini menunggu untuk dihapus. Mendaftarkannya akan membatalkan
+        penghapusan. Masukkan perintah lagi untuk mengonfirmasi.</gold>'
       cannot-make-island: >-
         <red>Sebuah pulau tidak dapat ditempatkan di sini, maaf. Lihat konsol</red>
         untuk kemungkinan kesalahan.
       island-is-spawn: >-
         <gold>Pulau muncul. Apa kamu yakin? Masukkan perintah lagi untuk</gold>
         mengonfirmasi.
+    undelete:
+      description: menghapus status penghapusan tertunda dari [prefix_island] tanpa pemilik tempat kamu berada
+      not-in-deletion: '<red>[prefix_island] ini tidak menunggu untuk dihapus.</red>'
+      undeleted-island: '<green>Status penghapusan dihapus dari [prefix_island] di [xyz]. Sekarang tanpa pemilik.</green>'
     unregister:
       parameters: <pemilik> [x,y,z]
       description: batalkan pendaftaran pemilik dari pulau, tetapi pertahankan blok pulau
@@ -578,8 +583,8 @@ commands:
     world:
       description: Kelola pengaturan dunia
     delete:
-      parameters: <pemain>
-      description: menghapus pulau pemain
+      parameters: '[pemain]'
+      description: 'menghapus pulau pemain, atau pulau tempat kamu berdiri jika tidak ada pemain yang diberikan'
       cannot-delete-owner: >-
         <red>Semua anggota pulau harus dikeluarkan dari pulau sebelum</red>
         menghapusnya.

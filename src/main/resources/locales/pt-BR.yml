@@ -269,13 +269,18 @@ commands:
       reserved-island: '<green>A ilha em [xyz] foi reservada para [name].</green>'
       already-owned: '<red>Essa ilha já é posse de outro jogador!</red>'
       no-island-here: '<red>Não há uma ilha aqui. Confirme para criar uma.</red>'
-      in-deletion: '<red>Esse espaço de ilha está sendo excluído no momento. Tente mais tarde.</red>'
+      in-deletion: '<gold>Esta ilha está pendente de exclusão. Registrá-la cancelará
+        a exclusão. Digite o comando novamente para confirmar.</gold>'
       cannot-make-island: >-
         <red>Uma ilha não pôde ser colocada aqui, desculpe. Veja o console para</red>
         possíveis erros.
       island-is-spawn: >-
         <gold>Essa ilha é o spawn. Você tem certeza? Digite o comando novamente</gold>
         para confirmar.
+    undelete:
+      description: remove o status de exclusão pendente da [prefix_island] sem dono em que você está
+      not-in-deletion: '<red>Esta [prefix_island] não está pendente de exclusão.</red>'
+      undeleted-island: '<green>Status de exclusão removido da [prefix_island] em [xyz]. Agora está sem dono.</green>'
     unregister:
       parameters: <dono> [x,y,z]
       description: desregistrar dono da ilha, mas manter os blocos
@@ -572,8 +577,8 @@ commands:
     world:
       description: Gerenciar opções de mundo
     delete:
-      parameters: <jogador>
-      description: excluir a ilha de um jogador
+      parameters: '[jogador]'
+      description: 'exclui a ilha de um jogador, ou a ilha em que você está se nenhum jogador for informado'
       cannot-delete-owner: '<red>Todos os membros da ilha devem ser expulsos antes de excluí-la.</red>'
       deleted-island: '<green>A ilha em </green><yellow>[xyz] </yellow><green>foi excluída com sucesso.</green>'
     deletehomes:

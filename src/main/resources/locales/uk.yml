@@ -247,9 +247,14 @@ commands:
       reserved-island: '<green>Зарезервовано [prefix_island] за [xyz] для [name].</green>'
       already-owned: '<red>[prefix_island] уже належить іншому гравцю!</red>'
       no-island-here: '<red>Тут немає [prefix_island]. Підтвердіть, щоб створити.</red>'
-      in-deletion: '<red>Цей простір [prefix_island] зараз видаляється. Спробуйте пізніше.</red>'
+      in-deletion: '<gold>Цей [prefix_island] очікує на видалення. Його реєстрація скасує
+        видалення. Введіть команду ще раз для підтвердження.</gold>'
       cannot-make-island: '<red>[prefix_an-island] не може бути створено тут. Див. консоль на помилки.</red>'
       island-is-spawn: '<gold>[prefix_island] — це спавн. Ви впевнені? Виконайте команду ще раз для підтвердження.</gold>'
+    undelete:
+      description: знімає статус очікування видалення з [prefix_island] без власника, на якому ви стоїте
+      not-in-deletion: '<red>Цей [prefix_island] не очікує на видалення.</red>'
+      undeleted-island: '<green>Статус видалення знято з [prefix_island] на [xyz]. Тепер він без власника.</green>'
     unregister:
       parameters: <owner> [x,y,z]
       description: зняти реєстрацію власника з [prefix_island], але залишити блоки [prefix_island]
@@ -518,8 +523,8 @@ commands:
     world:
       description: Керування налаштуваннями світу
     delete:
-      parameters: <гравець>
-      description: видалити [prefix_island] гравця
+      parameters: '[гравець]'
+      description: 'видалити [prefix_island] гравця або [prefix_island], на якому ви стоїте, якщо гравця не вказано'
       cannot-delete-owner: '<red>Усі учасники [prefix_island] мають бути вигнані до видалення.</red>'
       deleted-island: '<green>[prefix_Island] за </green><yellow>[xyz] </yellow><green>успішно видалено.</green>'
     deletehomes:

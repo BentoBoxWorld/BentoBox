@@ -309,7 +309,26 @@ public class IslandsManager {
             IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
         }
     }
-    
+
+    /**
+     * Removes an island from the pending-deletion queue.
+     *
+     * <p>Clears the soft-delete flags set by
+     * {@link #deleteIsland(Island, boolean, UUID)} so the island is no longer
+     * reaped by the region-file purge ({@code PurgeRegionsService} /
+     * {@code HousekeepingManager}), then persists the change. Ownership is left
+     * untouched - the island stays unowned unless the caller assigns an owner
+     * separately.
+     *
+     * @param island the island to remove from the deletion queue, not null
+     * @since 3.6.4
+     */
+    public void undeleteIsland(@NonNull Island island) {
+        island.setDeleted(false);
+        island.setDeletable(false);
+        saveIsland(island);
+    }
+
     /**
      * Hard-deletes an island: fires the pre-delete event, kicks members,
      * nulls the owner, evicts the island from the cache, and removes the

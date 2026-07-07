@@ -278,13 +278,18 @@ commands:
       reserved-island: '<italic>insulă rezervată la [xyz] pentru [name].</italic>'
       already-owned: '<red>Island este deja deținut de un alt jucător!</red>'
       no-island-here: '<red>Nu există insulă aici. Confirmați să faceți una.</red>'
-      in-deletion: '<red>Acest spațiu insular este în prezent șters. Încercați mai târziu.</red>'
+      in-deletion: '<gold>Această insulă așteaptă să fie ștearsă. Înregistrarea ei va
+        anula ștergerea. Introdu comanda din nou pentru a confirma.</gold>'
       cannot-make-island: >-
         <red>O insulă nu poate fi plasată aici, îmi pare rău. Consultați consola</red>
         pentru eventuale erori.
       island-is-spawn: >-
         <gold>Insula este spawn. Ești sigur? Introduceți din nou comanda pentru</gold>
         a confirma.
+    undelete:
+      description: elimină starea de ștergere în așteptare de pe [prefix_island] fără proprietar pe care te afli
+      not-in-deletion: '<red>Această [prefix_island] nu este în așteptarea ștergerii.</red>'
+      undeleted-island: '<green>Starea de ștergere a fost eliminată de pe [prefix_island] la [xyz]. Acum este fără proprietar.</green>'
     unregister:
       parameters: <proprietar> [x,y,z]
       description: >-
@@ -585,8 +590,8 @@ commands:
     world:
       description: Gestionați setările lumii
     delete:
-      parameters: <player>
-      description: șterge insula unui jucător
+      parameters: '[player]'
+      description: 'șterge insula unui jucător sau insula pe care te afli dacă nu este specificat niciun jucător'
       cannot-delete-owner: >-
         <red>Toți membrii insulei trebuie expulzați din insulă înainte de ao</red>
         șterge.

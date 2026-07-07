@@ -275,11 +275,16 @@ commands:
       reserved-island: '<green>Zarezerwowano wyspę na [xyz] dla gracza.</green>'
       already-owned: '<red>Wyspa jest już własnością innego gracza!</red>'
       no-island-here: '<red>Tu nie ma wyspy. Potwierdź, aby ją utworzyć.</red>'
-      in-deletion: '<red>Ta wyspa jest w trakcie usuwania. Spróbuj później.</red>'
+      in-deletion: '<gold>Ta wyspa oczekuje na usunięcie. Zarejestrowanie jej anuluje
+        usuwanie. Wpisz komendę ponownie, aby potwierdzić.</gold>'
       cannot-make-island: >-
         <red>Niestety nie można tu umieścić wyspy. Zobacz konsolę dla możliwych</red>
         błędów.
       island-is-spawn: '<gold>Ta wyspa jest wyspą spawnu. Jesteś pewny? Wpisz ponownie tę komendę.</gold>'
+    undelete:
+      description: usuwa oczekujący status usunięcia z [prefix_island] bez właściciela, na której stoisz
+      not-in-deletion: '<red>Ta [prefix_island] nie oczekuje na usunięcie.</red>'
+      undeleted-island: '<green>Usunięto status usunięcia z [prefix_island] na [xyz]. Jest teraz bez właściciela.</green>'
     unregister:
       parameters: <właściciel> [x,y,z]
       description: wyrejestruj właściciela z wyspy, ale zachowaj bloki wyspy
@@ -574,8 +579,8 @@ commands:
     world:
       description: Zarządzaj ustawieniami świata
     delete:
-      parameters: <gracz>
-      description: usuwa wyspę gracza
+      parameters: '[gracz]'
+      description: 'usuwa wyspę gracza lub wyspę, na której stoisz, jeśli nie podano gracza'
       cannot-delete-owner: >-
         <red>Wszyscy członkowie wyspy muszą zostać wyrzuceni z wyspy przed jej</red>
         usunięciem.

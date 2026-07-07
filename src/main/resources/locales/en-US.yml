@@ -247,12 +247,18 @@ commands:
       reserved-island: '<green>Reserved [prefix_island] at [xyz] for [name].</green>'
       already-owned: '<red>[prefix_island] is already owned by another player!</red>'
       no-island-here: '<red>There is no [prefix_island] here. Confirm to make one.</red>'
-      in-deletion: '<red>This [prefix_island] space is currently being deleted. Try
-        later.</red>'
+      in-deletion: '<gold>This [prefix_island] is pending deletion. Registering it will
+        cancel the deletion. Enter command again to confirm.</gold>'
       cannot-make-island: '<red>[prefix_an-island] cannot be placed here, sorry. See
         console for possible errors.</red>'
       island-is-spawn: '<gold>[prefix_island] is spawn. Are you sure? Enter command again
         to confirm.</gold>'
+    undelete:
+      description: remove the pending deletion status from the unowned [prefix_island]
+        you are on
+      not-in-deletion: '<red>This [prefix_island] is not pending deletion.</red>'
+      undeleted-island: '<green>Removed the deletion status from the [prefix_island]
+        at [xyz]. It is now unowned.</green>'
     unregister:
       parameters: <owner> [x,y,z]
       description: unregister owner from [prefix_island], but keep [prefix_island]
@@ -532,8 +538,9 @@ commands:
     world:
       description: Manage world settings
     delete:
-      parameters: <player>
-      description: deletes a player's [prefix_island]
+      parameters: '[player]'
+      description: deletes a player's [prefix_island], or the [prefix_island] you are
+        standing on if no player is given
       cannot-delete-owner: '<red>All [prefix_island] members have to be kicked from
         the [prefix_island] before deleting it.</red>'
       deleted-island: '<green>[prefix_Island] at </green><yellow>[xyz] </yellow><green>has been successfully deleted.</green>'

@@ -274,12 +274,16 @@ commands:
       reserved-island: <green>Остров на координатах [xyz] зарезервирован для [name].</green>
       already-owned: <red>Остров уже принадлежит другому игроку!</red>
       no-island-here: <red>Здесь нет острова. Подтвердите для создания острова.</red>
-      in-deletion: <red>Это пространство для острова уже было удалено. Попробуйте
-        позднее.</red>
+      in-deletion: '<gold>Этот остров ожидает удаления. Его регистрация отменит удаление.
+        Введите команду ещё раз для подтверждения.</gold>'
       cannot-make-island: <red>Остров не может быть размещён здесь, извините. Посмотрите
         в консоль за возможными ошибками.</red>
       island-is-spawn: <gold>Остров является спавном. Вы уверены? Введите команду
         снова для подтверждения.</gold>
+    undelete:
+      description: снимает статус ожидания удаления с [prefix_island] без владельца, на котором вы стоите
+      not-in-deletion: '<red>Этот [prefix_island] не ожидает удаления.</red>'
+      undeleted-island: '<green>Статус удаления снят с [prefix_island] на [xyz]. Теперь он без владельца.</green>'
     unregister:
       parameters: <владелец> [x,y,z]
       description: разрегистрирует остров, но сохраняет блоки на острове
@@ -571,8 +575,8 @@ commands:
     world:
       description: управление настройками мира
     delete:
-      parameters: <игрок>
-      description: удаление острова игрока
+      parameters: '[игрок]'
+      description: 'удаление острова игрока или острова, на котором вы стоите, если игрок не указан'
       cannot-delete-owner: <red>Все участники острова будут изгнаны перед удалением.</red>
       deleted-island: <green>Остров на координатах <yellow>[xyz] </yellow>успешно
         удален.</green>
