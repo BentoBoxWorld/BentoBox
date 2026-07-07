@@ -35,24 +35,23 @@ public class AdminUndeleteCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("admin.undelete");
         setOnlyPlayer(true);
         setDescription("commands.admin.undelete.description");
+        setPermission("admin.undelete");
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        // No arguments expected
-        if (!args.isEmpty()) {
-            showHelp(this, user);
-            return false;
-        }
-        // Check world
+        // Location-based command: right world, no arguments, standing on the island
         if (!getWorld().equals(user.getWorld())) {
             user.sendMessage("general.errors.wrong-world");
             return false;
         }
-        // The island must be at this location and be pending deletion
+        if (!args.isEmpty()) {
+            showHelp(this, user);
+            return false;
+        }
+        // The island here must exist and be pending deletion
         Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
         if (opIsland.isEmpty() || !opIsland.get().isDeletable()) {
             user.sendMessage("commands.admin.undelete.not-in-deletion");

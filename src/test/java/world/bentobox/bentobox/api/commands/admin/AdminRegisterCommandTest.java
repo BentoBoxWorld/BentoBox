@@ -230,7 +230,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     @Test
     void testRegisterClearsDeletionStatus() {
         testCanExecuteSuccess();
-        itl.register(user, "tastybento");
+        itl.register(user, uuid, island, "tastybento");
         verify(im).undeleteIsland(island);
     }
 
@@ -257,7 +257,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     void testRegister() {
         testCanExecuteSuccess();
         when(island.isSpawn()).thenReturn(true);
-        itl.register(user, "tastybento");
+        itl.register(user, uuid, island, "tastybento");
         verify(im).setOwner(user, uuid, island, RanksManager.VISITOR_RANK);
         verify(im).clearSpawn(world);
         verify(user).sendMessage("commands.admin.register.registered-island", TextVariables.XYZ, "123,123,432", TextVariables.NAME,
@@ -272,7 +272,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     void testReserveCannotMakeIsland() {
         when(im.createIsland(any(), eq(uuid))).thenReturn(null);
         testCanExecuteNoIsland();
-        itl.reserve(user, "tastybento");
+        itl.reserve(user, uuid, location, "tastybento");
         verify(im).createIsland(any(), eq(uuid));
         verify(user).sendMessage("commands.admin.register.cannot-make-island");
     }
@@ -283,7 +283,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     @Test
     void testReserveCanMakeIsland() {
         testCanExecuteNoIsland();
-        itl.reserve(user, "tastybento");
+        itl.reserve(user, uuid, location, "tastybento");
         verify(im).createIsland(any(), eq(uuid));
         verify(user, never()).sendMessage("commands.admin.register.cannot-make-island");
         verify(block).setType(Material.BEDROCK);

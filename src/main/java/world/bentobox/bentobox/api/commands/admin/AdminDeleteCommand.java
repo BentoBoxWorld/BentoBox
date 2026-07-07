@@ -130,18 +130,22 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        // Snapshot the resolved target so the deferred confirmation acts on it even
+        // if canExecute re-runs (e.g. the admin moves) before it is confirmed.
+        final Island targetIsland = this.island;
+        final UUID target = this.targetUUID;
         // Confirm
-        if (island == null) {
+        if (targetIsland == null) {
             // Delete the player entirely
-            askConfirmation(user, () -> deletePlayer(user));
+            askConfirmation(user, () -> deletePlayer(user, target));
         } else {
             // Just delete the player's island
-            askConfirmation(user, () -> deleteIsland(user, island));
+            askConfirmation(user, () -> deleteIsland(user, targetIsland, target));
         }
         return true;
     }
 
-    private void deleteIsland(User user, Island oldIsland) {
+    private void deleteIsland(User user, Island oldIsland, UUID targetUUID) {
         // Fire island preclear event
         IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
@@ -155,10 +159,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         getIslands().deleteIsland(oldIsland, true, targetUUID);
     }
 
-    private void deletePlayer(User user) {
+    private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
         for (Island oldIsland : getIslands().getIslands(getWorld(), targetUUID)) {
-            deleteIsland(user, oldIsland);
+            deleteIsland(user, oldIsland, targetUUID);
         }
         // Check if player is online and on the island
         assert targetUUID != null;

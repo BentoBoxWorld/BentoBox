@@ -61,9 +61,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         // Check if island is owned
         Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
         if (opIsland.isEmpty()) {
-            // Reserve spot
+            // Reserve spot. Capture the context now so the deferred confirmation
+            // acts on the same target/location even if the admin moves first.
+            final UUID uuid = targetUUID;
+            final Location loc = closestIsland;
+            final String name = args.getFirst();
             this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"),
-                    () -> reserve(user, args.getFirst()));
+                    () -> reserve(user, uuid, loc, name));
             return false;
         }
         island = opIsland.get();
@@ -73,32 +77,48 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
         // Island is pending deletion - registering it will cancel the deletion, so confirm first
         if (inDeletion) {
-            askConfirmation(user, user.getTranslation("commands.admin.register.in-deletion"),
-                    () -> register(user, args.getFirst()));
+            confirmRegister(user, "commands.admin.register.in-deletion", args.getFirst());
             return false;
         }
         // Check if island is spawn
         if (island.isSpawn()) {
-            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"),
-                    () -> register(user, args.getFirst()));
+            confirmRegister(user, "commands.admin.register.island-is-spawn", args.getFirst());
             return false;
         }
 
         return true;
     }
 
+    /**
+     * Ask the user to confirm registering the island they are on. The target and
+     * island are captured now so the deferred action stays stable even if
+     * {@link #canExecute(User, String, List)} re-runs before confirmation.
+     *
+     * @param user user doing the registering
+     * @param messageKey confirmation prompt translation key
+     * @param targetName name of the target player
+     */
+    private void confirmRegister(User user, String messageKey, String targetName) {
+        final UUID uuid = targetUUID;
+        final Island targetIsland = island;
+        askConfirmation(user, user.getTranslation(messageKey),
+                () -> register(user, uuid, targetIsland, targetName));
+    }
+
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        register(user, args.getFirst());
+        register(user, targetUUID, island, args.getFirst());
         return true;
     }
 
     /**
      * Reserve a spot for a target
      * @param user user doing the reserving
+     * @param targetUUID UUID of the target player
+     * @param closestIsland location to reserve
      * @param targetName target name
      */
-    void reserve(User user, String targetName) {
+    void reserve(User user, UUID targetUUID, Location closestIsland, String targetName) {
         Objects.requireNonNull(closestIsland);
         Objects.requireNonNull(targetUUID);
         // Island does not exist - this is a reservation
@@ -121,10 +141,11 @@ public class AdminRegisterCommand extends ConfirmableCommand {
     /**
      * Register the island to a target
      * @param user user doing the registering
+     * @param targetUUID UUID of the target player
+     * @param island island to register
      * @param targetName name of target
      */
-    void register(User user, String targetName) {
-        Objects.requireNonNull(closestIsland);
+    void register(User user, UUID targetUUID, Island island, String targetName) {
         Objects.requireNonNull(targetUUID);
         Objects.requireNonNull(island);
         // Island exists
