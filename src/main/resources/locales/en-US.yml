@@ -173,8 +173,8 @@ commands:
           owner to run it from the console
         already-owner: '<red>[name] is already the owner of this [prefix_island]!</red>'
         must-be-on-island: '<red>You must be on the [prefix_island] to set the owner</red>'
-        specify-island: '<red>Stand on the [prefix_island] and run this in-game, or name the
-          island''s current owner: </red><yellow>setowner <player> <island owner></yellow>'
+        specify-island: >-
+          <red>Stand on the [prefix_island] and run this in-game, or name the island's current owner: </red><yellow>setowner <player> <island owner></yellow>
         confirmation: '<green>Are you sure you want to set [name] to be the owner of the
           [prefix_island] at [xyz]?</green>'
         success: '<aqua>[name]</aqua><green> is now the owner of this [prefix_island].</green>'
