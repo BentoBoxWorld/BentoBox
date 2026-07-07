@@ -626,21 +626,30 @@ public class User implements MetaDataAble {
     }
 
     private String replacePrefixes(String translation, String[] variables) {
-        for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
-            String prefixTranslation = getTranslation("prefixes." + prefix);
+        // Only resolve prefixes when the string actually contains a [prefix_...] token. Resolving
+        // them means calling getAvailablePrefixes() (which parses locale language tags) and a
+        // nested getTranslation() per prefix - hundreds of times over during a panel rebuild.
+        // The vast majority of translated strings use no prefix at all, so this guard removes the
+        // dominant cost of translate() for them without changing the result.
+        if (translation.contains("[prefix_")) {
+            for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
+                String prefixTranslation = getTranslation("prefixes." + prefix);
 
-            // Append a formatting reset so prefix decorations (bold, italic, etc.)
-            // don't leak into the surrounding message text.
-            if (Util.isLegacyFormat(prefixTranslation)) {
-                prefixTranslation += "\u00A7r";
+                // Append a formatting reset so prefix decorations (bold, italic, etc.)
+                // don't leak into the surrounding message text.
+                if (Util.isLegacyFormat(prefixTranslation)) {
+                    prefixTranslation += "\u00A7r";
+                }
+
+                // Replace the prefix in the actual message
+                translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
             }
-
-            // Replace the prefix in the actual message
-            translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
         }
 
-        // Then replace Placeholders, this will only work if this is a player
-        if (player != null) {
+        // Then replace Placeholders, this will only work if this is a player. PlaceholderAPI
+        // placeholders are delimited by '%', so skip the (potentially hooked) call entirely when
+        // the string contains none.
+        if (player != null && translation.indexOf('%') >= 0) {
             translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
         }
 
@@ -656,10 +665,10 @@ public class User implements MetaDataAble {
 
         // Replace game mode and friendly name in general
         // Replace the [gamemode] text variable
-        if (addon != null && addon.getDescription() != null) {
+        if (translation.contains("[gamemode]") && addon != null && addon.getDescription() != null) {
             translation = translation.replace("[gamemode]", addon.getDescription().getName());
         }
-        if (player != null) {
+        if (player != null && translation.contains("[friendly_name]")) {
             // Replace the [friendly_name] text variable
             translation = translation.replace("[friendly_name]",
                     isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
@@ -995,11 +1004,28 @@ public class User implements MetaDataAble {
      * @return Locale
      */
     public Locale getLocale() {
-        if (sender instanceof Player && !plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
-            return Locale.forLanguageTag(plugin.getPlayers().getLocale(playerUUID));
+        // Resolve the language tag (a cheap map/config lookup) first...
+        String tag;
+        if (sender instanceof Player) {
+            String playerLocale = plugin.getPlayers().getLocale(playerUUID);
+            tag = playerLocale.isEmpty() ? plugin.getSettings().getDefaultLanguage() : playerLocale;
+        } else {
+            tag = plugin.getSettings().getDefaultLanguage();
         }
-        return Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage());
+        // ...then only re-run the (comparatively expensive) Locale.forLanguageTag parse when the
+        // tag has actually changed. getLocale() is called on every single translation lookup, so
+        // memoising the parsed Locale removes a large, repeated cost during panel rebuilds while
+        // still reflecting a language change the moment the player's tag changes.
+        if (!tag.equals(cachedLocaleTag)) {
+            cachedLocaleTag = tag;
+            cachedLocale = Locale.forLanguageTag(tag);
+        }
+        return cachedLocale;
     }
+
+    /** The language tag last parsed into {@link #cachedLocale}; see {@link #getLocale()}. */
+    private String cachedLocaleTag;
+    private Locale cachedLocale;
 
     /**
      * Forces an update of the user's complete inventory. Deprecated, but there is

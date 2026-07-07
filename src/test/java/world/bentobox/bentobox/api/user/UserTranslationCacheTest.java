@@ -2,6 +2,10 @@ package world.bentobox.bentobox.api.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -160,6 +164,24 @@ class UserTranslationCacheTest extends CommonTestSetup {
         assertTrue(speedup > 5.0,
                 () -> String.format("Expected cached conversion to be >5x faster, was %.0fx (cold %.3fus, warm %.4fus)",
                         speedup, coldPerCallUs, warmPerCallUs));
+    }
+
+    /**
+     * The expensive prefix-resolution path (getAvailablePrefixes + a nested getTranslation per
+     * prefix) must be skipped entirely when the translated string contains no [prefix_...] token.
+     * This is the single biggest cost the profiler flagged in translate().
+     */
+    @Test
+    void testPrefixResolutionSkippedWhenNoPrefixToken() {
+        user.getTranslation("a plain string with no prefix token at all");
+        verify(lm, never()).getAvailablePrefixes(any());
+    }
+
+    /** ...but it must still run when a [prefix_...] token is present. */
+    @Test
+    void testPrefixResolutionRunsWhenPrefixTokenPresent() {
+        user.getTranslation("[prefix_island] welcome");
+        verify(lm, atLeastOnce()).getAvailablePrefixes(any());
     }
 
     /** Prevents the JIT from optimising away the measured work. */

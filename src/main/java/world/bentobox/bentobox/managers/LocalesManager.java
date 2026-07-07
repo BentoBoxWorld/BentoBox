@@ -43,6 +43,11 @@ public class LocalesManager {
     private static final String BENTOBOX = "BentoBox";
     private static final String SPACER = "*************************************************";
     private static final String EN_US_TAG = "en-US";
+    /** {@code en-US} parsed once; {@link Locale#forLanguageTag(String)} is comparatively costly. */
+    private static final Locale EN_US_LOCALE = Locale.forLanguageTag(EN_US_TAG);
+    /** The default-language tag last parsed into {@link #cachedDefaultLocale}. */
+    private String cachedDefaultTag;
+    private Locale cachedDefaultLocale;
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
@@ -96,15 +101,31 @@ public class LocalesManager {
     @Nullable
     public String get(String reference) {
         // Get the translation from the server's locale
-        if (languages.containsKey(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage()))
-                && languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
-            return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
+        BentoBoxLocale serverLocale = languages.get(getDefaultLocale());
+        if (serverLocale != null && serverLocale.contains(reference)) {
+            return serverLocale.get(reference);
         }
         // Get the translation from the en-US locale
-        if (languages.get(Locale.forLanguageTag(EN_US_TAG)).contains(reference)) {
-            return languages.get(Locale.forLanguageTag(EN_US_TAG)).get(reference);
+        BentoBoxLocale enUs = languages.get(EN_US_LOCALE);
+        if (enUs != null && enUs.contains(reference)) {
+            return enUs.get(reference);
         }
         return null;
+    }
+
+    /**
+     * The server default language as a {@link Locale}, parsing the configured tag only when it
+     * changes. {@link Locale#forLanguageTag(String)} is a surprisingly expensive parse and this is
+     * on the hot translation path, so it is memoised here rather than re-parsed on every lookup.
+     * @return the default-language locale
+     */
+    private Locale getDefaultLocale() {
+        String tag = plugin.getSettings().getDefaultLanguage();
+        if (!tag.equals(cachedDefaultTag)) {
+            cachedDefaultTag = tag;
+            cachedDefaultLocale = Locale.forLanguageTag(tag);
+        }
+        return cachedDefaultLocale;
     }
     
     /**
@@ -154,10 +175,16 @@ public class LocalesManager {
         }
 
         // Get the prefixes from the server's locale
-        prefixes.addAll(languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).getPrefixes());
+        BentoBoxLocale serverLocale = languages.get(getDefaultLocale());
+        if (serverLocale != null) {
+            prefixes.addAll(serverLocale.getPrefixes());
+        }
 
         // Get the prefixes from the en-US locale
-        prefixes.addAll(languages.get(Locale.forLanguageTag(EN_US_TAG)).getPrefixes());
+        BentoBoxLocale enUs = languages.get(EN_US_LOCALE);
+        if (enUs != null) {
+            prefixes.addAll(enUs.getPrefixes());
+        }
 
         return prefixes;
     }
