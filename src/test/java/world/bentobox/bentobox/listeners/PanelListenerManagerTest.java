@@ -96,6 +96,8 @@ class PanelListenerManagerTest extends CommonTestSetup {
         when(panel.getListener()).thenReturn(opl);
         when(panel.getInventory()).thenReturn(view.getTopInventory());
         when(panel.getName()).thenReturn("name");
+        // Click handling now compares against the panel's cached plain name
+        when(panel.getPlainName()).thenReturn("name");
         Map<Integer, PanelItem> map = new HashMap<>();
         PanelItem panelItem = mock(PanelItem.class);
 
@@ -107,6 +109,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
 
         Panel wrongPanel = mock(Panel.class);
         when(wrongPanel.getName()).thenReturn("another_name");
+        when(wrongPanel.getPlainName()).thenReturn("another_name");
         when(wrongPanel.getInventory()).thenReturn(anotherInv);
 
         // Clear the static panels

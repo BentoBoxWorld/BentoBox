@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.base.Enums;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -508,6 +511,57 @@ public class User implements MetaDataAble {
      * @return legacy §-coded string
      */
     private String convertToLegacy(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        // Serve from the cache when possible. computeLegacy is a pure function of raw, so the
+        // cached value is always valid for that exact input (see LEGACY_CACHE).
+        String cached = LEGACY_CACHE.getIfPresent(raw);
+        if (cached != null) {
+            return cached;
+        }
+        String result = computeLegacy(raw);
+        LEGACY_CACHE.put(raw, result);
+        return result;
+    }
+
+    /**
+     * Bounded, self-expiring cache for {@link #computeLegacy(String)}.
+     * <p>
+     * The MiniMessage&nbsp;&rarr;&nbsp;{@link Component}&nbsp;&rarr;&nbsp;legacy conversion is by
+     * far the most expensive part of a translation, and panels re-translate the same handful of
+     * templates and rank names dozens of times per rebuild. Because {@link #computeLegacy(String)}
+     * depends only on its input string, the result can be cached keyed purely on that string:
+     * <ul>
+     *   <li>It never needs invalidating on a locale reload — a reload simply produces different
+     *       raw strings, which are different keys; the old entries age out on their own.</li>
+     *   <li>Dynamic content (PlaceholderAPI values, counts, names) is substituted into the raw
+     *       string <em>before</em> it reaches here, so a changed placeholder produces a different
+     *       key rather than a stale hit.</li>
+     * </ul>
+     * The cache is bounded <b>both</b> by size and by idle time so it cannot grow without limit:
+     * at most {@value #LEGACY_CACHE_MAX_SIZE} entries are kept, and any entry not read for
+     * {@value #LEGACY_CACHE_EXPIRE_MINUTES} minutes is evicted. This keeps the hot set (repeatedly
+     * rendered panel and message strings) resident while one-off strings fall out.
+     *
+     * @since 3.19.0
+     */
+    private static final int LEGACY_CACHE_MAX_SIZE = 10_000;
+    private static final int LEGACY_CACHE_EXPIRE_MINUTES = 30;
+    private static final Cache<String, String> LEGACY_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(LEGACY_CACHE_MAX_SIZE)
+            .expireAfterAccess(LEGACY_CACHE_EXPIRE_MINUTES, TimeUnit.MINUTES)
+            .build();
+
+    /**
+     * Performs the actual legacy conversion for {@link #convertToLegacy(String)}. This is a pure
+     * function of {@code raw} (it touches no instance or locale state), which is what makes the
+     * result safe to cache in {@link #LEGACY_CACHE}.
+     *
+     * @param raw the raw translated string
+     * @return legacy §-coded string
+     */
+    static String computeLegacy(String raw) {
         boolean hasLegacy = Util.isLegacyFormat(raw);
         boolean hasMiniMessage = raw.contains("<") && raw.contains(">");
         if (hasLegacy && !hasMiniMessage) {

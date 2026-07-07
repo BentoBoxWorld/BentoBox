@@ -39,11 +39,24 @@ public class PanelListenerManager implements Listener {
             // uncancel it. If gui was from our environment, then cancel event anyway.
             event.setCancelled(true);
 
+            // Get the panel itself
+            Panel panel = openPanels.get(user.getUniqueId());
+
+            // Apply the click cooldown for TabbedPanels first, before any other (potentially
+            // expensive) work. A rejected spam click must do the absolute minimum: without this
+            // early return, every click - even the throttled ones - would still pay for a
+            // view.getTitle() render and a MiniMessage title parse below, which is what keeps MSPT
+            // high while a settings GUI is being spam-clicked.
+            if (panel.getListener().filter(TabbedPanel.class::isInstance).isPresent()
+                    && BentoBox.getInstance().onTimeout(user, panel)) {
+                return;
+            }
+
             // Check the name of the panel using plain text comparison.
-            // Panel names may contain MiniMessage tags or legacy § codes; view.getTitle() returns rendered text.
+            // Panel names may contain MiniMessage tags or legacy § codes; view.getTitle() returns
+            // rendered text. The panel's plain name is cached, so this does not re-parse the title.
             String viewTitle = Util.stripColor(view.getTitle());
-            String panelName = Util.componentToPlainText(Util.parseMiniMessageOrLegacy(
-                    openPanels.get(user.getUniqueId()).getName()));
+            String panelName = panel.getPlainName();
             if (viewTitle.equals(panelName)) {
                 // Close inventory if clicked outside and if setting is true
                 if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
@@ -51,15 +64,6 @@ public class PanelListenerManager implements Listener {
                     return;
                 }
 
-                // Get the panel itself
-                Panel panel = openPanels.get(user.getUniqueId());
-                // Apply click cooldown for TabbedPanel before handlers run.
-                // This prevents rapid clicks from triggering expensive flag changes
-                // and panel rebuilds.
-                if (panel.getListener().filter(TabbedPanel.class::isInstance).isPresent()
-                        && BentoBox.getInstance().onTimeout(user, panel)) {
-                    return;
-                }
                 // Check that they clicked on a specific item
                 PanelItem pi = panel.getItems().get(event.getRawSlot());
                 if (pi != null) {

@@ -33,6 +33,12 @@ public class Panel implements HeadRequester, InventoryHolder {
     private PanelListener listener;
     private User user;
     private String name;
+    /**
+     * Cached plain-text rendering of {@link #name}. Computed once whenever the panel is (re)made
+     * so that click handling does not have to re-parse the (possibly MiniMessage) title on every
+     * click. See {@link #getPlainName()}.
+     */
+    private String plainName = "";
     private World world;
     private Island island;
 
@@ -92,6 +98,8 @@ public class Panel implements HeadRequester, InventoryHolder {
 
         // Create panel with Component-based title
         Component title = name != null ? Util.parseMiniMessageOrLegacy(name) : Component.empty();
+        // Cache the plain-text title so click handling does not re-parse it on every click
+        this.plainName = Util.componentToPlainText(title);
         switch (type) {
         case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), title);
         case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, title);
@@ -279,6 +287,20 @@ public class Panel implements HeadRequester, InventoryHolder {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the cached plain-text (colour- and tag-stripped) rendering of the panel's
+     * {@link #getName() name}. The panel title may contain MiniMessage tags or legacy {@code §}
+     * colour codes; this returns the same plain text that the client shows in the inventory view
+     * title. It is computed once when the panel is (re)made rather than on every click, so it is
+     * cheap to call from hot paths such as click handling.
+     *
+     * @return the plain-text panel title, never {@code null} (empty string if the panel has no name)
+     * @since 3.19.0
+     */
+    public String getPlainName() {
+        return plainName;
     }
 
     /**
