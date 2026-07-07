@@ -127,7 +127,8 @@ public class TabbedPanel extends Panel implements PanelListener {
                 // Previous page icon
                 items.put(46, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
                     this.activePage--;
-                    this.refreshPanel();
+                    // PanelListenerManager refreshes the panel after every click handler,
+                    // so we must not refresh again here (that would rebuild the panel twice).
                     return true;
                 }).build());
             }
@@ -135,18 +136,26 @@ public class TabbedPanel extends Panel implements PanelListener {
                 // Next page icon
                 items.put(52, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
                     this.activePage++;
-                    this.refreshPanel();
+                    // PanelListenerManager refreshes the panel after every click handler,
+                    // so we must not refresh again here (that would rebuild the panel twice).
                     return true;
                 }).build());
             }
         } else {
             throw new InvalidParameterException("Unknown tab slot number " + activeTab);
         }
-        // Show it to the player — mark as refreshing so that the inventory close
-        // triggered by opening a new inventory is not treated as a true close.
-        this.refreshing = true;
-        this.makePanel(tab.getName(), items, tpb.getSize(), tpb.getUser(), this);
-        this.refreshing = false;
+        // Try to refresh the already-open inventory in place first. This avoids the expensive
+        // InventoryClose/Open packet-and-event cascade of a full reopen when only the contents
+        // change (e.g. cycling the settings display mode or paging within the same tab), which is
+        // what makes spam-clicking the panel raise MSPT. Falls back to a full reopen when the
+        // panel is opened for the first time or the tab (and therefore the title) changes.
+        if (!tryRefreshInPlace(tab.getName(), items, tpb.getSize())) {
+            // Mark as refreshing so that the inventory close triggered by opening a new
+            // inventory is not treated as a true close.
+            this.refreshing = true;
+            this.makePanel(tab.getName(), items, tpb.getSize(), tpb.getUser(), this);
+            this.refreshing = false;
+        }
     }
 
     /**

@@ -286,7 +286,8 @@ public class SettingsTab implements Tab, ClickHandler {
         currentMode.put(user.getUniqueId(), currentMode.getOrDefault(user.getUniqueId(), Mode.BASIC).getNext());
         if (panel instanceof TabbedPanel tp) {
             tp.setActivePage(0);
-            tp.refreshPanel();
+            // Do not call refreshPanel() here: PanelListenerManager refreshes the panel after
+            // every click handler, so refreshing here as well would rebuild the panel twice.
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         }
         return true;
