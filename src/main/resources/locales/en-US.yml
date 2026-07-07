@@ -169,8 +169,8 @@ commands:
         success: '<aqua>[name] </aqua><green>has been kicked from </green><aqua>[owner]</aqua><green>''s [prefix_island].</green>'
       setowner:
         parameters: <player> [island owner]
-        description: transfers [prefix_island] ownership to the player. Name the current island
-          owner to run it from the console
+        description: >-
+          transfers [prefix_island] ownership to the player. Name the current island owner to run it from the console
         already-owner: '<red>[name] is already the owner of this [prefix_island]!</red>'
         must-be-on-island: '<red>You must be on the [prefix_island] to set the owner</red>'
         specify-island: >-
