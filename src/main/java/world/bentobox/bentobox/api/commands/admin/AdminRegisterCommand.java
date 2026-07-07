@@ -22,7 +22,6 @@ import world.bentobox.bentobox.util.Util;
 public class AdminRegisterCommand extends ConfirmableCommand {
 
     private Island island;
-    private Location closestIsland;
     private @Nullable UUID targetUUID;
 
     public AdminRegisterCommand(CompositeCommand parent) {
@@ -56,7 +55,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         // Check if this spot is being deleted
-        closestIsland = Util.getClosestIsland(user.getLocation());
+        Location closestIsland = Util.getClosestIsland(user.getLocation());
         boolean inDeletion = getPlugin().getIslandDeletionManager().inDeletion(closestIsland);
         // Check if island is owned
         Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());

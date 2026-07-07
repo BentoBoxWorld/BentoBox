@@ -21,6 +21,8 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminDeleteCommand extends ConfirmableCommand {
 
+    private static final String CANNOT_DELETE_OWNER = "commands.admin.delete.cannot-delete-owner";
+
     private @Nullable UUID targetUUID;
     private Island island;
 
@@ -57,7 +59,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             // Check if player is owner of any islands
             if (getIslands().getIslands(getWorld(), targetUUID).stream().filter(Island::hasTeam)
                     .anyMatch(is -> targetUUID.equals(is.getOwner()))) {
-                user.sendMessage("commands.admin.delete.cannot-delete-owner");
+                user.sendMessage(CANNOT_DELETE_OWNER);
                 return false;
             }
             // This is a delete everything request
@@ -83,7 +85,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
         // Team members should be kicked before deleting otherwise the whole team will become weird
         if (island.hasTeam() && targetUUID.equals(island.getOwner())) {
-            user.sendMessage("commands.admin.delete.cannot-delete-owner");
+            user.sendMessage(CANNOT_DELETE_OWNER);
             return false;
         }
         if (names.size() == 1) {
@@ -120,7 +122,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         island = opIsland.get();
         // Do not orphan a team - its members have to be kicked first
         if (island.hasTeam()) {
-            user.sendMessage("commands.admin.delete.cannot-delete-owner");
+            user.sendMessage(CANNOT_DELETE_OWNER);
             return false;
         }
         // The involved player for the deletion event is the island owner, if any

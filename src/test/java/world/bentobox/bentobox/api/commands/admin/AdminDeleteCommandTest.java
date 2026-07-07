@@ -334,7 +334,7 @@ class AdminDeleteCommandTest extends CommonTestSetup {
         itl.execute(user, itl.getLabel(), Collections.emptyList());
         itl.execute(user, itl.getLabel(), Collections.emptyList());
         // Only the island stood on is deleted, with its owner as the involved player
-        verify(im).deleteIsland(eq(island), eq(true), eq(notUUID));
+        verify(im).deleteIsland(island, true, notUUID);
         verify(im, never()).removePlayer(eq(world), any(UUID.class));
     }
 
