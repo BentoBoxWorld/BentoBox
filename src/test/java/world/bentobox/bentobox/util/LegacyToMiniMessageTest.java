@@ -33,6 +33,27 @@ class LegacyToMiniMessageTest extends CommonTestSetup {
     }
 
     /**
+     * {@link Util#parseMiniMessageOrLegacy(String)} caches its result. A cache hit must return a
+     * Component equal to the freshly-parsed one for every kind of input (plain, MiniMessage,
+     * legacy, mixed), so the cache can never alter what a panel item renders.
+     */
+    @Test
+    void testParseMiniMessageOrLegacyCacheIsConsistent() {
+        String[] samples = {
+                "Basic",
+                "<gold>Advanced mode</gold>",
+                "§aVisitor §r can now break blocks",
+                "<bold>§eSettings</bold> §7toggle",
+                "<green>line one\nline two</green>",
+                "§c§lALL §athe settings§r" };
+        for (String s : samples) {
+            Component first = Util.parseMiniMessageOrLegacy(s); // miss - computes and caches
+            Component hit = Util.parseMiniMessageOrLegacy(s); // hit - served from cache
+            assertEquals(first, hit, "cached Component differs for: " + s);
+        }
+    }
+
+    /**
      * When bold carries through a color change (no §r reset), the MiniMessage output
      * must still produce properly nested tags so that MiniMessage does not render
      * closing tags as literal text.

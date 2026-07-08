@@ -286,6 +286,17 @@ class PanelTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.api.panels.Panel#getPlainName()}.
+     * The plain name is the tag-/colour-stripped rendering of the title, cached at build time so
+     * that click handling does not have to re-parse a MiniMessage title on every click.
+     */
+    @Test
+    void testGetPlainName() {
+        Panel p = new Panel("<green>Settings</green>", items, 10, null, listener);
+        assertEquals("Settings", p.getPlainName());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.panels.Panel#tryRefreshInPlace(String, Map, int)}.
      * A same-title, same-size refresh must update the existing inventory in place: it must not
      * create a new inventory nor re-open the panel (which would fire the InventoryClose/Open cascade).

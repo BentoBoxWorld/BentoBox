@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -84,8 +85,10 @@ public class BentoBox extends JavaPlugin implements Listener {
     // Notifier
     private Notifier notifier;
 
-    // Click limiter
-    private ExpiringMap<Pair<UUID, String>, Boolean> lastClick ;
+    // Click limiter. The value tracks whether the "slow down" notice has already been sent for
+    // the current cooldown window, so a spam-clicked panel translates that message at most once
+    // per window instead of on every rejected click.
+    private ExpiringMap<Pair<UUID, String>, AtomicBoolean> lastClick ;
 
     private HeadGetter headGetter;
 
@@ -138,6 +141,8 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Set up click timeout
         lastClick = new ExpiringMap<>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
+        // Note: ExpiringMap.put schedules removal after one cooldown; onTimeout deliberately puts
+        // only on the allowed click so the window is not extended by subsequent rejected clicks.
 
         // Start Database managers
         playersManager = new PlayersManager(this);
@@ -658,11 +663,21 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return false if they can click and the timeout is started, otherwise true.
      */
     public boolean onTimeout(User user, Panel panel) {
-        if (lastClick.containsKey(new Pair<>(user.getUniqueId(), panel.getName()))) {
-            user.notify("general.errors.slow-down");
+        Pair<UUID, String> key = new Pair<>(user.getUniqueId(), panel.getName());
+        AtomicBoolean notified = lastClick.get(key);
+        if (notified != null) {
+            // Still within the cooldown window: reject the click. Only translate and send the
+            // "slow down" notice once per window (on the first rejected click). Re-translating
+            // it on every spam click is what needlessly raised MSPT - the message itself is
+            // already throttled by the Notifier, so the player sees no difference.
+            if (notified.compareAndSet(false, true)) {
+                user.notify("general.errors.slow-down");
+            }
             return true;
         }
-        lastClick.put(new Pair<>(user.getUniqueId(), panel.getName()), true);
+        // First click of a new window - allow it. Do not re-put on later rejected clicks so the
+        // window still expires one cooldown period after this click, not after the last spam click.
+        lastClick.put(key, new AtomicBoolean(false));
         return false;
     }
 }

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -974,7 +975,10 @@ class UserTest extends CommonTestSetup {
         when(addon.getDescription()).thenReturn(new Builder("main", "gameAddon", "1.0").build());
         p.setAddon(addon);
         p.getTranslation(TEST_TRANSLATION);
-        verify(addon, times(3)).getDescription();
+        // getDescription() is consulted for the addon translation prefix. The [gamemode] token is
+        // no longer substituted (and its getDescription() calls skipped) unless the string actually
+        // contains it - TEST_TRANSLATION does not - so verify it is simply used at least once.
+        verify(addon, atLeastOnce()).getDescription();
     }
 
     /**
