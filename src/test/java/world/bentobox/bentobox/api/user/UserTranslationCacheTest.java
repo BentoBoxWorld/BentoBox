@@ -107,12 +107,17 @@ class UserTranslationCacheTest extends CommonTestSetup {
         final int distinct = SAMPLES.length;
         final int reps = 20_000;
 
+        // Invoke both paths reflectively so the measured cold/warm timings carry the same
+        // Method.invoke overhead - otherwise the reflection cost would land only on the warm side
+        // and understate the speedup.
         Method convert = User.class.getDeclaredMethod("convertToLegacy", String.class);
         convert.setAccessible(true);
+        Method compute = User.class.getDeclaredMethod("computeLegacy", String.class);
+        compute.setAccessible(true);
 
         // Warm the JIT for both paths.
         for (int i = 0; i < 5_000; i++) {
-            User.computeLegacy(SAMPLES[i % distinct]);
+            compute.invoke(null, SAMPLES[i % distinct]);
         }
         clearCache();
         for (String s : SAMPLES) {
@@ -127,7 +132,7 @@ class UserTranslationCacheTest extends CommonTestSetup {
         {
             long start = System.nanoTime();
             for (int i = 0; i < reps; i++) {
-                blackhole(User.computeLegacy(SAMPLES[i % distinct]));
+                blackhole((String) compute.invoke(null, SAMPLES[i % distinct]));
             }
             coldNanos = System.nanoTime() - start;
         }
