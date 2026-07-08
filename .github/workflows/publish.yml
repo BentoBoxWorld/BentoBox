@@ -16,7 +16,7 @@ on:
 
 jobs:
   publish:
-    uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@71bf927bce32586216baa6995f21852d944b98b9 # master
+    uses: bentoboxworld/.github/.github/workflows/publish-platforms.yml@ca2dcd167e8db4e0f671a976080744dda43801a6 # master
     with:
       build_tool: "gradle"
       use_release_asset: "true"          # publish the jar attached to the GitHub release; don't rebuild (immune to dependency-repo outages)

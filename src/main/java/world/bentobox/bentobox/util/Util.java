@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Enums;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -1314,6 +1317,48 @@ public class Util {
      */
     @NonNull
     public static Component parseMiniMessageOrLegacy(@NonNull String text) {
+        // Serve from the cache when possible. computeMiniMessageOrLegacy is a pure function of
+        // text, so a cached Component (immutable) is always valid for that exact input.
+        Component cached = MINI_MESSAGE_CACHE.getIfPresent(text);
+        if (cached != null) {
+            return cached;
+        }
+        Component result = computeMiniMessageOrLegacy(text);
+        MINI_MESSAGE_CACHE.put(text, result);
+        return result;
+    }
+
+    /**
+     * Bounded, self-expiring cache for {@link #parseMiniMessageOrLegacy(String)}.
+     * <p>
+     * This is the return leg of the translation round-trip: UI code takes the legacy string a
+     * translation produced and parses it back into a {@link Component} for an item's name/lore.
+     * Panels do this for every item on every rebuild, over the same handful of strings. The parse
+     * is a pure function of its input and {@link Component} is immutable, so the result is cached
+     * keyed purely on the input string — no invalidation is ever needed (dynamic content produces
+     * a different key; a locale reload produces different strings, i.e. different keys).
+     * <p>
+     * Bounded <b>both</b> by size ({@value #MM_CACHE_MAX_SIZE}) and idle time
+     * ({@value #MM_CACHE_EXPIRE_MINUTES} minutes) so it cannot grow without limit.
+     *
+     * @since 3.19.0
+     */
+    private static final int MM_CACHE_MAX_SIZE = 10_000;
+    private static final int MM_CACHE_EXPIRE_MINUTES = 30;
+    private static final Cache<String, Component> MINI_MESSAGE_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(MM_CACHE_MAX_SIZE)
+            .expireAfterAccess(MM_CACHE_EXPIRE_MINUTES, TimeUnit.MINUTES)
+            .build();
+
+    /**
+     * Performs the actual auto-detecting parse for {@link #parseMiniMessageOrLegacy(String)}. This
+     * is a pure function of {@code text}, which is what makes the result safe to cache.
+     *
+     * @param text the text (either legacy or MiniMessage format)
+     * @return parsed Component
+     */
+    @NonNull
+    private static Component computeMiniMessageOrLegacy(@NonNull String text) {
         if (isLegacyFormat(text)) {
             boolean hasMiniMessage = text.contains("<") && text.contains(">");
             if (hasMiniMessage) {

@@ -25,6 +25,7 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -224,7 +225,18 @@ public class DefaultPasteUtil {
             // Nothing
             return false;
         }
-        Entity e = location.getWorld().spawnEntity(location, k.getType());
+        Entity e;
+        try {
+            // Paintings are spawned with art and facing pre-applied at their anchor block,
+            // otherwise the art is randomized and even-sized paintings shift position
+            e = k.getType() == EntityType.PAINTING ? k.spawnPainting(location)
+                    : location.getWorld().spawnEntity(location, k.getType());
+        } catch (IllegalArgumentException ex) {
+            // Hanging entities (item frames, paintings) cannot spawn without a block to attach to
+            plugin.logWarning("Could not paste entity " + k.getType() + " at "
+                    + Util.xyz(location.toVector()) + ": " + ex.getMessage());
+            return false;
+        }
         applyCustomName(e, k, island);
         k.configureEntity(e);
 

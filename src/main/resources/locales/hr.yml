@@ -272,11 +272,16 @@ commands:
       reserved-island: '<green>Rezervirani otok na [xyz] za [name].</green>'
       already-owned: '<red>Island je već u vlasništvu drugog igrača!</red>'
       no-island-here: '<red>Ovdje nema otoka. Potvrdite da napravite jedan.</red>'
-      in-deletion: '<red>Ovaj otočni prostor trenutno se briše. Pokušaj kasnije.</red>'
+      in-deletion: '<gold>Ovaj otok čeka na brisanje. Njegova registracija otkazat će
+        brisanje. Ponovno unesite naredbu za potvrdu.</gold>'
       cannot-make-island: >-
         <red>Ovdje se ne može smjestiti otok, nažalost. Pogledajte konzolu za</red>
         moguće pogreške.
       island-is-spawn: '<gold>Otok je spawn. Jeste li sigurni? Ponovno unesite naredbu za potvrdu.</gold>'
+    undelete:
+      description: uklanja status čekanja na brisanje s [prefix_island] bez vlasnika na kojem stojiš
+      not-in-deletion: '<red>Ovaj [prefix_island] ne čeka na brisanje.</red>'
+      undeleted-island: '<green>Uklonjen status brisanja s [prefix_island] na [xyz]. Sada je bez vlasnika.</green>'
     unregister:
       parameters: <vlasnik> [x,y,z]
       description: odjaviti vlasnika s otoka, ali zadržati otočne blokove
@@ -567,8 +572,8 @@ commands:
     world:
       description: Upravljanje svjetskim postavkama
     delete:
-      parameters: <igrač>
-      description: briše igračev otok
+      parameters: '[igrač]'
+      description: 'briše igračev otok ili otok na kojem stojiš ako igrač nije naveden'
       cannot-delete-owner: '<red>Svi članovi otoka moraju biti izbačeni s otoka prije brisanja.</red>'
       deleted-island: '<green>Otok na </green><yellow>[xyz] </yellow><green>je uspješno izbrisan.</green>'
     deletehomes:
@@ -806,6 +811,13 @@ commands:
               <green>Igrači moraju biti u</green>
               <green>istom svetu kao i vi da bi</green>
               <green>se prikazivali na listi.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Lijevi Klip</aqua>'
@@ -915,6 +927,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Pomakni lijevu tipku miša</aqua>'
               trust: '<green>za povjerenje igraču</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Ne možete pozvati sami sebe!</red>'
           cooldown: '<red>Ne možete pozvati tu osobu još [number] sekundi.</red>'
@@ -1078,6 +1096,12 @@ protection:
       description: Uključi/isključi interakciju
       name: Kreveti
       hint: Korištenje kreveta onemogućeno
+    BED_ANCHOR_RESPAWN:
+      name: Respawn kod kreveta/sidra
+      description: |-
+        <green>Igrači se ponovno pojavljuju kod valjanog kreveta</green>
+        <green>ili sidra za oživljavanje ako se nalazi na otoku</green>
+        <green>čiji su članovi.</green>
     BOAT:
       name: Čamci
       description: |-
@@ -1365,6 +1389,10 @@ protection:
       description: |-
         <green>Uključivanje/isključivanje može li se vatra proširiti</green>
         <green>u obližnje blokove ili ne.</green>
+    FISHING:
+      name: Pecanje
+      description: Omogućuje pecanje štapom za pecanje
+      hint: Pecanje onemogućeno
     FISH_SCOOPING:
       name: Grabljenje ribe
       description: Omogućuje vađenje ribe pomoću kante

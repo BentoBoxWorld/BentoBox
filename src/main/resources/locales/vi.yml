@@ -272,9 +272,14 @@ commands:
       reserved-island: '<green>Để dành đảo ở [xyz] cho [name].</green>'
       already-owned: '<red>Đảo đã có chủ!</red>'
       no-island-here: '<red>Không có đảo ở đây. Xác nhận để tạo.</red>'
-      in-deletion: '<red>Không gian đảo này đang được xóa. Thử lại.</red>'
+      in-deletion: '<gold>Hòn đảo này đang chờ bị xóa. Việc đăng ký sẽ hủy việc xóa. Nhập
+        lại lệnh để xác nhận.</gold>'
       cannot-make-island: '<red>Đảo không thể đặt ở đây. Xem bảng điều khiển để xem lỗi tiềm ẩn.</red>'
       island-is-spawn: '<gold>Đảo là điểm triệu hồi. Bạn chắc chứ? Nhập lần nữa để xác nhận.</gold>'
+    undelete:
+      description: xóa trạng thái chờ xóa khỏi [prefix_island] không có chủ mà bạn đang đứng trên đó
+      not-in-deletion: '<red>[prefix_island] này không đang chờ bị xóa.</red>'
+      undeleted-island: '<green>Đã xóa trạng thái xóa khỏi [prefix_island] tại [xyz]. Bây giờ nó không có chủ.</green>'
     unregister:
       parameters: <chủ> [x,y,z]
       description: hủy đăng kí chủ đảo khỏi đảo này. nhưng giữ lại tài nguyên đảo
@@ -565,8 +570,8 @@ commands:
     world:
       description: Quản lý cài đặt thế giới
     delete:
-      parameters: <người chơi>
-      description: xóa đảo của người chơi
+      parameters: '[người chơi]'
+      description: 'xóa đảo của người chơi, hoặc đảo bạn đang đứng nếu không có người chơi nào được cung cấp'
       cannot-delete-owner: >-
         <red>Tất cả thành viên đảo phải bị đuổi khỏi đảo trước khi xóa.</red>
       deleted-island: '<green>Đảo tại </green><yellow>[xyz] </yellow><green>đã được xóa thành công.</green>'
@@ -801,6 +806,13 @@ commands:
               <green>Người chơi phải ở trong cùng</green>
               <green>thế giới với bạn để được</green>
               <green>hiển thị trong danh sách.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Nhấp Chuột Trái</aqua>'
@@ -906,6 +918,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Nhấn Shift + Click Trái</aqua>'
               trust: '<green>để tin tưởng một người chơi</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Bạn không thể mời chính bạn!</red>'
           cooldown: '<red>Bạn không thể mời người đó trong [number] giây.</red>'
@@ -1069,6 +1087,12 @@ protection:
       description: Bật/Tắt tương tác
       name: Giường
       hint: Đã tắt dùng giường
+    BED_ANCHOR_RESPAWN:
+      name: Hồi sinh tại giường/neo
+      description: |-
+        <green>Người chơi hồi sinh tại giường hoặc</green>
+        <green>neo hồi sinh hợp lệ nếu nó nằm trên đảo</green>
+        <green>mà họ là thành viên.</green>
     BOAT:
       name: Thuyền
       description: |-
@@ -1353,6 +1377,10 @@ protection:
       description: |-
         <green>Bật/Tắt việc lửa có thể</green>
         <green>lan ra các khối bên cạnh.</green>
+    FISHING:
+      name: Câu cá
+      description: Cho phép câu cá bằng cần câu
+      hint: Đã tắt câu cá
     FISH_SCOOPING:
       name: Bắt cá
       description: Cho phép bắt cá bằng xô

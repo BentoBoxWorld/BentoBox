@@ -238,9 +238,13 @@ commands:
       reserved-island: '<green>プレイヤー用に[xyz]に島を予約しました。</green>'
       already-owned: '<red>島はすでに他のプレイヤーが所有している!</red>'
       no-island-here: '<red>ここには島はない1つを確認します。</red>'
-      in-deletion: '<red>この島のスペースは現在削除中です。後で試してください。</red>'
+      in-deletion: '<gold>この島は削除待ちです。登録すると削除が取り消されます。確認するにはコマンドをもう一度入力してください。</gold>'
       cannot-make-island: '<red>島はここに配置できません。申し訳ありません。考えられるエラーについては、コンソールをご覧ください。</red>'
       island-is-spawn: '<gold>島が生成されます。本気ですか？もう一度コマンドを入力して確認します。</gold>'
+    undelete:
+      description: あなたがいる所有者のいない[prefix_island]から保留中の削除ステータスを解除します
+      not-in-deletion: '<red>この[prefix_island]は削除待ちではありません。</red>'
+      undeleted-island: '<green>[xyz]の[prefix_island]から削除ステータスを解除しました。現在は所有者がいません。</green>'
     unregister:
       parameters: <所有者> [x,y,z]
       description: 島から所有者を登録解除するが、島のブロックを維持する
@@ -511,8 +515,8 @@ commands:
     world:
       description: 世界の設定を管理する
     delete:
-      parameters: <プレイヤー>
-      description: プレイヤーの島を削除します。
+      parameters: '[プレイヤー]'
+      description: 'プレイヤーの島を削除します。プレイヤーが指定されていない場合は、あなたがいる島を削除します。'
       cannot-delete-owner: '<red>すべての島のメンバーは、それを削除する前に島から追い出される必要があります。</red>'
       deleted-island: '<dark_green>[xyz] の島は正常に削除されました。</dark_green>'
     deletehomes:
@@ -735,6 +739,13 @@ commands:
               <green>プレイヤーはにいる必要があります</green>
               <green>あなたと同じ世界</green>
               <green>リストに示されています。</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>左クリック</aqua>'
@@ -836,6 +847,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>左クリックをシフトします</aqua>'
               trust: '<green>プレーヤーを信頼するために</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: 自分から誘うことはできない!
           cooldown: その人を別の [number]秒に招待することはできません
@@ -989,6 +1006,9 @@ protection:
       description: トグル使用
       name: ベッド
       hint: ベッド使用不可
+    BED_ANCHOR_RESPAWN:
+      name: ベッド/アンカーリスポーン
+      description: 島のメンバーである場合、有効なベッドまたはリスポーンアンカーでリスポーンします
     BOAT:
       name: ボート
       description: ボートの相互作用の切り替え
@@ -1259,6 +1279,10 @@ protection:
     FIRE_SPREAD:
       name: 延焼
       description: 火の広がりをトグル
+    FISHING:
+      name: 釣り
+      description: 釣り竿での釣りを許可
+      hint: 釣り無効
     FISH_SCOOPING:
       name: 魚すくい
       description: バケツを使用して魚をすくい取る

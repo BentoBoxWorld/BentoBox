@@ -67,6 +67,14 @@ public class IslandTeamGUI {
 
     private static final String NAME = ".name";
     private static final String TIPS = "commands.island.team.gui.tips.";
+    /** Locale key for the (customisable) member button name. Placeholders: [name], [display_name]. */
+    private static final String MEMBER_NAME_REF = "commands.island.team.gui.buttons.member.name";
+    /** Locale key for the (customisable) member button rank line. Placeholder: [rank]. */
+    private static final String MEMBER_DESC_REF = "commands.island.team.gui.buttons.member.description";
+    /** Locale key for the (customisable) suffix appended to an offline member's name. Placeholder: [last_seen]. */
+    private static final String MEMBER_LAST_SEEN_REF = "commands.island.team.gui.buttons.member.last-seen";
+    /** Placeholder replaced with the formatted last-seen suffix in the member button name. */
+    private static final String LAST_SEEN = "[last_seen]";
 
     /** The user viewing the GUI */
     private final User user;
@@ -136,7 +144,7 @@ public class IslandTeamGUI {
             return this.getBlankBorder();
         }
         PanelItemBuilder builder = new PanelItemBuilder();
-        builder.icon(Material.PLAYER_HEAD);
+        applyIcon(builder, template, Material.PLAYER_HEAD);
         builder.name(user.getTranslation("commands.island.team.gui.buttons.invite.name"));
         builder.description(user.getTranslation("commands.island.team.gui.buttons.invite.description"));
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
@@ -160,7 +168,7 @@ public class IslandTeamGUI {
         }
         PanelItemBuilder builder = new PanelItemBuilder();
         builder.name(user.getTranslation("commands.island.team.gui.buttons.rank-filter.name"));
-        builder.icon(Material.AMETHYST_SHARD);
+        applyIcon(builder, template, Material.AMETHYST_SHARD);
         // Create description
         createDescription(builder);
         createClickHandler(builder, template.actions());
@@ -333,8 +341,27 @@ public class IslandTeamGUI {
             return getBlankBorder();
         }
 
-        return builder.icon(user.getName()).name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
+        // Use the template icon if the admin has set one, otherwise show the viewer's head.
+        if (template.icon() != null) {
+            builder.icon(template.icon().clone());
+        } else {
+            builder.icon(user.getName());
+        }
+        return builder.name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
                 .description(showMembers()).build();
+    }
+
+    /**
+     * Applies the icon for a button. If the panel template defines an {@code icon:}
+     * for this button it is used (allowing server admins to customise it via
+     * {@code team_panel.yml}); otherwise the supplied default material is used.
+     *
+     * @param builder  the panel item builder
+     * @param template the template record for this button
+     * @param fallback the default material to use when the template has no icon
+     */
+    private void applyIcon(PanelItemBuilder builder, ItemTemplateRecord template, Material fallback) {
+        builder.icon(template.icon() != null ? template.icon().clone() : new ItemStack(fallback));
     }
 
     private PanelItem getBlankBorder() {
@@ -406,21 +433,56 @@ public class IslandTeamGUI {
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
         }
-        if (member.isOnline()) {
-            desc.addFirst(user.getTranslation(rankRef));
-            return new PanelItemBuilder().icon(member.getName()).name(member.getDisplayName()).description(desc)
-                    .clickHandler(
-                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
-                    .build();
-        } else {
-            // Offline player
-            desc.addFirst(user.getTranslation(rankRef));
-            return new PanelItemBuilder().icon(member.getName())
-                    .name(offlinePlayerStatus(Bukkit.getOfflinePlayer(member.getUniqueId()))).description(desc)
-                    .clickHandler(
-                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
-                    .build();
+        // Rank line, styled through a customisable locale key ([rank] placeholder), shown first.
+        // Fall back to the raw rank name if the key is absent (e.g. an older custom locale file).
+        String rankName = user.getTranslation(rankRef);
+        desc.addFirst(translateOr(MEMBER_DESC_REF, rankName, TextVariables.RANK, rankName));
+        // The name is styled through the same customisable member.name key whether the member is
+        // online or offline, so admins get one consistent format. Offline members (member rank or
+        // above) get a last-seen suffix via the [last_seen] placeholder; online members and
+        // trusted-or-below members get an empty suffix.
+        String lastSeenSuffix = lastSeenSuffix(is, member);
+        return new PanelItemBuilder().icon(member.getName())
+                .name(translateOr(MEMBER_NAME_REF, member.getDisplayName() + lastSeenSuffix, TextVariables.NAME,
+                        member.getName(), TextVariables.DISPLAY_NAME, member.getDisplayName(), LAST_SEEN,
+                        lastSeenSuffix))
+                .description(desc)
+                .clickHandler(
+                        (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
+                .build();
+    }
+
+    /**
+     * Builds the last-seen suffix shown after an offline member's name in the team GUI. Returns an
+     * empty string for online members and for members ranked trusted or below (who have no last-seen
+     * status), otherwise the formatted, customisable {@link #MEMBER_LAST_SEEN_REF} suffix.
+     *
+     * @param is     the island being viewed
+     * @param member the member whose button is being built
+     * @return the suffix to append to the member's name, or an empty string
+     */
+    private String lastSeenSuffix(Island is, User member) {
+        if (member.isOnline() || !is.getMemberSet(RanksManager.MEMBER_RANK, true).contains(member.getUniqueId())) {
+            return "";
         }
+        String lastSeen = lastSeen(Bukkit.getOfflinePlayer(member.getUniqueId()));
+        return translateOr(MEMBER_LAST_SEEN_REF, "", LAST_SEEN, lastSeen);
+    }
+
+    /**
+     * Translates {@code reference}, falling back to {@code fallback} when the key is
+     * missing from the locale. {@link User#getTranslation} echoes the reference back
+     * when a key is absent, so an older or customised locale file that lacks the new
+     * keys would otherwise show the raw key string in the GUI.
+     *
+     * @param reference the locale key
+     * @param fallback  value to use when the key is missing
+     * @param variables placeholder replacement pairs
+     * @return the translated (and substituted) string, or the fallback
+     */
+    private String translateOr(String reference, String fallback, String... variables) {
+        String translation = user.getTranslation(reference, variables);
+        return translation.equals(reference) ? fallback : translation;
     }
 
     /**

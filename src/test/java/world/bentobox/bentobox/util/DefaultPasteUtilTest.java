@@ -37,6 +37,7 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Painting;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -426,6 +427,37 @@ class DefaultPasteUtilTest extends CommonTestSetup {
 
         // No owner available; name is used as-is
         verify(e).customName(Component.text("Lonely Boss"));
+    }
+
+    @Test
+    void testSpawnBlueprintEntityPaintingUsesSpawnPainting() {
+        when(blueprintEntity.getType()).thenReturn(EntityType.PAINTING);
+        Painting p = mock(Painting.class);
+        when(blueprintEntity.spawnPainting(location)).thenReturn(p);
+
+        boolean result = DefaultPasteUtil.spawnBlueprintEntity(blueprintEntity, location, island);
+
+        assertTrue(result);
+        // Paintings must go through the anchor-correcting pre-spawn path, not spawnEntity
+        verify(blueprintEntity).spawnPainting(location);
+        verify(world, never()).spawnEntity(any(), any(EntityType.class));
+        verify(blueprintEntity).configureEntity(p);
+    }
+
+    @Test
+    void testSpawnBlueprintEntitySpawnFailureLogsWarningAndReturnsFalse() {
+        // Hanging entities (item frames, paintings) throw IllegalArgumentException when they
+        // have nothing to attach to - this must not propagate and kill the rest of the batch
+        when(blueprintEntity.getType()).thenReturn(EntityType.ITEM_FRAME);
+        when(world.spawnEntity(any(), any(EntityType.class)))
+                .thenThrow(new IllegalArgumentException("Cannot spawn hanging entity"));
+        mockedUtil.when(() -> Util.xyz(any())).thenReturn("1,2,3");
+
+        boolean result = DefaultPasteUtil.spawnBlueprintEntity(blueprintEntity, location, island);
+
+        assertFalse(result);
+        verify(plugin).logWarning(anyString());
+        verify(blueprintEntity, never()).configureEntity(any());
     }
 
     @Test

@@ -199,6 +199,51 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "dynmap.island-areas", since = "3.17.1")
     private boolean dynmapIslandAreas = true;
 
+    /* BLUEMAP */
+    @ConfigComment("Toggle whether BentoBox shows a marker (pin) on BlueMap at the center of every island.")
+    @ConfigComment("Set to false if you manage your own island markers and don't want BentoBox's layer.")
+    @ConfigComment("/!\\ Restart the server or use /bbox reload after changing this for it to take effect.")
+    @ConfigEntry(path = "bluemap.island-markers", since = "3.18.1")
+    private boolean bluemapIslandMarkers = true;
+
+    @ConfigComment("Toggle whether BentoBox draws the protected area border box of every island on BlueMap.")
+    @ConfigComment("/!\\ Restart the server or use /bbox reload after changing this for it to take effect.")
+    @ConfigEntry(path = "bluemap.island-areas", since = "3.18.1")
+    private boolean bluemapIslandAreas = true;
+
+    @ConfigComment("Path to a custom icon for the island POI marker, relative to BlueMap's web root")
+    @ConfigComment("(e.g. \"assets/island.png\" or \"assets/island.svg\"). Leave blank to use BlueMap's")
+    @ConfigComment("default POI icon.")
+    @ConfigEntry(path = "bluemap.marker-icon", since = "3.18.1")
+    private String bluemapMarkerIcon = "";
+
+    @ConfigComment("Pixel anchor of the custom icon - the point of the image that sits on the island")
+    @ConfigComment("location. Ignored when marker-icon is blank.")
+    @ConfigEntry(path = "bluemap.marker-icon-anchor-x", since = "3.18.1")
+    private int bluemapMarkerIconAnchorX = 25;
+    @ConfigEntry(path = "bluemap.marker-icon-anchor-y", since = "3.18.1")
+    private int bluemapMarkerIconAnchorY = 45;
+
+    @ConfigComment("Distance range (in blocks) within which the island POI marker is visible on the map.")
+    @ConfigComment("Raise min-distance to hide markers when zoomed far out; lower max-distance to hide them")
+    @ConfigComment("when zoomed in. The default range effectively means \"always visible\".")
+    @ConfigEntry(path = "bluemap.marker-min-distance", since = "3.18.1")
+    private double bluemapMarkerMinDistance = 0.0;
+    @ConfigEntry(path = "bluemap.marker-max-distance", since = "3.18.1")
+    private double bluemapMarkerMaxDistance = 10000000.0;
+
+    @ConfigComment("Colour and styling of the protected-area rectangle. Colours are hex strings.")
+    @ConfigEntry(path = "bluemap.area-line-color", since = "3.18.1")
+    private String bluemapAreaLineColor = "#3388FF";
+    @ConfigEntry(path = "bluemap.area-fill-color", since = "3.18.1")
+    private String bluemapAreaFillColor = "#3388FF";
+    @ConfigComment("Fill opacity, 0.0 (transparent) to 1.0 (opaque).")
+    @ConfigEntry(path = "bluemap.area-fill-opacity", since = "3.18.1")
+    private double bluemapAreaFillOpacity = 0.15;
+    @ConfigComment("Border line width in pixels.")
+    @ConfigEntry(path = "bluemap.area-line-width", since = "3.18.1")
+    private int bluemapAreaLineWidth = 2;
+
     /*
      * Logs
      */
@@ -1032,6 +1077,193 @@ public class Settings implements ConfigObject {
      */
     public void setDynmapIslandAreas(boolean dynmapIslandAreas) {
         this.dynmapIslandAreas = dynmapIslandAreas;
+    }
+
+    /**
+     * Whether BentoBox shows a marker (pin) on BlueMap at the center of every island.
+     *
+     * @return true if island markers should be shown
+     * @since 3.18.1
+     */
+    public boolean isBluemapIslandMarkers() {
+        return bluemapIslandMarkers;
+    }
+
+    /**
+     * Sets whether BentoBox shows a marker (pin) on BlueMap at the center of every island.
+     *
+     * @param bluemapIslandMarkers whether island markers should be shown
+     * @since 3.18.1
+     */
+    public void setBluemapIslandMarkers(boolean bluemapIslandMarkers) {
+        this.bluemapIslandMarkers = bluemapIslandMarkers;
+    }
+
+    /**
+     * Whether BentoBox draws the protected area border box of every island on BlueMap.
+     *
+     * @return true if island area boxes should be drawn
+     * @since 3.18.1
+     */
+    public boolean isBluemapIslandAreas() {
+        return bluemapIslandAreas;
+    }
+
+    /**
+     * Sets whether BentoBox draws the protected area border box of every island on BlueMap.
+     *
+     * @param bluemapIslandAreas whether island area boxes should be drawn
+     * @since 3.18.1
+     */
+    public void setBluemapIslandAreas(boolean bluemapIslandAreas) {
+        this.bluemapIslandAreas = bluemapIslandAreas;
+    }
+
+    /**
+     * Path to a custom icon for the island POI marker, relative to BlueMap's web root. Blank
+     * means use BlueMap's default POI icon.
+     * @return the icon path, possibly blank
+     * @since 3.18.1
+     */
+    public String getBluemapMarkerIcon() {
+        return bluemapMarkerIcon;
+    }
+
+    /**
+     * Sets the custom icon path for the island POI marker.
+     * @param bluemapMarkerIcon icon path relative to BlueMap's web root, or blank for default
+     * @since 3.18.1
+     */
+    public void setBluemapMarkerIcon(String bluemapMarkerIcon) {
+        this.bluemapMarkerIcon = bluemapMarkerIcon;
+    }
+
+    /**
+     * @return the X pixel anchor of the custom island marker icon
+     * @since 3.18.1
+     */
+    public int getBluemapMarkerIconAnchorX() {
+        return bluemapMarkerIconAnchorX;
+    }
+
+    /**
+     * @param bluemapMarkerIconAnchorX the X pixel anchor of the custom island marker icon
+     * @since 3.18.1
+     */
+    public void setBluemapMarkerIconAnchorX(int bluemapMarkerIconAnchorX) {
+        this.bluemapMarkerIconAnchorX = bluemapMarkerIconAnchorX;
+    }
+
+    /**
+     * @return the Y pixel anchor of the custom island marker icon
+     * @since 3.18.1
+     */
+    public int getBluemapMarkerIconAnchorY() {
+        return bluemapMarkerIconAnchorY;
+    }
+
+    /**
+     * @param bluemapMarkerIconAnchorY the Y pixel anchor of the custom island marker icon
+     * @since 3.18.1
+     */
+    public void setBluemapMarkerIconAnchorY(int bluemapMarkerIconAnchorY) {
+        this.bluemapMarkerIconAnchorY = bluemapMarkerIconAnchorY;
+    }
+
+    /**
+     * @return the minimum distance (blocks) at which the island POI marker is visible
+     * @since 3.18.1
+     */
+    public double getBluemapMarkerMinDistance() {
+        return bluemapMarkerMinDistance;
+    }
+
+    /**
+     * @param bluemapMarkerMinDistance the minimum distance (blocks) at which the marker is visible
+     * @since 3.18.1
+     */
+    public void setBluemapMarkerMinDistance(double bluemapMarkerMinDistance) {
+        this.bluemapMarkerMinDistance = bluemapMarkerMinDistance;
+    }
+
+    /**
+     * @return the maximum distance (blocks) at which the island POI marker is visible
+     * @since 3.18.1
+     */
+    public double getBluemapMarkerMaxDistance() {
+        return bluemapMarkerMaxDistance;
+    }
+
+    /**
+     * @param bluemapMarkerMaxDistance the maximum distance (blocks) at which the marker is visible
+     * @since 3.18.1
+     */
+    public void setBluemapMarkerMaxDistance(double bluemapMarkerMaxDistance) {
+        this.bluemapMarkerMaxDistance = bluemapMarkerMaxDistance;
+    }
+
+    /**
+     * @return the protected-area rectangle border colour as a hex string
+     * @since 3.18.1
+     */
+    public String getBluemapAreaLineColor() {
+        return bluemapAreaLineColor;
+    }
+
+    /**
+     * @param bluemapAreaLineColor the protected-area rectangle border colour as a hex string
+     * @since 3.18.1
+     */
+    public void setBluemapAreaLineColor(String bluemapAreaLineColor) {
+        this.bluemapAreaLineColor = bluemapAreaLineColor;
+    }
+
+    /**
+     * @return the protected-area rectangle fill colour as a hex string
+     * @since 3.18.1
+     */
+    public String getBluemapAreaFillColor() {
+        return bluemapAreaFillColor;
+    }
+
+    /**
+     * @param bluemapAreaFillColor the protected-area rectangle fill colour as a hex string
+     * @since 3.18.1
+     */
+    public void setBluemapAreaFillColor(String bluemapAreaFillColor) {
+        this.bluemapAreaFillColor = bluemapAreaFillColor;
+    }
+
+    /**
+     * @return the protected-area rectangle fill opacity, 0.0 to 1.0
+     * @since 3.18.1
+     */
+    public double getBluemapAreaFillOpacity() {
+        return bluemapAreaFillOpacity;
+    }
+
+    /**
+     * @param bluemapAreaFillOpacity the protected-area rectangle fill opacity, 0.0 to 1.0
+     * @since 3.18.1
+     */
+    public void setBluemapAreaFillOpacity(double bluemapAreaFillOpacity) {
+        this.bluemapAreaFillOpacity = bluemapAreaFillOpacity;
+    }
+
+    /**
+     * @return the protected-area rectangle border line width in pixels
+     * @since 3.18.1
+     */
+    public int getBluemapAreaLineWidth() {
+        return bluemapAreaLineWidth;
+    }
+
+    /**
+     * @param bluemapAreaLineWidth the protected-area rectangle border line width in pixels
+     * @since 3.18.1
+     */
+    public void setBluemapAreaLineWidth(int bluemapAreaLineWidth) {
+        this.bluemapAreaLineWidth = bluemapAreaLineWidth;
     }
 
     /**

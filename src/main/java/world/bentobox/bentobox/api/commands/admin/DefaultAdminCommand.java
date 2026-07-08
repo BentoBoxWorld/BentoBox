@@ -72,6 +72,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         // Register/unregister islands
         new AdminRegisterCommand(this);
         new AdminUnregisterCommand(this);
+        new AdminUndeleteCommand(this);
         // Range
         new AdminRangeCommand(this);
         // Resets

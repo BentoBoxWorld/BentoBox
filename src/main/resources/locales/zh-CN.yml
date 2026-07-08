@@ -244,11 +244,15 @@ commands:
       reserved-island: '<green>已为玩家</green><aqua>[name]</aqua><green>预留了位于</green><aqua>[xyz]</aqua><green>的岛屿.</green>'
       already-owned: '<red>当前岛屿已有所属!</red>'
       no-island-here: '<red>当前位置没有岛屿, 是否要创建一个?</red>'
-      in-deletion: '<red>当前位置对应的岛屿正在删除中, 请稍后再试.</red>'
+      in-deletion: '<gold>该岛屿正在等待删除. 注册它将取消删除. 再次输入命令以确认.</gold>'
       cannot-make-island: '<red>当前位置无法创建岛屿, 请查看控制台查看可能的错误.</red>'
       island-is-spawn: |-
         <red>当前岛屿是出生点岛屿, 确定要让玩家认领这个岛屿吗?</red>
         <gold>请再次输入命令以确认.</gold>
+    undelete:
+      description: 移除你所在的无主[prefix_island]的待删除状态
+      not-in-deletion: '<red>这个[prefix_island]没有等待删除.</red>'
+      undeleted-island: '<green>已移除[xyz]处[prefix_island]的删除状态. 现在它无主.</green>'
     unregister:
       parameters: <拥有者> [x,y,z]
       description: 设置为无主岛屿并保留岛屿建筑
@@ -526,8 +530,8 @@ commands:
     world:
       description: 管理世界设置
     delete:
-      parameters: <玩家>
-      description: 删除玩家的岛屿
+      parameters: '[玩家]'
+      description: '删除玩家的岛屿，如果未指定玩家则删除你所站的岛屿'
       cannot-delete-owner: '<red>删除岛屿之前, 必须将所有团队成员踢出队伍.</red>'
       deleted-island: '<green>位于</green><yellow>[xyz]</yellow><green>的岛屿已成功删除.</green>'
     deletehomes:
@@ -748,6 +752,13 @@ commands:
             description: |
               <green>玩家必须和你在一个世界(维度)</green>
               <green>才会显示在列表中</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>左键</aqua>'
@@ -855,6 +866,12 @@ commands:
               trust: |-
                 <green>将TA以</green><aqua>可信玩家</aqua><green>身份拉入团队</green>
                 <red>可信玩家拥有永久权限</red>
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>你不能邀请自己!</red>'
           cooldown: '<red>邀请冷却中, </red><aqua>[number]</aqua><red>秒后才能再次发出邀请.</red>'
@@ -1010,6 +1027,9 @@ protection:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用床</color:#FAFAD2>'
       name: '<aqua><bold>床</bold></aqua>'
       hint: 禁止使用床
+    BED_ANCHOR_RESPAWN:
+      name: '<aqua><bold>床/重生锚重生</bold></aqua>'
+      description: '<color:#FAFAD2>如果有效的床或重生锚位于玩家所属的岛屿上，则在该处重生</color:#FAFAD2>'
     BOAT:
       name: '<aqua><bold>船</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>放置、破坏或进入船</color:#FAFAD2>'
@@ -1270,6 +1290,10 @@ protection:
     FIRE_SPREAD:
       name: '<aqua><bold>火势蔓延</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>火势蔓延到附近的方块</color:#FAFAD2>'
+    FISHING:
+      name: '<aqua><bold>钓鱼</bold></aqua>'
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用钓鱼竿钓鱼</color:#FAFAD2>'
+      hint: 禁止钓鱼
     FISH_SCOOPING:
       name: '<aqua><bold>捕捞鱼</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>用水桶捕捞鱼</color:#FAFAD2>'

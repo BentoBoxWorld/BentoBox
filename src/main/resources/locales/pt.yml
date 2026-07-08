@@ -276,13 +276,18 @@ commands:
       reserved-island: '<green>Ilha reservada em [xyz] para [name].</green>'
       already-owned: '<red>Ilha já pertence a outro jogador!</red>'
       no-island-here: '<red>Não há ilha aqui. Confirme para criar uma.</red>'
-      in-deletion: '<red>Este espaço na ilha está sendo excluído no momento. Tente depois.</red>'
+      in-deletion: '<gold>Esta ilha está pendente de exclusão. Registá-la cancelará a
+        exclusão. Introduza o comando novamente para confirmar.</gold>'
       cannot-make-island: >-
         <red>Uma ilha não pode ser colocada aqui, desculpe. Veja o console para</red>
         possíveis erros.
       island-is-spawn: >-
         <gold>Ilha é spawn. Você tem certeza? Digite o comando novamente para</gold>
         confirmar.
+    undelete:
+      description: remove o estado de exclusão pendente da [prefix_island] sem dono onde estás
+      not-in-deletion: '<red>Esta [prefix_island] não está pendente de exclusão.</red>'
+      undeleted-island: '<green>Estado de exclusão removido da [prefix_island] em [xyz]. Agora está sem dono.</green>'
     unregister:
       parameters: <proprietário> [x,y,z]
       description: Remover o registro de dono da ilha, mas manter os blocos da ilha
@@ -579,8 +584,8 @@ commands:
     world:
       description: Gerenciar configurações mundiais
     delete:
-      parameters: <jogador>
-      description: exclui a ilha de um jogador
+      parameters: '[jogador]'
+      description: 'exclui a ilha de um jogador, ou a ilha onde estás se nenhum jogador for indicado'
       cannot-delete-owner: >-
         <red>Todos os membros da ilha devem ser expulsos da ilha antes de</red>
         excluí-la.
@@ -821,6 +826,13 @@ commands:
               <green>Os jogadores devem estar no</green>
               <green>mesmo mundo que você para</green>
               <green>serem mostrados na lista.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Clique Esquerdo</aqua>'
@@ -930,6 +942,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift Clique Esquerdo</aqua>'
               trust: '<green>para confiar em um jogador</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Você não pode se convidar!</red>'
           cooldown: '<red>Você não pode convidar essa pessoa por mais [number] segundos.</red>'
@@ -1094,6 +1112,12 @@ protection:
       description: Alternar interação
       name: Camas
       hint: Uso da cama desativado
+    BED_ANCHOR_RESPAWN:
+      name: Reaparecimento em cama/âncora
+      description: |-
+        <green>Os jogadores reaparecem numa cama válida</green>
+        <green>ou âncora de reaparecimento se estiver numa ilha</green>
+        <green>da qual são membros.</green>
     BOAT:
       name: Barcos
       description: |-
@@ -1381,6 +1405,10 @@ protection:
       description: |-
         <green>Alternar se o fogo pode se espalhar</green>
         <green>para blocos próximos ou não.</green>
+    FISHING:
+      name: Pesca
+      description: Permitir pescar com uma cana de pesca
+      hint: Pesca desativada
     FISH_SCOOPING:
       name: Escavação de peixe
       description: Permitir escavar peixes usando um balde

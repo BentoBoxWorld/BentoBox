@@ -202,6 +202,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
 
     /**
      * Test method for {@link AdminRegisterCommand#canExecute(org.bukkit.command.CommandSender, String, String[])}.
+     * An island pending deletion can be registered after confirmation.
      */
     @Test
     void testCanExecuteInDeletionIsland() {
@@ -211,14 +212,26 @@ class AdminRegisterCommandTest extends CommonTestSetup {
         when(pm.getUUID(any())).thenReturn(notUUID);
         Location loc = mock(Location.class);
 
-        // Island has owner
-        when(island.getOwner()).thenReturn(uuid);
+        // Island is orphaned (owner cleared by the soft-delete)
+        when(island.getOwner()).thenReturn(null);
         Optional<Island> opi = Optional.of(island);
         when(im.getIslandAt(any())).thenReturn(opi);
         when(user.getLocation()).thenReturn(loc);
 
+        // canExecute defers to a confirmation rather than registering immediately
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        verify(user).sendMessage("commands.admin.register.in-deletion");
+        verify(user).getTranslation("commands.admin.register.in-deletion");
+    }
+
+    /**
+     * Test method for {@link AdminRegisterCommand#register(User, String)}.
+     * Registering an island clears its deletion status so the region purge skips it.
+     */
+    @Test
+    void testRegisterClearsDeletionStatus() {
+        testCanExecuteSuccess();
+        itl.register(user, uuid, island, "tastybento");
+        verify(im).undeleteIsland(island);
     }
 
     /**
@@ -244,7 +257,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     void testRegister() {
         testCanExecuteSuccess();
         when(island.isSpawn()).thenReturn(true);
-        itl.register(user, "tastybento");
+        itl.register(user, uuid, island, "tastybento");
         verify(im).setOwner(user, uuid, island, RanksManager.VISITOR_RANK);
         verify(im).clearSpawn(world);
         verify(user).sendMessage("commands.admin.register.registered-island", TextVariables.XYZ, "123,123,432", TextVariables.NAME,
@@ -259,7 +272,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     void testReserveCannotMakeIsland() {
         when(im.createIsland(any(), eq(uuid))).thenReturn(null);
         testCanExecuteNoIsland();
-        itl.reserve(user, "tastybento");
+        itl.reserve(user, uuid, location, "tastybento");
         verify(im).createIsland(any(), eq(uuid));
         verify(user).sendMessage("commands.admin.register.cannot-make-island");
     }
@@ -270,7 +283,7 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     @Test
     void testReserveCanMakeIsland() {
         testCanExecuteNoIsland();
-        itl.reserve(user, "tastybento");
+        itl.reserve(user, uuid, location, "tastybento");
         verify(im).createIsland(any(), eq(uuid));
         verify(user, never()).sendMessage("commands.admin.register.cannot-make-island");
         verify(block).setType(Material.BEDROCK);

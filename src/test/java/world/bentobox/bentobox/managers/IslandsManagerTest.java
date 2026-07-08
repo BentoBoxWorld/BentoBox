@@ -473,6 +473,20 @@ class IslandsManagerTest extends CommonTestSetup {
 
     /**
      * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandsManager#undeleteIsland(world.bentobox.bentobox.database.objects.Island)}.
+     */
+    @Test
+    void testUndeleteIslandClearsFlags() {
+        Island island = islandsManager.createIsland(location, UUID.randomUUID());
+        island.setDeleted(true);
+        island.setDeletable(true);
+        islandsManager.undeleteIsland(island);
+        assertFalse(island.isDeleted());
+        assertFalse(island.isDeletable());
+    }
+
+    /**
+     * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#getIslandCount()}.
      */
     @Test
@@ -2066,6 +2080,87 @@ class IslandsManagerTest extends CommonTestSetup {
         when(island.getHomes()).thenReturn(Map.of());
         Location result = islandsManager.getHomeLocation(world, uuid, "missing");
         assertNull(result);
+    }
+
+    // ---- getSafeRespawnLocation ----
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeRespawnLocation(World, UUID)}.
+     * Safe home location is returned directly.
+     */
+    @Test
+    void testGetSafeRespawnLocationHomeSafe() {
+        IslandsManager spyIm = Mockito.spy(islandsManager);
+        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        Mockito.doReturn(true).when(spyIm).isSafeLocation(location);
+        assertEquals(location, spyIm.getSafeRespawnLocation(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeRespawnLocation(World, UUID)}.
+     * When the home is unsafe but one block above is safe (slabs, stairs, etc.),
+     * the location above is returned.
+     */
+    @Test
+    void testGetSafeRespawnLocationHomeUnsafeOneAboveSafe() {
+        IslandsManager spyIm = Mockito.spy(islandsManager);
+        Location above = mock(Location.class);
+        when(location.clone()).thenReturn(location);
+        when(location.add(any(Vector.class))).thenReturn(above);
+        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        Mockito.doReturn(false).when(spyIm).isSafeLocation(location);
+        Mockito.doReturn(true).when(spyIm).isSafeLocation(above);
+        assertEquals(above, spyIm.getSafeRespawnLocation(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeRespawnLocation(World, UUID)}.
+     * When the home and above are unsafe, a quick spot near the island center is returned.
+     */
+    @Test
+    void testGetSafeRespawnLocationFallsBackToIslandCenter() {
+        IslandsManager spyIm = Mockito.spy(islandsManager);
+        Location islandCenter = mock(Location.class);
+        Location offset = mock(Location.class);
+        when(location.clone()).thenReturn(location);
+        when(location.add(any(Vector.class))).thenReturn(location);
+        when(islandCenter.clone()).thenReturn(islandCenter);
+        when(islandCenter.add(any(Vector.class))).thenReturn(offset);
+        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        Mockito.doReturn(islandCenter).when(spyIm).getIslandLocation(world, uuid);
+        Mockito.doReturn(false).when(spyIm).isSafeLocation(location);
+        Mockito.doReturn(true).when(spyIm).isSafeLocation(offset);
+        assertEquals(offset, spyIm.getSafeRespawnLocation(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeRespawnLocation(World, UUID)}.
+     * When nothing safe can be found, null is returned.
+     */
+    @Test
+    void testGetSafeRespawnLocationNothingSafe() {
+        IslandsManager spyIm = Mockito.spy(islandsManager);
+        Location islandCenter = mock(Location.class);
+        when(location.clone()).thenReturn(location);
+        when(location.add(any(Vector.class))).thenReturn(location);
+        when(islandCenter.clone()).thenReturn(islandCenter);
+        when(islandCenter.add(any(Vector.class))).thenReturn(islandCenter);
+        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        Mockito.doReturn(islandCenter).when(spyIm).getIslandLocation(world, uuid);
+        Mockito.doReturn(false).when(spyIm).isSafeLocation(any());
+        assertNull(spyIm.getSafeRespawnLocation(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeRespawnLocation(World, UUID)}.
+     * No home and no island location returns null.
+     */
+    @Test
+    void testGetSafeRespawnLocationNoHomeNoIsland() {
+        IslandsManager spyIm = Mockito.spy(islandsManager);
+        Mockito.doReturn(null).when(spyIm).getHomeLocation(world, uuid);
+        Mockito.doReturn(null).when(spyIm).getIslandLocation(world, uuid);
+        assertNull(spyIm.getSafeRespawnLocation(world, uuid));
     }
 
     @Test

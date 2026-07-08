@@ -286,13 +286,18 @@ commands:
       reserved-island: '<green>fenntartott [prefix_island] a [xyz] címen a [name] számára.</green>'
       already-owned: 'Az <red>Island már egy másik játékos tulajdona!</red>'
       no-island-here: '<red>Itt nincs [prefix_island]. Erősítse meg, hogy készítsen egyet.</red>'
-      in-deletion: '<red>Ez a szigetterület jelenleg törlés alatt áll. Próbáld később.</red>'
+      in-deletion: '<gold>Ez a sziget törlésre vár. A regisztrálása megszakítja a törlést.
+        Írd be újra a parancsot a megerősítéshez.</gold>'
       cannot-make-island: >-
         <red>[prefix_Island] nem helyezhető ide, sajnálom. Lásd a konzolt a lehetséges</red>
         hibákért.
       island-is-spawn: >-
         <gold>A [prefix_island] spawn. biztos vagy ebben? A megerősítéshez írja be újra a</gold>
         parancsot.
+    undelete:
+      description: eltávolítja a függőben lévő törlési státuszt a tulajdonos nélküli [prefix_island] szigetről, amelyen állsz
+      not-in-deletion: '<red>Ez a [prefix_island] nem vár törlésre.</red>'
+      undeleted-island: '<green>A törlési státusz eltávolítva a [prefix_island] szigetről itt: [xyz]. Most már tulajdonos nélküli.</green>'
     unregister:
       parameters: <tulajdonos> [x,y,z]
       description: >-
@@ -601,8 +606,8 @@ commands:
     world:
       description: Világbeállítások kezelése
     delete:
-      parameters: <játékos>
-      description: törli a játékos szigetét
+      parameters: '[játékos]'
+      description: 'törli a játékos szigetét, vagy a szigetet, amelyen állsz, ha nincs játékos megadva'
       cannot-delete-owner: '<red>A [prefix_island] összes tagját ki kell rúgni a szigetről, mielőtt törli.</red>'
       deleted-island: '<green>[prefix_island] itt: </green><yellow>[xyz] </yellow><green>sikeresen törölve.</green>'
     deletehomes:
@@ -850,6 +855,13 @@ commands:
               hogy
 
               <green>megjelenjenek a listában.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Bal Kattintás</aqua>'
@@ -959,6 +971,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Balra átugrás kattintás</aqua>'
               trust: '<green>egy játékos megbízásához</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nem hívhatod meg magad!</red>'
           cooldown: '<red>Nem hívhatja meg ezt a személyt további [number] másodpercig.</red>'
@@ -1123,6 +1141,12 @@ protection:
       description: Interakció váltása
       name: Ágyak
       hint: Ágyhasználat tiltva
+    BED_ANCHOR_RESPAWN:
+      name: Ágy/horgony újraszületés
+      description: |-
+        <green>A játékosok érvényes ágynál vagy</green>
+        <green>újjáéledési horgonynál születnek újra, ha az olyan</green>
+        <green>szigeten van, amelynek tagjai.</green>
     BOAT:
       name: Csónakok
       description: |-
@@ -1410,6 +1434,10 @@ protection:
       description: |-
         <green>Kapcsolja be, hogy a tűz továbbterjedhet-e</green>
         <green>a közeli blokkokra vagy sem.</green>
+    FISHING:
+      name: Horgászat
+      description: Engedélyezi a horgászbottal való horgászatot
+      hint: Horgászat letiltva
     FISH_SCOOPING:
       name: Hal befogás vödörrel
       description: Engedje meg a halak vödörrel való befogását

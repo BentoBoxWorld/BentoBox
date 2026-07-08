@@ -278,13 +278,18 @@ commands:
       reserved-island: '<italic>insulă rezervată la [xyz] pentru [name].</italic>'
       already-owned: '<red>Island este deja deținut de un alt jucător!</red>'
       no-island-here: '<red>Nu există insulă aici. Confirmați să faceți una.</red>'
-      in-deletion: '<red>Acest spațiu insular este în prezent șters. Încercați mai târziu.</red>'
+      in-deletion: '<gold>Această insulă așteaptă să fie ștearsă. Înregistrarea ei va
+        anula ștergerea. Introdu comanda din nou pentru a confirma.</gold>'
       cannot-make-island: >-
         <red>O insulă nu poate fi plasată aici, îmi pare rău. Consultați consola</red>
         pentru eventuale erori.
       island-is-spawn: >-
         <gold>Insula este spawn. Ești sigur? Introduceți din nou comanda pentru</gold>
         a confirma.
+    undelete:
+      description: elimină starea de ștergere în așteptare de pe [prefix_island] fără proprietar pe care te afli
+      not-in-deletion: '<red>Această [prefix_island] nu este în așteptarea ștergerii.</red>'
+      undeleted-island: '<green>Starea de ștergere a fost eliminată de pe [prefix_island] la [xyz]. Acum este fără proprietar.</green>'
     unregister:
       parameters: <proprietar> [x,y,z]
       description: >-
@@ -585,8 +590,8 @@ commands:
     world:
       description: Gestionați setările lumii
     delete:
-      parameters: <player>
-      description: șterge insula unui jucător
+      parameters: '[player]'
+      description: 'șterge insula unui jucător sau insula pe care te afli dacă nu este specificat niciun jucător'
       cannot-delete-owner: >-
         <red>Toți membrii insulei trebuie expulzați din insulă înainte de ao</red>
         șterge.
@@ -831,6 +836,13 @@ commands:
               <green>Jucătorii trebuie să fie în</green>
               și aceeași lume ca și tine să fii
               <green>arătat în listă.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Faceți clic stânga</aqua>'
@@ -946,6 +958,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift Click stânga</aqua>'
               trust: '<green>a avea încredere într-un jucător</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nu vă puteți invita!</red>'
           cooldown: '<red>Nu puteți invita acea persoană pentru încă [number] de secunde.</red>'
@@ -1111,6 +1129,12 @@ protection:
       description: Comutați interacțiunea
       name: Paturi
       hint: Utilizarea patului este dezactivată
+    BED_ANCHOR_RESPAWN:
+      name: Respawn la pat/ancoră
+      description: |-
+        <green>Jucătorii reapar la un pat valid sau</green>
+        <green>o ancoră de reapariție dacă se află pe o insulă</green>
+        <green>ai cărei membri sunt.</green>
     BOAT:
       name: Bărci
       description: |-
@@ -1395,6 +1419,10 @@ protection:
       description: |-
         <green>Comutați dacă focul se poate răspândi</green>
         <green>la blocurile din apropiere sau nu.</green>
+    FISHING:
+      name: Pescuit
+      description: Permiteți pescuitul cu o undiță
+      hint: Pescuitul este dezactivat
     FISH_SCOOPING:
       name: Scooping de pește
       description: Permiteți scoaterea peștilor folosind o găleată

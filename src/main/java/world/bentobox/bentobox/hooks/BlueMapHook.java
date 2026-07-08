@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.hooks;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,6 +21,7 @@ import de.bluecolored.bluemap.api.markers.POIMarker;
 import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import de.bluecolored.bluemap.api.math.Shape;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
@@ -50,16 +53,47 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @Override
     public boolean hook() {
-        if (BlueMapAPI.getInstance().isPresent()) {
-            api = BlueMapAPI.getInstance().get();
-        } else {
-            return false;
-        }
+        // Register with BlueMap's own lifecycle instead of grabbing the API once. BlueMap
+        // invokes the onEnable callback immediately if its API is already loaded, and again
+        // every time BlueMap (re)loads - crucially, after a "/bluemap reload", which discards
+        // BlueMap's maps and their marker sets. Re-populating from the callback means our
+        // island markers survive a reload instead of vanishing until the next server restart.
+        // A one-shot getInstance() in hook() was also racy at startup: if BlueMap had not
+        // finished loading yet, the hook silently produced no markers.
+        BlueMapAPI.onEnable(loadedApi -> {
+            this.api = loadedApi;
+            populateAll();
+        });
+        BlueMapAPI.onDisable(disabledApi -> this.api = null);
         // Listen for island events and BentoBoxReadyEvent to populate island markers
         // after islands are loaded (map hooks register before addons enable, so islands
         // are not yet loaded at hook time)
         Bukkit.getPluginManager().registerEvents(this, plugin);
         return true;
+    }
+
+    /**
+     * (Re)creates and attaches every known marker set to BlueMap. Called whenever BlueMap's
+     * API becomes available (including after a reload) and once islands have loaded. Safe to
+     * call repeatedly - marker creation is idempotent.
+     */
+    private void populateAll() {
+        if (api == null) {
+            return;
+        }
+        // Rebuild island markers for every game mode and re-attach the sets to their worlds
+        Set<String> gameModeNames = new HashSet<>();
+        plugin.getAddonsManager().getGameModeAddons().forEach(addon -> {
+            gameModeNames.add(addon.getWorldSettings().getFriendlyName());
+            registerGameMode(addon);
+        });
+        // Re-attach any addon-created marker sets (created via createMarkerSet) to all maps,
+        // since a BlueMap reload drops them from the freshly built maps too
+        markerSets.forEach((id, markerSet) -> {
+            if (!gameModeNames.contains(id)) {
+                api.getMaps().forEach(map -> map.getMarkerSets().put(id, markerSet));
+            }
+        });
     }
 
     /**
@@ -105,25 +139,65 @@ public class BlueMapHook extends MapHook implements Listener {
     }
 
     private void setMarker(MarkerSet markerSet, Island island) {
+        Settings settings = plugin.getSettings();
         String label = getIslandLabel(island);
         String id = island.getUniqueId();
 
         // Point marker at island center for the label/icon
-        POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
-                .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
-                .build();
-        markerSet.put(id, marker);
+        if (settings.isBluemapIslandMarkers()) {
+            POIMarker.Builder builder = POIMarker.builder().label(label).listed(true)
+                    .position(island.getCenter().getX(), island.getCenter().getY(), island.getCenter().getZ())
+                    .minDistance(settings.getBluemapMarkerMinDistance())
+                    .maxDistance(settings.getBluemapMarkerMaxDistance());
+            String icon = settings.getBluemapMarkerIcon();
+            if (icon != null && !icon.isBlank()) {
+                builder.icon(icon, settings.getBluemapMarkerIconAnchorX(), settings.getBluemapMarkerIconAnchorY());
+            } else {
+                builder.defaultIcon();
+            }
+            markerSet.put(id, builder.build());
+        }
         // Shape marker showing the protected island border
-        ShapeMarker area = ShapeMarker.builder()
-                .label(label)
-                .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
-                        island.getMaxProtectedX(), island.getMaxProtectedZ()),
-                        (float) island.getCenter().getY())
-                .lineColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255))
-                .fillColor(new de.bluecolored.bluemap.api.math.Color(51, 136, 255, 0.15f))
-                .lineWidth(2)
-                .build();
-        markerSet.put(id + "_area", area);
+        if (settings.isBluemapIslandAreas()) {
+            ShapeMarker area = ShapeMarker.builder()
+                    .label(label)
+                    .shape(Shape.createRect(island.getMinProtectedX(), island.getMinProtectedZ(),
+                            island.getMaxProtectedX(), island.getMaxProtectedZ()),
+                            (float) island.getCenter().getY())
+                    .lineColor(parseHexColor(settings.getBluemapAreaLineColor(), 1.0f))
+                    .fillColor(parseHexColor(settings.getBluemapAreaFillColor(),
+                            (float) settings.getBluemapAreaFillOpacity()))
+                    .lineWidth(settings.getBluemapAreaLineWidth())
+                    .build();
+            markerSet.put(id + "_area", area);
+        }
+    }
+
+    /**
+     * Parses a {@code #RRGGBB} (or {@code RRGGBB}) hex string into a BlueMap colour with the
+     * given alpha. Falls back to the default island blue (51, 136, 255) if the string is null
+     * or malformed, so a bad config value never stops markers from rendering.
+     * @param hex hex colour string
+     * @param alpha alpha channel, 0.0 to 1.0
+     * @return the parsed colour
+     */
+    private de.bluecolored.bluemap.api.math.Color parseHexColor(String hex, float alpha) {
+        if (hex != null) {
+            String h = hex.startsWith("#") ? hex.substring(1) : hex;
+            if (h.length() == 6) {
+                try {
+                    int r = Integer.parseInt(h.substring(0, 2), 16);
+                    int g = Integer.parseInt(h.substring(2, 4), 16);
+                    int b = Integer.parseInt(h.substring(4, 6), 16);
+                    return new de.bluecolored.bluemap.api.math.Color(r, g, b, alpha);
+                } catch (NumberFormatException e) {
+                    plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Using default.");
+                }
+            } else {
+                plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Expected #RRGGBB. Using default.");
+            }
+        }
+        return new de.bluecolored.bluemap.api.math.Color(51, 136, 255, alpha);
     }
 
     private String getIslandLabel(Island island) {
@@ -269,8 +343,10 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
-        // Now that islands are loaded, populate markers for all game modes
-        plugin.getAddonsManager().getGameModeAddons().forEach(this::registerGameMode);
+        // Islands are now loaded. If BlueMap enabled before this point its onEnable callback
+        // ran against an empty island cache, so populate again now. No-op if BlueMap's API is
+        // not yet available - its onEnable callback will populate once it is.
+        populateAll();
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

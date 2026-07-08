@@ -264,11 +264,16 @@ commands:
       reserved-island: '<green>Ostrov [xyz] rezervován pro hráče.</green>'
       already-owned: '<red>Ostrov je již vlastněn jiným hráčem!</red>'
       no-island-here: '<red>Zde není žádný ostrov. Potvrď jeho vytvoření.</red>'
-      in-deletion: '<red>Tento ostrov bude smazán. Opakuj později.</red>'
+      in-deletion: '<gold>Tento ostrov čeká na smazání. Jeho registrace smazání zruší.
+        Pro potvrzení zadej příkaz znovu.</gold>'
       cannot-make-island: >-
         <red>Pardon, sem nelze umístit ostrov. Podívej se do konzole pro přípané</red>
         chyby.
       island-is-spawn: '<gold>Ostrov je spawn. Jsi si jistý? Potvrď opětovným zadáním příkazu.</gold>'
+    undelete:
+      description: odebere status čekání na smazání z [prefix_island] bez vlastníka, na kterém stojíš
+      not-in-deletion: '<red>Tento [prefix_island] nečeká na smazání.</red>'
+      undeleted-island: '<green>Odebrán status smazání z [prefix_island] na [xyz]. Nyní je bez vlastníka.</green>'
     unregister:
       parameters: <vlastník> [x,y,z]
       description: odregistrovat vlastníka z ostrova, ale zachovat bloky ostrova
@@ -559,8 +564,8 @@ commands:
     world:
       description: Spravovat nastavení světa
     delete:
-      parameters: <Player>
-      description: odstraní ostrov hráče
+      parameters: '[Player]'
+      description: 'odstraní ostrov hráče, nebo ostrov, na kterém stojíš, pokud není zadán hráč'
       cannot-delete-owner: >-
         <red>Všichni členové ostrova musí být vykopnuti z ostrova, než jej bude</red>
         možné smazat.
@@ -796,6 +801,13 @@ commands:
               <green>Hráči musí být ve</green>
               <green>stejném světě jako ty,</green>
               <green>aby se zobrazili v seznamu.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Levý klik</aqua>'
@@ -901,6 +913,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift + levý klik</aqua>'
               trust: '<green>důvěřovat hráči</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nemůžeš pozvat sám sebe!</red>'
           cooldown: '<red>Tohoto hráče nemůžeš pozvat dalších [number] sekund</red>'
@@ -1064,6 +1082,12 @@ protection:
       description: Přepnout interakce
       name: Postele
       hint: Použití postele zakázáno
+    BED_ANCHOR_RESPAWN:
+      name: Respawn u postele/kotvy
+      description: |-
+        <green>Hráči se oživí u platné postele</green>
+        <green>nebo kotvy oživení, pokud je na ostrově,</green>
+        <green>jehož jsou členy.</green>
     BOAT:
       name: Lodě
       description: Přepnout interakce lodí
@@ -1341,6 +1365,10 @@ protection:
       description: |-
         <green>Přepnout, zda se může oheň šířit</green>
         <green>na sousedící bloky nebo ne.</green>
+    FISHING:
+      name: Rybaření
+      description: Povolit rybaření udicí
+      hint: Rybaření zakázáno
     FISH_SCOOPING:
       name: Rybobraní
       description: Povolit rybobraní použitím kbelíku

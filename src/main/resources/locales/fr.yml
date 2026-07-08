@@ -288,13 +288,18 @@ commands:
       reserved-island: '<green>l''île à [xyz] est réservée pour le joueur </green><aqua>[name] </aqua><green>.</green>'
       already-owned: '<red>Cette île appartient déjà à un autre joueur!</red>'
       no-island-here: '<red>Il n''y a pas d''île ici. Confirmez pour en faire une.</red>'
-      in-deletion: '<red>Cette île est en cours de suppression. Essayer plus tard.</red>'
+      in-deletion: '<gold>Cette île est en attente de suppression. L''enregistrer annulera
+        la suppression. Entrez à nouveau la commande pour confirmer.</gold>'
       cannot-make-island: >-
         <red>Une île ne peut pas être placée ici, désolé. Voir la console pour les</red>
         erreurs possibles.
       island-is-spawn: >-
         <gold>L'île est un spawn. Êtes-vous sûr? Entrez à nouveau la commande pour</gold>
         confirmer.
+    undelete:
+      description: supprime le statut de suppression en attente de [prefix_island] sans propriétaire sur laquelle vous êtes
+      not-in-deletion: '<red>Cette [prefix_island] n''est pas en attente de suppression.</red>'
+      undeleted-island: '<green>Statut de suppression retiré de [prefix_island] à [xyz]. Elle est maintenant sans propriétaire.</green>'
     unregister:
       parameters: <owner> [x,y,z]
       description: >-
@@ -601,8 +606,8 @@ commands:
     world:
       description: Gérer les paramètres du monde
     delete:
-      parameters: <joueur>
-      description: supprimer l'île d'un joueur
+      parameters: '[joueur]'
+      description: 'supprimer l''île d''un joueur, ou l''île sur laquelle vous vous trouvez si aucun joueur n''est indiqué'
       cannot-delete-owner: >-
         <red>Tous les membres de l'île doivent être expulsés avant de la</red>
         supprimer.
@@ -853,6 +858,13 @@ commands:
               <green>Les joueurs doivent être dans le</green>
               <green>même monde que vous pour être</green>
               <green>affichés dans la liste.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Clic Gauche</aqua>'
@@ -958,6 +970,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift Clic Gauche</aqua>'
               trust: '<green>pour faire confiance à un joueur</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Vous ne pouvez pas vous inviter vous-même !</red>'
           cooldown: >-
@@ -1124,6 +1142,12 @@ protection:
       description: Autoriser l'utilisation des lits
       name: Lits
       hint: vous ne pouvez pas utiliser les lits
+    BED_ANCHOR_RESPAWN:
+      name: Réapparition lit/ancre
+      description: |-
+        <green>Les joueurs réapparaissent à un lit valide</green>
+        <green>ou une ancre de réapparition si situé sur une île</green>
+        <green>dont ils sont membres.</green>
     BOAT:
       name: Bateaux
       description: Autoriser l'interaction avec les bateaux
@@ -1399,6 +1423,10 @@ protection:
       description: |-
         <green>Basculer si le feu peut se propager</green>
         <green>aux blocs voisins ou non.</green>
+    FISHING:
+      name: Pêche
+      description: Autoriser la pêche avec une canne à pêche
+      hint: Pêche désactivée
     FISH_SCOOPING:
       name: Pêche à la source
       description: Autoriser la capture de poissons avec un seau

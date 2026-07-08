@@ -275,11 +275,16 @@ commands:
       reserved-island: '<green>Zarezerwowano wyspę na [xyz] dla gracza.</green>'
       already-owned: '<red>Wyspa jest już własnością innego gracza!</red>'
       no-island-here: '<red>Tu nie ma wyspy. Potwierdź, aby ją utworzyć.</red>'
-      in-deletion: '<red>Ta wyspa jest w trakcie usuwania. Spróbuj później.</red>'
+      in-deletion: '<gold>Ta wyspa oczekuje na usunięcie. Zarejestrowanie jej anuluje
+        usuwanie. Wpisz komendę ponownie, aby potwierdzić.</gold>'
       cannot-make-island: >-
         <red>Niestety nie można tu umieścić wyspy. Zobacz konsolę dla możliwych</red>
         błędów.
       island-is-spawn: '<gold>Ta wyspa jest wyspą spawnu. Jesteś pewny? Wpisz ponownie tę komendę.</gold>'
+    undelete:
+      description: usuwa oczekujący status usunięcia z [prefix_island] bez właściciela, na której stoisz
+      not-in-deletion: '<red>Ta [prefix_island] nie oczekuje na usunięcie.</red>'
+      undeleted-island: '<green>Usunięto status usunięcia z [prefix_island] na [xyz]. Jest teraz bez właściciela.</green>'
     unregister:
       parameters: <właściciel> [x,y,z]
       description: wyrejestruj właściciela z wyspy, ale zachowaj bloki wyspy
@@ -574,8 +579,8 @@ commands:
     world:
       description: Zarządzaj ustawieniami świata
     delete:
-      parameters: <gracz>
-      description: usuwa wyspę gracza
+      parameters: '[gracz]'
+      description: 'usuwa wyspę gracza lub wyspę, na której stoisz, jeśli nie podano gracza'
       cannot-delete-owner: >-
         <red>Wszyscy członkowie wyspy muszą zostać wyrzuceni z wyspy przed jej</red>
         usunięciem.
@@ -820,6 +825,13 @@ commands:
               <green>Gracze muszą być w tej samej</green>
               <green>rzeczywistości co ty, aby</green>
               <green>być wyświetleni na liście.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Lewy Klik</aqua>'
@@ -925,6 +937,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Przesuń lewy przycisk myszy</aqua>'
               trust: '<green>, aby ufać graczowi</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Nie możesz zaprosić samego siebie!</red>'
           cooldown: '<red>Nie możesz zaprosić tej osoby przez [number] sekund.</red>'
@@ -1088,6 +1106,12 @@ protection:
       description: Przełącz interakcje
       name: Łóżka
       hint: Używanie łóżka jest wyłączone.
+    BED_ANCHOR_RESPAWN:
+      name: Odradzanie przy łóżku/kotwicy
+      description: |-
+        <green>Gracze odradzają się przy prawidłowym łóżku</green>
+        <green>lub kotwicy odrodzenia, jeśli znajduje się na wyspie,</green>
+        <green>której są członkami.</green>
     BOAT:
       name: Łódki
       description: Przełącz używanie łódek
@@ -1359,6 +1383,10 @@ protection:
     FIRE_SPREAD:
       name: Rozprzestrzenianie ognia
       description: Przełącz rozprzestrzenianie
+    FISHING:
+      name: Wędkowanie
+      description: Zezwól na wędkowanie za pomocą wędki
+      hint: Wędkowanie jest wyłączone
     FISH_SCOOPING:
       name: Zbieranie ryb wiadrem
       description: Zezwól na zbieranie ryb za pomocą wiadra

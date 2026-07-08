@@ -21,6 +21,8 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminDeleteCommand extends ConfirmableCommand {
 
+    private static final String CANNOT_DELETE_OWNER = "commands.admin.delete.cannot-delete-owner";
+
     private @Nullable UUID targetUUID;
     private Island island;
 
@@ -38,8 +40,8 @@ public class AdminDeleteCommand extends ConfirmableCommand {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
-            this.showHelp(this, user);
-            return false;
+            // No player named - delete the island the admin is standing on
+            return canExecuteStandingOn(user);
         }
         // Convert name to a UUID
         targetUUID = Util.getUUID(args.getFirst());
@@ -57,7 +59,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             // Check if player is owner of any islands
             if (getIslands().getIslands(getWorld(), targetUUID).stream().filter(Island::hasTeam)
                     .anyMatch(is -> targetUUID.equals(is.getOwner()))) {
-                user.sendMessage("commands.admin.delete.cannot-delete-owner");
+                user.sendMessage(CANNOT_DELETE_OWNER);
                 return false;
             }
             // This is a delete everything request
@@ -83,7 +85,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
         // Team members should be kicked before deleting otherwise the whole team will become weird
         if (island.hasTeam() && targetUUID.equals(island.getOwner())) {
-            user.sendMessage("commands.admin.delete.cannot-delete-owner");
+            user.sendMessage(CANNOT_DELETE_OWNER);
             return false;
         }
         if (names.size() == 1) {
@@ -93,20 +95,59 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         return true;
     }
 
+    /**
+     * Handles the no-argument form: delete the island the admin is standing on.
+     * Sets {@link #island} and {@link #targetUUID} on success so
+     * {@link #execute(User, String, List)} deletes just that island after
+     * confirmation.
+     *
+     * @param user the admin running the command
+     * @return true if there is a deletable island here, false otherwise
+     */
+    private boolean canExecuteStandingOn(User user) {
+        // Location-based deletion only makes sense for an in-game player
+        if (!user.isPlayer()) {
+            this.showHelp(this, user);
+            return false;
+        }
+        if (!getWorld().equals(user.getWorld())) {
+            user.sendMessage("general.errors.wrong-world");
+            return false;
+        }
+        Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
+        if (opIsland.isEmpty()) {
+            user.sendMessage("general.errors.not-on-island");
+            return false;
+        }
+        island = opIsland.get();
+        // Do not orphan a team - its members have to be kicked first
+        if (island.hasTeam()) {
+            user.sendMessage(CANNOT_DELETE_OWNER);
+            return false;
+        }
+        // The involved player for the deletion event is the island owner, if any
+        targetUUID = island.getOwner();
+        return true;
+    }
+
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        // Snapshot the resolved target so the deferred confirmation acts on it even
+        // if canExecute re-runs (e.g. the admin moves) before it is confirmed.
+        final Island targetIsland = this.island;
+        final UUID target = this.targetUUID;
         // Confirm
-        if (island == null) {
+        if (targetIsland == null) {
             // Delete the player entirely
-            askConfirmation(user, () -> deletePlayer(user));
+            askConfirmation(user, () -> deletePlayer(user, target));
         } else {
             // Just delete the player's island
-            askConfirmation(user, () -> deleteIsland(user, island));
+            askConfirmation(user, () -> deleteIsland(user, targetIsland, target));
         }
         return true;
     }
 
-    private void deleteIsland(User user, Island oldIsland) {
+    private void deleteIsland(User user, Island oldIsland, UUID targetUUID) {
         // Fire island preclear event
         IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
@@ -120,10 +161,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         getIslands().deleteIsland(oldIsland, true, targetUUID);
     }
 
-    private void deletePlayer(User user) {
+    private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
         for (Island oldIsland : getIslands().getIslands(getWorld(), targetUUID)) {
-            deleteIsland(user, oldIsland);
+            deleteIsland(user, oldIsland, targetUUID);
         }
         // Check if player is online and on the island
         assert targetUUID != null;

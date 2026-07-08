@@ -3,11 +3,13 @@ package world.bentobox.bentobox.blueprints.dataobjects;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -22,11 +24,13 @@ import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Display.Brightness;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TextDisplay.TextAlignment;
@@ -167,7 +171,19 @@ public class BlueprintEntity {
      */
     @Expose
     private ItemFrameRec itemFrame;
-    
+    /**
+     * Facing direction for hanging entities (item frames, paintings)
+     * @since 3.18.1
+     */
+    @Expose
+    private BlockFace facing;
+    /**
+     * Painting art registry key, e.g. {@code minecraft:wanderer}
+     * @since 3.18.1
+     */
+    @Expose
+    private String paintingArt;
+
     /**
      * Serializes an entity to a Blueprint Entity
      * @param entity entity to serialize
@@ -211,6 +227,12 @@ public class BlueprintEntity {
         }
         if (entity instanceof ItemFrame frame) {
             this.setItemFrame(new ItemFrameRec(frame.getItem(), frame.getRotation(), frame.isFixed(), frame.isVisible(), frame.getItemDropChance()));
+        }
+        if (entity instanceof Hanging hanging) {
+            this.setFacing(hanging.getFacing());
+        }
+        if (entity instanceof Painting painting && painting.getArt() != null) {
+            this.setPaintingArt(painting.getArt().getKey().toString());
         }
     }
 
@@ -256,8 +278,16 @@ public class BlueprintEntity {
         e.setInvulnerable(isInvulnerable());
         e.setFireTicks(getFireTicks());
 
+        // Hanging entities (item frames, paintings) must face the way they were copied,
+        // otherwise they attach to an arbitrary face or pop off
+        if (facing != null && e instanceof Hanging hanging) {
+            hanging.setFacingDirection(facing, true);
+        }
         if (e instanceof ItemFrame frame) {
             setFrame(frame);
+        }
+        if (e instanceof Painting painting) {
+            setPainting(painting);
         }
         if (e instanceof Villager villager) {
             setVillager(villager);
@@ -303,10 +333,70 @@ public class BlueprintEntity {
             return;
         }
         frame.setItem(itemFrame.item());
-        frame.setVisible(itemFrame.isVisible);
-        frame.setFixed(frame.isFixed());
+        frame.setVisible(itemFrame.isVisible());
+        frame.setFixed(itemFrame.isFixed());
         frame.setRotation(itemFrame.rotation());
         frame.setItemDropChance(itemFrame.dropChance());
+    }
+
+    private void setPainting(Painting painting) {
+        Art art = getPaintingArtwork();
+        if (art != null) {
+            painting.setArt(art, true);
+        }
+    }
+
+    /**
+     * @return the stored painting art resolved from the registry, or null if none is stored
+     *         or the key is unknown on this server
+     */
+    private Art getPaintingArtwork() {
+        if (paintingArt == null) {
+            return null;
+        }
+        NamespacedKey key = NamespacedKey.fromString(paintingArt);
+        return key == null ? null : Registry.ART.get(key);
+    }
+
+    /**
+     * Spawns a painting with the stored art and facing applied before the entity is added
+     * to the world, at the anchor block the painting originally hung from.
+     * <p>
+     * A painting's entity location is the center of its bounding box. For even block
+     * widths the center sits half a block towards the counter-clockwise side of the
+     * facing, and for even block heights half a block up - in both cases outside the
+     * anchor block Minecraft hangs the painting from. Spawning at the stored entity block
+     * would shift the painting, so the anchor is recomputed here from the art dimensions.
+     *
+     * @param location center of the block the painting entity location was copied in
+     * @return the spawned painting
+     * @since 3.18.1
+     */
+    public Painting spawnPainting(Location location) {
+        Art art = getPaintingArtwork();
+        Location anchor = location.clone();
+        if (art != null) {
+            if (art.getBlockHeight() % 2 == 0) {
+                anchor.subtract(0, 1, 0);
+            }
+            if (art.getBlockWidth() % 2 == 0) {
+                // Only the facings whose counter-clockwise side points along a positive
+                // axis (SOUTH -> EAST, WEST -> SOUTH) push the center into the next block
+                if (facing == BlockFace.SOUTH) {
+                    anchor.subtract(1, 0, 0);
+                } else if (facing == BlockFace.WEST) {
+                    anchor.subtract(0, 0, 1);
+                }
+            }
+        }
+        return location.getWorld().spawn(anchor, Painting.class, p -> {
+            if (facing != null) {
+                p.setFacingDirection(facing, true);
+            }
+            if (art != null) {
+                p.setArt(art, true);
+            }
+        });
     }
 
     /**
@@ -727,5 +817,36 @@ public class BlueprintEntity {
         this.itemFrame = itemFrame;
     }
 
+    /**
+     * @return the facing direction of a hanging entity, or null if not a hanging entity
+     * @since 3.18.1
+     */
+    public BlockFace getFacing() {
+        return facing;
+    }
+
+    /**
+     * @param facing the facing direction to set
+     * @since 3.18.1
+     */
+    public void setFacing(BlockFace facing) {
+        this.facing = facing;
+    }
+
+    /**
+     * @return the painting art registry key, or null if not a painting
+     * @since 3.18.1
+     */
+    public String getPaintingArt() {
+        return paintingArt;
+    }
+
+    /**
+     * @param paintingArt the painting art registry key to set
+     * @since 3.18.1
+     */
+    public void setPaintingArt(String paintingArt) {
+        this.paintingArt = paintingArt;
+    }
 
 }

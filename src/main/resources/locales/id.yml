@@ -273,13 +273,18 @@ commands:
       reserved-island: '<green>Pulau yang dilindungi di [xyz] untuk [name].</green>'
       already-owned: '<red>Pulau sudah dimiliki oleh pemain lain!</red>'
       no-island-here: '<red>Tidak ada pulau di sini. Konfirmasikan untuk membuatnya.</red>'
-      in-deletion: '<red>Ruang pulau ini sedang dihapus. Coba nanti.</red>'
+      in-deletion: '<gold>Pulau ini menunggu untuk dihapus. Mendaftarkannya akan membatalkan
+        penghapusan. Masukkan perintah lagi untuk mengonfirmasi.</gold>'
       cannot-make-island: >-
         <red>Sebuah pulau tidak dapat ditempatkan di sini, maaf. Lihat konsol</red>
         untuk kemungkinan kesalahan.
       island-is-spawn: >-
         <gold>Pulau muncul. Apa kamu yakin? Masukkan perintah lagi untuk</gold>
         mengonfirmasi.
+    undelete:
+      description: menghapus status penghapusan tertunda dari [prefix_island] tanpa pemilik tempat kamu berada
+      not-in-deletion: '<red>[prefix_island] ini tidak menunggu untuk dihapus.</red>'
+      undeleted-island: '<green>Status penghapusan dihapus dari [prefix_island] di [xyz]. Sekarang tanpa pemilik.</green>'
     unregister:
       parameters: <pemilik> [x,y,z]
       description: batalkan pendaftaran pemilik dari pulau, tetapi pertahankan blok pulau
@@ -578,8 +583,8 @@ commands:
     world:
       description: Kelola pengaturan dunia
     delete:
-      parameters: <pemain>
-      description: menghapus pulau pemain
+      parameters: '[pemain]'
+      description: 'menghapus pulau pemain, atau pulau tempat kamu berdiri jika tidak ada pemain yang diberikan'
       cannot-delete-owner: >-
         <red>Semua anggota pulau harus dikeluarkan dari pulau sebelum</red>
         menghapusnya.
@@ -819,6 +824,13 @@ commands:
               <green>Pemain harus berada di</green>
               <green>dunia yang sama dengan Anda</green>
               <green>untuk ditampilkan di daftar.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Klik Kiri</aqua>'
@@ -928,6 +940,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Tekan Kiri Sambil Menahan Shift</aqua>'
               trust: '<green>untuk mempercayai pemain</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>Anda tidak dapat mengundang diri sendiri!</red>'
           cooldown: >-
@@ -1096,6 +1114,12 @@ protection:
       description: Alihkan interaksi
       name: Tempat tidur
       hint: Penggunaan tempat tidur dinonaktifkan
+    BED_ANCHOR_RESPAWN:
+      name: Muncul kembali di kasur/jangkar
+      description: |-
+        <green>Pemain muncul kembali di kasur atau</green>
+        <green>jangkar kebangkitan yang valid jika berada di pulau</green>
+        <green>tempat mereka menjadi anggota.</green>
     BOAT:
       name: Perahu
       description: |-
@@ -1383,6 +1407,10 @@ protection:
       description: |-
         <green>Beralih apakah api dapat menyebar</green>
         <green>ke blok terdekat atau tidak.</green>
+    FISHING:
+      name: Memancing
+      description: Izinkan memancing menggunakan pancing
+      hint: Memancing dinonaktifkan
     FISH_SCOOPING:
       name: Menyendoki Ikan
       description: Biarkan menyendok ikan menggunakan ember

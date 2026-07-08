@@ -26,6 +26,7 @@ import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.protection.ExplosionListener;
 import world.bentobox.bentobox.listeners.flags.protection.FireListener;
+import world.bentobox.bentobox.listeners.flags.protection.FishingListener;
 import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
 import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
@@ -219,6 +220,17 @@ public final class Flags {
      * @since 1.21
      */
     public static final Flag AXOLOTL_SCOOPING = new Flag.Builder("AXOLOTL_SCOOPING", Material.AXOLOTL_BUCKET).build();
+
+    // Fishing
+    /**
+     * Prevents players from fishing with a fishing rod.
+     * Defaults to {@link RanksManager#VISITOR_RANK} so fishing stays allowed unless an admin
+     * or island owner restricts it.
+     * @since 3.19.0
+     * @see FishingListener
+     */
+    public static final Flag FISHING = new Flag.Builder("FISHING", Material.FISHING_ROD)
+            .defaultRank(RanksManager.VISITOR_RANK).listener(new FishingListener()).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new Flag.Builder("CHORUS_FRUIT", Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
@@ -579,6 +591,17 @@ public final class Flags {
 
     public static final Flag ISLAND_RESPAWN = new Flag.Builder("ISLAND_RESPAWN", Material.TORCH).type(Type.WORLD_SETTING)
             .listener(new IslandRespawnListener()).defaultSetting(true).build();
+
+    /**
+     * If enabled (default), a valid bed or respawn anchor spawn point is honored when a
+     * player respawns, as long as it is on an island the player is at least a member of
+     * in the same game mode. If disabled, players are always sent to their island home
+     * when {@link #ISLAND_RESPAWN} applies. Also honored when players return through the
+     * end exit portal.
+     * @since 3.19.0
+     */
+    public static final Flag BED_ANCHOR_RESPAWN = new Flag.Builder("BED_ANCHOR_RESPAWN", Material.RED_BED)
+            .type(Type.WORLD_SETTING).defaultSetting(true).build();
 
     /**
      * If disabled, prevents redstone from operating on islands whose members are offline.

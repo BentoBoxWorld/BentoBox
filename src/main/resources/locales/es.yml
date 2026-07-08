@@ -270,15 +270,18 @@ commands:
       reserved-island: '<green>Isla reservada en [xyz] para jugador.</green>'
       already-owned: '<red>La isla ya es propiedad de otro jugador!</red>'
       no-island-here: '<red>No hay isla aquí. Confirmar para hacer uno.</red>'
-      in-deletion: >-
-        <red>Este espacio de la isla se está eliminando actualmente. Intenta más</red>
-        tarde.
+      in-deletion: '<gold>Esta isla está pendiente de eliminación. Registrarla cancelará
+        la eliminación. Introduce el comando de nuevo para confirmar.</gold>'
       cannot-make-island: >-
         <red>Una isla no puede ser colocada aquí, lo siento. Ver consola para</red>
         posibles errores.
       island-is-spawn: >-
         <gold>La isla está spawneada. ¿Estás seguro? Ingrese el comando nuevamente</gold>
         para confirmar.
+    undelete:
+      description: elimina el estado de eliminación pendiente de la [prefix_island] sin dueño en la que estás
+      not-in-deletion: '<red>Esta [prefix_island] no está pendiente de eliminación.</red>'
+      undeleted-island: '<green>Se eliminó el estado de eliminación de la [prefix_island] en [xyz]. Ahora no tiene dueño.</green>'
     unregister:
       parameters: <dueño> [x,y,z]
       description: Desregistrar propietario de isla, pero mantener bloques de islas
@@ -582,8 +585,8 @@ commands:
     world:
       description: Administrar la configuración del mundo
     delete:
-      parameters: <jugador>
-      description: elimina la isla de un jugador
+      parameters: '[jugador]'
+      description: 'elimina la isla de un jugador, o la isla en la que estás si no se indica un jugador'
       cannot-delete-owner: >-
         <red>Todos los miembros de la isla deben ser expulsados ​​de la isla antes</red>
         de eliminarla.
@@ -830,6 +833,13 @@ commands:
               <green>Los jugadores deben estar en el</green>
               <green>mismo mundo que tú para ser</green>
               <green>mostrados en la lista.</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>Clic Izquierdo</aqua>'
@@ -939,6 +949,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift Clic Izquierdo</aqua>'
               trust: '<green>para confiar en un jugador</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>No puedes invitarte!</red>'
           cooldown: '<red>No puedes invitar a esa persona por otros [number] segundos</red>'
@@ -1105,6 +1121,12 @@ protection:
       description: Interacción de camas
       name: Camas
       hint: Uso de camas desactivado
+    BED_ANCHOR_RESPAWN:
+      name: Reaparición en cama/ancla
+      description: |-
+        <green>Los jugadores reaparecen en una cama válida</green>
+        <green>o un ancla de reaparición si está en una isla</green>
+        <green>de la que son miembros.</green>
     BOAT:
       name: Botes
       description: Interacción de Botes
@@ -1379,6 +1401,10 @@ protection:
       description: |-
         <green>Modificar si el fuego puede exparcirse</green>
         <green>a bloques cercanos o no.</green>
+    FISHING:
+      name: Pesca
+      description: Permitir pescar con una caña de pescar
+      hint: Pesca deshabilitada
     FISH_SCOOPING:
       name: Recolección de pescado
       description: Permitir Recolección de pescado usando un balde

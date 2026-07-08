@@ -245,11 +245,15 @@ commands:
       reserved-island: '<green>已為 [name] 保留位於 [xyz] 的[prefix_island]。</green>'
       already-owned: '<red>該島嶼不是無人島!</red>'
       no-island-here: '<red>這個地方沒有島嶼。確認來創建一個。</red>'
-      in-deletion: '<red>這個島嶼空間正在被刪除。 請稍後再試</red>'
+      in-deletion: '<gold>這個島嶼正在等待刪除。 註冊它將取消刪除。 再次輸入指令以確認。</gold>'
       cannot-make-island: '<red>抱歉，不能在這裡創建島嶼。 請參閱控制台以獲取詳細信息。</red>'
       island-is-spawn: |-
         <red>所處位置為出生點島嶼， 您確定要將玩家注冊到這個島嶼上？</red>
         <gold>請再次輸入命令以確認。</gold>
+    undelete:
+      description: 移除你所在的無主[prefix_island]的待刪除狀態
+      not-in-deletion: '<red>這個[prefix_island]沒有等待刪除。</red>'
+      undeleted-island: '<green>已移除[xyz]處[prefix_island]的刪除狀態。 現在它無主。</green>'
     unregister:
       parameters: <owner> [x,y,z]
       description: 將島主註銷但保留方塊
@@ -524,8 +528,8 @@ commands:
     world:
       description: 管理世界設置
     delete:
-      parameters: <player>
-      description: 刪除玩家的島嶼
+      parameters: '[player]'
+      description: '刪除玩家的島嶼，如果未指定玩家則刪除你所站的島嶼'
       cannot-delete-owner: '<red>刪除之前必須將所有島嶼成員都踢出島嶼。</red>'
       deleted-island: '<green>位於 </green><yellow>[xyz] </yellow><green>的島嶼已經被成功刪除。</green>'
     deletehomes:
@@ -747,6 +751,13 @@ commands:
               <green>玩家必須在</green>
               <green>和你相同的世界</green>
               <green>才會顯示在列表中。</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
         tips:
           LEFT:
             name: '<aqua>左點擊</aqua>'
@@ -850,6 +861,12 @@ commands:
             SHIFT_LEFT:
               name: '<aqua>Shift+左鍵點擊</aqua>'
               trust: '<green>信任玩家</green>'
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ""
         errors:
           cannot-invite-self: '<red>您不能邀請您自己!</red>'
           cooldown: '<red>您必須在 [number] 秒後才能邀請這個人</red>'
@@ -1005,6 +1022,11 @@ protection:
       description: 切換 床交互/使用權
       name: '<green><bold>使用床</bold></green>'
       hint: '<red>已被禁止使用床</red>'
+    BED_ANCHOR_RESPAWN:
+      name: '<green><bold>床/重生錨重生</bold></green>'
+      description: |-
+        <gray>如果有效的床或重生錨位於</gray>
+        <gray>玩家所屬的島嶼上，則在該處重生</gray>
     BOAT:
       name: '<green><bold>使用船隻</bold></green>'
       description: 切換 船隻交互/使用權
@@ -1273,6 +1295,10 @@ protection:
     FIRE_SPREAD:
       name: 火焰蔓延
       description: 切換火焰能否蔓延
+    FISHING:
+      name: '<green><bold>釣魚</bold></green>'
+      description: 允許/禁止 使用魚竿釣魚
+      hint: '<red>已被禁止釣魚</red>'
     FISH_SCOOPING:
       name: '<green><bold>捕魚</bold></green>'
       description: 允許/禁止 用水桶捕魚
