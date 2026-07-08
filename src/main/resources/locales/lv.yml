@@ -275,13 +275,18 @@ commands:
       reserved-island: '<green>Sala ir rezērvēta [xyz] priekš spēlētāja.</green>'
       already-owned: '<red>Sala jau pieder citam spēlētājam!</red>'
       no-island-here: '<red>Šeit neatrodas neviena sala! Apstiprini, lai izveidotu.</red>'
-      in-deletion: '<red>Šī salas pozīcija šobrīt tiek dzēsta. Mēģini vēlāk.</red>'
+      in-deletion: '<gold>Šī sala gaida dzēšanu. Tās reģistrēšana atcels dzēšanu. Ievadi
+        komandu vēlreiz, lai apstiprinātu.</gold>'
       cannot-make-island: >-
         <red>Atvaino, bet neizdevās izveidot šeit salu. Iespējams konsulē ir kļūdas</red>
         paziņojumi.
       island-is-spawn: >-
         <gold>Šī ir sākuma sala. Vai tiešām vēlies turpināt? Ievadi komandu</gold>
         vēlreiz, lai apstiprinātu.
+    undelete:
+      description: noņem gaidošo dzēšanas statusu no [prefix_island] bez īpašnieka, uz kuras tu stāvi
+      not-in-deletion: '<red>Šī [prefix_island] negaida dzēšanu.</red>'
+      undeleted-island: '<green>Dzēšanas statuss noņemts no [prefix_island] pie [xyz]. Tagad tā ir bez īpašnieka.</green>'
     unregister:
       parameters: <īpašnieks> [x,y,z]
       description: atreģistrē īpašnieku no salas paturot salas blokus
@@ -574,8 +579,8 @@ commands:
     world:
       description: Pārvaldīt pasaules iestatījumus
     delete:
-      parameters: <spēlētājs>
-      description: izdzēš spēlētāja salu
+      parameters: '[spēlētājs]'
+      description: 'izdzēš spēlētāja salu vai salu, uz kuras tu stāvi, ja spēlētājs nav norādīts'
       cannot-delete-owner: >-
         <red>Visi spēlētāja komandas biedriem ir jābūt izmestiem no komandas pirms</red>
         salas dzēšanas.

@@ -288,13 +288,18 @@ commands:
       reserved-island: '<green>l''île à [xyz] est réservée pour le joueur </green><aqua>[name] </aqua><green>.</green>'
       already-owned: '<red>Cette île appartient déjà à un autre joueur!</red>'
       no-island-here: '<red>Il n''y a pas d''île ici. Confirmez pour en faire une.</red>'
-      in-deletion: '<red>Cette île est en cours de suppression. Essayer plus tard.</red>'
+      in-deletion: '<gold>Cette île est en attente de suppression. L''enregistrer annulera
+        la suppression. Entrez à nouveau la commande pour confirmer.</gold>'
       cannot-make-island: >-
         <red>Une île ne peut pas être placée ici, désolé. Voir la console pour les</red>
         erreurs possibles.
       island-is-spawn: >-
         <gold>L'île est un spawn. Êtes-vous sûr? Entrez à nouveau la commande pour</gold>
         confirmer.
+    undelete:
+      description: supprime le statut de suppression en attente de [prefix_island] sans propriétaire sur laquelle vous êtes
+      not-in-deletion: '<red>Cette [prefix_island] n''est pas en attente de suppression.</red>'
+      undeleted-island: '<green>Statut de suppression retiré de [prefix_island] à [xyz]. Elle est maintenant sans propriétaire.</green>'
     unregister:
       parameters: <owner> [x,y,z]
       description: >-
@@ -601,8 +606,8 @@ commands:
     world:
       description: Gérer les paramètres du monde
     delete:
-      parameters: <joueur>
-      description: supprimer l'île d'un joueur
+      parameters: '[joueur]'
+      description: 'supprimer l''île d''un joueur, ou l''île sur laquelle vous vous trouvez si aucun joueur n''est indiqué'
       cannot-delete-owner: >-
         <red>Tous les membres de l'île doivent être expulsés avant de la</red>
         supprimer.

@@ -286,13 +286,18 @@ commands:
       reserved-island: '<green>fenntartott [prefix_island] a [xyz] címen a [name] számára.</green>'
       already-owned: 'Az <red>Island már egy másik játékos tulajdona!</red>'
       no-island-here: '<red>Itt nincs [prefix_island]. Erősítse meg, hogy készítsen egyet.</red>'
-      in-deletion: '<red>Ez a szigetterület jelenleg törlés alatt áll. Próbáld később.</red>'
+      in-deletion: '<gold>Ez a sziget törlésre vár. A regisztrálása megszakítja a törlést.
+        Írd be újra a parancsot a megerősítéshez.</gold>'
       cannot-make-island: >-
         <red>[prefix_Island] nem helyezhető ide, sajnálom. Lásd a konzolt a lehetséges</red>
         hibákért.
       island-is-spawn: >-
         <gold>A [prefix_island] spawn. biztos vagy ebben? A megerősítéshez írja be újra a</gold>
         parancsot.
+    undelete:
+      description: eltávolítja a függőben lévő törlési státuszt a tulajdonos nélküli [prefix_island] szigetről, amelyen állsz
+      not-in-deletion: '<red>Ez a [prefix_island] nem vár törlésre.</red>'
+      undeleted-island: '<green>A törlési státusz eltávolítva a [prefix_island] szigetről itt: [xyz]. Most már tulajdonos nélküli.</green>'
     unregister:
       parameters: <tulajdonos> [x,y,z]
       description: >-
@@ -601,8 +606,8 @@ commands:
     world:
       description: Világbeállítások kezelése
     delete:
-      parameters: <játékos>
-      description: törli a játékos szigetét
+      parameters: '[játékos]'
+      description: 'törli a játékos szigetét, vagy a szigetet, amelyen állsz, ha nincs játékos megadva'
       cannot-delete-owner: '<red>A [prefix_island] összes tagját ki kell rúgni a szigetről, mielőtt törli.</red>'
       deleted-island: '<green>[prefix_island] itt: </green><yellow>[xyz] </yellow><green>sikeresen törölve.</green>'
     deletehomes:

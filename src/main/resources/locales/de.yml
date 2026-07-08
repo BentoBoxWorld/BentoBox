@@ -284,13 +284,18 @@ commands:
       reserved-island: '<green>Reservierte Insel bei [xyz] für Spieler.</green>'
       already-owned: '<red>Die Insel ist bereits im Besitz eines anderen Spielers!</red>'
       no-island-here: '<red>Es gibt hier keine Insel. Bestätige um eine zu erstellen.</red>'
-      in-deletion: '<red>Dieser Inselbereich wird derzeit gelöscht. Probier es später.</red>'
+      in-deletion: '<gold>Diese Insel wird gelöscht. Durch das Registrieren wird die
+        Löschung abgebrochen. Gib den Befehl zur Bestätigung erneut ein.</gold>'
       cannot-make-island: >-
         <red>Hier kann keine Insel platziert werden, sorry. Für mögliche Fehler</red>
         siehe Konsole.
       island-is-spawn: >-
         <gold>Die Insel ist der Spawn. Bist du sicher? Gib den Befehl zur</gold>
         Bestätigung noch einmal ein.
+    undelete:
+      description: entfernt den ausstehenden Löschstatus von [prefix_island] ohne Besitzer, auf der du stehst
+      not-in-deletion: '<red>Diese [prefix_island] wartet nicht auf Löschung.</red>'
+      undeleted-island: '<green>Löschstatus von [prefix_island] bei [xyz] entfernt. Sie ist jetzt ohne Besitzer.</green>'
     unregister:
       parameters: <inhaber> [x,y,z]
       description: Besitzer von Insel entfernen, aber Inselblöcke behalten
@@ -593,8 +598,8 @@ commands:
     world:
       description: Welteinstellungen verwalten
     delete:
-      parameters: <spieler>
-      description: Löscht die Insel eines Spielers
+      parameters: '[spieler]'
+      description: 'Löscht die Insel eines Spielers oder die Insel, auf der du stehst, wenn kein Spieler angegeben ist'
       cannot-delete-owner: >-
         <red>Alle Inselmitglieder müssen vor dem Löschen von der Insel gekickt</red>
         werden.

@@ -264,11 +264,16 @@ commands:
       reserved-island: '<green>Ostrov [xyz] rezervován pro hráče.</green>'
       already-owned: '<red>Ostrov je již vlastněn jiným hráčem!</red>'
       no-island-here: '<red>Zde není žádný ostrov. Potvrď jeho vytvoření.</red>'
-      in-deletion: '<red>Tento ostrov bude smazán. Opakuj později.</red>'
+      in-deletion: '<gold>Tento ostrov čeká na smazání. Jeho registrace smazání zruší.
+        Pro potvrzení zadej příkaz znovu.</gold>'
       cannot-make-island: >-
         <red>Pardon, sem nelze umístit ostrov. Podívej se do konzole pro přípané</red>
         chyby.
       island-is-spawn: '<gold>Ostrov je spawn. Jsi si jistý? Potvrď opětovným zadáním příkazu.</gold>'
+    undelete:
+      description: odebere status čekání na smazání z [prefix_island] bez vlastníka, na kterém stojíš
+      not-in-deletion: '<red>Tento [prefix_island] nečeká na smazání.</red>'
+      undeleted-island: '<green>Odebrán status smazání z [prefix_island] na [xyz]. Nyní je bez vlastníka.</green>'
     unregister:
       parameters: <vlastník> [x,y,z]
       description: odregistrovat vlastníka z ostrova, ale zachovat bloky ostrova
@@ -559,8 +564,8 @@ commands:
     world:
       description: Spravovat nastavení světa
     delete:
-      parameters: <Player>
-      description: odstraní ostrov hráče
+      parameters: '[Player]'
+      description: 'odstraní ostrov hráče, nebo ostrov, na kterém stojíš, pokud není zadán hráč'
       cannot-delete-owner: >-
         <red>Všichni členové ostrova musí být vykopnuti z ostrova, než jej bude</red>
         možné smazat.

@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -243,6 +244,98 @@ class AdminDeleteCommandTest extends CommonTestSetup {
 
         verify(im).deleteIsland(eq(island), eq(true), eq(notUUID));
         verify(im, never()).hardDeleteIsland(any());
+    }
+
+    /**
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)}.
+     * No argument and the console cannot stand on an island - show help.
+     */
+    @Test
+    void testNoArgConsoleShowsHelp() {
+        when(user.isPlayer()).thenReturn(false);
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user, never()).sendMessage("general.errors.not-on-island");
+    }
+
+    /**
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)}.
+     * No argument, standing in the wrong world.
+     */
+    @Test
+    void testNoArgWrongWorld() {
+        when(user.isPlayer()).thenReturn(true);
+        when(user.getWorld()).thenReturn(mock(org.bukkit.World.class));
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.wrong-world");
+    }
+
+    /**
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)}.
+     * No argument, not standing on an island.
+     */
+    @Test
+    void testNoArgNotOnIsland() {
+        when(user.isPlayer()).thenReturn(true);
+        when(user.getWorld()).thenReturn(world);
+        when(user.getLocation()).thenReturn(location);
+        when(im.getIslandAt(location)).thenReturn(Optional.empty());
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.not-on-island");
+    }
+
+    /**
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)}.
+     * No argument, standing on an island that still has a team - refuse.
+     */
+    @Test
+    void testNoArgIslandHasTeam() {
+        when(user.isPlayer()).thenReturn(true);
+        when(user.getWorld()).thenReturn(world);
+        when(user.getLocation()).thenReturn(location);
+        when(island.hasTeam()).thenReturn(true);
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("commands.admin.delete.cannot-delete-owner");
+    }
+
+    /**
+     * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)}.
+     * No argument, standing on a teamless island - soft-delete it after confirmation.
+     */
+    @Test
+    void testNoArgDeletesIslandStandingOn() {
+        when(user.isPlayer()).thenReturn(true);
+        when(user.getWorld()).thenReturn(world);
+        when(user.getLocation()).thenReturn(location);
+        when(island.hasTeam()).thenReturn(false);
+        when(island.getOwner()).thenReturn(notUUID);
+        when(island.getCenter()).thenReturn(location);
+        when(island.getWorld()).thenReturn(world);
+        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+
+        // Scheduler that runs the confirmation runnable immediately
+        BukkitScheduler scheduler = mock(BukkitScheduler.class);
+        BukkitTask task = mock(BukkitTask.class);
+        when(scheduler.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
+        when(scheduler.runTask(any(), any(Runnable.class))).thenAnswer(inv -> {
+            inv.<Runnable>getArgument(1).run();
+            return task;
+        });
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
+
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+        // First execute asks for confirmation, second confirms and runs it
+        itl.execute(user, itl.getLabel(), Collections.emptyList());
+        itl.execute(user, itl.getLabel(), Collections.emptyList());
+        // Only the island stood on is deleted, with its owner as the involved player
+        verify(im).deleteIsland(island, true, notUUID);
+        verify(im, never()).removePlayer(eq(world), any(UUID.class));
     }
 
     private AdminDeleteCommand setupForDeletion() {

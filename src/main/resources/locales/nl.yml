@@ -280,13 +280,19 @@ commands:
       reserved-island: '<green>gereserveerd eiland op [xyz] voor [name].</green>'
       already-owned: '<red>Eiland is al eigendom van een andere speler!</red>'
       no-island-here: '<red>Er is hier geen eiland. Bevestig om er een te maken.</red>'
-      in-deletion: '<red>Deze eilandruimte wordt momenteel verwijderd. Probeer later.</red>'
+      in-deletion: '<gold>Dit eiland staat op de nominatie om verwijderd te worden. Door
+        het te registreren wordt de verwijdering geannuleerd. Voer het commando nogmaals
+        in om te bevestigen.</gold>'
       cannot-make-island: >-
         <red>Hier kan geen eiland worden geplaatst, sorry. Zie console voor</red>
         mogelijke fouten.
       island-is-spawn: >-
         <gold>Eiland wordt uitgezet. Weet je het zeker? Voer de opdracht nogmaals</gold>
         in om te bevestigen.
+    undelete:
+      description: verwijdert de aanstaande verwijderstatus van [prefix_island] zonder eigenaar waar je op staat
+      not-in-deletion: '<red>Dit [prefix_island] staat niet op de nominatie om verwijderd te worden.</red>'
+      undeleted-island: '<green>Verwijderstatus verwijderd van [prefix_island] op [xyz]. Het heeft nu geen eigenaar.</green>'
     unregister:
       parameters: <eigenaar> [x,y,z]
       description: >-
@@ -599,8 +605,8 @@ commands:
     world:
       description: Beheer wereldinstellingen
     delete:
-      parameters: <speler>
-      description: verwijdert het eiland van een speler
+      parameters: '[speler]'
+      description: 'verwijdert het eiland van een speler, of het eiland waar je op staat als er geen speler is opgegeven'
       cannot-delete-owner: >-
         <red>Alle eilandleden moeten van het eiland worden verwijderd voordat ze</red>
         het kunnen verwijderen.

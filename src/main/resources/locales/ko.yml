@@ -255,9 +255,13 @@ commands:
       reserved-island: '<green>[xyz] 에 있는섬을 [name]에게 예약걸었습니다.</green>'
       already-owned: '<red>이섬은 이미 주인이 있습니다!</red>'
       no-island-here: '<red>그곳에는 섬이 없습니다. 명령어를 한번더 입력하여 하나 만듭니다.</red>'
-      in-deletion: '<red>섬 공간이 삭제되었습니다 잠시후 다시 시도해보세요</red>'
+      in-deletion: '<gold>이 섬은 삭제 대기 중입니다. 등록하면 삭제가 취소됩니다. 확인하려면 명령어를 다시 입력하세요.</gold>'
       cannot-make-island: '<red>섬은 이곳에 만들수 없습니다. 죄송합니다. 콘솔을 참고해주세요.</red>'
       island-is-spawn: '<gold>섬이 생성되었습니다. 정말로 하시겠습니까? 명령어를 한번더 입력해주세요.</gold>'
+    undelete:
+      description: 당신이 있는 소유자 없는 [prefix_island]에서 삭제 대기 상태를 제거합니다
+      not-in-deletion: '<red>이 [prefix_island]은(는) 삭제 대기 중이 아닙니다.</red>'
+      undeleted-island: '<green>[xyz]의 [prefix_island]에서 삭제 상태를 제거했습니다. 이제 소유자가 없습니다.</green>'
     unregister:
       parameters: <주인> [x,y,z]
       description: 섬을 주인없는 섬으로 만들지만 섬은 유지됩니다
@@ -527,8 +531,8 @@ commands:
     world:
       description: 월드 설정
     delete:
-      parameters: <player>
-      description: 플레이어의 섬을 삭제합니다
+      parameters: '[player]'
+      description: '플레이어의 섬을 삭제합니다. 플레이어를 지정하지 않으면 당신이 서 있는 섬을 삭제합니다'
       cannot-delete-owner: '<red>섬을 삭제하기 전에 모든 섬원을 추방해야합니다.</red>'
       deleted-island: '<yellow>[xyz] </yellow><green>에 있던 섬을 삭제했습니다</green>'
     deletehomes:

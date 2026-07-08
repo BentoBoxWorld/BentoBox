@@ -272,11 +272,16 @@ commands:
       reserved-island: '<green>Rezervirani otok na [xyz] za [name].</green>'
       already-owned: '<red>Island je već u vlasništvu drugog igrača!</red>'
       no-island-here: '<red>Ovdje nema otoka. Potvrdite da napravite jedan.</red>'
-      in-deletion: '<red>Ovaj otočni prostor trenutno se briše. Pokušaj kasnije.</red>'
+      in-deletion: '<gold>Ovaj otok čeka na brisanje. Njegova registracija otkazat će
+        brisanje. Ponovno unesite naredbu za potvrdu.</gold>'
       cannot-make-island: >-
         <red>Ovdje se ne može smjestiti otok, nažalost. Pogledajte konzolu za</red>
         moguće pogreške.
       island-is-spawn: '<gold>Otok je spawn. Jeste li sigurni? Ponovno unesite naredbu za potvrdu.</gold>'
+    undelete:
+      description: uklanja status čekanja na brisanje s [prefix_island] bez vlasnika na kojem stojiš
+      not-in-deletion: '<red>Ovaj [prefix_island] ne čeka na brisanje.</red>'
+      undeleted-island: '<green>Uklonjen status brisanja s [prefix_island] na [xyz]. Sada je bez vlasnika.</green>'
     unregister:
       parameters: <vlasnik> [x,y,z]
       description: odjaviti vlasnika s otoka, ali zadržati otočne blokove
@@ -567,8 +572,8 @@ commands:
     world:
       description: Upravljanje svjetskim postavkama
     delete:
-      parameters: <igrač>
-      description: briše igračev otok
+      parameters: '[igrač]'
+      description: 'briše igračev otok ili otok na kojem stojiš ako igrač nije naveden'
       cannot-delete-owner: '<red>Svi članovi otoka moraju biti izbačeni s otoka prije brisanja.</red>'
       deleted-island: '<green>Otok na </green><yellow>[xyz] </yellow><green>je uspješno izbrisan.</green>'
     deletehomes:

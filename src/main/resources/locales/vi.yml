@@ -272,9 +272,14 @@ commands:
       reserved-island: '<green>Để dành đảo ở [xyz] cho [name].</green>'
       already-owned: '<red>Đảo đã có chủ!</red>'
       no-island-here: '<red>Không có đảo ở đây. Xác nhận để tạo.</red>'
-      in-deletion: '<red>Không gian đảo này đang được xóa. Thử lại.</red>'
+      in-deletion: '<gold>Hòn đảo này đang chờ bị xóa. Việc đăng ký sẽ hủy việc xóa. Nhập
+        lại lệnh để xác nhận.</gold>'
       cannot-make-island: '<red>Đảo không thể đặt ở đây. Xem bảng điều khiển để xem lỗi tiềm ẩn.</red>'
       island-is-spawn: '<gold>Đảo là điểm triệu hồi. Bạn chắc chứ? Nhập lần nữa để xác nhận.</gold>'
+    undelete:
+      description: xóa trạng thái chờ xóa khỏi [prefix_island] không có chủ mà bạn đang đứng trên đó
+      not-in-deletion: '<red>[prefix_island] này không đang chờ bị xóa.</red>'
+      undeleted-island: '<green>Đã xóa trạng thái xóa khỏi [prefix_island] tại [xyz]. Bây giờ nó không có chủ.</green>'
     unregister:
       parameters: <chủ> [x,y,z]
       description: hủy đăng kí chủ đảo khỏi đảo này. nhưng giữ lại tài nguyên đảo
@@ -565,8 +570,8 @@ commands:
     world:
       description: Quản lý cài đặt thế giới
     delete:
-      parameters: <người chơi>
-      description: xóa đảo của người chơi
+      parameters: '[người chơi]'
+      description: 'xóa đảo của người chơi, hoặc đảo bạn đang đứng nếu không có người chơi nào được cung cấp'
       cannot-delete-owner: >-
         <red>Tất cả thành viên đảo phải bị đuổi khỏi đảo trước khi xóa.</red>
       deleted-island: '<green>Đảo tại </green><yellow>[xyz] </yellow><green>đã được xóa thành công.</green>'
