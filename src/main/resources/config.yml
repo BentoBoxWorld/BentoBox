@@ -284,6 +284,22 @@ island:
   # This value is also used for valid nether portal linking between dimension.
   # Added since 1.21.0.
   safe-spot-search-range: 16
+world:
+  # Vanilla structures disabled by default in EVERY BentoBox game mode world
+  # (overworld, nether and end). List the structure keys to stop generating and to
+  # skip in structure searches (/locate, Eyes of Ender, explorer/treasure maps,
+  # dolphins and villager cartographer trades). Suppressing a structure this way also
+  # prevents those searches scanning to the world border and freezing the server.
+  # Keys may use '-' or '_' and any case, e.g. trial_chambers, ancient-city.
+  # A game mode can override this per structure in its own config, both to disable
+  # more structures and to force-enable one that this list disables.
+  # Empty (the default) disables nothing, so behaviour is unchanged.
+  # Example:
+  #   disabled-structures:
+  #   - trial_chambers
+  #   - ancient_city
+  # Added since 3.19.1.
+  disabled-structures: []
 web:
   github:
     # Toggle whether BentoBox can connect to GitHub to get data about updates and addons.
