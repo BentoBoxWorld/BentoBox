@@ -492,6 +492,23 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.obsidian-scooping-lava-tip-duration", since = "3.14.0")
     private int obsidianScoopingLavaTipDuration = 5;
 
+    /* WORLD */
+    @ConfigComment("Vanilla structures disabled by default in EVERY BentoBox game mode world")
+    @ConfigComment("(overworld, nether and end). List the structure keys to stop generating and to")
+    @ConfigComment("skip in structure searches (/locate, Eyes of Ender, explorer/treasure maps,")
+    @ConfigComment("dolphins and villager cartographer trades). Suppressing a structure this way also")
+    @ConfigComment("prevents those searches scanning to the world border and freezing the server.")
+    @ConfigComment("Keys may use '-' or '_' and any case, e.g. trial_chambers, ancient-city.")
+    @ConfigComment("A game mode can override this per structure in its own config, both to disable")
+    @ConfigComment("more structures and to force-enable one that this list disables.")
+    @ConfigComment("Empty (the default) disables nothing, so behaviour is unchanged.")
+    @ConfigComment("Example:")
+    @ConfigComment("  disabled-structures:")
+    @ConfigComment("  - trial_chambers")
+    @ConfigComment("  - ancient_city")
+    @ConfigEntry(path = "world.disabled-structures", since = "3.19.1")
+    private List<String> disabledStructures = new ArrayList<>();
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -1751,6 +1768,23 @@ public class Settings implements ConfigObject {
      */
     public void setIslandPurgeLevel(int islandPurgeLevel) {
         this.islandPurgeLevel = islandPurgeLevel;
+    }
+
+    /**
+     * Vanilla structures disabled by default in every BentoBox game mode world.
+     * @return the list of disabled structure keys, never {@code null}
+     * @since 3.19.1
+     */
+    public List<String> getDisabledStructures() {
+        return disabledStructures == null ? new ArrayList<>() : disabledStructures;
+    }
+
+    /**
+     * @param disabledStructures the disabledStructures to set
+     * @since 3.19.1
+     */
+    public void setDisabledStructures(List<String> disabledStructures) {
+        this.disabledStructures = disabledStructures;
     }
 
 }

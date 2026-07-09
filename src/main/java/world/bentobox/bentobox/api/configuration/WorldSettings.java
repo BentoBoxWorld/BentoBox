@@ -697,4 +697,29 @@ public interface WorldSettings extends ConfigObject {
     default boolean isTeamsDisabled() {
         return false;
     }
+
+    /**
+     * Per-world override for vanilla structure generation and searching.
+     * <p>
+     * The key is a structure name, e.g. {@code "trial_chambers"} or {@code "ancient_city"}
+     * (with {@code '-'} or {@code '_'} separators and any case). The value is whether that
+     * structure should generate:
+     * <ul>
+     *   <li>{@code false} — disable the structure in this world: it will not generate and is
+     *       removed from structure searches ({@code /locate}, Eyes of Ender, explorer/treasure
+     *       maps, dolphins, villager cartographer trades), which also stops those searches
+     *       scanning to the world border and freezing the server.</li>
+     *   <li>{@code true} — force the structure on in this world even if BentoBox's global
+     *       {@code world.disabled-structures} list disables it.</li>
+     * </ul>
+     * A structure that is absent from this map inherits the global
+     * {@code world.disabled-structures} setting. The default is an empty map, so a game mode
+     * that does not override this method inherits BentoBox's global configuration entirely.
+     *
+     * @return a map of structure key to whether it should generate, never {@code null}
+     * @since 3.19.1
+     */
+    default Map<String, Boolean> getStructureSettings() {
+        return Collections.emptyMap();
+    }
 }
