@@ -332,9 +332,9 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon gameMode) {
                 // Suppress disabled structures before the worlds (and their spawn-area chunks)
                 // are generated. createWorlds() generates the spawn chunks, so a listener
-                // registered any later would miss those first structures.
-                plugin.getServer().getPluginManager().registerEvents(new StructureListener(plugin, gameMode),
-                        plugin);
+                // registered any later would miss those first structures. Registered through
+                // registerListener so it is tracked and unregistered when the addon is disabled.
+                registerListener(gameMode, new StructureListener(plugin, gameMode));
                 // Create the gameWorlds
                 gameMode.createWorlds();
                 plugin.getIWM().addGameMode(gameMode);
