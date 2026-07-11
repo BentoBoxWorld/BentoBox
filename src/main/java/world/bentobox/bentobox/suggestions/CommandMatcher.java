@@ -234,12 +234,23 @@ public final class CommandMatcher {
         }
         // Typos and plurals: "teams" for "team", "tem" for "team"
         int maxLength = Math.max(typed.length(), candidate.length());
-        int allowed = maxLength <= 4 ? 1 : maxLength <= 7 ? 2 : 3;
+        int allowed = allowedDistance(maxLength);
         int distance = levenshtein(typed, candidate);
         if (distance <= allowed) {
             result = Math.max(result, 1.0 - (double) distance / maxLength);
         }
         return result;
+    }
+
+    /** Edit-distance budget scaled to the longer word: stricter for short labels. */
+    private static int allowedDistance(int maxLength) {
+        if (maxLength <= 4) {
+            return 1;
+        }
+        if (maxLength <= 7) {
+            return 2;
+        }
+        return 3;
     }
 
     /** Plain Levenshtein edit distance; inputs are short command labels. */

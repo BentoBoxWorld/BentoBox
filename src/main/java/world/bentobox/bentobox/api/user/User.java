@@ -824,8 +824,9 @@ public class User implements MetaDataAble {
         if (clickEvent != null) {
             component = component.clickEvent(clickEvent);
         }
-        if (inline.hoverText() != null) {
-            component = component.hoverEvent(HoverEvent.showText(Util.parseMiniMessageOrLegacy(inline.hoverText())));
+        String hoverText = inline.hoverText();
+        if (hoverText != null) {
+            component = component.hoverEvent(HoverEvent.showText(Util.parseMiniMessageOrLegacy(hoverText)));
         }
         return component;
     }

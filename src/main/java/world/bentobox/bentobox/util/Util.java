@@ -1460,16 +1460,11 @@ public class Util {
             String action = matcher.group(1).toLowerCase(java.util.Locale.ENGLISH);
             String value = matcher.group(2);
             switch (action) {
-                case "hover" -> {
-                    if (hoverText == null) {
-                        hoverText = value;
-                    }
-                }
+                // First hover/click wins; ignore later duplicates.
+                case "hover" -> hoverText = hoverText == null ? value : hoverText;
                 case "run_command", "suggest_command", "copy_to_clipboard", "open_url" -> {
-                    if (clickAction == null) {
-                        clickAction = action;
-                        clickValue = value;
-                    }
+                    clickValue = clickAction == null ? value : clickValue;
+                    clickAction = clickAction == null ? action : clickAction;
                 }
                 default -> cleanText.append(matcher.group()); // unknown, keep as-is
             }

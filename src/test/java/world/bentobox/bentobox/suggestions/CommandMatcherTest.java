@@ -9,11 +9,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.bukkit.World;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -62,36 +66,28 @@ class CommandMatcherTest extends CommonTestSetup {
     }
 
     /**
-     * The headline case: a player types the subcommand as if it were the whole
-     * command, with a plural on top. {@code /teams} → {@code /oneblock team}.
+     * A mistyped command line against the root commands resolves to the intended
+     * command, covering three shapes:
+     * <ul>
+     * <li>subcommand typed as the whole command, with a plural:
+     * {@code /teams} → {@code /oneblock team};</li>
+     * <li>a whole subcommand path typed as a root command keeps its arguments:
+     * {@code /team invite Floris} → {@code /oneblock team invite Floris};</li>
+     * <li>a typo in the root command itself: {@code /oneblok} → {@code /oneblock}.</li>
+     * </ul>
      */
-    @Test
-    void testSubcommandTypedAsRootCommand() {
-        List<Match> matches = CommandMatcher.matchCommandLine(List.of("teams"), List.of(oneblock), null, ALL);
+    @ParameterizedTest
+    @MethodSource("commandLineMatchCases")
+    void testCommandLineMatch(List<String> input, String expected) {
+        List<Match> matches = CommandMatcher.matchCommandLine(input, List.of(oneblock), null, ALL);
         assertFalse(matches.isEmpty());
-        assertEquals("/oneblock team", matches.get(0).commandString());
+        assertEquals(expected, matches.get(0).commandString());
     }
 
-    /**
-     * A whole subcommand path typed as a root command keeps its arguments:
-     * {@code /team invite Floris} → {@code /oneblock team invite Floris}.
-     */
-    @Test
-    void testSubcommandPathTypedAsRootCommandKeepsArgs() {
-        List<Match> matches = CommandMatcher.matchCommandLine(List.of("team", "invite", "Floris"),
-                List.of(oneblock), null, ALL);
-        assertFalse(matches.isEmpty());
-        assertEquals("/oneblock team invite Floris", matches.get(0).commandString());
-    }
-
-    /**
-     * A typo in the root command itself: {@code /oneblok} → {@code /oneblock}.
-     */
-    @Test
-    void testTypoInRootCommand() {
-        List<Match> matches = CommandMatcher.matchCommandLine(List.of("oneblok"), List.of(oneblock), null, ALL);
-        assertFalse(matches.isEmpty());
-        assertEquals("/oneblock", matches.get(0).commandString());
+    static Stream<Arguments> commandLineMatchCases() {
+        return Stream.of(Arguments.of(List.of("teams"), "/oneblock team"),
+                Arguments.of(List.of("team", "invite", "Floris"), "/oneblock team invite Floris"),
+                Arguments.of(List.of("oneblok"), "/oneblock"));
     }
 
     /**
