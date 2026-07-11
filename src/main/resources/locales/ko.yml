@@ -12,6 +12,10 @@ prefixes:
   an-island: 섬
   islands: 섬들
 general:
+  did-you-mean:
+    suggestion: '<gray>혹시 </gray><yellow>[command]</yellow><gray> 명령어를 입력하려고 하셨나요? 여기를 클릭하거나 </gray><green>yes</green><gray>를 입력하면 실행됩니다.</gray>[run_command: [command]][hover: 클릭하여 [command] 실행]'
+    header: '<gray>다음 중 하나를 입력하려고 하셨나요? 클릭하면 실행됩니다:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 클릭하여 [command] 실행]'
   success: '<green>성공!</green>'
   invalid: 올바르지 않음
   beta: '<light_purple><bold>이 명령은 베타입니다. 백업이 있는지 확인하십시오!</bold></light_purple>'
@@ -180,6 +184,7 @@ commands:
         admin-kicked: '<red>관리자가 당신을 소속되있던 섬에서 추방시켰습니다.</red>'
         success: '<aqua>[name] </aqua><green>이가 </green><aqua>[owner]</aqua><green>의 섬에서 추방당했습니다.</green>'
       setowner:
+        specify-island: '<red>[prefix_island] 위에 서서 게임 내에서 실행하거나, 섬의 현재 소유자를 지정하세요: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <닉네임>
         description: 섬의 주인권한을 플레이어에게 넘깁니다
         already-owner: '<red>[name] 은 이미 이 섬의 주인입니다!</red>'

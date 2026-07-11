@@ -11,6 +11,10 @@ prefixes:
   an-island: o insulă
   islands: insule
 general:
+  did-you-mean:
+    suggestion: '<gray>Ai vrut să spui </gray><yellow>[command]</yellow><gray>? Dă clic aici sau tastează </gray><green>yes</green><gray> pentru a-l rula.</gray>[run_command: [command]][hover: Dă clic pentru a rula [command]]'
+    header: '<gray>Ai vrut să spui una dintre acestea? Dă clic pe una pentru a o rula:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Dă clic pentru a rula [command]]'
   success: '<green>Succes!</green>'
   invalid: Invalid
   beta: >-
@@ -197,6 +201,7 @@ commands:
         admin-kicked: '<red>Administratorul te-a dat afară din echipă.</red>'
         success: '<aqua>[name] </aqua><green>a fost dat afară de pe insula lui </green><aqua>[owner] </aqua><green>.</green>'
       setowner:
+        specify-island: '<red>Stai pe [prefix_island] și rulează asta în joc, sau numește proprietarul actual al insulei: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <player>
         description: transferă proprietatea insulei către jucător
         already-owner: '<red>[name] este deja proprietarul acestei insule!</red>'

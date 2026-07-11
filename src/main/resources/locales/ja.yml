@@ -11,6 +11,10 @@ prefixes:
   an-island: 島
   islands: 島
 general:
+  did-you-mean:
+    suggestion: '<gray>もしかして </gray><yellow>[command]</yellow><gray>？ここをクリックするか、</gray><green>yes</green><gray> と入力すると実行されます。</gray>[run_command: [command]][hover: クリックで [command] を実行]'
+    header: '<gray>もしかして次のいずれかですか？クリックすると実行されます:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: クリックで [command] を実行]'
   success: '<green>成功！</green>'
   invalid: 無効
   beta: '<light_purple><bold>このコマンドはベータ版です。バックアップがあることを確認してください！</bold></light_purple>'
@@ -169,6 +173,7 @@ commands:
         admin-kicked: 管理者は、あなたをチームから外しました。
         success: '<aqua>[name]</aqua><green>は</green><aqua>[owner]</aqua><green>の島から追い出されました。</green>'
       setowner:
+        specify-island: '<red>[prefix_island]の上に立ってゲーム内で実行するか、島の現在の所有者を指定してください: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <プレーヤー>
         description: プレーヤーをチームのリーダーにする％
         already-owner: '<red>プレイヤーはすでにリーダーです!</red>'

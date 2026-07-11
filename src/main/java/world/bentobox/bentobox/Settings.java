@@ -152,6 +152,18 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.teleport-remove-mobs")
     private boolean teleportRemoveMobs = false;
 
+    @ConfigComment("Did-you-mean command suggestions.")
+    @ConfigComment("When a player types an unknown command, e.g. /teams instead of /oneblock team,")
+    @ConfigComment("BentoBox suggests the closest matching BentoBox command. The player can click the")
+    @ConfigComment("suggestion or type 'yes' to run it.")
+    @ConfigEntry(path = "general.did-you-mean.unknown-commands", since = "3.20.0")
+    private boolean didYouMeanUnknownCommands = true;
+
+    @ConfigComment("When a player types an unknown subcommand, e.g. /island invit instead of /island team invite,")
+    @ConfigComment("BentoBox suggests the closest matching subcommand instead of showing an error.")
+    @ConfigEntry(path = "general.did-you-mean.subcommands", since = "3.20.0")
+    private boolean didYouMeanSubcommands = true;
+
     /* PANELS */
     @ConfigComment("Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.")
     @ConfigEntry(path = "panel.click-cooldown-ms")
@@ -491,6 +503,23 @@ public class Settings implements ConfigObject {
     @ConfigComment("Set to 0 or less to disable the tip entirely. Default is 5 seconds.")
     @ConfigEntry(path = "island.obsidian-scooping-lava-tip-duration", since = "3.14.0")
     private int obsidianScoopingLavaTipDuration = 5;
+
+    /* WORLD */
+    @ConfigComment("Vanilla structures disabled by default in EVERY BentoBox game mode world")
+    @ConfigComment("(overworld, nether and end). List the structure keys to stop generating and to")
+    @ConfigComment("skip in structure searches (/locate, Eyes of Ender, explorer/treasure maps,")
+    @ConfigComment("dolphins and villager cartographer trades). Suppressing a structure this way also")
+    @ConfigComment("prevents those searches scanning to the world border and freezing the server.")
+    @ConfigComment("Keys may use '-' or '_' and any case, e.g. trial_chambers, ancient-city.")
+    @ConfigComment("A game mode can override this per structure in its own config, both to disable")
+    @ConfigComment("more structures and to force-enable one that this list disables.")
+    @ConfigComment("Empty (the default) disables nothing, so behaviour is unchanged.")
+    @ConfigComment("Example:")
+    @ConfigComment("  disabled-structures:")
+    @ConfigComment("  - trial_chambers")
+    @ConfigComment("  - ancient_city")
+    @ConfigEntry(path = "world.disabled-structures", since = "3.19.1")
+    private List<String> disabledStructures = new ArrayList<>();
 
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
@@ -1751,6 +1780,55 @@ public class Settings implements ConfigObject {
      */
     public void setIslandPurgeLevel(int islandPurgeLevel) {
         this.islandPurgeLevel = islandPurgeLevel;
+    }
+
+    /**
+     * Vanilla structures disabled by default in every BentoBox game mode world.
+     * @return the list of disabled structure keys, never {@code null}
+     * @since 3.19.1
+     */
+    public List<String> getDisabledStructures() {
+        return disabledStructures == null ? new ArrayList<>() : disabledStructures;
+    }
+
+    /**
+     * @param disabledStructures the disabledStructures to set
+     * @since 3.19.1
+     */
+    public void setDisabledStructures(List<String> disabledStructures) {
+        this.disabledStructures = disabledStructures;
+    }
+
+    /**
+     * @return whether unknown root commands trigger did-you-mean suggestions
+     * @since 3.20.0
+     */
+    public boolean isDidYouMeanUnknownCommands() {
+        return didYouMeanUnknownCommands;
+    }
+
+    /**
+     * @param didYouMeanUnknownCommands the didYouMeanUnknownCommands to set
+     * @since 3.20.0
+     */
+    public void setDidYouMeanUnknownCommands(boolean didYouMeanUnknownCommands) {
+        this.didYouMeanUnknownCommands = didYouMeanUnknownCommands;
+    }
+
+    /**
+     * @return whether unknown subcommands trigger did-you-mean suggestions
+     * @since 3.20.0
+     */
+    public boolean isDidYouMeanSubcommands() {
+        return didYouMeanSubcommands;
+    }
+
+    /**
+     * @param didYouMeanSubcommands the didYouMeanSubcommands to set
+     * @since 3.20.0
+     */
+    public void setDidYouMeanSubcommands(boolean didYouMeanSubcommands) {
+        this.didYouMeanSubcommands = didYouMeanSubcommands;
     }
 
 }

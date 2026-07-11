@@ -11,6 +11,10 @@ prefixes:
   an-island: sebuah pulau
   islands: pulau-pulau
 general:
+  did-you-mean:
+    suggestion: '<gray>Apakah maksud Anda </gray><yellow>[command]</yellow><gray>? Klik di sini atau ketik </gray><green>yes</green><gray> untuk menjalankannya.</gray>[run_command: [command]][hover: Klik untuk menjalankan [command]]'
+    header: '<gray>Apakah maksud Anda salah satu dari ini? Klik salah satu untuk menjalankan:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klik untuk menjalankan [command]]'
   success: '<green>Berhasil!</green>'
   invalid: Tidak valid
   beta: '<light_purple><bold>Perintah ini dalam beta. Pastikan Anda memiliki cadangan!</bold></light_purple>'
@@ -192,6 +196,7 @@ commands:
         admin-kicked: '<red>Admin mengeluarkan Anda dari tim.</red>'
         success: '<aqua>[name] </aqua><green>telah diusir dari pulau </green><aqua>[owner]</aqua><green>.</green>'
       setowner:
+        specify-island: '<red>Berdirilah di [prefix_island] dan jalankan ini dalam game, atau sebutkan pemilik pulau saat ini: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <pemain>
         description: mentransfer kepemilikan pulau kepada pemain
         already-owner: '<red>[name] sudah menjadi pemilik pulau ini!</red>'

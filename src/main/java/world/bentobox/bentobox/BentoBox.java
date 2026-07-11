@@ -30,6 +30,7 @@ import world.bentobox.bentobox.listeners.BentoBoxListenerRegistrar;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.suggestions.SuggestionsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.ChunkPregenManager;
@@ -65,6 +66,7 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     // Managers
     private CommandsManager commandsManager;
+    private SuggestionsManager suggestionsManager;
     private LocalesManager localesManager;
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
@@ -163,6 +165,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Set up command manager
         commandsManager = new CommandsManager();
+
+        // Did-you-mean command suggestions
+        suggestionsManager = new SuggestionsManager(this);
 
         // Load BentoBox commands
         commandsManager.registerDefaultCommands();
@@ -392,6 +397,14 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public CommandsManager getCommandsManager() {
         return commandsManager;
+    }
+
+    /**
+     * @return the did-you-mean command suggestions manager
+     * @since 3.20.0
+     */
+    public SuggestionsManager getSuggestionsManager() {
+        return suggestionsManager;
     }
 
     /**

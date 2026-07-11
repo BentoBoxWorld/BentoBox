@@ -52,6 +52,7 @@ import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.objects.DataObject;
+import world.bentobox.bentobox.listeners.StructureListener;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -329,6 +330,11 @@ public class AddonsManager {
         try {
             // If this is a GameModeAddon create the worlds, register it and load the blueprints
             if (addon instanceof GameModeAddon gameMode) {
+                // Suppress disabled structures before the worlds (and their spawn-area chunks)
+                // are generated. createWorlds() generates the spawn chunks, so a listener
+                // registered any later would miss those first structures. Registered through
+                // registerListener so it is tracked and unregistered when the addon is disabled.
+                registerListener(gameMode, new StructureListener(plugin, gameMode));
                 // Create the gameWorlds
                 gameMode.createWorlds();
                 plugin.getIWM().addGameMode(gameMode);
