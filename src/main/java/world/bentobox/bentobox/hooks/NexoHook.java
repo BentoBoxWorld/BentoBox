@@ -50,10 +50,15 @@ public class NexoHook extends Hook {
      *
      * @param location the target location
      * @param blockId  the Nexo custom block ID
-     * @return {@code true} if the block was placed successfully
+     * @return {@code true} if the ID is a known Nexo block and placement was attempted (this does
+     *         not guarantee that the placement itself succeeded, only that it was requested)
      */
     public static boolean placeBlock(Location location, String blockId) {
-        return NexoBlocks.place(blockId, location);
+        if (!NexoBlocks.isCustomBlock(blockId)) {
+            return false;
+        }
+        NexoBlocks.place(blockId, location);
+        return true;
     }
 
     /**
