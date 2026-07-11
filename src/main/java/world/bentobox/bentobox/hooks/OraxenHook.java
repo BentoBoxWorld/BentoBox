@@ -65,6 +65,21 @@ public class OraxenHook extends Hook {
     }
 
     /**
+     * Places an Oraxen custom block at the given location.
+     *
+     * @param location the target location
+     * @param blockId  Oraxen block ID (e.g. "ruby_ore")
+     * @return true if the ID is a known Oraxen block and placement was attempted
+     */
+    public static boolean placeBlock(Location location, String blockId) {
+        if (!OraxenBlocks.isOraxenBlock(blockId)) {
+            return false;
+        }
+        OraxenBlocks.place(blockId, location);
+        return true;
+    }
+
+    /**
      * Returns Optional empty if the provided {@link ItemStack} is not a custom item created with ItemsAdder.
      *
      * @param myItemStack the Bukkit ItemStack
