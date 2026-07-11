@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -111,6 +113,11 @@ class IslandGoCommandTest extends CommonTestSetup {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
         when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
+        // Run scheduled (zero-delay) teleport tasks synchronously so we can verify them
+        when(sch.runTask(any(), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1, Runnable.class).run();
+            return task;
+        });
         // Event register
         mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
 
@@ -251,6 +258,89 @@ class IslandGoCommandTest extends CommonTestSetup {
         checkSpigotMessage("commands.island.go.unknown-home");
         checkSpigotMessage("commands.island.sethome.homes-are");
         checkSpigotMessage("commands.island.sethome.home-list-syntax");
+    }
+
+    /**
+     * Forgiving matching: an island name typed in the wrong case still teleports.
+     * Test method for {@link IslandGoCommand#execute(User, String, List)}
+     */
+    @Test
+    void testExecuteIslandNameWrongCase() {
+        when(island.getName()).thenReturn("MyIsland");
+        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("myisland")));
+        // No unknown-home moan; we teleported to the island
+        verify(mockPlayer, Mockito.never()).sendMessage("commands.island.go.unknown-home");
+        verify(im).homeTeleportAsync(island, user);
+    }
+
+    /**
+     * Forgiving matching: a unique prefix of a home name teleports to that home.
+     * Test method for {@link IslandGoCommand#execute(User, String, List)}
+     */
+    @Test
+    void testExecuteHomeNamePrefix() {
+        when(island.getHomes()).thenReturn(Map.of("Home", mock(Location.class)));
+        when(im.homeTeleportAsync(world, mockPlayer, "Home"))
+                .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(true));
+        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("hom")));
+        verify(mockPlayer, Mockito.never()).sendMessage("commands.island.go.unknown-home");
+        verify(im).homeTeleportAsync(world, mockPlayer, "Home");
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameExactWins() {
+        assertEquals("Home", IslandGoCommand.resolveName("Home", Set.of("Home", "Hut")));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameCaseAndSpaceInsensitive() {
+        assertEquals("My Home", IslandGoCommand.resolveName("my  HOME", Set.of("My Home", "Hut")));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameUniquePrefix() {
+        assertEquals("Home", IslandGoCommand.resolveName("hom", Set.of("Home", "Base")));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameAmbiguousPrefixReturnsNull() {
+        assertNull(IslandGoCommand.resolveName("h", Set.of("Home", "Hut")));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameAmbiguousNormalizedReturnsNull() {
+        assertNull(IslandGoCommand.resolveName("home", Set.of("Home", "HOME")));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameNoMatchReturnsNull() {
+        assertNull(IslandGoCommand.resolveName("xyzzy", Set.of("Home", "Hut")));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#resolveName(String, Set)}
+     */
+    @Test
+    void testResolveNameBlankReturnsNull() {
+        assertNull(IslandGoCommand.resolveName("   ", Set.of("Home", "Hut")));
     }
 
     /**
