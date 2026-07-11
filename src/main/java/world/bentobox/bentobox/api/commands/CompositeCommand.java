@@ -261,6 +261,18 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         CompositeCommand cmd = getCommandFromArgs(args);
         String cmdLabel = (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel - 1] : label;
         List<String> cmdArgs = Arrays.asList(args).subList(cmd.subCommandLevel, args.length);
+        // Did-you-mean: the walk stopped at a command that has subcommands but with
+        // unconsumed args, i.e. the first leftover arg matched none of them. Suggest
+        // what the player probably meant instead of dead-ending into an error.
+        if (!cmdArgs.isEmpty() && cmd.hasSubCommands() && user.isPlayer()
+                && plugin.getSettings().isDidYouMeanSubcommands() && plugin.getSuggestionsManager() != null) {
+            String typedPrefix = "/" + label + (cmd.subCommandLevel > 0
+                    ? " " + String.join(" ", Arrays.asList(args).subList(0, cmd.subCommandLevel))
+                    : "");
+            if (plugin.getSuggestionsManager().suggestSubcommand(user, cmd, typedPrefix, cmdArgs)) {
+                return true;
+            }
+        }
         return cmd.call(user, cmdLabel, cmdArgs);
     }
 

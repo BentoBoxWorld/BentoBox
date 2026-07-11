@@ -11,6 +11,10 @@ prefixes:
   an-island: otok
   islands: ostrva
 general:
+  did-you-mean:
+    suggestion: '<gray>Jeste li mislili </gray><yellow>[command]</yellow><gray>? Kliknite ovdje ili upišite </gray><green>yes</green><gray> za pokretanje.</gray>[run_command: [command]][hover: Kliknite za pokretanje [command]]'
+    header: '<gray>Jeste li mislili nešto od ovoga? Kliknite za pokretanje:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknite za pokretanje [command]]'
   success: '<green>Uspjeh!</green>'
   invalid: Neispravno
   beta: '<light_purple><bold>Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!</bold></light_purple>'
@@ -191,6 +195,7 @@ commands:
         admin-kicked: '<red>Admin vas je izbacio iz tima.</red>'
         success: '<aqua>[name] </aqua><green>je izbačen s otoka </green><aqua>[owner]</aqua><green>.</green>'
       setowner:
+        specify-island: '<red>Stanite na [prefix_island] i pokrenite ovo u igri, ili navedite trenutnog vlasnika otoka: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <igrač>
         description: prenosi vlasništvo nad otokom na igrača
         already-owner: '<red>[name] je već vlasnik ovog otoka!</red>'

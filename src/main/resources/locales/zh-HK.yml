@@ -14,6 +14,10 @@ prefixes:
   an-island: 一個島
   islands: 島嶼
 general:
+  did-you-mean:
+    suggestion: '<gray>你是想輸入 </gray><yellow>[command]</yellow><gray> 嗎？點擊此處或輸入 </gray><green>yes</green><gray> 來執行。</gray>[run_command: [command]][hover: 點擊執行 [command]]'
+    header: '<gray>你是想輸入以下指令之一嗎？點擊即可執行:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 點擊執行 [command]]'
   success: '<green>成功!</green>'
   invalid: 無效
   beta: '<light_purple><bold>此命令在Beta中。確保您有備份！</bold></light_purple>'
@@ -176,6 +180,7 @@ commands:
         admin-kicked: '<red>管理員將您從隊伍中踢了出來。</red>'
         success: '<green>您已將 </green><aqua>[name] </aqua><green>從 </green><aqua>[owner] </aqua><green>的島嶼裡踢出去。</green>'
       setowner:
+        specify-island: '<red>站在[prefix_island]上並在遊戲中執行，或指定島嶼的目前擁有者: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <player>
         description: 將島嶼所有權轉移給指定玩家
         already-owner: '<red>[name]本身已經是島主！</red>'

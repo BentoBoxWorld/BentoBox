@@ -11,6 +11,10 @@ prefixes:
   an-island: uma ilha
   islands: ilhas
 general:
+  did-you-mean:
+    suggestion: '<gray>Queria dizer </gray><yellow>[command]</yellow><gray>? Clique aqui ou escreva </gray><green>yes</green><gray> para o executar.</gray>[run_command: [command]][hover: Clique para executar [command]]'
+    header: '<gray>Queria dizer um destes? Clique num para executar:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Clique para executar [command]]'
   success: '<red>Sucesso!</red>'
   invalid: Invalido
   beta: '<light_purple><bold>Este comando está na versão beta. Certifique -se de ter backups!</bold></light_purple>'
@@ -195,6 +199,7 @@ commands:
         admin-kicked: '<red>O administrador expulsou você do time.</red>'
         success: '<aqua>[name] </aqua><green>foi expulsa da ilha de </green><aqua>[owner]</aqua><green>.</green>'
       setowner:
+        specify-island: '<red>Fique na [prefix_island] e execute isto no jogo, ou indique o atual dono da ilha: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <jogador>
         description: transfere o dono da ilha para o jogador
         already-owner: '<red>[name] já é o dono desta ilha!</red>'

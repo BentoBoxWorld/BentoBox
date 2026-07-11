@@ -11,6 +11,10 @@ prefixes:
   an-island: salā
   islands: saliņas
 general:
+  did-you-mean:
+    suggestion: '<gray>Vai jūs domājāt </gray><yellow>[command]</yellow><gray>? Noklikšķiniet šeit vai ierakstiet </gray><green>yes</green><gray>, lai to palaistu.</gray>[run_command: [command]][hover: Noklikšķiniet, lai palaistu [command]]'
+    header: '<gray>Vai jūs domājāt kādu no šiem? Noklikšķiniet, lai palaistu:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Noklikšķiniet, lai palaistu [command]]'
   success: '<green>Darīts!</green>'
   invalid: Nederīgs!
   beta: '<light_purple><bold>Šī komanda ir beta versijā. Pārliecinieties, ka jums ir dublējumi!</bold></light_purple>'
@@ -190,6 +194,7 @@ commands:
         admin-kicked: '<red>Admins tevi izmenta no komandas.</red>'
         success: '<aqua>[name] </aqua><green>tika izmests no </green><aqua>[owner]</aqua><green>salas.</green>'
       setowner:
+        specify-island: '<red>Nostājieties uz [prefix_island] un palaidiet to spēlē, vai norādiet salas pašreizējo īpašnieku: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <spēlētājs>
         description: iecelt par salas īpašnieku
         already-owner: '<red>[name] jau ir salas īpašnieks!</red>'

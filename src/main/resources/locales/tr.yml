@@ -12,6 +12,10 @@ prefixes:
   an-island: bir ada
   islands: adalar
 general:
+  did-you-mean:
+    suggestion: '<gray>Şunu mu demek istediniz: </gray><yellow>[command]</yellow><gray>? Çalıştırmak için buraya tıklayın veya </gray><green>yes</green><gray> yazın.</gray>[run_command: [command]][hover: [command] çalıştırmak için tıklayın]'
+    header: '<gray>Şunlardan birini mi demek istediniz? Çalıştırmak için birine tıklayın:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: [command] çalıştırmak için tıklayın]'
   success: '<blue>Başarılı!</blue>'
   invalid: '<dark_red>Geçersiz!</dark_red>'
   beta: '<light_purple><bold>Bu komut beta. Yedeklemeleriniz olduğundan emin olun!</bold></light_purple>'
@@ -189,6 +193,7 @@ commands:
         admin-kicked: '<blue>Admin seni takımından attı!</blue>'
         success: '<light_purple>[name] </light_purple><blue>[owner] </blue><dark_red>adasından atıldı!</dark_red>'
       setowner:
+        specify-island: '<red>[prefix_island] üzerinde durup bunu oyun içinde çalıştırın veya adanın mevcut sahibini belirtin: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <player>
         description: Oyuncuya ada liderligini ver!
         already-owner: '<light_purple>[name] </light_purple><dark_red>zaten ada sahibi!</dark_red>'
