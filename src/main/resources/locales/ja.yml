@@ -619,6 +619,11 @@ commands:
     confirm: '<red>[seconds]秒でコマンドをもう一度入力して確認します。</red>'
     previous-request-cancelled: '<red>前の確認要求が取り消されました</red>'
     request-cancelled: '<red>確認のタイムアウト-要求が取り消されました</red>'
+    title: '<red>本当によろしいですか？</red>'
+    dialog-body: '<gray>続行するには確認を、中止するにはキャンセルを選んでください。</gray>'
+    buttons:
+      confirm: '<green>確認</green>'
+      cancel: '<red>キャンセル</red>'
   delay:
     previous-command-cancelled: '<red>前のコマンドがキャンセルされました</red>'
     stand-still: '<gold>移動しないでください！ [seconds]秒でのテレポート</gold>'

@@ -696,6 +696,11 @@ commands:
     confirm: '<red>Ketik perintah lagi dalam </red><aqua>[seconds]s</aqua><red>untuk mengonfirmasi.</red>'
     previous-request-cancelled: '<gold>Permintaan konfirmasi sebelumnya dibatalkan.</gold>'
     request-cancelled: '<red>Batas waktu konfirmasi - </red><aqua>permintaan dibatalkan.</aqua>'
+    title: '<red>Apakah kamu yakin?</red>'
+    dialog-body: '<gray>Konfirmasi untuk melanjutkan, atau batalkan.</gray>'
+    buttons:
+      confirm: '<green>Konfirmasi</green>'
+      cancel: '<red>Batal</red>'
   delay:
     previous-command-cancelled: '<red>Perintah sebelumnya dibatalkan</red>'
     stand-still: '<gold>Jangan bergerak! Teleportasi dalam [seconds] detik</gold>'

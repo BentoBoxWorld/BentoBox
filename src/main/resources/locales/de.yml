@@ -714,6 +714,11 @@ commands:
     confirm: '<red>Befehl innerhalb von</red><aqua>[seconds]s</aqua><red>zur Bestätigung erneut eingeben.</red>'
     previous-request-cancelled: '<gold>Vorherige Bestätigungsanforderung abgebrochen.</gold>'
     request-cancelled: '<red>Bestätigungs-Timeout - </red><aqua>-Anforderung abgebrochen.</aqua>'
+    title: '<red>Bist du sicher?</red>'
+    dialog-body: '<gray>Bestätige, um fortzufahren, oder brich ab.</gray>'
+    buttons:
+      confirm: '<green>Bestätigen</green>'
+      cancel: '<red>Abbrechen</red>'
   delay:
     previous-command-cancelled: '<red>Vorheriger Befehl abgebrochen</red>'
     stand-still: '<gold>Nicht bewegen! Teleportiert in [seconds] Sekunden</gold>'

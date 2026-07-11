@@ -639,6 +639,11 @@ commands:
     confirm: '<red>계속하려면 </red><aqua>[seconds]초안에</aqua><red> 명령어를 다시 사용하세요.</red>'
     previous-request-cancelled: '<gold>이전 확인 요청이 취소되었습니다.</gold>'
     request-cancelled: '<red>확인 시간 종료 - </red><aqua>요청이 취소되었습니다.</aqua>'
+    title: '<red>정말 실행하시겠습니까?</red>'
+    dialog-body: '<gray>계속하려면 확인을, 취소하려면 취소를 누르세요.</gray>'
+    buttons:
+      confirm: '<green>확인</green>'
+      cancel: '<red>취소</red>'
   delay:
     previous-command-cancelled: '<red>전에 사용한 커맨드가 취소되어습니다</red>'
     stand-still: '<gold>움직이지마세요! [seconds] 초후 이동됩니다!</gold>'

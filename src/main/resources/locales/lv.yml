@@ -689,6 +689,11 @@ commands:
     confirm: '<red>Ievadi komandu atkārtoti </red><aqua>[seconds]s</aqua><red>laikā, lai apstiprinātu.</red>'
     previous-request-cancelled: '<gold>Iepriekšējais apstiprinājumu pieprasījums ir apturēts.</gold>'
     request-cancelled: '<red>Apstiprinājuma noilgums - </red><aqua>pieprasījums apturēts.</aqua>'
+    title: '<red>Vai tu esi pārliecināts?</red>'
+    dialog-body: '<gray>Apstiprini, lai turpinātu, vai atcel.</gray>'
+    buttons:
+      confirm: '<green>Apstiprināt</green>'
+      cancel: '<red>Atcelt</red>'
   delay:
     previous-command-cancelled: '<red>Iepriekšēja komanda tika atcelta!</red>'
     stand-still: '<gold>Apstājies! Teleportēšana notiks pēc [seconds] sekundēm</gold>'

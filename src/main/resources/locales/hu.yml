@@ -722,6 +722,11 @@ commands:
     confirm: '<red>A megerősítéshez írja be újra a parancsot </red><aqua>[seconds]s</aqua><red>időn belül.</red>'
     previous-request-cancelled: '<gold>Az előző megerősítési kérés törölve.</gold>'
     request-cancelled: '<red>Megerősítés időtúllépése – </red><aqua>kérés törölve.</aqua>'
+    title: '<red>Biztos vagy benne?</red>'
+    dialog-body: '<gray>Erősítsd meg a folytatáshoz, vagy mégse a megszakításhoz.</gray>'
+    buttons:
+      confirm: '<green>Megerősítés</green>'
+      cancel: '<red>Mégse</red>'
   delay:
     previous-command-cancelled: '<red>Az előző parancs megszakítva</red>'
     stand-still: '<gold>Ne mozdulj! Teleportálás [seconds] másodpercen belül</gold>'

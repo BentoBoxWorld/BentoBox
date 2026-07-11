@@ -706,6 +706,11 @@ commands:
     confirm: '<red>Tastați din nou comanda în </red><aqua>[seconds] s </aqua><red>pentru a confirma.</red>'
     previous-request-cancelled: '<gold>Cererea de confirmare anterioară a fost anulată.</gold>'
     request-cancelled: '<red>Timpul limită de confirmare - cererea </red><aqua>a fost anulată.</aqua>'
+    title: '<red>Ești sigur?</red>'
+    dialog-body: '<gray>Confirmă pentru a continua, sau anulează.</gray>'
+    buttons:
+      confirm: '<green>Confirmă</green>'
+      cancel: '<red>Anulează</red>'
   delay:
     previous-command-cancelled: '<red>Comanda anterioară a fost anulată</red>'
     stand-still: '<gold>Nu vă mișcați! Se teleportează în [seconds] secunde</gold>'

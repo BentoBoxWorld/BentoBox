@@ -685,6 +685,11 @@ commands:
     confirm: '<red>Nhập lệnh đó lại trong </red><aqua>[seconds] giây</aqua><red> để xác nhận.</red>'
     previous-request-cancelled: '<gold>Lần xác nhận trước đã bị hủy.</gold>'
     request-cancelled: '<red>Hết thời gian xác nhận - </red><aqua>yêu cầu đã bị hủy.</aqua>'
+    title: '<red>Bạn có chắc không?</red>'
+    dialog-body: '<gray>Xác nhận để tiếp tục, hoặc hủy để dừng lại.</gray>'
+    buttons:
+      confirm: '<green>Xác nhận</green>'
+      cancel: '<red>Hủy</red>'
   delay:
     previous-command-cancelled: '<red>Lệnh trước đã bị hủy</red>'
     stand-still: '<gold>Đừng di chuyển! Dịch chuyển trong [seconds] giây</gold>'

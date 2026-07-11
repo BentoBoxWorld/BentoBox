@@ -674,6 +674,11 @@ commands:
     confirm: '<red>Napiš příkaz znovu během </red><aqua>[seconds]s</aqua><red> k potvrzení.</red>'
     previous-request-cancelled: '<gold>Předchozí žádost o potvrzení zamítnuta.</gold>'
     request-cancelled: '<red>Časový limit vypršel - </red><aqua>žádost zamítnuta.</aqua>'
+    title: '<red>Jsi si jistý?</red>'
+    dialog-body: '<gray>Potvrď pro pokračování, nebo zruš.</gray>'
+    buttons:
+      confirm: '<green>Potvrdit</green>'
+      cancel: '<red>Zrušit</red>'
   delay:
     previous-command-cancelled: '<red>Předchozí příkaz zrušen</red>'
     stand-still: '<gold>Nehýbej se! Teleportuji za [seconds] sekund</gold>'

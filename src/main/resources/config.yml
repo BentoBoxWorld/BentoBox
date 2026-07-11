@@ -221,6 +221,12 @@ island:
     # Team invites will always require confirmation, for safety concerns.
     # Added since 1.8.0.
     invites: false
+    # Show sensitive-command confirmations as a modal [Confirm]/[Cancel] dialog
+    # instead of asking the player to type the command again. Requires a server
+    # that supports dialogs (Minecraft 26+); older servers always use the type-again
+    # prompt regardless of this setting.
+    # Added since 3.21.0.
+    use-dialog: true
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0

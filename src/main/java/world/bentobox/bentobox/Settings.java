@@ -344,6 +344,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.confirmation.invites", since = "1.8.0")
     private boolean inviteConfirmation = false;
 
+    @ConfigComment("Show sensitive-command confirmations as a modal [Confirm]/[Cancel] dialog")
+    @ConfigComment("instead of asking the player to type the command again. Requires a server")
+    @ConfigComment("that supports dialogs (Minecraft 26+); older servers always use the type-again")
+    @ConfigComment("prompt regardless of this setting.")
+    @ConfigEntry(path = "island.confirmation.use-dialog", since = "3.21.0")
+    private boolean useDialogConfirmation = true;
+
     @ConfigComment("Sets the minimum length an island custom name is required to have.")
     @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength = 4;
@@ -920,6 +927,22 @@ public class Settings implements ConfigObject {
      */
     public void setInviteConfirmation(boolean inviteConfirmation) {
         this.inviteConfirmation = inviteConfirmation;
+    }
+
+    /**
+     * @return whether sensitive-command confirmations should use a modal dialog
+     * @since 3.21.0
+     */
+    public boolean isUseDialogConfirmation() {
+        return useDialogConfirmation;
+    }
+
+    /**
+     * @param useDialogConfirmation whether to use a modal dialog for confirmations
+     * @since 3.21.0
+     */
+    public void setUseDialogConfirmation(boolean useDialogConfirmation) {
+        this.useDialogConfirmation = useDialogConfirmation;
     }
 
     /**

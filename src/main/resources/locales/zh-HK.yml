@@ -635,6 +635,11 @@ commands:
     confirm: '<red>於 </red><aqua>[seconds] </aqua><red>秒內再次輸入命令來確認</red>'
     previous-request-cancelled: '<gold>上一個確認請求已取消</gold>'
     request-cancelled: '<red>確認超時 - </red><aqua>請求已取消</aqua>'
+    title: '<red>確定嗎？</red>'
+    dialog-body: '<gray>確認以繼續，或取消以中止。</gray>'
+    buttons:
+      confirm: '<green>確認</green>'
+      cancel: '<red>取消</red>'
   delay:
     previous-command-cancelled: '<red>上一個命令已取消。</red>'
     stand-still: '<gold>請不要移動！ 將在 </gold><aqua>[seconds] </aqua><gold>秒後傳送。</gold>'

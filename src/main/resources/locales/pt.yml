@@ -698,6 +698,11 @@ commands:
     confirm: '<red>Digite o comando novamente dentro de </red><aqua>[segundos]s</aqua><red>para confirmar.</red>'
     previous-request-cancelled: '<gold>Solicitação de confirmação anterior cancelada.</gold>'
     request-cancelled: '<red>Tempo limite de confirmação - solicitação </red><aqua>cancelada.</aqua>'
+    title: '<red>Tens a certeza?</red>'
+    dialog-body: '<gray>Confirma para continuar, ou cancela para abortar.</gray>'
+    buttons:
+      confirm: '<green>Confirmar</green>'
+      cancel: '<red>Cancelar</red>'
   delay:
     previous-command-cancelled: '<red>Comando anterior cancelado</red>'
     stand-still: '<gold>Não se mova! Teletransportando em [segundos] segundos</gold>'

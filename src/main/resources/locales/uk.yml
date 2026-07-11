@@ -625,6 +625,11 @@ commands:
     confirm: '<red>Повторіть команду протягом </red><aqua>[seconds]с</aqua><red>для підтвердження.</red>'
     previous-request-cancelled: '<gold>Попередній запит підтвердження скасовано.</gold>'
     request-cancelled: '<red>Час підтвердження вийшов — </red><aqua>запит скасовано.</aqua>'
+    title: '<red>Ви впевнені?</red>'
+    dialog-body: '<gray>Підтвердьте, щоб продовжити, або скасуйте.</gray>'
+    buttons:
+      confirm: '<green>Підтвердити</green>'
+      cancel: '<red>Скасувати</red>'
   delay:
     previous-command-cancelled: '<red>Попередню команду скасовано</red>'
     stand-still: '<gold>Не рухайтеся! Телепорт через [seconds] секунд</gold>'

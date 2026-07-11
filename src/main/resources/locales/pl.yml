@@ -693,6 +693,11 @@ commands:
     confirm: '<red>Wprowadź komendę w ciągu </red><aqua>[seconds]s</aqua><red>, by potwierdzić.</red>'
     previous-request-cancelled: '<gold>Poprzednie żądanie potwierdzenia zostało anulowane.</gold>'
     request-cancelled: '<red>Limit czasu potwierdzenia - </red><aqua>żądanie anulowane.</aqua>'
+    title: '<red>Jesteś pewien?</red>'
+    dialog-body: '<gray>Potwierdź, aby kontynuować, lub anuluj.</gray>'
+    buttons:
+      confirm: '<green>Potwierdź</green>'
+      cancel: '<red>Anuluj</red>'
   delay:
     previous-command-cancelled: '<red>Anulowano poprzednią komendę.</red>'
     stand-still: '<gold>Nie ruszaj się! Teleportowanie za [seconds] sekund...</gold>'

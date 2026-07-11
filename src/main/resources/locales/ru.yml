@@ -684,6 +684,11 @@ commands:
     confirm: <red>Подтвердите, повторив команду в течение <aqua>[seconds] секунд</aqua>.</red>
     previous-request-cancelled: <gold>Предыдущий запрос на подтверждение был отменён.</gold>
     request-cancelled: <red>Время подтверждения истекло - <aqua>запрос отменён</aqua>.</red>
+    title: '<red>Вы уверены?</red>'
+    dialog-body: '<gray>Подтвердите, чтобы продолжить, или отмените.</gray>'
+    buttons:
+      confirm: '<green>Подтвердить</green>'
+      cancel: '<red>Отмена</red>'
   delay:
     previous-command-cancelled: <red>Предыдущая команда была отменена</red>
     stand-still: <gold>Не двигайтесь! Телепортация через [seconds] секунды</gold>

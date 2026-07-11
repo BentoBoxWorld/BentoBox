@@ -711,6 +711,11 @@ commands:
     confirm: '<red>Riscrivi il comando entro </red><aqua>[seconds]s</aqua><red>per confermare.</red>'
     previous-request-cancelled: '<gold>Richiesta di conferma precedente cancellata.</gold>'
     request-cancelled: '<red>Timeout di conferma - </red><aqua>richiesta cancellata.</aqua>'
+    title: '<red>Sei sicuro?</red>'
+    dialog-body: '<gray>Conferma per procedere, o annulla.</gray>'
+    buttons:
+      confirm: '<green>Conferma</green>'
+      cancel: '<red>Annulla</red>'
   delay:
     previous-command-cancelled: '<red>Comando precedente annullato</red>'
     stand-still: '<gold>Non muoverti! Teletrasporto tra [seconds] secondi</gold>'

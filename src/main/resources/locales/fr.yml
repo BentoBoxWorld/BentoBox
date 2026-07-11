@@ -726,6 +726,11 @@ commands:
       confirmer.
     previous-request-cancelled: '<gold>La demande de confirmation est annulée.</gold>'
     request-cancelled: '<red>Délai de confirmation dépassé - </red><aqua>demande annulée.</aqua>'
+    title: '<red>Es-tu sûr ?</red>'
+    dialog-body: '<gray>Confirme pour continuer, ou annule pour abandonner.</gray>'
+    buttons:
+      confirm: '<green>Confirmer</green>'
+      cancel: '<red>Annuler</red>'
   delay:
     previous-command-cancelled: '<red>Commande annulée</red>'
     stand-still: '<gold>Ne bougez pas ! Téléportation dans [seconds] secondes.</gold>'

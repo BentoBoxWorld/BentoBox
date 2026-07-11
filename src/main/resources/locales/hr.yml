@@ -685,6 +685,11 @@ commands:
     confirm: '<red>Ponovno upišite naredbu unutar </red><aqua>[seconds]s</aqua><red>za potvrdu.</red>'
     previous-request-cancelled: '<gold>Prethodni zahtjev za potvrdu otkazan.</gold>'
     request-cancelled: '<red>Istek potvrde - </red><aqua>zahtjev otkazan.</aqua>'
+    title: '<red>Jesi li siguran?</red>'
+    dialog-body: '<gray>Potvrdi za nastavak ili odustani.</gray>'
+    buttons:
+      confirm: '<green>Potvrdi</green>'
+      cancel: '<red>Odustani</red>'
   delay:
     previous-command-cancelled: '<red>Prethodna naredba poništena</red>'
     stand-still: '<gold>Ne miči se! Teleportiranje za [seconds] sekundi</gold>'

@@ -646,6 +646,11 @@ commands:
     confirm: '<red>Type command again within </red><aqua>[seconds]s</aqua><red> to confirm.</red>'
     previous-request-cancelled: '<gold>Previous confirmation request cancelled.</gold>'
     request-cancelled: '<red>Confirmation timeout - </red><aqua>request cancelled.</aqua>'
+    title: '<red>Are you sure?</red>'
+    dialog-body: '<gray>Confirm to proceed, or cancel to abort.</gray>'
+    buttons:
+      confirm: '<green>Confirm</green>'
+      cancel: '<red>Cancel</red>'
   delay:
     previous-command-cancelled: '<red>Previous command cancelled</red>'
     stand-still: '<gold>Do not move! Teleporting in [seconds] seconds</gold>'

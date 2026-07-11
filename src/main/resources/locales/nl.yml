@@ -721,6 +721,11 @@ commands:
     confirm: '<red>Typ het commando opnieuw binnen </red><aqua>[seconds]s </aqua><red>om te bevestigen.</red>'
     previous-request-cancelled: '<gold>Eerder bevestigingsverzoek geannuleerd.</gold>'
     request-cancelled: '<red>Time-out voor bevestiging - </red><aqua>-verzoek geannuleerd.</aqua>'
+    title: '<red>Weet je het zeker?</red>'
+    dialog-body: '<gray>Bevestig om door te gaan, of annuleer.</gray>'
+    buttons:
+      confirm: '<green>Bevestigen</green>'
+      cancel: '<red>Annuleren</red>'
   delay:
     previous-command-cancelled: '<red>Vorige opdracht geannuleerd</red>'
     stand-still: '<gold>Beweeg niet! Teleporteren in [seconds]seconden</gold>'
