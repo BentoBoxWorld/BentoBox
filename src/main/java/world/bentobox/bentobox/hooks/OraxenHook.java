@@ -17,6 +17,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,6 +63,22 @@ public class OraxenHook extends Hook {
      */
     public static void clearBlockInfo(Location location) {
         OraxenBlocks.remove(location, null, null); // Null player
+    }
+
+    /**
+     * Places an Oraxen custom block at the given location.
+     *
+     * @param location the target location
+     * @param blockId  Oraxen block ID (e.g. "ruby_ore")
+     * @return true if the ID is a known Oraxen block and placement was attempted (this does not
+     *         guarantee that the placement itself succeeded, only that it was requested)
+     */
+    public static boolean placeBlock(@NonNull Location location, @NonNull String blockId) {
+        if (!OraxenBlocks.isOraxenBlock(blockId)) {
+            return false;
+        }
+        OraxenBlocks.place(blockId, location);
+        return true;
     }
 
     /**
