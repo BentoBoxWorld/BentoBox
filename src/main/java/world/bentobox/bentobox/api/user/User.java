@@ -42,6 +42,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import world.bentobox.bentobox.BentoBox;
@@ -804,13 +806,48 @@ public class User implements MetaDataAble {
     /**
      * Parses a message string into an Adventure Component, handling inline commands and
      * auto-detecting legacy or MiniMessage format.
+     * <p>
+     * Inline [run_command]/[hover]-style commands are applied to the parsed Component
+     * programmatically, not by wrapping the text in MiniMessage click/hover tags: the
+     * text routinely contains a {@code §r} from the legacy round-trip (any closed color
+     * or decoration emits one), and the {@code <reset>} it maps to would close the
+     * wrapper tags, killing the events and leaking literal {@code </click></hover>}
+     * text into chat.
      *
      * @param text the message text
      * @return the parsed Component
      */
     private Component parseToComponent(String text) {
-        String mmMessage = Util.convertInlineCommandsToMiniMessage(text);
-        return Util.parseMiniMessageOrLegacy(mmMessage);
+        Util.InlineCommands inline = Util.extractInlineCommands(text);
+        Component component = Util.parseMiniMessageOrLegacy(inline.cleanText());
+        ClickEvent clickEvent = toClickEvent(inline.clickAction(), inline.clickValue());
+        if (clickEvent != null) {
+            component = component.clickEvent(clickEvent);
+        }
+        if (inline.hoverText() != null) {
+            component = component.hoverEvent(HoverEvent.showText(Util.parseMiniMessageOrLegacy(inline.hoverText())));
+        }
+        return component;
+    }
+
+    /**
+     * Maps an inline command action to an Adventure {@link ClickEvent}.
+     *
+     * @param action the inline command action name, may be null
+     * @param value  the action's value, may be null
+     * @return the click event, or null if the action is unknown or absent
+     */
+    private static ClickEvent toClickEvent(String action, String value) {
+        if (action == null || value == null) {
+            return null;
+        }
+        return switch (action) {
+        case "run_command" -> ClickEvent.runCommand(value);
+        case "suggest_command" -> ClickEvent.suggestCommand(value);
+        case "copy_to_clipboard" -> ClickEvent.copyToClipboard(value);
+        case "open_url" -> ClickEvent.openUrl(value);
+        default -> null;
+        };
     }
 
     /**

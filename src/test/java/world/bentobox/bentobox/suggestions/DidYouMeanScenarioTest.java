@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -265,6 +266,36 @@ class DidYouMeanScenarioTest extends CommonTestSetup {
         // The old unknown-command error is back, and no suggestion was made
         checkSpigotMessage("general.errors.unknown-command");
         checkSpigotMessage("Did you mean", 0);
+    }
+
+    /**
+     * Regression test for the in-game report on PR #3029: the locale strings
+     * close a color tag (e.g. {@code </yellow>}) right before the inline
+     * [run_command]/[hover] tags. The legacy round-trip turns that into §r,
+     * which used to become a MiniMessage {@code <reset>} INSIDE the
+     * click/hover wrapper — killing the click and rendering the literal text
+     * "&lt;/click&gt;&lt;/hover&gt;" in chat.
+     */
+    @Test
+    void testNoLiteralClosingTagsAndClickCoversWholeMessage() {
+        // Single-suggestion path
+        listener.onUnknownCommand(unknownCommand("teams"));
+        // Options-list path
+        GameModeCommand island = new GameModeCommand("island", "is");
+        island.setWorld(mock(World.class));
+        registeredCommands.put("island", island);
+        when(mockPlayer.getWorld()).thenReturn(mock(World.class));
+        listener.onUnknownCommand(unknownCommand("teams"));
+        // No message may leak MiniMessage tags as literal text
+        ArgumentCaptor<Component> captor = ArgumentCaptor.forClass(Component.class);
+        verify(mockPlayer, atLeast(1)).sendMessage(captor.capture());
+        for (Component component : captor.getAllValues()) {
+            String plain = PlainTextComponentSerializer.plainText().serialize(component);
+            assertFalse(plain.contains("</click>"), "Literal </click> leaked into: " + plain);
+            assertFalse(plain.contains("</hover>"), "Literal </hover> leaked into: " + plain);
+            assertFalse(plain.contains("<reset>"), "Literal <reset> leaked into: " + plain);
+        }
+        assertClickRuns("/oneblock team");
     }
 
     private UnknownCommandEvent unknownCommand(String commandLine) {

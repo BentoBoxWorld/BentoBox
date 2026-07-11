@@ -1389,13 +1389,68 @@ public class Util {
      */
     @NonNull
     public static String convertInlineCommandsToMiniMessage(@NonNull String message) {
-        // Handle escaped double brackets first: [[text]] → text (literal)
+        InlineCommands inline = extractInlineCommands(message);
+        String clickTag = inline.clickAction() != null
+                ? "<click:" + inline.clickAction() + ":" + inline.clickValue() + ">"
+                : null;
+        String hoverTag = inline.hoverText() != null
+                // Escape single quotes in hover text
+                ? "<hover:show_text:'" + inline.hoverText().replace("'", "\\'") + "'>"
+                : null;
+        String result = inline.cleanText();
+
+        // Wrap the text with click and hover tags
+        if (clickTag != null || hoverTag != null) {
+            String prefix = (hoverTag != null ? hoverTag : "") + (clickTag != null ? clickTag : "");
+            String suffix = (clickTag != null ? "</click>" : "") + (hoverTag != null ? "</hover>" : "");
+            result = prefix + result + suffix;
+        }
+
+        return result;
+    }
+
+    /**
+     * The click/hover data carried by a message's inline bracket commands, plus the
+     * message text with those bracket tags removed.
+     *
+     * @param cleanText   the message with recognized inline commands stripped and escaped
+     *                    double brackets unescaped
+     * @param clickAction the click action name ({@code run_command}, {@code suggest_command},
+     *                    {@code copy_to_clipboard} or {@code open_url}), or null if none
+     * @param clickValue  the click action's value, or null if none
+     * @param hoverText   the hover text, or null if none
+     * @since 3.20.0
+     */
+    public record InlineCommands(@NonNull String cleanText, @Nullable String clickAction,
+            @Nullable String clickValue, @Nullable String hoverText) {
+    }
+
+    /**
+     * Extracts inline command bracket syntax ({@code [run_command: /cmd]}, {@code [hover: text]},
+     * etc.) from a message, returning the click/hover actions as data along with the cleaned
+     * text.
+     * <p>
+     * Callers that build a {@link Component} should parse {@link InlineCommands#cleanText()} and
+     * apply the click/hover events programmatically rather than wrapping the text in MiniMessage
+     * tags (as {@link #convertInlineCommandsToMiniMessage(String)} does): if the text itself
+     * contains a reset - such as the {@code \u00A7r} the legacy round-trip emits when a color or
+     * decoration closes - MiniMessage's {@code <reset>} closes the wrapping click/hover tags too,
+     * which kills the events and renders the orphaned closing tags as literal text.
+     *
+     * @param message the message with bracket-syntax inline commands
+     * @return the cleaned text and any click/hover data found
+     * @since 3.20.0
+     */
+    @NonNull
+    public static InlineCommands extractInlineCommands(@NonNull String message) {
+        // Handle escaped double brackets first: [[text]] -> text (literal)
         message = message.replace("[[", "\u0000LBRACKET\u0000").replace("]]", "\u0000RBRACKET\u0000");
 
         // Extract all inline commands
         Matcher matcher = INLINE_CMD_PATTERN.matcher(message);
-        String clickTag = null;
-        String hoverTag = null;
+        String clickAction = null;
+        String clickValue = null;
+        String hoverText = null;
 
         // Collect commands and strip them from the text
         StringBuilder cleanText = new StringBuilder();
@@ -1406,14 +1461,14 @@ public class Util {
             String value = matcher.group(2);
             switch (action) {
                 case "hover" -> {
-                    if (hoverTag == null) {
-                        // Escape single quotes in hover text
-                        hoverTag = "<hover:show_text:'" + value.replace("'", "\\'") + "'>";
+                    if (hoverText == null) {
+                        hoverText = value;
                     }
                 }
                 case "run_command", "suggest_command", "copy_to_clipboard", "open_url" -> {
-                    if (clickTag == null) {
-                        clickTag = "<click:" + action + ":" + value + ">";
+                    if (clickAction == null) {
+                        clickAction = action;
+                        clickValue = value;
                     }
                 }
                 default -> cleanText.append(matcher.group()); // unknown, keep as-is
@@ -1421,19 +1476,11 @@ public class Util {
             lastEnd = matcher.end();
         }
         cleanText.append(message.substring(lastEnd));
-        String result = cleanText.toString();
 
         // Restore escaped brackets
-        result = result.replace("\u0000LBRACKET\u0000", "[").replace("\u0000RBRACKET\u0000", "]");
-
-        // Wrap the text with click and hover tags
-        if (clickTag != null || hoverTag != null) {
-            String prefix = (hoverTag != null ? hoverTag : "") + (clickTag != null ? clickTag : "");
-            String suffix = (clickTag != null ? "</click>" : "") + (hoverTag != null ? "</hover>" : "");
-            result = prefix + result + suffix;
-        }
-
-        return result;
+        String result = cleanText.toString().replace("\u0000LBRACKET\u0000", "[")
+                .replace("\u0000RBRACKET\u0000", "]");
+        return new InlineCommands(result, clickAction, clickValue, hoverText);
     }
 
     /**
