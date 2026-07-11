@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -269,7 +270,7 @@ class IslandGoCommandTest extends CommonTestSetup {
         when(island.getName()).thenReturn("MyIsland");
         assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("myisland")));
         // No unknown-home moan; we teleported to the island
-        verify(mockPlayer, Mockito.never()).sendMessage("commands.island.go.unknown-home");
+        verify(mockPlayer, never()).sendMessage("commands.island.go.unknown-home");
         verify(im).homeTeleportAsync(island, user);
     }
 
@@ -283,7 +284,7 @@ class IslandGoCommandTest extends CommonTestSetup {
         when(im.homeTeleportAsync(world, mockPlayer, "Home"))
                 .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(true));
         assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("hom")));
-        verify(mockPlayer, Mockito.never()).sendMessage("commands.island.go.unknown-home");
+        verify(mockPlayer, never()).sendMessage("commands.island.go.unknown-home");
         verify(im).homeTeleportAsync(world, mockPlayer, "Home");
     }
 
