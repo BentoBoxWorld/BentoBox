@@ -80,13 +80,14 @@ public class BentoBoxHookRegistrar {
     }
 
     /**
-     * Registers hooks for plugins that load after BentoBox (Slimefun, ItemsAdder, Oraxen, CraftEngine).
+     * Registers hooks for plugins that load after BentoBox (Slimefun, ItemsAdder, Oraxen, CraftEngine, Nexo).
      */
     public void registerLateHooks() {
         hooksManager.registerHook(new SlimefunHook());
         hooksManager.registerHook(new ItemsAdderHook(plugin));
         hooksManager.registerHook(new OraxenHook(plugin));
         hooksManager.registerHook(new CraftEngineHook());
+        hooksManager.registerHook(new NexoHook());
     }
 
     private boolean hasClass(String className) {
