@@ -120,6 +120,7 @@ val jdtAnnotationVersion = "2.2.600"
 val multilibVersion = "1.1.13"
 val oraxenVersion = "1.193.1"
 val craftEngineVersion = "26.5"
+val nexoVersion = "1.19.1"
 val blueMapApiVersion = "v2.6.2"
 val dynmapApiVersion = "3.4"
 
@@ -198,6 +199,7 @@ repositories {
     maven("https://mvn.lumine.io/repository/maven-public/") { name = "Lumine-Releases" } // Mythic mobs
     maven("https://maven.devs.beer/") { name = "MatteoDev" }
     maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
+    maven("https://repo.nexomc.com/releases") { name = "Nexo" } // Custom items/blocks plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
 
@@ -292,6 +294,7 @@ dependencies {
     }
     compileOnly("net.momirealms:craft-engine-bukkit:$craftEngineVersion")
     compileOnly("net.momirealms:craft-engine-core:$craftEngineVersion")
+    compileOnly("com.nexomc:nexo:$nexoVersion")
     compileOnly("io.th0rgal:oraxen:$oraxenVersion") {
         exclude(group = "me.gabytm.util", module = "actions-spigot")
         exclude(group = "org.jetbrains", module = "annotations")
