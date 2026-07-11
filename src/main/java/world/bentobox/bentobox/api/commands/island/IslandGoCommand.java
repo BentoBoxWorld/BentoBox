@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.bukkit.World;
 
@@ -106,9 +108,11 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         // Check if the name is known if one is given
         if (!args.isEmpty()) {
             // Assemble the arguments into one string
-            final String name = String.join(" ", args);
-            // If the name is not in the list
-            if (!names.containsKey(name)) {
+            final String typed = String.join(" ", args);
+            // Forgiving lookup: exact, then case/space-insensitive, then unique prefix
+            final String name = resolveName(typed, names.keySet());
+            // If the name could not be resolved to a destination
+            if (name == null) {
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
@@ -185,6 +189,56 @@ public class IslandGoCommand extends DelayedTeleportCommand {
              * True if this is an island name as opposed to a home name
              */
             boolean islandName) {
+    }
+
+    /**
+     * Resolves the text a player typed to one of the valid destination names using
+     * forgiving matching, so small mistakes still teleport them instead of dumping a
+     * list. Matching is tried in decreasing order of confidence:
+     * <ol>
+     *   <li>exact match (existing behaviour, always wins);</li>
+     *   <li>case-, colour- and whitespace-insensitive exact match;</li>
+     *   <li>a unique case-insensitive prefix (e.g. {@code hom} for {@code Home}).</li>
+     * </ol>
+     * Any step that is ambiguous (more than one candidate) is skipped, so an unclear
+     * input falls through to the normal unknown-home list rather than guessing.
+     *
+     * @param typed the raw string the player typed
+     * @param names the valid destination names
+     * @return the canonical destination name to use, or {@code null} if none matched confidently
+     */
+    static String resolveName(String typed, Set<String> names) {
+        // 1. Exact match wins and preserves the original behaviour
+        if (names.contains(typed)) {
+            return typed;
+        }
+        String norm = normalize(typed);
+        if (norm.isEmpty()) {
+            return null;
+        }
+        // 2. Case/colour/whitespace-insensitive exact match, if unambiguous
+        List<String> exact = names.stream().filter(n -> normalize(n).equals(norm)).toList();
+        if (exact.size() == 1) {
+            return exact.get(0);
+        }
+        if (!exact.isEmpty()) {
+            // Several names collapse to the same normalized form - too ambiguous to guess
+            return null;
+        }
+        // 3. Unique prefix match
+        List<String> prefix = names.stream().filter(n -> normalize(n).startsWith(norm)).toList();
+        return prefix.size() == 1 ? prefix.get(0) : null;
+    }
+
+    /**
+     * Normalizes a name for forgiving comparison: strips colour codes, lower-cases and
+     * collapses runs of whitespace to a single space.
+     *
+     * @param s the string to normalize
+     * @return the normalized form
+     */
+    private static String normalize(String s) {
+        return Util.stripColor(s).toLowerCase(Locale.ENGLISH).replaceAll("\\s+", " ").trim();
     }
 
     /**
