@@ -11,6 +11,10 @@ prefixes:
   an-island: egy sziget
   islands: szigetek
 general:
+  did-you-mean:
+    suggestion: '<gray>Erre gondoltál: </gray><yellow>[command]</yellow><gray>? Kattints ide, vagy írd be: </gray><green>yes</green><gray> a futtatáshoz.</gray>[run_command: [command]][hover: Kattints a futtatáshoz: [command]]'
+    header: '<gray>Ezek egyikére gondoltál? Kattints egyre a futtatáshoz:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kattints a futtatáshoz: [command]]'
   success: '<green>Siker!</green>'
   invalid: Érvénytelen
   beta: '<light_purple><bold>Ez a parancs béta. Győződjön meg róla, hogy van biztonsági másolata!</bold></light_purple>'
@@ -201,6 +205,7 @@ commands:
         admin-kicked: '<red>Egy adminisztrátor kirúgott téged a csapatból.</red>'
         success: '<aqua>[name] </aqua><green>ki lett rúgva </green><aqua>[owner]</aqua><green>szigetéről.</green>'
       setowner:
+        specify-island: '<red>Állj a(z) [prefix_island] szigetre és futtasd a játékban, vagy add meg a sziget jelenlegi tulajdonosát: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <Játékosnév>
         description: A [prefix_island] tulajdonjogának átruházása a játékosnak.
         already-owner: '<red>[name] már a szigetnek a tulajdonosa!</red>'

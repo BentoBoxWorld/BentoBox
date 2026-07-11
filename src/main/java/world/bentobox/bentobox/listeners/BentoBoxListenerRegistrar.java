@@ -7,6 +7,7 @@ import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
 import world.bentobox.bentobox.managers.ChunkPregenManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
+import world.bentobox.bentobox.suggestions.DidYouMeanListener;
 
 /**
  * Registers all BentoBox event listeners with the Bukkit plugin manager.
@@ -35,6 +36,7 @@ public class BentoBoxListenerRegistrar {
         manager.registerEvents(new BlockEndDragon(plugin), plugin);
         manager.registerEvents(new BannedCommands(plugin), plugin);
         manager.registerEvents(new DeathListener(plugin), plugin);
+        manager.registerEvents(new DidYouMeanListener(plugin), plugin);
         // Register the plugin itself for any listeners it implements (e.g. MV unregister)
         manager.registerEvents(plugin, plugin);
         islandDeletionManager = new IslandDeletionManager(plugin);

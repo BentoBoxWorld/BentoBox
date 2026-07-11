@@ -15,6 +15,10 @@ prefixes:
   an-island: 岛屿
   islands: 岛屿
 general:
+  did-you-mean:
+    suggestion: '<gray>你是想输入 </gray><yellow>[command]</yellow><gray> 吗？点击此处或输入 </gray><green>yes</green><gray> 来执行。</gray>[run_command: [command]][hover: 点击执行 [command]]'
+    header: '<gray>你是想输入以下命令之一吗？点击即可执行:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 点击执行 [command]]'
   success: '<green>成功!</green>'
   invalid: 无效
   beta: '<light_purple><bold>此命令在Beta中。确保您有备份！</bold></light_purple>'
@@ -175,6 +179,7 @@ commands:
         admin-kicked: '<red>管理员将你踢出了团队.</red>'
         success: '<green>已将</green><aqua>[name]</aqua><green>从</green><aqua>[owner]</aqua><green>的岛屿里踢出.</green>'
       setowner:
+        specify-island: '<red>站在[prefix_island]上并在游戏中执行，或指定岛屿的当前所有者: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <玩家>
         description: 将当前岛屿的岛主设置为指定玩家
         already-owner: '<red>[name]已经是当前岛屿的岛主了!</red>'

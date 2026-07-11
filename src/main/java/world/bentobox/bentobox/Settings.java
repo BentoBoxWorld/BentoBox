@@ -152,6 +152,18 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.teleport-remove-mobs")
     private boolean teleportRemoveMobs = false;
 
+    @ConfigComment("Did-you-mean command suggestions.")
+    @ConfigComment("When a player types an unknown command, e.g. /teams instead of /oneblock team,")
+    @ConfigComment("BentoBox suggests the closest matching BentoBox command. The player can click the")
+    @ConfigComment("suggestion or type 'yes' to run it.")
+    @ConfigEntry(path = "general.did-you-mean.unknown-commands", since = "3.20.0")
+    private boolean didYouMeanUnknownCommands = true;
+
+    @ConfigComment("When a player types an unknown subcommand, e.g. /island invit instead of /island team invite,")
+    @ConfigComment("BentoBox suggests the closest matching subcommand instead of showing an error.")
+    @ConfigEntry(path = "general.did-you-mean.subcommands", since = "3.20.0")
+    private boolean didYouMeanSubcommands = true;
+
     /* PANELS */
     @ConfigComment("Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.")
     @ConfigEntry(path = "panel.click-cooldown-ms")
@@ -1785,6 +1797,38 @@ public class Settings implements ConfigObject {
      */
     public void setDisabledStructures(List<String> disabledStructures) {
         this.disabledStructures = disabledStructures;
+    }
+
+    /**
+     * @return whether unknown root commands trigger did-you-mean suggestions
+     * @since 3.20.0
+     */
+    public boolean isDidYouMeanUnknownCommands() {
+        return didYouMeanUnknownCommands;
+    }
+
+    /**
+     * @param didYouMeanUnknownCommands the didYouMeanUnknownCommands to set
+     * @since 3.20.0
+     */
+    public void setDidYouMeanUnknownCommands(boolean didYouMeanUnknownCommands) {
+        this.didYouMeanUnknownCommands = didYouMeanUnknownCommands;
+    }
+
+    /**
+     * @return whether unknown subcommands trigger did-you-mean suggestions
+     * @since 3.20.0
+     */
+    public boolean isDidYouMeanSubcommands() {
+        return didYouMeanSubcommands;
+    }
+
+    /**
+     * @param didYouMeanSubcommands the didYouMeanSubcommands to set
+     * @since 3.20.0
+     */
+    public void setDidYouMeanSubcommands(boolean didYouMeanSubcommands) {
+        this.didYouMeanSubcommands = didYouMeanSubcommands;
     }
 
 }

@@ -17,6 +17,10 @@ prefixes:
   an-island: остров
   islands: острова
 general:
+  did-you-mean:
+    suggestion: '<gray>Возможно, вы имели в виду </gray><yellow>[command]</yellow><gray>? Нажмите здесь или введите </gray><green>yes</green><gray>, чтобы выполнить.</gray>[run_command: [command]][hover: Нажмите, чтобы выполнить [command]]'
+    header: '<gray>Возможно, вы имели в виду одну из этих команд? Нажмите, чтобы выполнить:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Нажмите, чтобы выполнить [command]]'
   success: <green>Успешно!</green>
   invalid: Некорректно
   beta: <light_purple><bold>Эта команда в бета-версии. Убедитесь, что у вас есть резервные
@@ -196,6 +200,7 @@ commands:
         admin-kicked: <red>Администратор выгнал вас из команды.</red>
         success: <green><aqua>[name] </aqua>был выгнан с острова игрока <aqua>[owner]</aqua>.</green>
       setowner:
+        specify-island: '<red>Встаньте на [prefix_island] и выполните команду в игре, либо укажите текущего владельца острова: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <игрок>
         description: передает статус владельца между игроками
         already-owner: <red>[name] уже является владельцем острова!</red>

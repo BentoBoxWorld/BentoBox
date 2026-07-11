@@ -90,6 +90,17 @@ general:
   flingback: 5.0
   # Remove mobs on teleport.
   teleport-remove-mobs: false
+  # Did-you-mean command suggestions.
+  did-you-mean:
+    # When a player types an unknown command, e.g. /teams instead of /oneblock team,
+    # BentoBox suggests the closest matching BentoBox command. The player can click the
+    # suggestion or type 'yes' to run it.
+    # Added since 3.20.0.
+    unknown-commands: true
+    # When a player types an unknown subcommand, e.g. /island invit instead of /island team invite,
+    # BentoBox suggests the closest matching subcommand instead of showing an error.
+    # Added since 3.20.0.
+    subcommands: true
 panel:
   # Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.
   click-cooldown-ms: 250

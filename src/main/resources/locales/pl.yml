@@ -11,6 +11,10 @@ prefixes:
   an-island: wyspa
   islands: wyspy
 general:
+  did-you-mean:
+    suggestion: '<gray>Czy chodziło ci o </gray><yellow>[command]</yellow><gray>? Kliknij tutaj lub wpisz </gray><green>yes</green><gray>, aby uruchomić.</gray>[run_command: [command]][hover: Kliknij, aby uruchomić [command]]'
+    header: '<gray>Czy chodziło ci o któreś z tych? Kliknij, aby uruchomić:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknij, aby uruchomić [command]]'
   success: '<green>Sukces!</green>'
   invalid: Błąd
   beta: '<light_purple><bold>To polecenie jest w wersji beta. Upewnij się, że masz kopie zapasowe!</bold></light_purple>'
@@ -195,6 +199,7 @@ commands:
         admin-kicked: '<red>Administrator wyrzucił cię z drużyny.</red>'
         success: '<aqua>[name] </aqua><green>został wyrzucony z </green><aqua>[owner]</aqua><green>''s [prefix_island].</green>'
       setowner:
+        specify-island: '<red>Stań na [prefix_island] i uruchom to w grze, lub podaj obecnego właściciela wyspy: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <gracz>
         description: uczyń gracza liderem wyspy
         already-owner: '<red>Gracz jest już liderem!</red>'

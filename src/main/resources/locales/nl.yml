@@ -11,6 +11,10 @@ prefixes:
   an-island: een eiland
   islands: eilanden
 general:
+  did-you-mean:
+    suggestion: '<gray>Bedoelde je </gray><yellow>[command]</yellow><gray>? Klik hier of typ </gray><green>yes</green><gray> om het uit te voeren.</gray>[run_command: [command]][hover: Klik om [command] uit te voeren]'
+    header: '<gray>Bedoelde je een van deze? Klik op één om uit te voeren:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klik om [command] uit te voeren]'
   success: '<green>Succes!</green>'
   invalid: Ongeldig
   beta: '<light_purple><bold>Deze opdracht is in bèta. Zorg ervoor dat je back -ups hebt!</bold></light_purple>'
@@ -197,6 +201,7 @@ commands:
         admin-kicked: '<red>De admin heeft je uit het team geschopt.</red>'
         success: '<aqua>[name] </aqua><green>is geschopt van </green><aqua>[owner] </aqua><green>''s eiland.</green>'
       setowner:
+        specify-island: '<red>Ga op het [prefix_island] staan en voer dit in-game uit, of geef de huidige eilandeigenaar op: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <speler>
         description: draagt het eilandbezit over aan de speler
         already-owner: '<red>[name] is al de eigenaar van dit eiland!</red>'

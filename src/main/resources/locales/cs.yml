@@ -11,6 +11,10 @@ prefixes:
   an-island: ostrov
   islands: ostrovy
 general:
+  did-you-mean:
+    suggestion: '<gray>Měli jste na mysli </gray><yellow>[command]</yellow><gray>? Klikněte sem nebo napište </gray><green>yes</green><gray> pro spuštění.</gray>[run_command: [command]][hover: Kliknutím spustíte [command]]'
+    header: '<gray>Měli jste na mysli něco z tohoto? Klikněte pro spuštění:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknutím spustíte [command]]'
   success: '<green>Povedlo se!</green>'
   invalid: Neplatné
   beta: '<light_purple><bold>Tento příkaz je v beta verzi. Ujisti se, že máš zálohy!</bold></light_purple>'
@@ -183,6 +187,7 @@ commands:
         admin-kicked: '<red>Admin tě vykopnul z týmu.</red>'
         success: '<aqua>[name] </aqua><green>byl vykopnut z ostrova hráče </green><aqua>[owner]</aqua><green>.</green>'
       setowner:
+        specify-island: '<red>Postavte se na [prefix_island] a spusťte příkaz ve hře, nebo uveďte současného vlastníka ostrova: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <Player>
         description: předat vlastnictví ostrova hráči
         already-owner: '<red>[name] již je vlastníkem ostrova!</red>'

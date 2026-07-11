@@ -11,6 +11,10 @@ prefixes:
   an-island: một hòn đảo
   islands: đảo
 general:
+  did-you-mean:
+    suggestion: '<gray>Có phải bạn muốn nhập </gray><yellow>[command]</yellow><gray>? Nhấp vào đây hoặc gõ </gray><green>yes</green><gray> để chạy lệnh.</gray>[run_command: [command]][hover: Nhấp để chạy [command]]'
+    header: '<gray>Có phải bạn muốn nhập một trong các lệnh sau? Nhấp vào một lệnh để chạy:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Nhấp để chạy [command]]'
   success: '<green>Thành công!</green>'
   invalid: Không hợp lệ
   beta: '<light_purple><bold>Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao lưu!</bold></light_purple>'
@@ -192,6 +196,7 @@ commands:
         admin-kicked: '<red>Quản trị viên đã đuổi bạn khỏi đội.</red>'
         success: '<aqua>[name] </aqua><green>đã bị đuổi khỏi đội của </green><aqua>[owner]</aqua><green>.</green>'
       setowner:
+        specify-island: '<red>Đứng trên [prefix_island] và chạy lệnh này trong game, hoặc nêu tên chủ đảo hiện tại: </red><yellow>setowner <player> <island owner></yellow>'
         parameters: <người chơi>
         description: Chuyển quyền chủ đảo cho người chơi
         already-owner: '<red>[name] đã là chủ đảo này!</red>'

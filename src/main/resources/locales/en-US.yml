@@ -48,6 +48,11 @@ general:
     must-be-positive-number: '<red>[number] is not a valid positive number.</red>'
     not-on-island: '<red>You are not on [prefix_island]!</red>'
     slow-down: '<red>Slow down. Click slower.</red>'
+  did-you-mean:
+    suggestion: '<gray>Did you mean </gray><yellow>[command]</yellow><gray>? Click here
+      or type </gray><green>yes</green><gray> to run it.</gray>[run_command: [command]][hover: Click to run [command]]'
+    header: '<gray>Did you mean one of these? Click one to run it:</gray>'
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Click to run [command]]'
   worlds:
     overworld: Overworld
     nether: Nether
