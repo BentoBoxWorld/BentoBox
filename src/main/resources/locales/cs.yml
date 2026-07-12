@@ -11,6 +11,9 @@ prefixes:
   an-island: ostrov
   islands: ostrovy
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Vyber si svou hru</green>'
   did-you-mean:
     suggestion: '<gray>Měli jste na mysli </gray><yellow>[command]</yellow><gray>? Klikněte sem nebo napište </gray><green>yes</green><gray> pro spuštění.</gray>[run_command: [command]][hover: Kliknutím spustíte [command]]'
     header: '<gray>Měli jste na mysli něco z tohoto? Klikněte pro spuštění:</gray>'
@@ -696,6 +699,8 @@ commands:
         <red>Teleportování z nějakého důvodu selhalo. Zkuste to prosím znovu</red>
         později.
       unknown-home: '<red>Neznámé domácí jméno!</red>'
+      picker:
+        title: '<green>Kam chceš jít?</green>'
     help:
       description: Hlavní příkaz ostrova
     spawn:
@@ -893,6 +898,11 @@ commands:
       invite:
         description: pozvi hráče jako člena tvého ostrova
         invitation-sent: '<green>Pozvánka poslána hráči [name]</green>'
+        dialog:
+          title: '<green>Pozvánka do týmu od [name]</green>'
+          body: '<gray>[name] tě pozval, aby ses připojil k jeho ostrovu. Přijmout?</gray>'
+          accept: '<green>Přijmout</green>'
+          decline: '<red>Odmítnout</red>'
         removing-invite: '<red>Odstraňuji pozvánku</red>'
         name-has-invited-you: '<green>[name] tě pozval jako člena jeho ostrova.</green>'
         to-accept-or-reject: >-

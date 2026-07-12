@@ -344,12 +344,30 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.confirmation.invites", since = "1.8.0")
     private boolean inviteConfirmation = false;
 
+    @ConfigComment("Modal dialog options. Dialogs are the 'menu they can't click away' shown to")
+    @ConfigComment("players for high-friction flows. They require a server that supports dialogs")
+    @ConfigComment("(Minecraft 26+); on older servers every option below falls back automatically")
+    @ConfigComment("to the classic chat/command behaviour regardless of the setting.")
     @ConfigComment("Show sensitive-command confirmations as a modal [Confirm]/[Cancel] dialog")
-    @ConfigComment("instead of asking the player to type the command again. Requires a server")
-    @ConfigComment("that supports dialogs (Minecraft 26+); older servers always use the type-again")
-    @ConfigComment("prompt regardless of this setting.")
-    @ConfigEntry(path = "island.confirmation.use-dialog", since = "3.21.0")
-    private boolean useDialogConfirmation = true;
+    @ConfigComment("instead of asking the player to type the command again.")
+    @ConfigEntry(path = "island.dialogs.confirmations", since = "3.21.0")
+    private boolean dialogConfirmations = true;
+
+    @ConfigComment("Auto-open an [Accept]/[Decline] dialog when a player receives a team invite,")
+    @ConfigComment("instead of relying on them to type the accept/reject command.")
+    @ConfigEntry(path = "island.dialogs.team-invites", since = "3.21.0")
+    private boolean dialogTeamInvites = true;
+
+    @ConfigComment("Show a button-per-destination picker when a player runs the island go/home")
+    @ConfigComment("command with no name and has more than one island or home to choose from.")
+    @ConfigEntry(path = "island.dialogs.go-picker", since = "3.21.0")
+    private boolean dialogGoPicker = true;
+
+    @ConfigComment("Show a non-dismissable 'choose your game' dialog to brand new players when")
+    @ConfigComment("more than one game mode is installed. Off by default: it is intrusive and")
+    @ConfigComment("clicking a game runs that game mode's command for the player.")
+    @ConfigEntry(path = "island.dialogs.game-mode-selection", since = "3.21.0")
+    private boolean dialogGameModeSelection = false;
 
     @ConfigComment("Sets the minimum length an island custom name is required to have.")
     @ConfigEntry(path = "island.name.min-length")
@@ -933,16 +951,64 @@ public class Settings implements ConfigObject {
      * @return whether sensitive-command confirmations should use a modal dialog
      * @since 3.21.0
      */
-    public boolean isUseDialogConfirmation() {
-        return useDialogConfirmation;
+    public boolean isDialogConfirmations() {
+        return dialogConfirmations;
     }
 
     /**
-     * @param useDialogConfirmation whether to use a modal dialog for confirmations
+     * @param dialogConfirmations whether to use a modal dialog for confirmations
      * @since 3.21.0
      */
-    public void setUseDialogConfirmation(boolean useDialogConfirmation) {
-        this.useDialogConfirmation = useDialogConfirmation;
+    public void setDialogConfirmations(boolean dialogConfirmations) {
+        this.dialogConfirmations = dialogConfirmations;
+    }
+
+    /**
+     * @return whether team invites should auto-open an accept/decline dialog
+     * @since 3.21.0
+     */
+    public boolean isDialogTeamInvites() {
+        return dialogTeamInvites;
+    }
+
+    /**
+     * @param dialogTeamInvites whether team invites should open a dialog
+     * @since 3.21.0
+     */
+    public void setDialogTeamInvites(boolean dialogTeamInvites) {
+        this.dialogTeamInvites = dialogTeamInvites;
+    }
+
+    /**
+     * @return whether the island go/home command shows a destination picker dialog
+     * @since 3.21.0
+     */
+    public boolean isDialogGoPicker() {
+        return dialogGoPicker;
+    }
+
+    /**
+     * @param dialogGoPicker whether the go/home command shows a picker dialog
+     * @since 3.21.0
+     */
+    public void setDialogGoPicker(boolean dialogGoPicker) {
+        this.dialogGoPicker = dialogGoPicker;
+    }
+
+    /**
+     * @return whether brand new players see a game-mode selection dialog
+     * @since 3.21.0
+     */
+    public boolean isDialogGameModeSelection() {
+        return dialogGameModeSelection;
+    }
+
+    /**
+     * @param dialogGameModeSelection whether new players see a game-mode dialog
+     * @since 3.21.0
+     */
+    public void setDialogGameModeSelection(boolean dialogGameModeSelection) {
+        this.dialogGameModeSelection = dialogGameModeSelection;
     }
 
     /**

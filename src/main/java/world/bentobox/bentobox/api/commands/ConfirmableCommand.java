@@ -148,14 +148,14 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     /**
      * Whether this confirmation should be presented as a modal dialog rather than
      * the type-the-command-again prompt. True only for online players, when the
-     * server supports dialogs and the {@code island.confirmation.use-dialog}
+     * server supports dialogs and the {@code island.dialogs.confirmations}
      * setting is enabled.
      *
      * @param user the user being asked
      * @return true if a dialog should be shown
      */
     private boolean useDialog(User user) {
-        return user.isPlayer() && Dialogs.isSupported() && getPlugin().getSettings().isUseDialogConfirmation();
+        return user.isPlayer() && Dialogs.isSupported() && getPlugin().getSettings().isDialogConfirmations();
     }
 
     /**

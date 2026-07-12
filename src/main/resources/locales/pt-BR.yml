@@ -10,6 +10,9 @@ prefixes:
   an-island: uma ilha
   islands: ilhas
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Escolha seu jogo</green>'
   did-you-mean:
     suggestion: '<gray>Você quis dizer </gray><yellow>[command]</yellow><gray>? Clique aqui ou digite </gray><green>yes</green><gray> para executá-lo.</gray>[run_command: [command]][hover: Clique para executar [command]]'
     header: '<gray>Você quis dizer um destes? Clique em um para executar:</gray>'
@@ -711,6 +714,8 @@ commands:
         <red>A teletransporte falhou por algum motivo. Por favor, tente novamente</red>
         mais tarde.
       unknown-home: '<red>Nome de lar desconhecido!</red>'
+      picker:
+        title: '<green>Para onde você quer ir?</green>'
     help:
       description: o comando principal de ilhas
     spawn:
@@ -913,6 +918,11 @@ commands:
       invite:
         description: convidar um jogador a equipe de sua ilha
         invitation-sent: '<green>Convite enviado pra </green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>Convite de equipe de [name]</green>'
+          body: '<gray>[name] convidou você para entrar na ilha dele. Aceitar?</gray>'
+          accept: '<green>Aceitar</green>'
+          decline: '<red>Recusar</red>'
         removing-invite: '<red>Removendo convite.</red>'
         name-has-invited-you: '<green>[name] te convidou a se juntar a ilha.</green>'
         to-accept-or-reject: >-

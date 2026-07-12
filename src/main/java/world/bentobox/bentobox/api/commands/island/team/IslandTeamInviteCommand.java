@@ -10,6 +10,9 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.dialogs.DialogBuilder;
+import world.bentobox.bentobox.api.dialogs.DialogButton;
+import world.bentobox.bentobox.api.dialogs.Dialogs;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -230,12 +233,46 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         // Send message to online player
         invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
-        if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
-                && getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
+        boolean willLoseIsland = getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
+                && getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId());
+        if (willLoseIsland) {
             invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
         }
+        // Auto-open an accept/decline dialog for the invited player if enabled
+        showInviteDialog(user, invitedPlayer, willLoseIsland);
         invitedPlayer = null;
         return true;
+    }
+
+    /**
+     * Opens an [Accept]/[Decline] dialog for the invited player, so they do not have
+     * to find and type the accept/reject command. Silently does nothing (leaving the
+     * chat messages as the fallback) if dialogs are disabled or unsupported.
+     *
+     * @param inviter       the player who sent the invite
+     * @param invited       the player who received it
+     * @param willLoseIsland whether accepting will cost the invited player their island
+     */
+    private void showInviteDialog(User inviter, User invited, boolean willLoseIsland) {
+        if (!invited.isPlayer() || !Dialogs.isSupported() || !getSettings().isDialogTeamInvites()) {
+            return;
+        }
+        try {
+            DialogBuilder builder = new DialogBuilder()
+                    .title(invited, "commands.island.team.invite.dialog.title", TextVariables.NAME, inviter.getName());
+            builder.body(invited, "commands.island.team.invite.dialog.body", TextVariables.NAME, inviter.getName());
+            if (willLoseIsland) {
+                builder.body(invited, "commands.island.team.invite.you-will-lose-your-island");
+            }
+            builder.confirmation(
+                    DialogButton.of(invited, "commands.island.team.invite.dialog.accept",
+                            u -> itc.getSubCommand("accept").ifPresent(c -> c.call(u, c.getLabel(), List.of()))),
+                    DialogButton.of(invited, "commands.island.team.invite.dialog.decline",
+                            u -> itc.getSubCommand("reject").ifPresent(c -> c.call(u, c.getLabel(), List.of()))));
+            builder.build().show(invited);
+        } catch (Exception e) {
+            getPlugin().logError("Could not show team invite dialog: " + e.getMessage());
+        }
     }
 
     /**

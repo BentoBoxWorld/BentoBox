@@ -11,6 +11,9 @@ prefixes:
   an-island: een eiland
   islands: eilanden
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Kies je spel</green>'
   did-you-mean:
     suggestion: '<gray>Bedoelde je </gray><yellow>[command]</yellow><gray>? Klik hier of typ </gray><green>yes</green><gray> om het uit te voeren.</gray>[run_command: [command]][hover: Klik om [command] uit te voeren]'
     header: '<gray>Bedoelde je een van deze? Klik op één om uit te voeren:</gray>'
@@ -743,6 +746,8 @@ commands:
         <red>Teleporteren is om een of andere reden mislukt. Probeer het later</red>
         opnieuw.
       unknown-home: '<red>Onbekende thuisnaam!</red>'
+      picker:
+        title: '<green>Waar wil je heen?</green>'
     help:
       description: het commando van het hoofdeiland
     spawn:
@@ -951,6 +956,11 @@ commands:
       invite:
         description: nodig een speler uit om zich bij je eiland aan te sluiten
         invitation-sent: '<green>uitnodiging verzonden naar </green><aqua>[name] </aqua><green>.</green>'
+        dialog:
+          title: '<green>Teamuitnodiging van [name]</green>'
+          body: '<gray>[name] heeft je uitgenodigd om zich bij hun eiland aan te sluiten. Accepteren?</gray>'
+          accept: '<green>Accepteren</green>'
+          decline: '<red>Weigeren</red>'
         removing-invite: '<red>Uitnodiging verwijderen.</red>'
         name-has-invited-you: '<green>[name] heeft je uitgenodigd om lid te worden van hun eiland.</green>'
         to-accept-or-reject: >-

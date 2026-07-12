@@ -17,6 +17,9 @@ prefixes:
   an-island: остров
   islands: острова
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Выберите свою игру</green>'
   did-you-mean:
     suggestion: '<gray>Возможно, вы имели в виду </gray><yellow>[command]</yellow><gray>? Нажмите здесь или введите </gray><green>yes</green><gray>, чтобы выполнить.</gray>[run_command: [command]][hover: Нажмите, чтобы выполнить [command]]'
     header: '<gray>Возможно, вы имели в виду одну из этих команд? Нажмите, чтобы выполнить:</gray>'
@@ -705,6 +708,8 @@ commands:
       failure: <red>Телепортация не удалась по какой-то причине. Пожалуйста, попробуйте
         снова позже.</red>
       unknown-home: <red>Неизвестное название точки дома!</red>
+      picker:
+        title: '<green>Куда вы хотите отправиться?</green>'
     help:
       description: основная команда режима
     spawn:
@@ -903,6 +908,11 @@ commands:
       invite:
         description: приглашает игрока посетить ваш остров
         invitation-sent: <green>Приглашение отправлено игроку <aqua>[name]</aqua>.</green>
+        dialog:
+          title: '<green>Приглашение в команду от [name]</green>'
+          body: '<gray>[name] пригласил вас присоединиться к своему острову. Принять?</gray>'
+          accept: '<green>Принять</green>'
+          decline: '<red>Отклонить</red>'
         removing-invite: <red>Удаление приглашения.</red>
         name-has-invited-you: <green>[name] пригласил вас посетить его остров.</green>
         to-accept-or-reject: <green>Введите /[label] team accept чтобы принять либо

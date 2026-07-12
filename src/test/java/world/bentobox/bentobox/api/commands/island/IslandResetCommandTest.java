@@ -365,7 +365,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         // Require confirmation, and prefer a dialog for an online player
         when(s.isResetConfirmation()).thenReturn(true);
         when(s.getConfirmationTime()).thenReturn(20);
-        when(s.isUseDialogConfirmation()).thenReturn(true);
+        when(s.isDialogConfirmations()).thenReturn(true);
         when(user.isPlayer()).thenReturn(true);
 
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));

@@ -11,6 +11,9 @@ prefixes:
   an-island: o insulă
   islands: insule
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Alege-ți jocul</green>'
   did-you-mean:
     suggestion: '<gray>Ai vrut să spui </gray><yellow>[command]</yellow><gray>? Dă clic aici sau tastează </gray><green>yes</green><gray> pentru a-l rula.</gray>[run_command: [command]][hover: Dă clic pentru a rula [command]]'
     header: '<gray>Ai vrut să spui una dintre acestea? Dă clic pe una pentru a o rula:</gray>'
@@ -728,6 +731,8 @@ commands:
         <red>Teleportarea a eșuat din anumite motive. Vă rugăm să încercați din</red>
         nou mai târziu.
       unknown-home: '<red>Nume de casă necunoscut!</red>'
+      picker:
+        title: '<green>Unde vrei să mergi?</green>'
     help:
       description: comandamentul insulei principale
     spawn:
@@ -934,6 +939,11 @@ commands:
       invite:
         description: invită un jucător să se alăture insulei tale
         invitation-sent: '<green>Invitație trimisă la </green><aqua>[name] </aqua><green>.</green>'
+        dialog:
+          title: '<green>Invitație de echipă de la [name]</green>'
+          body: '<gray>[name] te-a invitat să te alături insulei sale. Accepți?</gray>'
+          accept: '<green>Acceptă</green>'
+          decline: '<red>Refuză</red>'
         removing-invite: '<red>Eliminarea invitației.</red>'
         name-has-invited-you: |
           <green>[name] v-a invitat</green>

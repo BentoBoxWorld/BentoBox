@@ -11,6 +11,9 @@ prefixes:
   an-island: egy sziget
   islands: szigetek
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Válaszd ki a játékod</green>'
   did-you-mean:
     suggestion: '<gray>Erre gondoltál: </gray><yellow>[command]</yellow><gray>? Kattints ide, vagy írd be: </gray><green>yes</green><gray> a futtatáshoz.</gray>[run_command: [command]][hover: Kattints a futtatáshoz: [command]]'
     header: '<gray>Ezek egyikére gondoltál? Kattints egyre a futtatáshoz:</gray>'
@@ -742,6 +745,8 @@ commands:
       teleported: '<green>hazateleportált </green><yellow>[number].</yellow>'
       failure: '<red>A teleportálás valamiért sikertelen. Kérlek, próbáld újra később.</red>'
       unknown-home: '<red>Ismeretlen otthonnév!</red>'
+      picker:
+        title: '<green>Hová szeretnél menni?</green>'
     help:
       description: a főszigeti parancsnokság
     spawn:
@@ -951,6 +956,11 @@ commands:
       invite:
         description: hívj meg egy játékost a szigetedre
         invitation-sent: '<green>Meghívó elküldve a </green><aqua>[name]</aqua><green>címre.</green>'
+        dialog:
+          title: '<green>Csapatmeghívó [name] játékostól</green>'
+          body: '<gray>[name] meghívott, hogy csatlakozz a szigetéhez. Elfogadod?</gray>'
+          accept: '<green>Elfogadás</green>'
+          decline: '<red>Elutasítás</red>'
         removing-invite: '<red>Meghívó eltávolítása.</red>'
         name-has-invited-you: '<green>[name] meghívott téged, hogy csatlakozz a szigetéhez.</green>'
         to-accept-or-reject: >-

@@ -11,6 +11,9 @@ prefixes:
   an-island: 島
   islands: 島
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>ゲームを選んでください</green>'
   did-you-mean:
     suggestion: '<gray>もしかして </gray><yellow>[command]</yellow><gray>？ここをクリックするか、</gray><green>yes</green><gray> と入力すると実行されます。</gray>[run_command: [command]][hover: クリックで [command] を実行]'
     header: '<gray>もしかして次のいずれかですか？クリックすると実行されます:</gray>'
@@ -639,6 +642,8 @@ commands:
       teleported: '<green>テレポート #[number]をホームにします。</green>'
       failure: '<red>何らかの理由でテレポートが失敗しました。後でもう一度やり直してください。</red>'
       unknown-home: '<red>不明な家の名前！</red>'
+      picker:
+        title: '<green>どこへ行きますか？</green>'
     help:
       description: 本島のコマンド
     spawn:
@@ -829,6 +834,11 @@ commands:
       invite:
         description: 島に参加するプレーヤーを招待
         invitation-sent: 招待状を [name] に送信
+        dialog:
+          title: '<green>[name] からのチーム招待</green>'
+          body: '<gray>[name] があなたを島に招待しました。承認しますか？</gray>'
+          accept: '<green>承認</green>'
+          decline: '<red>拒否</red>'
         removing-invite: 招待の削除
         name-has-invited-you: '[name]は、彼らの島に参加することを招待しました。'
         to-accept-or-reject: /[label] team accept を受け入れるか、/[label] team reject を拒否すると言う

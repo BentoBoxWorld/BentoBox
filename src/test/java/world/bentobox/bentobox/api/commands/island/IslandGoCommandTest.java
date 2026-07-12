@@ -251,6 +251,36 @@ class IslandGoCommandTest extends CommonTestSetup {
     }
 
     /**
+     * With the go picker enabled and several destinations, a bare /go tries to show the
+     * dialog; when it cannot be built (as under test) it falls back to the default teleport.
+     * Test method for {@link IslandGoCommand#execute(User, String, List)}
+     */
+    @Test
+    void testExecuteNoArgsGoPickerFallsBack() {
+        when(island.getName()).thenReturn("MyIsland");
+        when(island.getHomes()).thenReturn(Map.of("Home", mock(Location.class)));
+        when(s.isDialogGoPicker()).thenReturn(true);
+        assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
+        verify(plugin).logError(Mockito.contains("go picker"));
+        // Fell back to the default home teleport
+        verify(im).homeTeleportAsync(world, mockPlayer);
+    }
+
+    /**
+     * With the go picker disabled, a bare /go teleports directly without touching dialogs.
+     * Test method for {@link IslandGoCommand#execute(User, String, List)}
+     */
+    @Test
+    void testExecuteNoArgsGoPickerDisabled() {
+        when(island.getName()).thenReturn("MyIsland");
+        when(island.getHomes()).thenReturn(Map.of("Home", mock(Location.class)));
+        when(s.isDialogGoPicker()).thenReturn(false);
+        assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
+        verify(plugin, Mockito.never()).logError(Mockito.contains("go picker"));
+        verify(im).homeTeleportAsync(world, mockPlayer);
+    }
+
+    /**
      * Test method for {@link IslandGoCommand#execute(User, String, List)}
      */
     @Test

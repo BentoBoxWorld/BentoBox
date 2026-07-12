@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +46,7 @@ import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
@@ -288,6 +291,31 @@ class JoinLeaveListenerTest extends RanksManagerTestSetup {
         // Verify
         verify(pm, times(3)).getPlayer(any());
         checkSpigotMessage("commands.island.create.on-first-login");
+    }
+
+    /**
+     * With the game-mode selection dialog enabled and several game modes installed, a first
+     * join tries to show the dialog; when it cannot be built (as under test) it logs and
+     * falls through to the normal first-login handling.
+     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(PlayerJoinEvent)}.
+     */
+    @Test
+    void testOnPlayerJoinGameModeDialogFallsBack() {
+        when(settings.isDialogGameModeSelection()).thenReturn(true);
+        AddonDescription desc = mock(AddonDescription.class);
+        when(desc.getName()).thenReturn("BSkyBlock");
+        CompositeCommand cmd = mock(CompositeCommand.class);
+        GameModeAddon gm1 = mock(GameModeAddon.class);
+        GameModeAddon gm2 = mock(GameModeAddon.class);
+        when(gm1.getPlayerCommand()).thenReturn(Optional.of(cmd));
+        when(gm2.getPlayerCommand()).thenReturn(Optional.of(cmd));
+        when(gm1.getDescription()).thenReturn(desc);
+        when(gm2.getDescription()).thenReturn(desc);
+        when(am.getGameModeAddons()).thenReturn(List.of(gm1, gm2));
+
+        jll.onPlayerJoin(new PlayerJoinEvent(mockPlayer, component));
+
+        verify(plugin).logError(contains("game mode selection dialog"));
     }
 
     /**

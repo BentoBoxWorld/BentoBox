@@ -11,6 +11,9 @@ prefixes:
   an-island: salā
   islands: saliņas
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Izvēlies savu spēli</green>'
   did-you-mean:
     suggestion: '<gray>Vai jūs domājāt </gray><yellow>[command]</yellow><gray>? Noklikšķiniet šeit vai ierakstiet </gray><green>yes</green><gray>, lai to palaistu.</gray>[run_command: [command]][hover: Noklikšķiniet, lai palaistu [command]]'
     header: '<gray>Vai jūs domājāt kādu no šiem? Noklikšķiniet, lai palaistu:</gray>'
@@ -711,6 +714,8 @@ commands:
         <red>Teleportācija neizdevās kāda iemesla dēļ. Lūdzu, mēģiniet vēlreiz</red>
         vēlāk.
       unknown-home: '<red>Nezināms mājas nosaukums!</red>'
+      picker:
+        title: '<green>Kurp vēlies doties?</green>'
     help:
       description: Galvenā salas komanda
     spawn:
@@ -908,6 +913,11 @@ commands:
       invite:
         description: uzaicini spēlētāju pievienoties tavai salai
         invitation-sent: '<green>Ielūgums nosūtīts [name]</green>'
+        dialog:
+          title: '<green>Komandas ielūgums no [name]</green>'
+          body: '<gray>[name] uzaicināja tevi pievienoties savai salai. Pieņemt?</gray>'
+          accept: '<green>Pieņemt</green>'
+          decline: '<red>Noraidīt</red>'
         removing-invite: '<red>Ielūgumu atsauc</red>'
         name-has-invited-you: '<green>[name] ielūdza tevi pievienoties viņa komandai.</green>'
         to-accept-or-reject: >-
