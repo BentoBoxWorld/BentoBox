@@ -14,6 +14,9 @@ prefixes:
   an-island: 一個島
   islands: 島嶼
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>選擇你的遊戲</green>'
   did-you-mean:
     suggestion: '<gray>你是想輸入 </gray><yellow>[command]</yellow><gray> 嗎？點擊此處或輸入 </gray><green>yes</green><gray> 來執行。</gray>[run_command: [command]][hover: 點擊執行 [command]]'
     header: '<gray>你是想輸入以下指令之一嗎？點擊即可執行:</gray>'
@@ -635,6 +638,11 @@ commands:
     confirm: '<red>於 </red><aqua>[seconds] </aqua><red>秒內再次輸入命令來確認</red>'
     previous-request-cancelled: '<gold>上一個確認請求已取消</gold>'
     request-cancelled: '<red>確認超時 - </red><aqua>請求已取消</aqua>'
+    title: '<red>確定嗎？</red>'
+    dialog-body: '<gray>確認以繼續，或取消以中止。</gray>'
+    buttons:
+      confirm: '<green>確認</green>'
+      cancel: '<red>取消</red>'
   delay:
     previous-command-cancelled: '<red>上一個命令已取消。</red>'
     stand-still: '<gold>請不要移動！ 將在 </gold><aqua>[seconds] </aqua><gold>秒後傳送。</gold>'
@@ -650,6 +658,8 @@ commands:
       teleported: '<green>傳送到您的第 </green><yellow>#[number] 號家。</yellow>'
       failure: '<red>傳送由於某種原因失敗。請稍後再試。</red>'
       unknown-home: '<red>未知島嶼傳送點。</red>'
+      picker:
+        title: '<green>想去哪裡？</green>'
     help:
       description: 主要島嶼命令
     spawn:
@@ -836,6 +846,11 @@ commands:
       invite:
         description: 邀請玩家來您的島嶼
         invitation-sent: '<green>邀請已經發送給 [name]</green>'
+        dialog:
+          title: '<green>來自 [name] 的隊伍邀請</green>'
+          body: '<gray>[name] 邀請你加入他們的島嶼。接受嗎？</gray>'
+          accept: '<green>接受</green>'
+          decline: '<red>拒絕</red>'
         removing-invite: '<red>移除邀請</red>'
         name-has-invited-you: '<green>[name] 邀請您去他們的島嶼。</green>'
         to-accept-or-reject: |-

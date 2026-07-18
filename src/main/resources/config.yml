@@ -221,6 +221,25 @@ island:
     # Team invites will always require confirmation, for safety concerns.
     # Added since 1.8.0.
     invites: false
+  # Modal dialog options. Dialogs are the 'menu they can't click away' shown to
+  # players for high-friction flows. They require a server that supports dialogs
+  # (Minecraft 26+); on older servers every option below falls back automatically
+  # to the classic chat/command behaviour regardless of the setting.
+  # Added since 3.21.0.
+  dialogs:
+    # Show sensitive-command confirmations as a modal [Confirm]/[Cancel] dialog
+    # instead of asking the player to type the command again.
+    confirmations: true
+    # Auto-open an [Accept]/[Decline] dialog when a player receives a team invite,
+    # instead of relying on them to type the accept/reject command.
+    team-invites: true
+    # Show a button-per-destination picker when a player runs the island go/home
+    # command with no name and has more than one island or home to choose from.
+    go-picker: true
+    # Show a non-dismissable 'choose your game' dialog to brand new players when
+    # more than one game mode is installed. Off by default: it is intrusive and
+    # clicking a game runs that game mode's command for the player.
+    game-mode-selection: false
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0

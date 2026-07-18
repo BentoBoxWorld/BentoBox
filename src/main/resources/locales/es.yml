@@ -12,6 +12,9 @@ prefixes:
   an-island: una isla
   islands: islas
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Elige tu juego</green>'
   did-you-mean:
     suggestion: '<gray>¿Quisiste decir </gray><yellow>[command]</yellow><gray>? Haz clic aquí o escribe </gray><green>yes</green><gray> para ejecutarlo.</gray>[run_command: [command]][hover: Haz clic para ejecutar [command]]'
     header: '<gray>¿Quisiste decir uno de estos? Haz clic en uno para ejecutarlo:</gray>'
@@ -703,6 +706,11 @@ commands:
     confirm: '<red>Vuelva a escribir el comando antes de </red><aqua>[seconds]s </aqua><red>para confirmar.</red>'
     previous-request-cancelled: '<gold>Previa solicitud de confirmación cancelada.</gold>'
     request-cancelled: '<red>Tiempo de espera de confirmación - </red><aqua>solicitud cancelada.</aqua>'
+    title: '<red>¿Estás seguro?</red>'
+    dialog-body: '<gray>Confirma para continuar, o cancela para abortar.</gray>'
+    buttons:
+      confirm: '<green>Confirmar</green>'
+      cancel: '<red>Cancelar</red>'
   delay:
     previous-command-cancelled: '<red>Anterior comando cancelado</red>'
     stand-still: '<gold>¡No te muevas! Teletransportación en [seconds] segundos</gold>'
@@ -720,6 +728,8 @@ commands:
         <red>La teletransportación falló por alguna razón. Por favor, intenta de</red>
         nuevo más tarde.
       unknown-home: '<red>¡Nombre de hogar desconocido!</red>'
+      picker:
+        title: '<green>¿A dónde quieres ir?</green>'
     help:
       description: El comando principal de la isla.
     spawn:
@@ -924,6 +934,11 @@ commands:
       invite:
         description: invita a un jugador a unirse a tu isla
         invitation-sent: '<green>Invitación enviada a [name]</green>'
+        dialog:
+          title: '<green>Invitación de equipo de [name]</green>'
+          body: '<gray>[name] te ha invitado a unirte a su isla. ¿Aceptar?</gray>'
+          accept: '<green>Aceptar</green>'
+          decline: '<red>Rechazar</red>'
         removing-invite: '<red>Eliminando invitación</red>'
         name-has-invited-you: '<green>[name] Te ha invitado a unirte a su isla.</green>'
         to-accept-or-reject: >-

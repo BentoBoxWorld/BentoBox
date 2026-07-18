@@ -12,6 +12,9 @@ prefixes:
   an-island: bir ada
   islands: adalar
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Oyununu seç</green>'
   did-you-mean:
     suggestion: '<gray>Şunu mu demek istediniz: </gray><yellow>[command]</yellow><gray>? Çalıştırmak için buraya tıklayın veya </gray><green>yes</green><gray> yazın.</gray>[run_command: [command]][hover: [command] çalıştırmak için tıklayın]'
     header: '<gray>Şunlardan birini mi demek istediniz? Çalıştırmak için birine tıklayın:</gray>'
@@ -679,6 +682,11 @@ commands:
     confirm: '<dark_red>Onaylamak icin </dark_red><yellow>[seconds] </yellow><dark_red>saniye icinde tekrar yaz!</dark_red>'
     previous-request-cancelled: '<dark_red>Istek iptal edildi!</dark_red>'
     request-cancelled: '<dark_red>Istek zaman aşımına ugradı ve iptal edildi!</dark_red>'
+    title: '<red>Emin misin?</red>'
+    dialog-body: '<gray>Devam etmek için onayla, iptal etmek için vazgeç.</gray>'
+    buttons:
+      confirm: '<green>Onayla</green>'
+      cancel: '<red>İptal</red>'
   delay:
     previous-command-cancelled: '<red>Önceki komut iptal edildi.</red>'
     stand-still: '<gold>Sakın hareket etme. </gold><yellow>[seconds] </yellow><gold>saniye içerisinde ışınlanacaksın.</gold>'
@@ -696,6 +704,8 @@ commands:
         <red>Bir nedenden dolayı ışınlanma başarısız oldu. Lütfen daha sonra</red>
         tekrar deneyin.
       unknown-home: '<red>Bilinmeyen ev adı!</red>'
+      picker:
+        title: '<green>Nereye gitmek istersin?</green>'
     help:
       description: Ana ada komudu
     spawn:
@@ -889,6 +899,11 @@ commands:
       invite:
         description: Adana oyuncu davet et.
         invitation-sent: '<light_purple>[name] </light_purple><aqua>oyuncusuna davet gonderildi!</aqua>'
+        dialog:
+          title: '<green>[name] adlı oyuncudan takım daveti</green>'
+          body: '<gray>[name] seni adasına katılmaya davet etti. Kabul edilsin mi?</gray>'
+          accept: '<green>Kabul et</green>'
+          decline: '<red>Reddet</red>'
         removing-invite: '<dark_red>Davet iptal edildi.</dark_red>'
         name-has-invited-you: '<light_purple>[name] </light_purple><aqua>seni adasına katılman icin davet etti!</aqua>'
         to-accept-or-reject: >-

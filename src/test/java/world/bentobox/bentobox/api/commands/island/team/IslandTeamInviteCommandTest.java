@@ -307,6 +307,27 @@ class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
     }
 
     /**
+     * With team-invite dialogs enabled and an online target, execute attempts to show the
+     * accept/decline dialog; when it cannot be built (as under test) the chat invite still
+     * goes out and the failure is logged.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
+     */
+    @Test
+    void testExecuteInviteDialogFallsBack() {
+        when(im.getIsland(world, uuid)).thenReturn(island);
+        testCanExecuteSuccess();
+        when(target.isPlayer()).thenReturn(true);
+        when(s.isDialogTeamInvites()).thenReturn(true);
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
+        // Chat invite still sent as the fallback
+        verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target",
+                TextVariables.DISPLAY_NAME, "&Ctarget");
+        // Dialog build failed under test and was logged
+        verify(plugin).logError(Mockito.contains("team invite dialog"));
+    }
+
+    /**
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */

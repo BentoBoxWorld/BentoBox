@@ -18,6 +18,9 @@ prefixes:
   an-island: острів
   islands: острови
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Виберіть свою гру</green>'
   did-you-mean:
     suggestion: '<gray>Можливо, ви мали на увазі </gray><yellow>[command]</yellow><gray>? Натисніть тут або введіть </gray><green>yes</green><gray>, щоб виконати.</gray>[run_command: [command]][hover: Натисніть, щоб виконати [command]]'
     header: '<gray>Можливо, ви мали на увазі одну з цих команд? Натисніть, щоб виконати:</gray>'
@@ -625,6 +628,11 @@ commands:
     confirm: '<red>Повторіть команду протягом </red><aqua>[seconds]с</aqua><red>для підтвердження.</red>'
     previous-request-cancelled: '<gold>Попередній запит підтвердження скасовано.</gold>'
     request-cancelled: '<red>Час підтвердження вийшов — </red><aqua>запит скасовано.</aqua>'
+    title: '<red>Ви впевнені?</red>'
+    dialog-body: '<gray>Підтвердьте, щоб продовжити, або скасуйте.</gray>'
+    buttons:
+      confirm: '<green>Підтвердити</green>'
+      cancel: '<red>Скасувати</red>'
   delay:
     previous-command-cancelled: '<red>Попередню команду скасовано</red>'
     stand-still: '<gold>Не рухайтеся! Телепорт через [seconds] секунд</gold>'
@@ -640,6 +648,8 @@ commands:
       teleported: '<green>Телепортовано до дому </green><yellow>[number].</yellow>'
       failure: '<red>Не вдалося телепортуватися. Спробуйте пізніше.</red>'
       unknown-home: '<red>Невідома назва дому!</red>'
+      picker:
+        title: '<green>Куди ви хочете піти?</green>'
     help:
       description: головна команда [prefix_island]
     spawn:
@@ -832,6 +842,11 @@ commands:
       invite:
         description: запросити гравця приєднатися до вашого [prefix_island]
         invitation-sent: '<green>Запрошення надіслано для </green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>Запрошення в команду від [name]</green>'
+          body: '<gray>[name] запросив вас приєднатися до свого острова. Прийняти?</gray>'
+          accept: '<green>Прийняти</green>'
+          decline: '<red>Відхилити</red>'
         removing-invite: '<red>Видаляю запрошення.</red>'
         name-has-invited-you: |
           <green>[name] запросив(ла) вас</green>

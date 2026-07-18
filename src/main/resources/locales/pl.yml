@@ -11,6 +11,9 @@ prefixes:
   an-island: wyspa
   islands: wyspy
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Wybierz swoją grę</green>'
   did-you-mean:
     suggestion: '<gray>Czy chodziło ci o </gray><yellow>[command]</yellow><gray>? Kliknij tutaj lub wpisz </gray><green>yes</green><gray>, aby uruchomić.</gray>[run_command: [command]][hover: Kliknij, aby uruchomić [command]]'
     header: '<gray>Czy chodziło ci o któreś z tych? Kliknij, aby uruchomić:</gray>'
@@ -693,6 +696,11 @@ commands:
     confirm: '<red>Wprowadź komendę w ciągu </red><aqua>[seconds]s</aqua><red>, by potwierdzić.</red>'
     previous-request-cancelled: '<gold>Poprzednie żądanie potwierdzenia zostało anulowane.</gold>'
     request-cancelled: '<red>Limit czasu potwierdzenia - </red><aqua>żądanie anulowane.</aqua>'
+    title: '<red>Jesteś pewien?</red>'
+    dialog-body: '<gray>Potwierdź, aby kontynuować, lub anuluj.</gray>'
+    buttons:
+      confirm: '<green>Potwierdź</green>'
+      cancel: '<red>Anuluj</red>'
   delay:
     previous-command-cancelled: '<red>Anulowano poprzednią komendę.</red>'
     stand-still: '<gold>Nie ruszaj się! Teleportowanie za [seconds] sekund...</gold>'
@@ -710,6 +718,8 @@ commands:
         <red>Teleportacja nie powiodła się z jakiegoś powodu. Proszę spróbować</red>
         ponownie później.
       unknown-home: '<red>Nieznana nazwa domu!</red>'
+      picker:
+        title: '<green>Dokąd chcesz iść?</green>'
     help:
       description: Główne komendy wyspy
     spawn:
@@ -912,6 +922,11 @@ commands:
       invite:
         description: zaproś gracza, by dołączył do Twojej wyspy
         invitation-sent: Zaproszenie wysłane do [name]
+        dialog:
+          title: '<green>Zaproszenie do drużyny od [name]</green>'
+          body: '<gray>[name] zaprosił cię do swojej wyspy. Zaakceptować?</gray>'
+          accept: '<green>Zaakceptuj</green>'
+          decline: '<red>Odrzuć</red>'
         removing-invite: Usuwanie zaproszenia
         name-has-invited-you: '[name] zaprosił cię do przyłączenia się do jego wyspy.'
         to-accept-or-reject: >-
