@@ -84,20 +84,21 @@ version = finalRevision
 val javaVersion = "25"
 val junitVersion = "5.10.2"
 val mockitoVersion = "5.11.0"
-// MockBukkit's modern, per-Minecraft-version artifacts are published to Paper's Maven repo
-// under org.mockbukkit.mockbukkit (see the testImplementation coordinate below). The closest
-// available to Paper 26.2 is the 26.1.2 line (no 26.2 build exists yet); 4.113.2 is the latest.
+// TODO(blocked): switch the testImplementation coordinate below to mockbukkit-v26.2 once it is
+// published. Until then the test suite cannot run against the 26.2 API — MockBukkit's registry
+// mock throws on 26.2's new `minecraft:sulfur_cube_archetype` registry. The code still compiles
+// against mockbukkit-v26.1.2; only the test *run* is blocked. This is the sole remaining change.
 val mockBukkitVersion = "4.113.2"
 val mongodbVersion = "3.12.12"
 val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
 val postgresqlVersion = "42.2.18"
 val hikaricpVersion = "5.0.1"
-// Compile against the latest stable 26.1.2 dev bundle. This is the newest Paper API that has a
-// matching MockBukkit release (mockbukkit-v26.1.2); MockBukkit does not yet support 26.2's new
-// registries. Minecraft 26.2 is still fully supported at runtime (see ServerCompatibility and
-// the Modrinth game-versions list); 26.2-only blocks/entities are accessed via Enums.getIfPresent.
-val paperVersion = "26.1.2.build.72-stable"
+// Compile against the literal 26.2 dev bundle so EntityType.SULFUR_CUBE and the new 26.2
+// materials are available at compile time. Pairs with mockbukkit-v26.2 (see above) once that
+// MockBukkit build exists; until then the test suite is red (registry mismatch), which is why
+// this PR is a draft.
+val paperVersion = "26.2.build.25-alpha"
 val bstatsVersion = "3.0.0"
 val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
