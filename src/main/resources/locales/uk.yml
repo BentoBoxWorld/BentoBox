@@ -2110,44 +2110,6 @@ panels:
         name: '<white><bold>Назад</bold></white>'
         description: '<gray>Повернутися до списку аддонів</gray>'
   # The set of common buttons used in multiple panels.
-  placeholder:
-    title: '<dark_aqua><bold>Браузер замінників</bold></dark_aqua>'
-    buttons:
-      bentobox:
-        name: '<white><bold>BentoBox</bold></white>'
-        description: '<gray>[number] замінників</gray>'
-      addon:
-        name: '<white><bold>[name]</bold></white>'
-        description: '<gray>[number] замінників</gray>'
-  placeholder-list:
-    title: '<dark_aqua><bold>[name]</bold></dark_aqua>'
-    buttons:
-      leaf:
-        name: '<aqua>[placeholder]</aqua>'
-        description: '<gray>[description]</gray>'
-        disabled: '<red><italic>(вимкнено)</italic></red>'
-        hint: '<yellow>Натисніть </yellow><gray>для перемикання.</gray>'
-      folder:
-        name: '<white><bold>[label]</bold></white>'
-        description: '<gray>[count] замінників</gray>'
-        hint: '<yellow>Натисніть </yellow><gray>для перегляду.</gray>'
-      leaf-folder:
-        hint: '<yellow>ЛКМ </yellow><gray>для перемикання. · </gray><yellow>ПКМ </yellow><gray>для перегляду.</gray>'
-      series:
-        name: '<aqua>[placeholder]</aqua>'
-        description: '<gray>[description]</gray>'
-        range: '<dark_gray>#[min] – #[max] · [count] елементів</dark_gray>'
-        disabled: '<red><italic>(деякі вимкнено)</italic></red>'
-        hint: '<yellow>Натисніть </yellow><gray>для перемикання всіх.</gray>'
-        sample: '<dark_gray>#[index] → </dark_gray><white>[value]</white>'
-        sample-empty: '<dark_gray>#[index] → </dark_gray><dark_gray>(порожньо)</dark_gray>'
-      leaf-series:
-        hint: '<yellow>ЛКМ </yellow><gray>для перемикання. · </gray><yellow>ПКМ </yellow><gray>для перемикання всіх.</gray>'
-      value: '<dark_gray>→ </dark_gray><white>[value]</white>'
-      value-empty: '<dark_gray>→ </dark_gray><dark_gray>(порожньо)</dark_gray>'
-      back:
-        name: '<white><bold>Назад</bold></white>'
-        description: '<gray>Повернутися до списку аддонів</gray>'
   buttons:
     # Button that is used in multi-page GUIs which allows to return to previous page.
     previous:
