@@ -11,6 +11,9 @@ prefixes:
   an-island: sebuah pulau
   islands: pulau-pulau
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Pilih permainanmu</green>'
   did-you-mean:
     suggestion: '<gray>Apakah maksud Anda </gray><yellow>[command]</yellow><gray>? Klik di sini atau ketik </gray><green>yes</green><gray> untuk menjalankannya.</gray>[run_command: [command]][hover: Klik untuk menjalankan [command]]'
     header: '<gray>Apakah maksud Anda salah satu dari ini? Klik salah satu untuk menjalankan:</gray>'
@@ -696,6 +699,11 @@ commands:
     confirm: '<red>Ketik perintah lagi dalam </red><aqua>[seconds]s</aqua><red>untuk mengonfirmasi.</red>'
     previous-request-cancelled: '<gold>Permintaan konfirmasi sebelumnya dibatalkan.</gold>'
     request-cancelled: '<red>Batas waktu konfirmasi - </red><aqua>permintaan dibatalkan.</aqua>'
+    title: '<red>Apakah kamu yakin?</red>'
+    dialog-body: '<gray>Konfirmasi untuk melanjutkan, atau batalkan.</gray>'
+    buttons:
+      confirm: '<green>Konfirmasi</green>'
+      cancel: '<red>Batal</red>'
   delay:
     previous-command-cancelled: '<red>Perintah sebelumnya dibatalkan</red>'
     stand-still: '<gold>Jangan bergerak! Teleportasi dalam [seconds] detik</gold>'
@@ -711,6 +719,8 @@ commands:
       teleported: '<green>Teleportasi Anda ke rumah </green><yellow>[number].</yellow>'
       failure: '<red>Teleportasi gagal karena suatu alasan. Silakan coba lagi nanti.</red>'
       unknown-home: '<red>Nama rumah tidak diketahui!</red>'
+      picker:
+        title: '<green>Mau pergi ke mana?</green>'
     help:
       description: komando pulau utama
     spawn:
@@ -915,6 +925,11 @@ commands:
       invite:
         description: undang pemain untuk bergabung dengan pulau Anda
         invitation-sent: '<green>Undangan dikirim ke </green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>Undangan tim dari [name]</green>'
+          body: '<gray>[name] mengundangmu untuk bergabung ke pulaunya. Terima?</gray>'
+          accept: '<green>Terima</green>'
+          decline: '<red>Tolak</red>'
         removing-invite: '<red>Menghapus undangan.</red>'
         name-has-invited-you: '<green>[name] telah mengundang Anda untuk bergabung dengan pulau mereka.</green>'
         to-accept-or-reject: >-

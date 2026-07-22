@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -16,8 +17,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.dialogs.BBDialog;
+import world.bentobox.bentobox.api.dialogs.DialogBuilder;
+import world.bentobox.bentobox.api.dialogs.DialogButton;
+import world.bentobox.bentobox.api.dialogs.Dialogs;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -141,6 +147,12 @@ public class JoinLeaveListener implements Listener {
         // don't exist
         players.getPlayer(user.getUniqueId());
 
+        // If enabled and several game modes are installed, let the player pick one via a
+        // dialog instead of silently auto-creating islands per world.
+        if (showGameModeDialog(user)) {
+            return;
+        }
+
         plugin.getIWM().getOverWorlds().stream().filter(w -> plugin.getIWM().isCreateIslandOnFirstLoginEnabled(w))
                 .forEach(w -> {
                     // Even if that'd be extremely unlikely, it's better to check if the player
@@ -171,6 +183,40 @@ public class JoinLeaveListener implements Listener {
                         }
                     }
                 });
+    }
+
+    /**
+     * Shows a non-dismissable "choose your game" dialog to a brand new player when
+     * more than one game mode is installed and the option is enabled. Each button runs
+     * that game mode's player command. Shown a short moment after join so the client is
+     * ready.
+     *
+     * @param user the joining player
+     * @return true if the dialog was built and scheduled; false to fall through to the
+     *         default per-world first-login behaviour
+     */
+    private boolean showGameModeDialog(User user) {
+        if (!user.isPlayer() || !Dialogs.isSupported() || !plugin.getSettings().isDialogGameModeSelection()) {
+            return false;
+        }
+        List<GameModeAddon> modes = plugin.getAddonsManager().getGameModeAddons().stream()
+                .filter(gm -> gm.getPlayerCommand().isPresent()).toList();
+        if (modes.size() < 2) {
+            return false;
+        }
+        try {
+            DialogBuilder builder = new DialogBuilder().title(user, "general.dialogs.game-mode-selection.title")
+                    .escapable(false);
+            modes.forEach(gm -> builder.button(new DialogButton(Component.text(gm.getDescription().getName()),
+                    u -> gm.getPlayerCommand().ifPresent(c -> c.call(u, c.getLabel(), Collections.emptyList())))));
+            // Build now so a build failure falls back; show a little after join so the client is ready
+            BBDialog dialog = builder.build();
+            Bukkit.getScheduler().runTaskLater(plugin, () -> dialog.show(user), 20L);
+            return true;
+        } catch (Exception e) {
+            plugin.logError("Could not show game mode selection dialog: " + e.getMessage());
+            return false;
+        }
 
     }
 

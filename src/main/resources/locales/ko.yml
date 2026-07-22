@@ -12,6 +12,9 @@ prefixes:
   an-island: 섬
   islands: 섬들
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>게임을 선택하세요</green>'
   did-you-mean:
     suggestion: '<gray>혹시 </gray><yellow>[command]</yellow><gray> 명령어를 입력하려고 하셨나요? 여기를 클릭하거나 </gray><green>yes</green><gray>를 입력하면 실행됩니다.</gray>[run_command: [command]][hover: 클릭하여 [command] 실행]'
     header: '<gray>다음 중 하나를 입력하려고 하셨나요? 클릭하면 실행됩니다:</gray>'
@@ -639,6 +642,11 @@ commands:
     confirm: '<red>계속하려면 </red><aqua>[seconds]초안에</aqua><red> 명령어를 다시 사용하세요.</red>'
     previous-request-cancelled: '<gold>이전 확인 요청이 취소되었습니다.</gold>'
     request-cancelled: '<red>확인 시간 종료 - </red><aqua>요청이 취소되었습니다.</aqua>'
+    title: '<red>정말 실행하시겠습니까?</red>'
+    dialog-body: '<gray>계속하려면 확인을, 취소하려면 취소를 누르세요.</gray>'
+    buttons:
+      confirm: '<green>확인</green>'
+      cancel: '<red>취소</red>'
   delay:
     previous-command-cancelled: '<red>전에 사용한 커맨드가 취소되어습니다</red>'
     stand-still: '<gold>움직이지마세요! [seconds] 초후 이동됩니다!</gold>'
@@ -654,6 +662,8 @@ commands:
       teleported: '<green>집 </green><yellow># [번호] (으)로 이동했습니다.</yellow>'
       failure: '<red>전송이 어떤 이유로 실패했습니다. 나중에 다시 시도해 주세요.</red>'
       unknown-home: '<red>알 수 없는 홈 이름입니다!</red>'
+      picker:
+        title: '<green>어디로 갈까요?</green>'
     help:
       description: 섬의 명령어보기
     spawn:
@@ -840,6 +850,11 @@ commands:
       invite:
         description: 플레이어를 섬원으로 초대합니다
         invitation-sent: '<aqua>[name]</aqua><green>에게 초대를 보냈습니다.</green>'
+        dialog:
+          title: '<green>[name] 님의 팀 초대</green>'
+          body: '<gray>[name] 님이 섬에 초대했습니다. 수락하시겠습니까?</gray>'
+          accept: '<green>수락</green>'
+          decline: '<red>거절</red>'
         removing-invite: '<red>보낸 초대를 취소했습니다.</red>'
         name-has-invited-you: '<green>[name] 이(가) 당신을 섬원으로 초대하고 있습니다</green>'
         to-accept-or-reject: >-

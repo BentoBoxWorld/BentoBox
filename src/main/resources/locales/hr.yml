@@ -11,6 +11,9 @@ prefixes:
   an-island: otok
   islands: ostrva
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Odaberi svoju igru</green>'
   did-you-mean:
     suggestion: '<gray>Jeste li mislili </gray><yellow>[command]</yellow><gray>? Kliknite ovdje ili upišite </gray><green>yes</green><gray> za pokretanje.</gray>[run_command: [command]][hover: Kliknite za pokretanje [command]]'
     header: '<gray>Jeste li mislili nešto od ovoga? Kliknite za pokretanje:</gray>'
@@ -685,6 +688,11 @@ commands:
     confirm: '<red>Ponovno upišite naredbu unutar </red><aqua>[seconds]s</aqua><red>za potvrdu.</red>'
     previous-request-cancelled: '<gold>Prethodni zahtjev za potvrdu otkazan.</gold>'
     request-cancelled: '<red>Istek potvrde - </red><aqua>zahtjev otkazan.</aqua>'
+    title: '<red>Jesi li siguran?</red>'
+    dialog-body: '<gray>Potvrdi za nastavak ili odustani.</gray>'
+    buttons:
+      confirm: '<green>Potvrdi</green>'
+      cancel: '<red>Odustani</red>'
   delay:
     previous-command-cancelled: '<red>Prethodna naredba poništena</red>'
     stand-still: '<gold>Ne miči se! Teleportiranje za [seconds] sekundi</gold>'
@@ -702,6 +710,8 @@ commands:
         <red>Teleportacija je neuspjela iz nekog razloga. Molimo pokušajte ponovno</red>
         kasnije.
       unknown-home: '<red>Nepoznato kućno ime!</red>'
+      picker:
+        title: '<green>Kamo želiš ići?</green>'
     help:
       description: glavna otočka komanda
     spawn:
@@ -902,6 +912,11 @@ commands:
       invite:
         description: pozovite igrača da se pridruži vašem otoku
         invitation-sent: '<green>Pozivnica poslana na </green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>Pozivnica tima od [name]</green>'
+          body: '<gray>[name] te pozvao da se pridružiš njegovom otoku. Prihvatiti?</gray>'
+          accept: '<green>Prihvati</green>'
+          decline: '<red>Odbij</red>'
         removing-invite: '<red>Uklanjanje pozivnice.</red>'
         name-has-invited-you: '<green>[name] vas je pozvao da se pridružite njihovom otoku.</green>'
         to-accept-or-reject: >-

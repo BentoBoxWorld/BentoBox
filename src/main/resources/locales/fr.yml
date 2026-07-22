@@ -11,6 +11,9 @@ prefixes:
   an-island: une île
   islands: îles
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Choisis ton jeu</green>'
   did-you-mean:
     suggestion: '<gray>Vouliez-vous dire </gray><yellow>[command]</yellow><gray> ? Cliquez ici ou tapez </gray><green>yes</green><gray> pour l’exécuter.</gray>[run_command: [command]][hover: Cliquez pour exécuter [command]]'
     header: '<gray>Vouliez-vous dire l’un de ceux-ci ? Cliquez pour exécuter :</gray>'
@@ -726,6 +729,11 @@ commands:
       confirmer.
     previous-request-cancelled: '<gold>La demande de confirmation est annulée.</gold>'
     request-cancelled: '<red>Délai de confirmation dépassé - </red><aqua>demande annulée.</aqua>'
+    title: '<red>Es-tu sûr ?</red>'
+    dialog-body: '<gray>Confirme pour continuer, ou annule pour abandonner.</gray>'
+    buttons:
+      confirm: '<green>Confirmer</green>'
+      cancel: '<red>Annuler</red>'
   delay:
     previous-command-cancelled: '<red>Commande annulée</red>'
     stand-still: '<gold>Ne bougez pas ! Téléportation dans [seconds] secondes.</gold>'
@@ -743,6 +751,8 @@ commands:
         <red>La téléportation a échoué pour une raison quelconque. Veuillez</red>
         réessayer plus tard.
       unknown-home: '<red>Nom de maison inconnu!</red>'
+      picker:
+        title: '<green>Où veux-tu aller ?</green>'
     help:
       description: commande principale pour l'île
     spawn:
@@ -945,6 +955,11 @@ commands:
       invite:
         description: inviter un joueur à rejoindre votre île
         invitation-sent: '<green>Invitation envoyée à </green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>Invitation d''équipe de [name]</green>'
+          body: '<gray>[name] t''a invité à rejoindre son île. Accepter ?</gray>'
+          accept: '<green>Accepter</green>'
+          decline: '<red>Refuser</red>'
         removing-invite: '<red>Suppression de l''invitation.</red>'
         name-has-invited-you: '<aqua>[name] </aqua><green>vous a invité à rejoindre son île.</green>'
         to-accept-or-reject: >-

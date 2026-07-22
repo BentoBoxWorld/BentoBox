@@ -22,6 +22,9 @@ general:
   success: '<green>Success!</green>'
   invalid: Invalid
   beta: '<light_purple><bold>This command is in beta. Make sure you have backups!</bold></light_purple>'
+  dialogs:
+    game-mode-selection:
+      title: '<green>Choose your game</green>'
   errors:
     command-cancelled: '<red>Command cancelled.</red>'
     no-permission: '<red>You don''t have the permission to execute this command (</red><gray>
@@ -646,6 +649,11 @@ commands:
     confirm: '<red>Type command again within </red><aqua>[seconds]s</aqua><red> to confirm.</red>'
     previous-request-cancelled: '<gold>Previous confirmation request cancelled.</gold>'
     request-cancelled: '<red>Confirmation timeout - </red><aqua>request cancelled.</aqua>'
+    title: '<red>Are you sure?</red>'
+    dialog-body: '<gray>Confirm to proceed, or cancel to abort.</gray>'
+    buttons:
+      confirm: '<green>Confirm</green>'
+      cancel: '<red>Cancel</red>'
   delay:
     previous-command-cancelled: '<red>Previous command cancelled</red>'
     stand-still: '<gold>Do not move! Teleporting in [seconds] seconds</gold>'
@@ -661,6 +669,8 @@ commands:
       teleported: '<green>Teleported you to home </green><yellow>[number].</yellow>'
       failure: '<red>Teleporting failed for some reason. Please try again later.</red>'
       unknown-home: '<red>Unknown home name!</red>'
+      picker:
+        title: '<green>Where would you like to go?</green>'
     help:
       description: the main [prefix_island] command
     spawn:
@@ -872,6 +882,11 @@ commands:
         you-will-lose-your-island: |
           <red>WARNING! You will lose all</red>
           <red>your [prefix_islands] if you accept!</red>
+        dialog:
+          title: '<green>Team invite from [name]</green>'
+          body: '<gray>[name] has invited you to join their island. Accept?</gray>'
+          accept: '<green>Accept</green>'
+          decline: '<red>Decline</red>'
         gui:
           titles:
             team-invite-panel: Invite Players

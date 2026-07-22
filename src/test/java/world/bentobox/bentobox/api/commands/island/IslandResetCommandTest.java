@@ -350,6 +350,32 @@ class IslandResetCommandTest extends CommonTestSetup {
     }
 
     /**
+     * When dialog confirmations are enabled but the dialog cannot be shown (no live
+     * dialog registry, as under test), the command must fall back to the classic
+     * type-again prompt rather than silently losing the confirmation.
+     * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    void testConfirmationDialogFallsBackWhenUnavailable() throws Exception {
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(1);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(mock(Island.class));
+
+        // Require confirmation, and prefer a dialog for an online player
+        when(s.isResetConfirmation()).thenReturn(true);
+        when(s.getConfirmationTime()).thenReturn(20);
+        when(s.isDialogConfirmations()).thenReturn(true);
+        when(user.isPlayer()).thenReturn(true);
+
+        assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
+        // The dialog could not be built under test, so we fell back to the prompt
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(s.getConfirmationTime()));
+        // and the failure was logged
+        verify(plugin).logError(Mockito.contains("confirmation dialog"));
+    }
+
+    /**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test

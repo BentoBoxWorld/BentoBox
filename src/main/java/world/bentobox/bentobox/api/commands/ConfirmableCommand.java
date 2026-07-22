@@ -7,7 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.dialogs.BBDialog;
+import world.bentobox.bentobox.api.dialogs.DialogBuilder;
+import world.bentobox.bentobox.api.dialogs.DialogButton;
+import world.bentobox.bentobox.api.dialogs.Dialogs;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * An extension of {@link CompositeCommand} that adds a confirmation step for
@@ -96,6 +101,11 @@ public abstract class ConfirmableCommand extends CompositeCommand {
      * @param confirmed The action to execute upon successful confirmation.
      */
     public void askConfirmation(User user, String message, Runnable confirmed) {
+        // Prefer a modal dialog when the server supports it and it is enabled.
+        // Falls through to the type-again prompt if the dialog cannot be shown.
+        if (useDialog(user) && showConfirmationDialog(user, message, confirmed)) {
+            return;
+        }
         // Check for pending confirmations
         if (toBeConfirmed.containsKey(user)) {
             if (toBeConfirmed.get(user).topLabel().equals(getTopLabel()) && toBeConfirmed.get(user).label().equalsIgnoreCase(getLabel())) {
@@ -133,6 +143,49 @@ public abstract class ConfirmableCommand extends CompositeCommand {
      */
     public void askConfirmation(User user, Runnable confirmed) {
         askConfirmation(user, "", confirmed);
+    }
+
+    /**
+     * Whether this confirmation should be presented as a modal dialog rather than
+     * the type-the-command-again prompt. True only for online players, when the
+     * server supports dialogs and the {@code island.dialogs.confirmations}
+     * setting is enabled.
+     *
+     * @param user the user being asked
+     * @return true if a dialog should be shown
+     */
+    private boolean useDialog(User user) {
+        return user.isPlayer() && Dialogs.isSupported() && getPlugin().getSettings().isDialogConfirmations();
+    }
+
+    /**
+     * Shows a two-button [Confirm]/[Cancel] dialog. Confirming runs the action;
+     * cancelling (or dismissing with Escape) aborts it.
+     *
+     * @param user      the user to ask
+     * @param message   a pre-translated context message, or empty
+     * @param confirmed the action to run on confirmation
+     * @return true if the dialog was shown; false if it could not be built/shown,
+     *         in which case the caller should fall back to the type-again prompt
+     */
+    private boolean showConfirmationDialog(User user, String message, Runnable confirmed) {
+        try {
+            DialogBuilder builder = new DialogBuilder().title(user, "commands.confirmation.title");
+            if (message != null && !message.trim().isEmpty()) {
+                builder.body(Util.parseMiniMessageOrLegacy(message));
+            }
+            builder.body(user, "commands.confirmation.dialog-body")
+                    .confirmation(
+                            DialogButton.of(user, "commands.confirmation.buttons.confirm", u -> confirmed.run()),
+                            DialogButton.of(user, "commands.confirmation.buttons.cancel",
+                                    u -> u.sendMessage("commands.confirmation.request-cancelled")));
+            builder.build().show(user);
+            return true;
+        } catch (Exception e) {
+            getPlugin().logError("Could not show confirmation dialog, falling back to command prompt: "
+                    + e.getMessage());
+            return false;
+        }
     }
 
     /**

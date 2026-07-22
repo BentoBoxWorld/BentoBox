@@ -15,6 +15,9 @@ prefixes:
   an-island: 岛屿
   islands: 岛屿
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>选择你的游戏</green>'
   did-you-mean:
     suggestion: '<gray>你是想输入 </gray><yellow>[command]</yellow><gray> 吗？点击此处或输入 </gray><green>yes</green><gray> 来执行。</gray>[run_command: [command]][hover: 点击执行 [command]]'
     header: '<gray>你是想输入以下命令之一吗？点击即可执行:</gray>'
@@ -637,6 +640,11 @@ commands:
     confirm: '<red>请在</red><aqua>[seconds]</aqua><red>秒内再次输入命令以确认.</red>'
     previous-request-cancelled: '<gold>先前的确认请求已取消.</gold>'
     request-cancelled: '<red>确认超时 </red><gray>- </gray><aqua>请求已取消.</aqua>'
+    title: '<red>确定吗？</red>'
+    dialog-body: '<gray>确认以继续，或取消以中止。</gray>'
+    buttons:
+      confirm: '<green>确认</green>'
+      cancel: '<red>取消</red>'
   delay:
     previous-command-cancelled: '<red>上一个命令已取消.</red>'
     stand-still: '<gold>请勿移动! 传送将在</gold><aqua>[seconds]</aqua><gold>秒后开始.</gold>'
@@ -652,6 +660,8 @@ commands:
       teleported: '<green>正在将你传送到你的岛屿传送点: </green><yellow>[number]</yellow><green>.</green>'
       failure: '<red>传送失败，出于某种原因。请稍后再试。</red>'
       unknown-home: '<red>未知岛屿传送点名称!</red>'
+      picker:
+        title: '<green>想去哪里？</green>'
     help:
       description: 岛屿主要命令
     spawn:
@@ -837,6 +847,11 @@ commands:
       invite:
         description: 邀请一位玩家以成员身份加入团队(对方会失去自己领取的岛屿)
         invitation-sent: '<green>邀请已发送给</green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>来自 [name] 的队伍邀请</green>'
+          body: '<gray>[name] 邀请你加入他们的岛屿。接受吗？</gray>'
+          accept: '<green>接受</green>'
+          decline: '<red>拒绝</red>'
         removing-invite: '<red>邀请已取消.</red>'
         name-has-invited-you: '<aqua>[name]</aqua><green>邀请你以成员身份加入TA的岛屿.</green>'
         to-accept-or-reject: |-

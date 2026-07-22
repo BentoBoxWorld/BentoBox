@@ -11,6 +11,9 @@ prefixes:
   an-island: một hòn đảo
   islands: đảo
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Chọn trò chơi của bạn</green>'
   did-you-mean:
     suggestion: '<gray>Có phải bạn muốn nhập </gray><yellow>[command]</yellow><gray>? Nhấp vào đây hoặc gõ </gray><green>yes</green><gray> để chạy lệnh.</gray>[run_command: [command]][hover: Nhấp để chạy [command]]'
     header: '<gray>Có phải bạn muốn nhập một trong các lệnh sau? Nhấp vào một lệnh để chạy:</gray>'
@@ -685,6 +688,11 @@ commands:
     confirm: '<red>Nhập lệnh đó lại trong </red><aqua>[seconds] giây</aqua><red> để xác nhận.</red>'
     previous-request-cancelled: '<gold>Lần xác nhận trước đã bị hủy.</gold>'
     request-cancelled: '<red>Hết thời gian xác nhận - </red><aqua>yêu cầu đã bị hủy.</aqua>'
+    title: '<red>Bạn có chắc không?</red>'
+    dialog-body: '<gray>Xác nhận để tiếp tục, hoặc hủy để dừng lại.</gray>'
+    buttons:
+      confirm: '<green>Xác nhận</green>'
+      cancel: '<red>Hủy</red>'
   delay:
     previous-command-cancelled: '<red>Lệnh trước đã bị hủy</red>'
     stand-still: '<gold>Đừng di chuyển! Dịch chuyển trong [seconds] giây</gold>'
@@ -700,6 +708,8 @@ commands:
       teleported: '<green>Đang dịch chuyển về nhà </green><yellow>#[number].</yellow>'
       failure: '<red>Di chuyển không thành công vì một số lý do. Vui lòng thử lại sau.</red>'
       unknown-home: '<red>Tên nhà không tồn tại!</red>'
+      picker:
+        title: '<green>Bạn muốn đi đâu?</green>'
     help:
       description: lệnh chính cho đảo
     spawn:
@@ -893,6 +903,11 @@ commands:
       invite:
         description: mời người chơi vào đảo của bạn
         invitation-sent: '<green>Lời mời đã gửi tới </green><aqua>[name]</aqua><green>.</green>'
+        dialog:
+          title: '<green>Lời mời nhóm từ [name]</green>'
+          body: '<gray>[name] đã mời bạn tham gia đảo của họ. Chấp nhận?</gray>'
+          accept: '<green>Chấp nhận</green>'
+          decline: '<red>Từ chối</red>'
         removing-invite: '<red>Đang xóa lời mời.</red>'
         name-has-invited-you: '<green>[name] đã mời bạn vào đảo họ.</green>'
         to-accept-or-reject: >-

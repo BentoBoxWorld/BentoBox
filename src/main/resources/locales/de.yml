@@ -12,6 +12,9 @@ prefixes:
   an-island: eine Insel
   islands: Inseln
 general:
+  dialogs:
+    game-mode-selection:
+      title: '<green>Wähle dein Spiel</green>'
   did-you-mean:
     suggestion: '<gray>Meintest du </gray><yellow>[command]</yellow><gray>? Klicke hier oder tippe </gray><green>yes</green><gray>, um ihn auszuführen.</gray>[run_command: [command]][hover: Klicken, um [command] auszuführen]'
     header: '<gray>Meintest du einen dieser Befehle? Klicke zum Ausführen:</gray>'
@@ -714,6 +717,11 @@ commands:
     confirm: '<red>Befehl innerhalb von</red><aqua>[seconds]s</aqua><red>zur Bestätigung erneut eingeben.</red>'
     previous-request-cancelled: '<gold>Vorherige Bestätigungsanforderung abgebrochen.</gold>'
     request-cancelled: '<red>Bestätigungs-Timeout - </red><aqua>-Anforderung abgebrochen.</aqua>'
+    title: '<red>Bist du sicher?</red>'
+    dialog-body: '<gray>Bestätige, um fortzufahren, oder brich ab.</gray>'
+    buttons:
+      confirm: '<green>Bestätigen</green>'
+      cancel: '<red>Abbrechen</red>'
   delay:
     previous-command-cancelled: '<red>Vorheriger Befehl abgebrochen</red>'
     stand-still: '<gold>Nicht bewegen! Teleportiert in [seconds] Sekunden</gold>'
@@ -731,6 +739,8 @@ commands:
         <red>Das Teleportieren ist aus irgendeinem Grund gescheitert. Bitte</red>
         versuchen Sie es später erneut.
       unknown-home: '<red>Unbekannter Home-Name!</red>'
+      picker:
+        title: '<green>Wohin möchtest du?</green>'
     help:
       description: Der wichtigste Inselbefehl
     spawn:
@@ -945,6 +955,11 @@ commands:
       invite:
         description: Einen Spieler auf deine Insel einladen
         invitation-sent: '<green>Einladung gesendet an [name]</green>'
+        dialog:
+          title: '<green>Team-Einladung von [name]</green>'
+          body: '<gray>[name] hat dich eingeladen, seiner Insel beizutreten. Annehmen?</gray>'
+          accept: '<green>Annehmen</green>'
+          decline: '<red>Ablehnen</red>'
         removing-invite: '<red>Einladung entfernen</red>'
         name-has-invited-you: |
           <green>[name] hat Sie eingeladen,</green>
