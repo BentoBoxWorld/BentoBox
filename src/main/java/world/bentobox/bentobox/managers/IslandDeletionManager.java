@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import org.bukkit.Location;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Reports whether an island location is awaiting filesystem-level cleanup
@@ -29,7 +30,7 @@ public class IslandDeletionManager {
      * @return true if there is an island at this location that is marked deletable
      */
     public boolean inDeletion(Location location) {
-        return plugin.getIslands().getIslandAt(location).map(island -> island.isDeletable()).orElse(false);
+        return plugin.getIslands().getIslandAt(location).map(Island::isDeletable).orElse(false);
     }
 
 }

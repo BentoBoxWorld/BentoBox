@@ -1145,7 +1145,7 @@ public class Util {
                                         || tag.equals("strikethrough") || tag.equals("obfuscated")) {
                                     // Close decoration temporarily to maintain nesting
                                     result.append("</").append(tag).append(">");
-                                    decorationsToReopen.add(0, tag);
+                                    decorationsToReopen.addFirst(tag);
                                     openTags.remove(j);
                                 } else {
                                     // Named color or color:# tag — close it
@@ -1182,7 +1182,7 @@ public class Util {
                                 || tag.equals("strikethrough") || tag.equals("obfuscated")) {
                             // Close decoration temporarily to maintain nesting
                             result.append("</").append(tag).append(">");
-                            decorationsToReopen.add(0, tag);
+                            decorationsToReopen.addFirst(tag);
                             openTags.remove(j);
                         } else {
                             result.append("</").append(tag).append(">");

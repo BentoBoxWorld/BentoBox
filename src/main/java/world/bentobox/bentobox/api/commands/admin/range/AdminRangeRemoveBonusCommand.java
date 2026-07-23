@@ -64,9 +64,9 @@ public class AdminRangeRemoveBonusCommand extends ConfirmableCommand {
             return false;
         }
         // Get target player
-        targetUUID = Util.getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
         // Target must have an island in this world
@@ -93,7 +93,7 @@ public class AdminRangeRemoveBonusCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         Objects.requireNonNull(targetIsland);
         Objects.requireNonNull(targetUUID);
-        askConfirmation(user, () -> removeBonusRanges(user, args.get(0)));
+        askConfirmation(user, () -> removeBonusRanges(user, args.getFirst()));
         return true;
     }
 
@@ -149,7 +149,7 @@ public class AdminRangeRemoveBonusCommand extends ConfirmableCommand {
             return Optional.of(Util.tabLimit(new ArrayList<>(Util.getOnlinePlayerList(user)), lastArg));
         } else if (args.size() == 2) {
             // Offer the bonus ids that exist on the target player's island
-            UUID uuid = Util.getUUID(args.get(0));
+            UUID uuid = Util.getUUID(args.getFirst());
             if (uuid != null) {
                 Island island = getIslands().getIsland(getWorld(), uuid);
                 if (island != null) {

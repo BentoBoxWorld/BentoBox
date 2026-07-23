@@ -103,17 +103,11 @@ public class BlueMapHook extends MapHook implements Listener {
     public void registerGameMode(@NonNull GameModeAddon addon) {
         String friendlyName = addon.getWorldSettings().getFriendlyName();
 
-        MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName, k -> {
-
-            return MarkerSet.builder().toggleable(true).defaultHidden(false).label(k).build();
-        });
+        MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName, k -> MarkerSet.builder().toggleable(true).defaultHidden(false).label(k).build());
         // Create a marker for each owned island in this addon's overworld
         plugin.getIslands().getIslands(addon.getOverWorld()).stream()
                 .filter(is -> is.getOwner() != null)
-                .forEach(island -> {
-
-                    setMarker(markerSet, island);
-                });
+                .forEach(island -> setMarker(markerSet, island));
         // Overworld
         addMarkerSetToWorld(addon.getOverWorld(), friendlyName, markerSet);
         // Nether

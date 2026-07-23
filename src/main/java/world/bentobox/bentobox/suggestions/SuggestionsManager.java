@@ -144,7 +144,7 @@ public class SuggestionsManager {
         }
         if (plausible.size() == 1 || plausible.get(0).score() - plausible.get(1).score() >= CONFIDENT_GAP - EPSILON) {
             // One clear winner: suggest it and let the player accept by typing "yes"
-            String command = plausible.get(0).commandString();
+            String command = plausible.getFirst().commandString();
             user.sendMessage("general.did-you-mean.suggestion", COMMAND_VAR, command);
             pending.put(user.getUniqueId(), new PendingSuggestion(command, System.currentTimeMillis() + PENDING_EXPIRY_MS));
         } else {
