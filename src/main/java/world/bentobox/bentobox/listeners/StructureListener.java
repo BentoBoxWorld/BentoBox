@@ -3,12 +3,15 @@ package world.bentobox.bentobox.listeners;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.AsyncStructureSpawnEvent;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.structure.Structure;
 
 import io.papermc.paper.event.world.StructuresLocateEvent;
@@ -40,6 +43,14 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
  *       the main thread. Removing disabled structures from the search — and cancelling when
  *       nothing enabled remains — skips that scan entirely.</li>
  * </ul>
+ *
+ * <p>Searches are additionally suppressed, with no configuration required, in worlds whose
+ * {@link ChunkGenerator} reports {@link ChunkGenerator#shouldGenerateStructures(org.bukkit.generator.WorldInfo, Random, int, int)
+ * shouldGenerateStructures} {@code false} (e.g. void skyblock worlds): a world that never
+ * places structures can never satisfy a search, so every search there is the pathological
+ * scan-to-the-cap case. A per-world {@link WorldSettings#getStructureSettings()} entry of
+ * {@code true} still force-enables searching for that structure — the escape hatch for
+ * converted worlds that contain structures generated before the game mode took over.</p>
  *
  * <p>One instance is registered per {@link GameModeAddon}, immediately before its worlds are
  * created, so it is active for the initial spawn-area generation. Worlds are matched by
@@ -90,9 +101,10 @@ public class StructureListener implements Listener {
         if (!isGameModeWorld(event.getWorld())) {
             return;
         }
+        boolean structurelessWorld = !generatesStructures(event.getWorld(), event.getOrigin());
         List<Structure> targets = event.getStructures();
         List<Structure> allowed = targets.stream()
-                .filter(structure -> !isDisabled(structure.getKey().getKey()))
+                .filter(structure -> !isSuppressed(structure.getKey().getKey(), structurelessWorld))
                 .toList();
         if (allowed.size() == targets.size()) {
             // Nothing disabled in this search — let it run normally.
@@ -135,6 +147,18 @@ public class StructureListener implements Listener {
      * @return {@code true} if this structure should be suppressed
      */
     private boolean isDisabled(String structureKey) {
+        return isSuppressed(structureKey, false);
+    }
+
+    /**
+     * As {@link #isDisabled(String)}, with one extra final layer: in a world whose generator
+     * never places structures, every structure not explicitly force-enabled is suppressed.
+     *
+     * @param structureKey the vanilla structure key path, e.g. {@code ancient_city}
+     * @param structurelessWorld whether the world's generator reports it never places structures
+     * @return {@code true} if this structure should be suppressed
+     */
+    private boolean isSuppressed(String structureKey, boolean structurelessWorld) {
         String normalizedKey = normalize(structureKey);
         // Per-world override wins: value is whether the structure should generate.
         Map<String, Boolean> overrides = gameMode.getWorldSettings().getStructureSettings();
@@ -145,9 +169,28 @@ public class StructureListener implements Listener {
                 }
             }
         }
-        // Otherwise fall back to the global default list.
-        return plugin.getSettings().getDisabledStructures().stream()
-                .anyMatch(key -> normalize(key).equals(normalizedKey));
+        // Then the global default list.
+        if (plugin.getSettings().getDisabledStructures().stream()
+                .anyMatch(key -> normalize(key).equals(normalizedKey))) {
+            return true;
+        }
+        // Finally, a world that never places structures can never satisfy a search.
+        return structurelessWorld;
+    }
+
+    /**
+     * @param world a game mode world
+     * @param origin the origin of the structure search
+     * @return {@code true} if {@code world}'s generator places vanilla structures. A world
+     *         with no custom generator is vanilla-generated, so structures are assumed.
+     */
+    private boolean generatesStructures(World world, Location origin) {
+        ChunkGenerator generator = world.getGenerator();
+        if (generator == null) {
+            return true;
+        }
+        return generator.shouldGenerateStructures(world, new Random(world.getSeed()),
+                origin.getBlockX() >> 4, origin.getBlockZ() >> 4);
     }
 
     private String normalize(String key) {
