@@ -8,13 +8,20 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.world.AsyncStructureSpawnEvent;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.WorldInfo;
 import org.bukkit.generator.structure.Structure;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,7 +96,19 @@ class StructureListenerTest {
         StructuresLocateEvent e = mock(StructuresLocateEvent.class);
         lenient().when(e.getWorld()).thenReturn(world);
         lenient().when(e.getStructures()).thenReturn(structures);
+        lenient().when(e.getOrigin()).thenReturn(mock(Location.class));
         return e;
+    }
+
+    /**
+     * Gives the test world a custom generator whose {@code shouldGenerateStructures}
+     * reports {@code generates}.
+     */
+    private void withGenerator(boolean generates) {
+        ChunkGenerator generator = mock(ChunkGenerator.class);
+        lenient().when(generator.shouldGenerateStructures(any(WorldInfo.class), any(Random.class), anyInt(), anyInt()))
+                .thenReturn(generates);
+        lenient().when(world.getGenerator()).thenReturn(generator);
     }
 
     // --- Spawn suppression -------------------------------------------------
@@ -179,5 +198,54 @@ class StructureListenerTest {
         listener.onStructuresLocate(e);
         verify(e, never()).setCancelled(true);
         verify(e, never()).setStructures(anyList());
+    }
+
+    // --- Structureless-world locate suppression ----------------------------
+
+    @Test
+    void testLocateInStructurelessWorldIsCancelledWithoutConfig() {
+        // Generator never places structures — even structures on no disabled list
+        // (e.g. a cartographer map's monument search) must not be scanned for.
+        withGenerator(false);
+        StructuresLocateEvent e = locateEvent("monument", "mansion");
+        listener.onStructuresLocate(e);
+        verify(e).setCancelled(true);
+        verify(e, never()).setStructures(anyList());
+    }
+
+    @Test
+    void testLocateInStructurelessWorldKeepsForceEnabledStructure() {
+        // ancient_city is force-enabled by the per-world override, so it survives
+        // even though the world generates no structures.
+        withGenerator(false);
+        StructuresLocateEvent e = locateEvent("monument", "ancient_city");
+        listener.onStructuresLocate(e);
+        verify(e, never()).setCancelled(true);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Structure>> captor = ArgumentCaptor.forClass(List.class);
+        verify(e).setStructures(captor.capture());
+        assertEquals(1, captor.getValue().size());
+        assertEquals("ancient_city", captor.getValue().get(0).getKey().getKey());
+    }
+
+    @Test
+    void testLocateWithStructureGeneratingGeneratorIsUntouched() {
+        // Generator places structures (e.g. SkyGrid, Boxed with allow-structures) —
+        // unlisted structures search normally.
+        withGenerator(true);
+        StructuresLocateEvent e = locateEvent("monument", "village_plains");
+        listener.onStructuresLocate(e);
+        verify(e, never()).setCancelled(true);
+        verify(e, never()).setStructures(anyList());
+    }
+
+    @Test
+    void testStructurelessWorldDoesNotAffectSpawnSuppression() {
+        // The generator layer applies to searches only; spawn events for enabled
+        // structures pass through (they cannot fire in a structureless world anyway).
+        withGenerator(false);
+        AsyncStructureSpawnEvent e = spawnEvent("village_plains");
+        listener.onStructureSpawn(e);
+        verify(e, never()).setCancelled(true);
     }
 }

@@ -320,14 +320,22 @@ world:
   # skip in structure searches (/locate, Eyes of Ender, explorer/treasure maps,
   # dolphins and villager cartographer trades). Suppressing a structure this way also
   # prevents those searches scanning to the world border and freezing the server.
-  # Keys may use '-' or '_' and any case, e.g. trial_chambers, ancient-city.
+  # Keys are the vanilla structure ids: tab-complete '/locate structure ' in-game for
+  # the full list ('minecraft:mansion' is listed here as 'mansion'). Keys may use '-'
+  # or '_' and any case, e.g. trial_chambers, ancient-city.
+  # To stop the map searches that most commonly freeze servers with void worlds
+  # (villager cartographer explorer-map trades, dolphins, chest treasure maps),
+  # disable the structures those maps look for:
+  #   disabled-structures:
+  #   - monument
+  #   - mansion
+  #   - trial_chambers
+  #   - buried_treasure
+  # Worlds whose generator places no structures at all (e.g. classic skyblock void
+  # worlds) skip these searches automatically — no entries are needed for them.
   # A game mode can override this per structure in its own config, both to disable
   # more structures and to force-enable one that this list disables.
   # Empty (the default) disables nothing, so behaviour is unchanged.
-  # Example:
-  #   disabled-structures:
-  #   - trial_chambers
-  #   - ancient_city
   # Added since 3.19.1.
   disabled-structures: []
 web:
