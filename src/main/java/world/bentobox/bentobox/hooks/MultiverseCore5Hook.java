@@ -26,6 +26,9 @@ public class MultiverseCore5Hook extends Hook implements WorldManagementHook {
      */
     @Override
     public void registerWorld(World world, boolean islandWorld) {
+        if (world == null) {
+            return;
+        }
         MultiverseCoreApi api = MultiverseCoreApi.get();
         String generator = islandWorld ? getGenerator(world) : null;
         api.getWorldManager().importWorld(ImportWorldOptions.worldName(world.getName())

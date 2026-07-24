@@ -238,7 +238,8 @@ public class PVPListener extends FlagListener {
     public void onPVPFlagToggle(final FlagSettingChangeEvent e) {
         Flag flag = e.getEditedFlag();
         // Only care about PVP Flags
-        if (Flags.PVP_OVERWORLD.equals(flag) || Flags.PVP_NETHER.equals(flag) || Flags.PVP_END.equals(flag)) {
+        if (flag != null
+                && (Flags.PVP_OVERWORLD.equals(flag) || Flags.PVP_NETHER.equals(flag) || Flags.PVP_END.equals(flag))) {
             String message = "protection.flags." + flag.getID() + "." + (e.isSetTo() ? "enabled" : "disabled");
             // Send the message to all players on the island
             e.getIsland().getPlayersOnIsland().forEach(player -> User.getInstance(player).sendMessage(message));

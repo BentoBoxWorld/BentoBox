@@ -157,11 +157,11 @@ public class AddonClassLoader extends URLClassLoader {
 
         String depend = data.getString("depend");
         if (depend != null) {
-            builder.dependencies(Arrays.asList(depend.split("\\s*,\\s*")));
+            builder.dependencies(Arrays.asList(depend.split("\\s*+,\\s*+")));
         }
         String softDepend = data.getString("softdepend");
         if (softDepend != null) {
-            builder.softDependencies(Arrays.asList(softDepend.split("\\s*,\\s*")));
+            builder.softDependencies(Arrays.asList(softDepend.split("\\s*+,\\s*+")));
         }
         Material icon = Material.getMaterial(data.getString("icon", "PAPER").toUpperCase(Locale.ENGLISH));
         if (icon == null) {
