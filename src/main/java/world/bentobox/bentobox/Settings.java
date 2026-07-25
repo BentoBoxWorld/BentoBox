@@ -164,6 +164,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.did-you-mean.subcommands", since = "3.20.0")
     private boolean didYouMeanSubcommands = true;
 
+    @ConfigComment("Register commands with Paper's Brigadier command system instead of the legacy command map.")
+    @ConfigComment("Brigadier lets the client show subcommands and completions as the player types, rather than")
+    @ConfigComment("only after they press enter or TAB. Turn this off to go back to the legacy registration if")
+    @ConfigComment("another plugin conflicts with it.")
+    @ConfigEntry(path = "general.brigadier-commands", since = "3.22.0")
+    private boolean useBrigadierCommands = true;
+
     /* PANELS */
     @ConfigComment("Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.")
     @ConfigEntry(path = "panel.click-cooldown-ms")
@@ -1926,6 +1933,22 @@ public class Settings implements ConfigObject {
      */
     public void setDidYouMeanSubcommands(boolean didYouMeanSubcommands) {
         this.didYouMeanSubcommands = didYouMeanSubcommands;
+    }
+
+    /**
+     * @return whether commands are registered with Paper's Brigadier system
+     * @since 3.22.0
+     */
+    public boolean isUseBrigadierCommands() {
+        return useBrigadierCommands;
+    }
+
+    /**
+     * @param useBrigadierCommands the useBrigadierCommands to set
+     * @since 3.22.0
+     */
+    public void setUseBrigadierCommands(boolean useBrigadierCommands) {
+        this.useBrigadierCommands = useBrigadierCommands;
     }
 
 }

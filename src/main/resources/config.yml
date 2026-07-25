@@ -101,6 +101,12 @@ general:
     # BentoBox suggests the closest matching subcommand instead of showing an error.
     # Added since 3.20.0.
     subcommands: true
+  # Register commands with Paper's Brigadier command system instead of the legacy command map.
+  # Brigadier lets the client show subcommands and completions as the player types, rather than
+  # only after they press enter or TAB. Turn this off to go back to the legacy registration if
+  # another plugin conflicts with it.
+  # Added since 3.22.0.
+  brigadier-commands: true
 panel:
   # Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.
   click-cooldown-ms: 250
