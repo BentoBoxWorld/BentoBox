@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.commands.brigadier.BrigadierCommandRegistrar;
 
 public class CommandsManager {
 
@@ -22,10 +23,47 @@ public class CommandsManager {
     private final Map<@NonNull String, @NonNull CompositeCommand> commands = new HashMap<>();
     private SimpleCommandMap commandMap;
 
-    // Reflection is required to access Bukkit's internal command map for dynamic command registration
-    @SuppressWarnings("java:S3011")
+    /**
+     * Brigadier registrar, or {@code null} when Brigadier registration is turned
+     * off in the config or is unavailable on this server, in which case the
+     * legacy command map path is used instead.
+     */
+    @Nullable
+    private final BrigadierCommandRegistrar brigadier;
+
+    public CommandsManager() {
+        BentoBox plugin = BentoBox.getInstance();
+        BrigadierCommandRegistrar registrar = null;
+        if (plugin.getSettings().isUseBrigadierCommands()) {
+            try {
+                registrar = new BrigadierCommandRegistrar(plugin);
+                // Must be hooked before Paper opens the COMMANDS lifecycle window,
+                // which happens as soon as onEnable returns.
+                registrar.hookLifecycle();
+            } catch (Exception | LinkageError e) {
+                plugin.logWarning(
+                        "Brigadier command registration is unavailable, falling back to the legacy command map: "
+                                + e.getMessage());
+                registrar = null;
+            }
+        }
+        this.brigadier = registrar;
+    }
+
     public void registerCommand(@NonNull CompositeCommand command) {
         commands.put(command.getLabel(), command);
+        if (brigadier != null) {
+            // Commands created before the lifecycle window opens are picked up by
+            // the registrar when it opens, so nothing more is needed here.
+            brigadier.registerCommand(command);
+            return;
+        }
+        registerWithCommandMap(command);
+    }
+
+    // Reflection is required to access Bukkit's internal command map for dynamic command registration
+    @SuppressWarnings("java:S3011")
+    private void registerWithCommandMap(@NonNull CompositeCommand command) {
         // Use reflection to obtain the commandMap method in Bukkit's server.
         try{
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -49,6 +87,15 @@ public class CommandsManager {
      * Unregisters all BentoBox registered commands with Bukkit
      */
     public void unregisterCommands() {
+        if (brigadier != null) {
+            // Brigadier has no API for removing a node, so the nodes stay put and
+            // instead resolve to nothing: their requires predicate hides them from
+            // clients and their executor becomes a no-op. Any command re-registered
+            // after this reuses the node it already has.
+            commands.clear();
+            brigadier.refreshClients();
+            return;
+        }
         // Use reflection to obtain the knownCommands in the commandMap
         try {
             @SuppressWarnings("unchecked")
