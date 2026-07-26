@@ -280,6 +280,9 @@ public class AddonsManager {
                 .filter(g -> !(g instanceof GameModeAddon)).forEach(this::enableAddon);
         // Set perms for enabled addons
         this.getEnabledAddons().forEach(this::setPerms);
+        // Addons add their sub-commands to game mode commands as they enable, which is
+        // after the command tree was handed to Paper, so rebuild it now it is complete.
+        plugin.getCommandsManager().refreshCommandTrees();
         plugin.log("Addons successfully enabled.");
     }
 
@@ -723,6 +726,9 @@ public class AddonsManager {
      */
     public void allLoaded() {
         this.getEnabledAddons().forEach(this::allLoaded);
+        // Anything an addon registered in allLoaded() is later still than enableAddons(),
+        // so the tree needs another pass. It is a no-op when nothing has changed.
+        plugin.getCommandsManager().refreshCommandTrees();
     }
 
     /**

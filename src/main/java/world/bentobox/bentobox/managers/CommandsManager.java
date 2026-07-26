@@ -84,6 +84,26 @@ public class CommandsManager {
     }
 
     /**
+     * Rebuilds the Brigadier command tree so that sub-commands registered after a
+     * top level command was first advertised are included.
+     * <p>
+     * Addons add their sub-commands to game mode commands as they enable, which
+     * happens a tick after Paper's command lifecycle window has closed and the
+     * tree was built. Those sub-commands run either way, but without this the
+     * client is never told about them, so they are missing from tab completion.
+     * <p>
+     * Does nothing when Brigadier registration is off - the legacy command map
+     * resolves completions dynamically and has never had this problem.
+     *
+     * @since 3.22.0
+     */
+    public void refreshCommandTrees() {
+        if (brigadier != null) {
+            brigadier.refreshTrees();
+        }
+    }
+
+    /**
      * Unregisters all BentoBox registered commands with Bukkit
      */
     public void unregisterCommands() {
