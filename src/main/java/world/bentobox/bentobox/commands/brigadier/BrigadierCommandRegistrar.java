@@ -20,6 +20,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -141,6 +142,67 @@ public class BrigadierCommandRegistrar {
             // /bentobox reload - need the new tree pushed to them.
             Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
         }
+    }
+
+    /**
+     * Rebuilds the literal tree of every registered top level command, picking up
+     * sub-commands added since the node was first built.
+     * <p>
+     * This is needed because a top level command's children are baked in when its
+     * node is created, and addons add their sub-commands to game mode commands
+     * later - {@code enableAddons()} runs a tick after the lifecycle window has
+     * closed. Without this the late sub-commands still run, because the greedy
+     * argument catches them, but the client is never told they exist.
+     * <p>
+     * Brigadier merges same-named literals rather than replacing them
+     * ({@code CommandNode#addChild} copies the incoming command across and
+     * recursively merges its children), so re-registering a freshly built tree
+     * grafts the new children onto the live node and leaves the existing ones
+     * alone. Nodes are never removed, but a sub-command that has gone away
+     * resolves to null and its {@code requires} predicate stops matching, so it
+     * disappears from clients anyway.
+     */
+    public void refreshTrees() {
+        if (dispatcher == null) {
+            return;
+        }
+        boolean changed = false;
+        for (CompositeCommand command : new ArrayList<>(plugin.getCommandsManager().getCommands().values())) {
+            String label = command.getLabel().toLowerCase(Locale.ENGLISH);
+            if (!registeredLabels.contains(label)) {
+                // Never registered at all - the normal path builds it and pushes it.
+                registerCommand(command);
+                continue;
+            }
+            int before = childCount(label);
+            dispatcher.register(buildTopLevel(label));
+            // Merging is a no-op when nothing new turned up, and pushing the tree to
+            // every online player for no reason is not free.
+            changed |= childCount(label) != before;
+        }
+        if (changed) {
+            refreshClients();
+        }
+    }
+
+    /**
+     * Total number of nodes in a top level command's tree, used to tell whether a
+     * rebuild actually added anything.
+     *
+     * @param label top level label
+     * @return node count, 0 if the label has no node
+     */
+    private int childCount(@NonNull String label) {
+        CommandNode<CommandSourceStack> node = dispatcher == null ? null : dispatcher.getRoot().getChild(label);
+        return node == null ? 0 : countNodes(node);
+    }
+
+    private static int countNodes(@NonNull CommandNode<CommandSourceStack> node) {
+        int count = 1;
+        for (CommandNode<CommandSourceStack> child : node.getChildren()) {
+            count += countNodes(child);
+        }
+        return count;
     }
 
     /**
@@ -294,6 +356,13 @@ public class BrigadierCommandRegistrar {
     /**
      * The visible literal subcommands at the position the greedy argument starts,
      * i.e. the ones Brigadier itself will already be suggesting.
+     * <p>
+     * A sub-command only counts if it actually has a literal node in the
+     * dispatcher. The command tree and the live {@link CompositeCommand} tree can
+     * disagree - a sub-command registered after this node was built has no literal
+     * of its own - and dropping such a sub-command here would remove it from the
+     * greedy argument's suggestions as well, leaving no way for the client to
+     * learn about it at all.
      */
     private Set<String> literalSiblings(SuggestionsBuilder builder, CommandSender sender) {
         // Everything before the greedy argument was consumed by literal nodes.
@@ -305,13 +374,48 @@ public class BrigadierCommandRegistrar {
         if (current == null || consumed.length - 1 >= MAX_TREE_DEPTH) {
             return Set.of();
         }
+        Set<String> advertised = advertisedChildren(consumed);
         Set<String> labels = new HashSet<>();
         for (CompositeCommand sub : current.getSubCommands().values()) {
-            if (!sub.isHidden() && canUse(sub, sender)) {
+            if (!sub.isHidden() && canUse(sub, sender)
+                    && advertised.contains(sub.getLabel().toLowerCase(Locale.ENGLISH))) {
                 labels.add(sub.getLabel());
             }
         }
         return labels;
+    }
+
+    /**
+     * The names of the literal children Brigadier holds at the node the given
+     * tokens lead to, which are exactly the ones it will suggest by itself.
+     *
+     * @param consumed tokens consumed by literal nodes, label first
+     * @return literal child names, lower case, or an empty set if the path does
+     *         not exist in the dispatcher
+     */
+    private Set<String> advertisedChildren(String[] consumed) {
+        if (dispatcher == null || consumed.length == 0) {
+            return Set.of();
+        }
+        CommandNode<CommandSourceStack> node = dispatcher.getRoot()
+                .getChild(consumed[0].toLowerCase(Locale.ENGLISH));
+        if (node != null && node.getRedirect() != null) {
+            // An alias or the namespaced form - the children live on the main node.
+            node = node.getRedirect();
+        }
+        for (int i = 1; i < consumed.length && node != null; i++) {
+            node = node.getChild(consumed[i].toLowerCase(Locale.ENGLISH));
+        }
+        if (node == null) {
+            return Set.of();
+        }
+        Set<String> names = new HashSet<>();
+        for (CommandNode<CommandSourceStack> child : node.getChildren()) {
+            if (child instanceof LiteralCommandNode) {
+                names.add(child.getName().toLowerCase(Locale.ENGLISH));
+            }
+        }
+        return names;
     }
 
     /*
