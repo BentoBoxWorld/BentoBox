@@ -14,6 +14,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.awt.Color;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -553,13 +554,117 @@ class BlueMapHookTest extends CommonTestSetup {
     }
 
     @Test
-    void testCreateMarkerSet() {
-        when(blueMapAPI.getMaps()).thenReturn(List.of(blueMapMap));
+    void testCreateMarkerSetNotAttachedUntilMarkerAdded() {
         hook.hook();
         simulateBlueMapEnable();
         hook.createMarkerSet("warps.markers", "Warps");
-        // Should be attached to the BlueMap map
+        // Creating a set alone says nothing about which world it belongs to, so it must not be
+        // attached to any map yet
+        assertFalse(mapMarkerSets.containsKey("warps.markers"));
+    }
+
+    @Test
+    void testAddPointMarkerAttachesSetToItsWorld() {
+        hook.hook();
+        simulateBlueMapEnable();
+        hook.createMarkerSet("warps.markers", "Warps");
+        hook.addPointMarker("warps.markers", "warp1", "Warp One", locationIn(overWorld), "default");
+
         assertTrue(mapMarkerSets.containsKey("warps.markers"));
         assertEquals("Warps", mapMarkerSets.get("warps.markers").getLabel());
+        assertNotNull(mapMarkerSets.get("warps.markers").get("warp1"));
+    }
+
+    @Test
+    void testAddPointMarkerDoesNotAttachSetToUnrelatedWorld() {
+        // A second world with its own BlueMap map, unrelated to where the marker is added
+        World otherWorld = mock(World.class);
+        BlueMapWorld otherBMWorld = mock(BlueMapWorld.class);
+        BlueMapMap otherMap = mock(BlueMapMap.class);
+        Map<String, MarkerSet> otherMapMarkerSets = new HashMap<>();
+        when(blueMapAPI.getWorld(otherWorld)).thenReturn(Optional.of(otherBMWorld));
+        when(otherBMWorld.getMaps()).thenReturn(List.of(otherMap));
+        when(otherMap.getMarkerSets()).thenReturn(otherMapMarkerSets);
+        when(blueMapAPI.getMaps()).thenReturn(List.of(blueMapMap, otherMap));
+
+        hook.hook();
+        simulateBlueMapEnable();
+        hook.createMarkerSet("warps.markers", "Warps");
+        hook.addPointMarker("warps.markers", "warp1", "Warp One", locationIn(overWorld), "default");
+
+        assertTrue(mapMarkerSets.containsKey("warps.markers"));
+        // The unrelated world's map must not pick up the set
+        assertFalse(otherMapMarkerSets.containsKey("warps.markers"));
+    }
+
+    @Test
+    void testAddAreaMarkerAttachesSetToItsWorld() {
+        hook.hook();
+        simulateBlueMapEnable();
+        hook.createMarkerSet("regions", "Regions");
+        hook.addAreaMarker("regions", "r1", "Region One", overWorld, 0, 0, 10, 10, Color.RED, Color.BLUE, 2);
+
+        assertTrue(mapMarkerSets.containsKey("regions"));
+        assertNotNull(mapMarkerSets.get("regions").get("r1"));
+    }
+
+    @Test
+    void testAddPolygonMarkerAttachesSetToItsWorld() {
+        hook.hook();
+        simulateBlueMapEnable();
+        hook.createMarkerSet("regions", "Regions");
+        hook.addPolygonMarker("regions", "p1", "Poly One", overWorld, new double[] { 0, 10, 10 },
+                new double[] { 0, 0, 10 }, Color.RED, Color.BLUE, 2);
+
+        assertTrue(mapMarkerSets.containsKey("regions"));
+        assertNotNull(mapMarkerSets.get("regions").get("p1"));
+    }
+
+    @Test
+    void testRemoveMarkerSetDetachesFromItsWorld() {
+        hook.hook();
+        simulateBlueMapEnable();
+        hook.createMarkerSet("warps.markers", "Warps");
+        hook.addPointMarker("warps.markers", "warp1", "Warp One", locationIn(overWorld), "default");
+        assertTrue(mapMarkerSets.containsKey("warps.markers"));
+
+        hook.removeMarkerSet("warps.markers");
+        assertFalse(mapMarkerSets.containsKey("warps.markers"));
+    }
+
+    @Test
+    void testAddonMarkerSetReattachedToItsWorldAfterBlueMapReload() {
+        hook.hook();
+        simulateBlueMapEnable();
+        hook.createMarkerSet("warps.markers", "Warps");
+        hook.addPointMarker("warps.markers", "warp1", "Warp One", locationIn(overWorld), "default");
+
+        // A BlueMap reload discards the maps and their marker sets
+        simulateBlueMapDisable();
+        mapMarkerSets.clear();
+        simulateBlueMapEnable();
+
+        assertTrue(mapMarkerSets.containsKey("warps.markers"));
+        assertNotNull(mapMarkerSets.get("warps.markers").get("warp1"));
+    }
+
+    @Test
+    void testCreateMarkerSetBeforeBlueMapLoadsDoesNotThrow() {
+        hook.hook();
+        // BlueMap not loaded yet - api is null
+        hook.createMarkerSet("warps.markers", "Warps");
+        hook.addPointMarker("warps.markers", "warp1", "Warp One", locationIn(overWorld), "default");
+        hook.removeMarkerSet("warps.markers");
+        assertNull(hook.getBlueMapAPI());
+    }
+
+    /** A mocked Location in the given world; only world and coordinates are used by the hook. */
+    private Location locationIn(World world) {
+        Location loc = mock(Location.class);
+        when(loc.getWorld()).thenReturn(world);
+        when(loc.getX()).thenReturn(0.0);
+        when(loc.getY()).thenReturn(64.0);
+        when(loc.getZ()).thenReturn(0.0);
+        return loc;
     }
 }
