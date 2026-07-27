@@ -76,7 +76,7 @@ public class SuggestionsManager {
         World contextWorld = user.isPlayer() ? Util.getWorld(user.getWorld()) : null;
         List<Match> matches = CommandMatcher.matchCommandLine(tokens,
                 plugin.getCommandsManager().getCommands().values(), contextWorld, cmd -> isAccessible(user, cmd));
-        return sendSuggestions(user, matches);
+        return sendSuggestions(user, dropTyped(matches, "/" + String.join(" ", tokens)));
     }
 
     /**
@@ -95,7 +95,24 @@ public class SuggestionsManager {
             @NonNull String typedPrefix, @NonNull List<String> args) {
         List<Match> matches = CommandMatcher.matchSubtree(args, command, typedPrefix,
                 cmd -> isAccessible(user, cmd));
-        return sendSuggestions(user, matches);
+        return sendSuggestions(user, dropTyped(matches, typedPrefix + " " + String.join(" ", args)));
+    }
+
+    /**
+     * Drops any match that is exactly what was typed.
+     * <p>
+     * The matcher re-attaches tokens it could not match as arguments, so a
+     * command line that fails for a reason other than a mistyped label - no
+     * permission for the sub-command, say - can come back as a suggestion to run
+     * the very thing that just failed. That cannot help, and if the player
+     * accepts it the same failure happens again.
+     *
+     * @param matches   candidate matches
+     * @param typedLine what was typed, starting with '/'
+     * @return the matches that differ from what was typed
+     */
+    private static List<Match> dropTyped(@NonNull List<Match> matches, @NonNull String typedLine) {
+        return matches.stream().filter(m -> !m.commandString().equalsIgnoreCase(typedLine.trim())).toList();
     }
 
     /**
