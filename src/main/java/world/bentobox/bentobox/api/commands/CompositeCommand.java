@@ -329,7 +329,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * recorded - see {@link BStats#recordCommandFailure(CommandFailure, String)}.
      *
      * @param failure kind of failure
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void recordFailure(@NonNull CommandFailure failure) {
         plugin.getMetrics().ifPresent(bStats -> bStats.recordCommandFailure(failure, getStatsKey()));
@@ -347,7 +347,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * name, which is equally stable.
      *
      * @return stable identifier of this command
-     * @since 3.21.1
+     * @since 3.22.0
      */
     public @NonNull String getStatsKey() {
         String perm = getPermission();

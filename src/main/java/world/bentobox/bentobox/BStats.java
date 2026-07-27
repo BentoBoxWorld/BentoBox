@@ -32,14 +32,14 @@ public class BStats {
      * Maximum number of distinct command keys tracked between submissions. Once this
      * is reached, counts of already-known commands keep rising but new ones are
      * dropped. Guards against unbounded growth from addons with generated commands.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private static final int MAX_TRACKED_COMMANDS = 200;
 
     /**
      * Maximum number of failing commands reported per submission. Only the busiest
      * are sent, to keep the chart readable and the payload small.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private static final int REPORTED_COMMANDS = 20;
 
@@ -61,13 +61,13 @@ public class BStats {
 
     /**
      * Counts of command failures by {@link CommandFailure} since the last data send.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private final Map<String, Integer> commandFailures = new HashMap<>();
 
     /**
      * Counts of command failures by command key since the last data send.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private final Map<String, Integer> commandFailurePaths = new HashMap<>();
 
@@ -211,7 +211,7 @@ public class BStats {
      * Sends the version of each enabled addon (except GameModeAddons), grouped by
      * addon name. This is what tells us how long the tail is after a release and
      * whether it is safe to make a breaking API change.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void registerAddonVersionsChart() {
         metrics.addCustomChart(new DrilldownPie("addonVersions",
@@ -221,7 +221,7 @@ public class BStats {
 
     /**
      * Sends the version of each enabled GameModeAddon, grouped by game mode name.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void registerGameModeVersionsChart() {
         metrics.addCustomChart(new DrilldownPie("gameModeVersions",
@@ -233,7 +233,7 @@ public class BStats {
      * metrics opt-out.
      * @param addons stream of addons
      * @return map of addon name to a map of version to count
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private Map<String, Map<String, Integer>> versionsOf(Stream<? extends Addon> addons) {
         Map<String, Map<String, Integer>> values = new HashMap<>();
@@ -246,7 +246,7 @@ public class BStats {
     /**
      * Sends the BentoBox API version each enabled addon is built against. Tells us
      * which API levels are still in use in the wild.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void registerAddonApiVersionsChart() {
         metrics.addCustomChart(new AdvancedPie("addonApiVersions", () -> {
@@ -268,7 +268,7 @@ public class BStats {
      * feature that defaults to on appears as {@code no-<name>} when a server turns
      * it off. Comparing a bar against the total server count gives the adoption (or
      * rejection) rate of that feature.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void registerFeaturesChart() {
         metrics.addCustomChart(new SimpleBarChart("features", () -> {
@@ -306,7 +306,7 @@ public class BStats {
 
     /**
      * Records a feature that defaults to off and has been switched on.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void optedIn(Map<String, Integer> values, String name, boolean enabled) {
         if (enabled) {
@@ -316,7 +316,7 @@ public class BStats {
 
     /**
      * Records a feature that defaults to on and has been switched off.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void optedOut(Map<String, Integer> values, String name, boolean enabled) {
         if (!enabled) {
@@ -326,7 +326,7 @@ public class BStats {
 
     /**
      * Sends the number of command failures of each kind since the last data send.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void registerCommandFailuresChart() {
         metrics.addCustomChart(new AdvancedPie("commandFailures", () -> {
@@ -339,7 +339,7 @@ public class BStats {
     /**
      * Sends the commands that failed most often since the last data send. Only the
      * busiest {@value #REPORTED_COMMANDS} are sent.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     private void registerCommandFailurePathsChart() {
         metrics.addCustomChart(new SimpleBarChart("commandFailurePaths", () -> {
@@ -360,7 +360,7 @@ public class BStats {
      * @param failure kind of failure
      * @param commandKey stable identifier of the command, see
      *        {@link world.bentobox.bentobox.api.commands.CompositeCommand#getStatsKey()}
-     * @since 3.21.1
+     * @since 3.22.0
      */
     public void recordCommandFailure(@NonNull CommandFailure failure, @NonNull String commandKey) {
         commandFailures.merge(failure.name().toLowerCase(Locale.ENGLISH), 1, Integer::sum);
@@ -373,7 +373,7 @@ public class BStats {
 
     /**
      * The ways in which running a command can fail.
-     * @since 3.21.1
+     * @since 3.22.0
      */
     public enum CommandFailure {
         /**
