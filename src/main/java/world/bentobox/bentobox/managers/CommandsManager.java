@@ -142,6 +142,32 @@ public class CommandsManager {
     }
 
     /**
+     * Resolves a top level command from the first token of something that was
+     * typed: its label, one of its aliases, or either of those in the
+     * {@code addon:label} form, in any case.
+     *
+     * @param label first token of a command line, without the leading slash
+     * @return the command, or {@code null} if BentoBox does not own that label
+     * @since 3.22.0
+     */
+    @Nullable
+    public CompositeCommand resolveCommand(@NonNull String label) {
+        int colon = label.indexOf(':');
+        String name = colon >= 0 ? label.substring(colon + 1) : label;
+        CompositeCommand command = commands.get(name);
+        if (command != null) {
+            return command;
+        }
+        for (CompositeCommand c : commands.values()) {
+            if (c.getLabel().equalsIgnoreCase(name)
+                    || c.getAliases().stream().anyMatch(a -> a.equalsIgnoreCase(name))) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a map of every command registered in BentoBox
      * @return the commands
      */

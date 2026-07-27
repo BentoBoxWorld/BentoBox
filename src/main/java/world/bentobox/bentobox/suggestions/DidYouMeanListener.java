@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.suggestions;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,10 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.command.UnknownCommandEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.eclipse.jdt.annotation.Nullable;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 
 /**
@@ -40,11 +44,20 @@ public class DidYouMeanListener implements Listener {
     }
 
     /**
-     * Fires only when no plugin owns the typed command, so BentoBox never
-     * shadows another plugin's command here.
+     * Fires when no plugin owns the typed command, and also when Brigadier
+     * refused to parse one, so BentoBox never shadows another plugin's command
+     * here.
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onUnknownCommand(UnknownCommandEvent e) {
+        // A command line of our own that Brigadier would not parse must still reach
+        // the command tree, which reports for itself. This has to run whatever the
+        // did-you-mean settings say: it is dispatch, not a suggestion.
+        if (dispatchOwnCommand(e.getSender(), e.getCommandLine())) {
+            // The command has spoken for itself, so drop Brigadier's error
+            e.message(null);
+            return;
+        }
         if (!plugin.getSettings().isDidYouMeanUnknownCommands() || !(e.getSender() instanceof Player player)) {
             return;
         }
@@ -53,6 +66,41 @@ public class DidYouMeanListener implements Listener {
             // Our suggestion replaces the vanilla "Unknown command" message
             e.message(null);
         }
+    }
+
+    /**
+     * Runs a BentoBox command line that never made it to its command.
+     * <p>
+     * Brigadier hides nodes the sender may not use, and a hidden node is not just
+     * invisible: the parse walks into the matching sub-command literal, finds it
+     * unusable and dead-ends there, without ever falling back to the catch-all
+     * argument beside it. The sender then gets "Incorrect argument for command"
+     * from Brigadier rather than the command's own "you do not have permission"
+     * message, and nothing runs. Dispatching the line through the command tree
+     * restores what happens when the same command is registered the legacy way:
+     * the command checks its own permissions and says what is wrong.
+     * <p>
+     * Nothing has run at this point - Paper reports an unknown command from its
+     * parse step, before execution - so there is no risk of running it twice.
+     *
+     * @param sender      whoever typed it
+     * @param commandLine the command line, without the leading slash
+     * @return true if this was one of our commands and it was dispatched
+     */
+    private boolean dispatchOwnCommand(CommandSender sender, @Nullable String commandLine) {
+        if (commandLine == null || commandLine.isBlank()) {
+            return false;
+        }
+        String[] tokens = commandLine.trim().split("\\s+");
+        CompositeCommand command = plugin.getCommandsManager().resolveCommand(tokens[0]);
+        if (command == null) {
+            return false;
+        }
+        // Commands echo the label back in their help, so drop any addon: prefix
+        int colon = tokens[0].indexOf(':');
+        String label = colon >= 0 ? tokens[0].substring(colon + 1) : tokens[0];
+        command.execute(sender, label, Arrays.copyOfRange(tokens, 1, tokens.length));
+        return true;
     }
 
     /**
@@ -80,7 +128,15 @@ public class DidYouMeanListener implements Listener {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Player player = Bukkit.getPlayer(uuid);
                 if (player != null) {
-                    player.performCommand(command.substring(1));
+                    try {
+                        player.performCommand(command.substring(1));
+                    } catch (Exception ex) {
+                        // Bukkit wraps anything the dispatch throws, and letting that out
+                        // of a scheduled task only produces a stack trace nobody can act
+                        // on. The player has already seen whatever the command said.
+                        plugin.logError("Could not run the accepted suggestion '" + command + "' for "
+                                + player.getName() + ": " + ex.getMessage());
+                    }
                 }
             });
             return true;
