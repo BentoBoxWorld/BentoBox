@@ -99,6 +99,15 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#saveObjectNow(java.lang.Object)
+     */
+    @Override
+    public CompletableFuture<Boolean> saveObjectNow(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Save only in the destination database
+        return toHandler.saveObjectNow(instance);
+    }
+
+    /* (non-Javadoc)
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.String)
      */
     @Override

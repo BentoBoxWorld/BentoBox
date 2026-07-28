@@ -62,7 +62,7 @@ public class PlayersManager {
 
     public void shutdown(){
         // Save all players in cache
-        playerCache.forEach((uuid, player) -> handler.saveObject(player));
+        playerCache.forEach((uuid, player) -> handler.saveObjectAsync(player));
         handler.close();
         playerCache.shutdown();
     }
@@ -163,7 +163,7 @@ public class PlayersManager {
         }
         Players player = getPlayer(user.getUniqueId());
         player.setPlayerName(user.getName());
-        handler.saveObject(player);
+        handler.saveObjectAsync(player);
         // Update names
         Names newName = new Names(user.getName(), user.getUniqueId());
         // Add to cache
@@ -226,7 +226,7 @@ public class PlayersManager {
     public void setResets(World world, UUID playerUUID, int resets) {
         Players p = getPlayer(playerUUID);
         p.setResets(world, resets);
-        handler.saveObject(p);
+        handler.saveObjectAsync(p);
     }
 
     /**
@@ -246,7 +246,7 @@ public class PlayersManager {
     public void setLocale(UUID playerUUID, String localeName) {
         Players p = getPlayer(playerUUID);
         p.setLocale(localeName);
-        handler.saveObject(p);
+        handler.saveObjectAsync(p);
     }
 
     /**
@@ -257,7 +257,7 @@ public class PlayersManager {
     public void addDeath(World world, UUID playerUUID) {
         Players p = getPlayer(playerUUID);
         p.addDeath(Util.getWorld(world));
-        handler.saveObject(p);
+        handler.saveObjectAsync(p);
     }
 
     /**
@@ -269,7 +269,7 @@ public class PlayersManager {
     public void setDeaths(World world, UUID playerUUID, int deaths) {
         Players p = getPlayer(playerUUID);
         p.setDeaths(Util.getWorld(world), deaths);
-        handler.saveObject(p);
+        handler.saveObjectAsync(p);
     }
 
     /**
@@ -333,7 +333,7 @@ public class PlayersManager {
     public void addReset(World world, UUID playerUUID) {
         Players p = getPlayer(playerUUID);
         p.addReset(world);
-        handler.saveObject(p);
+        handler.saveObjectAsync(p);
     }
 
     /**

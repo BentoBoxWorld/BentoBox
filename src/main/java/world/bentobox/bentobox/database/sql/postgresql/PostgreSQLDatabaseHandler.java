@@ -1,15 +1,11 @@
 package world.bentobox.bentobox.database.sql.postgresql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 
-import com.google.gson.Gson;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
-import world.bentobox.bentobox.database.objects.DataObject;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
 import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 
@@ -54,52 +50,32 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T>
                 );
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public CompletableFuture<Boolean> saveObject(T instance)
     {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        return this.saveInstance(instance, false, "PostgreSQL", PostgreSQLDatabaseHandler::bindSave);
+    }
 
-        // Null check
-        if (instance == null)
-        {
-            this.plugin.logError("PostgreSQL database request to store a null. ");
-            completableFuture.complete(false);
-            return completableFuture;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CompletableFuture<Boolean> saveObjectNow(T instance)
+    {
+        return this.saveInstance(instance, true, "PostgreSQL", PostgreSQLDatabaseHandler::bindSave);
+    }
 
-        if (!(instance instanceof DataObject))
-        {
-            this.plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            completableFuture.complete(false);
-            return completableFuture;
-        }
-
-        Gson gson = this.getGson();
-        String toStore = gson.toJson(instance);
-        String uniqueId = ((DataObject) instance).getUniqueId();
-
-        this.processQueue.add(() ->
-        {
-            try (Connection connection = this.dataSource.getConnection();
-                    PreparedStatement preparedStatement = connection.prepareStatement(this.getSqlConfig().getSaveObjectSQL()))
-            {
-                preparedStatement.setString(1, uniqueId); // INSERT
-                preparedStatement.setString(2, toStore); // INSERT
-                preparedStatement.setString(3, toStore); // ON CONFLICT
-                preparedStatement.execute();
-                completableFuture.complete(true);
-            }
-            catch (SQLException e)
-            {
-                this.plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
-                completableFuture.complete(false);
-            }
-        });
-
-        return completableFuture;
+    /**
+     * PostgreSQL's upsert takes the id first for the INSERT, then the json, then the json again for
+     * the ON CONFLICT update.
+     */
+    private static void bindSave(PreparedStatement statement, String json, String uniqueId) throws SQLException
+    {
+        statement.setString(1, uniqueId);
+        statement.setString(2, json);
+        statement.setString(3, json);
     }
 }

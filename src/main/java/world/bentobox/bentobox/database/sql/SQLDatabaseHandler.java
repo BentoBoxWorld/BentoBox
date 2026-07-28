@@ -37,6 +37,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
 {
     protected static final String COULD_NOT_LOAD_OBJECTS = "Could not load objects ";
     protected static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
+    protected static final String NOT_A_DATA_OBJECT = "This class is not a DataObject: ";
 
     /**
      * DataSource of database
@@ -251,6 +252,113 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     @Override
     public CompletableFuture<Boolean> saveObject(T instance)
     {
+        return this.save(instance, false);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CompletableFuture<Boolean> saveObjectNow(T instance)
+    {
+        return this.save(instance, true);
+    }
+
+
+    /**
+     * Binds a serialised instance to a save statement. The upsert syntax differs between databases,
+     * so the order the parameters are bound in is left to each handler.
+     * @since 3.22.0
+     */
+    @FunctionalInterface
+    protected interface SaveBinder
+    {
+        /**
+         * @param statement the statement to bind
+         * @param json the serialised instance
+         * @param uniqueId the instance's unique id
+         * @throws SQLException if a parameter cannot be bound
+         */
+        void bind(PreparedStatement statement, String json, String uniqueId) throws SQLException;
+    }
+
+
+    /**
+     * Shared save path for SQL handlers that build their own upsert statement. Validates and
+     * serialises the instance, then either writes on the calling thread or queues the write.
+     * <p>
+     * Exists so that handlers do not each repeat the validation, serialisation and dispatch around
+     * a statement whose only real difference is the order its parameters are bound in.
+     *
+     * @param instance the object to write
+     * @param forceSync true to write on the calling thread instead of queuing the write
+     * @param databaseName database name, used in error messages
+     * @param binder binds the serialised instance to the prepared statement
+     * @return completable future that is true if saved
+     * @since 3.22.0
+     */
+    protected CompletableFuture<Boolean> saveInstance(T instance, boolean forceSync, String databaseName,
+            SaveBinder binder)
+    {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+
+        // Null check
+        if (instance == null)
+        {
+            this.plugin.logError(databaseName + " database request to store a null. ");
+            completableFuture.complete(false);
+            return completableFuture;
+        }
+
+        if (!(instance instanceof DataObject dataObj))
+        {
+            this.plugin.logError(NOT_A_DATA_OBJECT + instance.getClass().getName());
+            completableFuture.complete(false);
+            return completableFuture;
+        }
+
+        String toStore = this.getGson().toJson(instance);
+        String uniqueId = dataObj.getUniqueId();
+
+        Runnable write = () ->
+        {
+            try (Connection connection = this.dataSource.getConnection();
+                    PreparedStatement preparedStatement =
+                            connection.prepareStatement(this.getSqlConfig().getSaveObjectSQL()))
+            {
+                binder.bind(preparedStatement, toStore, uniqueId);
+                preparedStatement.execute();
+                completableFuture.complete(true);
+            }
+            catch (SQLException e)
+            {
+                this.plugin.logError("Could not save object " + instance.getClass().getName() + " " + uniqueId + " " +
+                        e.getMessage());
+                completableFuture.complete(false);
+            }
+        };
+
+        if (forceSync)
+        {
+            write.run();
+        }
+        else
+        {
+            this.processQueue.add(write);
+        }
+
+        return completableFuture;
+    }
+
+
+    /**
+     * @param instance the object to write
+     * @param forceSync true to write on the calling thread instead of queuing the write
+     * @return completable future that is true if saved
+     */
+    private CompletableFuture<Boolean> save(T instance, boolean forceSync)
+    {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
         // Null check
@@ -263,7 +371,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
 
         if (!(instance instanceof DataObject))
         {
-            this.plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            this.plugin.logError(NOT_A_DATA_OBJECT + instance.getClass().getName());
             completableFuture.complete(false);
             return completableFuture;
         }
@@ -271,7 +379,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         // This has to be on the main thread to avoid concurrent modification errors
         String toStore = this.getGson().toJson(instance);
 
-        if (this.plugin.isEnabled())
+        if (!forceSync && this.plugin.isEnabled())
         {
             // Async
             this.processQueue.add(() -> store(completableFuture,
@@ -300,8 +408,9 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
      */
     private void store(CompletableFuture<Boolean> completableFuture, String name, String toStore, String storeSQL, boolean async)
     {
-        // Do not save anything if plug is disabled and this was an async request
-        if (async && !this.plugin.isEnabled())
+        // Do not save anything if plug is disabled and this was an async request, unless we are
+        // deliberately flushing the queue on shutdown (see AbstractDatabaseHandler#flush)
+        if (async && !this.plugin.isEnabled() && !this.draining)
         {
             return;
         }
@@ -368,7 +477,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
 
         if (!(instance instanceof DataObject))
         {
-            this.plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            this.plugin.logError(NOT_A_DATA_OBJECT + instance.getClass().getName());
             return;
         }
 

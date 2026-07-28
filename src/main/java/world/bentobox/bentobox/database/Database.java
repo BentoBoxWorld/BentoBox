@@ -113,12 +113,47 @@ public class Database<T> {
      * @param instance to save
      * @return true - always.
      * @since 1.13.0
+     * @deprecated The name implies the write has happened by the time this returns, but it has not -
+     *             this is identical to {@link #saveObjectAsync(Object)} and always returns
+     *             {@code true} without waiting for, or checking, the result.
+     *             <p>
+     *             Use {@link #saveObjectAsync(Object)} for normal saves. Use
+     *             {@link #saveObjectNow(Object)} only where a lost write cannot be retried, such as
+     *             a shutdown path - it blocks the calling thread, so it is not a drop-in
+     *             replacement for this method.
      */
+    @Deprecated(since = "3.22.0")
     public boolean saveObject(T instance) {
         saveObjectAsync(instance).thenAccept(r -> {
             if (r != null && !r) logger.severe(() -> "Could not save object to database!");
         });
         return true;
+    }
+
+    /**
+     * Save object on the calling thread, bypassing the asynchronous save queue, and return once the
+     * write has been attempted.
+     * <p>
+     * Queued writes are discarded if BentoBox is disabled before the queue drains, so a save issued
+     * while the server is shutting down can be lost. Pladdons are disabled by the server before
+     * BentoBox itself, which means anything a Pladdon persists from {@code onDisable()} needs this
+     * method rather than {@link #saveObject(Object)} or {@link #saveObjectAsync(Object)}.
+     * <p>
+     * Use this only on shutdown paths where a lost write cannot be retried. It blocks the calling
+     * thread for the duration of the write.
+     *
+     * @param instance to save
+     * @return true if the object was saved
+     * @since 3.22.0
+     */
+    public boolean saveObjectNow(T instance) {
+        try {
+            return Boolean.TRUE.equals(handler.saveObjectNow(instance).getNow(false));
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
+                | IntrospectionException e) {
+            logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
