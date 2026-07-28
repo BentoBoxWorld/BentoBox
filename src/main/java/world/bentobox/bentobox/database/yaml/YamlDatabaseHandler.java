@@ -349,6 +349,20 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        return save(instance, false);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> saveObjectNow(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        return save(instance, true);
+    }
+
+    /**
+     * @param instance the object to write
+     * @param forceSync true to write on the calling thread instead of scheduling the write
+     * @return CompletableFuture that will be true if object is saved successfully
+     */
+    private CompletableFuture<Boolean> save(T instance, boolean forceSync) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
@@ -359,7 +373,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return CompletableFuture.completedFuture(false);
         }
-        if (plugin.isShutdown()) {
+        if (forceSync || plugin.isShutdown()) {
             try {
                 processFile(completableFuture, instance);
             } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {

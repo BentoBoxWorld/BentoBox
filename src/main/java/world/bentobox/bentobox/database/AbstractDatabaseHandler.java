@@ -2,8 +2,12 @@ package world.bentobox.bentobox.database;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -33,12 +37,31 @@ public abstract class AbstractDatabaseHandler<T> {
     protected Queue<Runnable> processQueue;
 
     /**
+     * Every handler created in this JVM, so that queued writes can be flushed on shutdown.
+     * <p>
+     * A handler is created per {@link Database} instance, each with its own {@link #processQueue},
+     * and nothing else keeps a list of them. Weakly held so handlers belonging to a discarded
+     * {@code Database} can still be collected.
+     * @since 3.22.0
+     */
+    private static final Set<AbstractDatabaseHandler<?>> HANDLERS =
+            Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
+
+    /**
      * Async save task that runs repeatedly
      */
     private BukkitTask asyncSaveTask;
     private boolean inSave;
 
     protected boolean shutdown;
+
+    /**
+     * True while {@link #flush()} is draining the queue on the calling thread. Queued writes
+     * normally refuse to run once BentoBox is disabled; during a flush they must be allowed to
+     * complete, because that is the whole point of the flush.
+     * @since 3.22.0
+     */
+    protected volatile boolean draining;
 
     /**
      * Name of the folder where databases using files will live
@@ -115,9 +138,53 @@ public abstract class AbstractDatabaseHandler<T> {
                 inSave = false;
             }
         }, 0L, 1L);
+        HANDLERS.add(this);
     }
 
     protected AbstractDatabaseHandler() {}
+
+    /**
+     * Runs every write still sitting in this handler's queue, on the calling thread.
+     * <p>
+     * Queued writes are normally drained by an asynchronous repeating task. That task stops once
+     * BentoBox is disabled, so anything queued during shutdown is never written. Pladdons are
+     * disabled by the server <i>before</i> BentoBox, which means everything they save from
+     * {@code onDisable()} lands in a queue that is about to be abandoned.
+     *
+     * @since 3.22.0
+     */
+    public void flush() {
+        if (processQueue == null || processQueue.isEmpty()) {
+            return;
+        }
+        draining = true;
+        try {
+            while (!processQueue.isEmpty()) {
+                try {
+                    processQueue.poll().run();
+                } catch (Exception e) {
+                    plugin.logError("Could not flush a queued database write: " + e.getMessage());
+                }
+            }
+        } finally {
+            draining = false;
+        }
+    }
+
+    /**
+     * Flushes every handler's outstanding writes on the calling thread. Called during BentoBox
+     * shutdown, once all addons have been disabled and before any database is closed, so that
+     * writes queued by addons on their way out are not discarded.
+     *
+     * @since 3.22.0
+     */
+    public static void flushAll() {
+        List<AbstractDatabaseHandler<?>> handlers;
+        synchronized (HANDLERS) {
+            handlers = new ArrayList<>(HANDLERS);
+        }
+        handlers.forEach(AbstractDatabaseHandler::flush);
+    }
 
     /**
      * Loads all the records in this table and returns a list of them
@@ -161,6 +228,31 @@ public abstract class AbstractDatabaseHandler<T> {
      * @return completable future that is true if saved
      */
     public abstract CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
+
+    /**
+     * Save T into the corresponding database on the calling thread, bypassing the asynchronous save
+     * queue. The returned future is already complete when this method returns.
+     * <p>
+     * Normal saves are queued and written by an asynchronous task. That task stops running once
+     * BentoBox is disabled, and any write still sitting in the queue at that point is discarded, so
+     * a save issued while the server is shutting down can be lost silently. This is not
+     * hypothetical: Pladdons are disabled by the server <i>before</i> BentoBox itself, so anything a
+     * Pladdon persists from {@code onDisable()} is queued and never drained.
+     * <p>
+     * Use this only where a write must not be lost and there is no later chance to retry - shutdown
+     * paths, essentially. Everywhere else prefer {@link #saveObject(Object)}, as this blocks the
+     * calling thread for the duration of the write.
+     * <p>
+     * The default implementation delegates to {@link #saveObject(Object)}, which is already correct
+     * for handlers that write synchronously. Handlers that queue writes must override it.
+     *
+     * @param instance that should be inserted into the database
+     * @return completable future, already complete, that is true if saved
+     * @since 3.22.0
+     */
+    public CompletableFuture<Boolean> saveObjectNow(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        return saveObject(instance);
+    }
 
     /**
      * Deletes the object with the unique id from the database. If the object does not exist, it will fail silently.

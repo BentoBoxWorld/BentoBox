@@ -23,6 +23,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.BentoBoxHookRegistrar;
 import world.bentobox.bentobox.hooks.VaultHook;
@@ -324,6 +325,11 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (addonsManager != null) {
             addonsManager.disableAddons();
         }
+        // Write out anything addons queued on their way out. The asynchronous save task has already
+        // stopped by this point, so without this those writes would be discarded. Pladdons are
+        // disabled by the server before BentoBox, so their onDisable() saves are always in this
+        // position. Must run before any database is closed below.
+        AbstractDatabaseHandler.flushAll();
         // Save data
         if (playersManager != null) {
             playersManager.shutdown();
