@@ -595,6 +595,11 @@ public class AddonsManager {
                 if (!names.contains(dependency)) {
                     plugin.logError(a.getDescription().getName() + " has dependency on " + dependency
                             + " that does not exist. Addon will not load!");
+                    // The addon's onLoad has already run and may have registered flags whose
+                    // listeners would otherwise stay active for an addon that never enables,
+                    // firing with no worlds behind them
+                    a.setState(State.MISSING_DEPENDENCY);
+                    plugin.getFlagsManager().unregister(a);
                     addonsIterator.remove();
                     break;
                 }
