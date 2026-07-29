@@ -1,0 +1,2143 @@
+# ##########################################################################################
+# This is a YML file. Be careful when editing.
+# Check your edits in a YAML checker like
+# the one at http://yaml-online-parser.appspot.com
+# ##########################################################################################
+
+# -----------------------------------------------------------------------------
+# Traditional Chinese (Taiwan) localization for BentoBox
+# Based on the official en-US.yml
+# -----------------------------------------------------------------------------
+
+# This locale is always current with the latest version
+meta:
+  authors:
+  - tastybento
+  - Poslovitch
+  banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
+
+prefixes:
+  bentobox: <gold>BentoBox </gold><gray><bold>> </bold></gray>
+  island: 島嶼
+  Island: 島嶼
+  Islands: 島嶼
+  an-island: 一座島嶼
+  islands: 島嶼
+general:
+  success: <green>成功！</green>
+  invalid: 無效
+  beta: <light_purple><bold>此指令仍處於 Beta 測試階段，請務必先做好備份！</bold></light_purple>
+  errors:
+    command-cancelled: <red>指令已取消。</red>
+    no-permission: <red>你沒有權限執行此指令（</red><gray>[permission]</gray><red>）。</red>
+    insufficient-rank: <red>你的權限等級不足，無法執行此操作！（</red><gray>[rank]</gray><red>）</red>
+    use-in-game: <red>此指令只能在遊戲內使用。</red>
+    use-in-console: <red>此指令只能在主控台中使用。</red>
+    no-team: <red>你沒有隊伍！</red>
+    no-island: <red>你沒有[prefix_an-island]！</red>
+    player-has-island: <red>該玩家已經擁有[prefix_an-island]！</red>
+    player-has-no-island: <red>該玩家沒有[prefix_island]！</red>
+    already-have-island: <red>你已經擁有[prefix_an-island]！</red>
+    no-safe-location-found: <red>無法在[prefix_island]上找到可安全傳送的位置。</red>
+    not-owner: <red>你不是[prefix_island]的島主！</red>
+    player-is-not-owner: <aqua>[name] </aqua><red>不是[prefix_an-island]的島主！</red>
+    not-in-team: <red>該玩家不在你的隊伍中！</red>
+    offline-player: <red>該玩家目前離線或不存在。</red>
+    unknown-player: <red>[name] 是未知的玩家！</red>
+    general: <red>此指令尚未完成，請聯絡管理員。</red>
+    unknown-command: <red>未知的指令。請輸入 </red><aqua>/[label] help </aqua><red>以查看說明。</red>
+    wrong-world: <red>你目前所在的世界無法執行此操作！</red>
+    you-must-wait: <red>你必須等待 [number] 秒後才能再次執行此指令。</red>
+    must-be-positive-number: <red>[number] 不是有效的正整數。</red>
+    not-on-island: <red>你目前不在[prefix_island]上！</red>
+    slow-down: <red>請慢一點，點擊不要太快。</red>
+  did-you-mean:
+    suggestion: '<gray>你是不是想輸入 </gray><yellow>[command]</yellow><gray>？點擊這裡或輸入 </gray><green>yes</green><gray> 來執行。</gray>[run_command: [command]][hover: 點擊即可執行 [command]]'
+    header: <gray>你是不是想輸入以下其中一個指令？點擊即可執行：</gray>
+    option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 點擊即可執行 [command]]'
+  worlds:
+    overworld: 主世界
+    nether: 地獄
+    the-end: 終界
+
+commands:
+  # Parameters in <> are required, parameters in [] are optional
+  help:
+    header: <gray>=========== </gray><red>[label] 說明 </red><gray>===========</gray>
+    syntax: '<aqua>[usage] </aqua><green>[parameters]</green><gray>： </gray><yellow>[description]</yellow>'
+    syntax-no-parameters: '<aqua>[usage]</aqua><gray>： </gray><yellow>[description]</yellow>'
+    end: <gray>=================================</gray>
+    page: <gray>第 </gray><yellow>[page]</yellow><gray> 頁，共 </gray><yellow>[total]</yellow><gray> 頁</gray>
+    parameters: '[command]'
+    description: 顯示說明
+    console: 主控台
+  admin:
+    help:
+      description: 管理員指令
+    maxhomes:
+      description: 變更此[prefix_island]或指定玩家[prefix_island]可設定的家數量
+      parameters: <數量 / 玩家> <數量> [[prefix_island] 名稱]
+      max-homes-set: <green>[name] - 已將[prefix_island]可設定的家數量設為 [number]</green>
+      errors:
+        unknown-island: 未知的[prefix_island]！[name]
+    resethome:
+      description: 將玩家的家重設為預設位置
+      parameters: <玩家> [[prefix_island] 名稱]
+      cleared: <aqua>已重設家。[name]</aqua>
+    resets:
+      description: 編輯玩家的重置次數
+      set:
+        description: 設定此玩家的[prefix_island]重置次數
+        parameters: <玩家> <重置次數>
+        success: <aqua>[name]</aqua><green> 的[prefix_island]重置次數已設為 </green><aqua>[number]</aqua><green>。</green>
+      reset:
+        description: 將玩家的[prefix_island]重置次數設為 0
+        parameters: <玩家>
+        success-everyone: <green>已成功將 </green><aqua>所有玩家</aqua><green> 的重置次數設為 </green><aqua>0</aqua><green>。</green>
+        success: <green>已成功將 </green><aqua>[name]</aqua><green> 的重置次數設為 </green><aqua>0</aqua><green>。</green>
+      add:
+        description: 增加此玩家的[prefix_island]重置次數
+        parameters: <玩家> <重置次數>
+        success: <green>已成功為 </green><aqua>[name]</aqua><green> 增加 </green><aqua>[number]</aqua><green> 次重置，目前總重置次數為 </green><aqua>[total]</aqua><green> 次。</green>
+      remove:
+        description: 減少玩家的[prefix_island]重置次數
+        parameters: <玩家> <重置次數>
+        success: <green>已成功為 </green><aqua>[name]</aqua><green> 減少 </green><aqua>[number]</aqua><green> 次重置，目前總重置次數為 </green><aqua>[total]</aqua><green> 次。</green>
+    purge:
+      parameters: '[天數]'
+      description: 刪除超過 [days] 天未使用的[prefix_Islands]區域檔案（釋放磁碟空間）
+      days-one-or-more: <red>天數至少必須為 1 天以上。</red>
+      purgable-islands: <green>找到 </green><aqua>[number] </aqua><green>個可清除的[prefix_Islands]。</green>
+      purge-in-progress: <red>正在清除中，請等待作業完成。</red>
+      scanning: <green>正在掃描區域檔案，依世界大小不同可能需要一些時間……</green>
+      none-found: <red>沒有找到可清除的[prefix_Islands]。</red>
+      confirm: <light_purple>請輸入 </light_purple><aqua>/[label] purge confirm </aqua><light_purple>開始清除</light_purple>
+      failed: <red>清除完成，但發生錯誤。部分區域檔案無法刪除，請查看伺服器日誌以取得詳細資訊。</red>
+      age-regions:
+        parameters: '[天數]'
+        description: '除錯／測試：修改區域檔案的時間戳記，使其符合可清除條件'
+        done: <green>已將目前世界中的 </green><aqua>[number]</aqua><green> 個區域檔案設為可清除狀態。</green>
+      deleted:
+        parameters: ''
+        description: 清除所有已標記為已刪除之[prefix_island]的區域檔案
+        confirm: <light_purple>請輸入 </light_purple><aqua>/[label] purge deleted confirm </aqua><light_purple>開始清除區域檔案</light_purple>
+        deferred: <green>區域檔案已清除。島嶼資料庫中的紀錄將於下次伺服器重新啟動時移除。</green>
+      protect:
+        description: 啟用或停用[prefix_island]的清除保護
+        move-to-island: <red>請先移動到[prefix_an-island]！</red>
+        protecting: <green>已啟用[prefix_island]的清除保護。</green>
+        unprotecting: <green>已停用清除保護。</green>
+      unowned:
+        parameters: ''
+        description: 將無人擁有的[prefix_Islands]標記為可刪除，以便清除其區域檔案
+        unowned-islands: <green>找到 </green><aqua>[number] </aqua><green>個無人擁有的[prefix_Islands]。</green>
+        flagged: <green>已將 </green><aqua>[number] </aqua><green>個[prefix_island]標記為可刪除。請執行 </green><aqua>/[label] purge deleted</aqua><green> 來清除區域檔案。</green>
+    team:
+      description: 管理隊伍
+      add:
+        parameters: <島主> <玩家>
+        description: 將玩家加入島主的隊伍
+        name-not-owner: <red>[name] 不是島主。</red>
+        name-has-island: <red>[name] 已擁有[prefix_an-island]。請先解除註冊或刪除該島嶼！</red>
+        success: <aqua>[name]</aqua><green> 已加入 </green><aqua>[owner]</aqua><green> 的[prefix_island]。</green>
+      disband:
+        parameters: <島主>
+        description: 解散島主的隊伍
+        use-disband-owner: <red>指定的玩家不是島主！請使用 disband [owner]。</red>
+        disbanded: <red>管理員已解散你的隊伍！</red>
+        success: <aqua>[name]</aqua><green> 的隊伍已解散。</green>
+      disbandall:
+        description: 移除此世界所有[prefix_island]的成員與副島主
+        confirmation: <red>此操作將移除此世界所有[prefix_island]的成員與副島主，Trusted 與 Coop 玩家不會受到影響。請輸入確認指令以繼續。</red>
+        success: <green>已從 </green><aqua>[islands]</aqua><green> 個[prefix_islands]移除 </green><aqua>[number]</aqua><green> 位成員。</green>
+      fix:
+        description: 掃描並修復資料庫中的跨[prefix_island]成員資料
+        scanning: 正在掃描資料庫……
+        duplicate-owner: '<red>玩家在資料庫中擁有超過一個[prefix_island]：[name]</red>'
+        player-has: <red>玩家 [name] 擁有 [number] 個[prefix_islands]。</red>
+        duplicate-member: <red>玩家 [name] 在資料庫中同時是多個[prefix_island]的成員。</red>
+        rank-on-island: <red>[rank]（[prefix_island]，座標：[xyz]）</red>
+        fixed: <green>已修復。</green>
+        done: <green>掃描完成。</green>
+      kick:
+        parameters: <隊伍成員> [x,y,z]
+        description: 將玩家踢出隊伍
+        cannot-kick-owner: <red>你不能踢出島主。請先使用 </red><yellow>setowner</yellow><red> 轉移島嶼擁有權，或使用 </red><yellow>disband</yellow><red> 解散隊伍。</red>
+        not-in-team: <red>這名玩家不在隊伍中。</red>
+        admin-kicked: <red>管理員已將你踢出隊伍。</red>
+        success: <aqua>[name] </aqua><green>已被踢出 </green><aqua>[owner]</aqua><green> 的[prefix_island]。</green>
+      setowner:
+        parameters: <玩家> [島主]
+        description: 將[prefix_island]的擁有權轉移給指定玩家。若從主控台執行，請指定目前的島主
+        already-owner: <red>[name] 已經是這座[prefix_island]的島主！</red>
+        must-be-on-island: <red>你必須位於[prefix_island]上才能設定島主。</red>
+        specify-island: '<red>請站在[prefix_island]上於遊戲內執行此指令，或指定目前的島主：</red><yellow>setowner <player> <island owner></yellow>'
+        confirmation: <green>確定要將位於 [xyz] 的[prefix_island]島主設為 [name] 嗎？</green>
+        success: <aqua>[name]</aqua><green> 現在是這座[prefix_island]的島主。</green>
+        errors:
+          at-max: <red>[name] 已擁有 [number] 個[prefix_islands]，已達設定或權限允許的上限（[max]）。請調整其權限以允許擁有更多島嶼。</red>
+        extra-islands: '<red>警告：此玩家目前擁有 [number] 個[prefix_islands]，已超過設定或權限允許的上限（[max]）。</red>'
+      maxsize:
+        parameters: <玩家> <人數>
+        description: 設定玩家[prefix_island]的隊伍人數上限（輸入 0 可重設為世界預設值）
+        success: <green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]隊伍人數上限設為 </green><aqua>[number]</aqua><green>。</green>
+        reset: <green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]隊伍人數上限重設為世界預設值（</green><aqua>[number]</aqua><green>）。</green>
+    range:
+      description: 管理員[prefix_island]保護範圍指
+      invalid-value:
+        too-low: <red>保護範圍必須大於 </red><aqua>1</aqua><red>！</red>
+        too-high: <red>保護範圍必須小於或等於 </red><aqua>[number]</aqua><red>！</red>
+        same-as-before: <red>保護範圍已經設為 </red><aqua>[number]</aqua><red>！</red>
+      display:
+        already-off: <red>範圍指示器已經關閉。</red>
+        already-on: <red>範圍指示器已經開啟。</red>
+        description: 顯示／隱藏[prefix_island]保護範圍指示器
+        hiding: <dark_green>正在隱藏範圍指示器。</dark_green>
+        hint: |-
+          <red>紅色屏障圖示 </red><white>表示目前[prefix_island]的保護範圍邊界。</white>
+          <gray>灰色粒子 </gray><white>表示[prefix_island]可設定的最大範圍。</white>
+          <green>綠色粒子 </green><white>表示預設的保護範圍（僅在[prefix_island]目前的保護範圍與預設值不同時顯示）。</white>
+        showing: <dark_green>正在顯示範圍指示器。</dark_green>
+      set:
+        parameters: <玩家> <範圍> [[prefix_island] 座標]
+        description: 設定[prefix_island]的保護範圍
+        success: <green>已將[prefix_island]的保護範圍設為 </green><aqua>[number]</aqua><green>。</green>
+      reset:
+        parameters: <玩家>
+        description: 將[prefix_island]的保護範圍重設為世界預設值
+        success: <green>已將[prefix_island]的保護範圍重設為 </green><aqua>[number]</aqua><green>。</green>
+      add:
+        description: 增加[prefix_island]的保護範圍
+        parameters: <玩家> <範圍> [[prefix_island] 座標]
+        success: <green>已成功將 </green><aqua>[name]</aqua><green> 的[prefix_island]保護範圍增加至 </green><aqua>[total]</aqua><green> </green><gray>(</gray><aqua>+[number]</aqua><gray>)</gray><green>。</green>
+      remove:
+        description: 減少[prefix_island]的保護範圍
+        parameters: <玩家> <範圍> [[prefix_island] 座標]
+        success: <green>已成功將 </green><aqua>[name]</aqua><green> 的[prefix_island]保護範圍減少至 </green><aqua>[total]</aqua><green> </green><gray>(</gray><aqua>-[number]</aqua><gray>)</gray><green>。</green>
+      removebonus:
+        parameters: <玩家> [ID]
+        description: 移除[prefix_island]的額外保護範圍（可移除全部或依 ID 移除）
+        no-bonus: <red>這座[prefix_island]沒有可移除的額外保護範圍！</red>
+        unknown-bonus: <red>這座[prefix_island]沒有 ID 為 </red><aqua>[id]</aqua><red> 的額外保護範圍！</red>
+        success: <green>已從 </green><aqua>[name]</aqua><green> 的[prefix_island]移除 </green><aqua>[number]</aqua><green> 個額外保護範圍。</green>
+        success-id: <green>已從 </green><aqua>[name]</aqua><green> 的[prefix_island]移除額外保護範圍 </green><aqua>[id]</aqua><green>（</green><aqua>[number]</aqua><green>）。</green>
+      purgebonus:
+        parameters: <ID>
+        description: 從所有[prefix_islands]移除指定 ID 的額外保護範圍（例如移除新增該範圍的附加元件後）
+        none: <red>沒有任何[prefix_island]擁有 ID 為 </red><aqua>[id]</aqua><red> 的額外保護範圍！</red>
+        warning: <gold>此操作將從 </gold><aqua>[number]</aqua><gold> 個[prefix_islands]移除 ID 為 </gold><aqua>[id]</aqua><gold> 的額外保護範圍。</gold>
+        success: <green>已從 </green><aqua>[number]</aqua><green> 個[prefix_islands]移除 ID 為 </green><aqua>[id]</aqua><green> 的額外保護範圍。</green>
+        confirm: <gold>若要繼續，請再次執行此指令並加上 </gold><aqua>confirm</aqua><gold>。</gold>
+        in-progress: <red>正在執行額外保護範圍清除作業，請稍候。</red>
+        failed: <red>掃描島嶼失敗，請查看主控台。</red>
+    register:
+      parameters: <玩家>
+      description: 將玩家註冊為目前所在未擁有的[prefix_island]島主
+      registered-island: <green>已將位於 [xyz] 的[prefix_island]註冊給 [name]。</green>
+      reserved-island: <green>已為 [name] 保留位於 [xyz] 的[prefix_island]。</green>
+      already-owned: <red>這座[prefix_island]已由其他玩家擁有！</red>
+      no-island-here: <red>此處沒有[prefix_island]。請再次執行此指令以確認建立。</red>
+      in-deletion: <gold>這座[prefix_island]正等待刪除。若註冊此島嶼，將會取消刪除作業。請再次執行此指令以確認。</gold>
+      cannot-make-island: <red>無法在此建立[prefix_an-island]。請查看主控台以取得可能的錯誤資訊。</red>
+      island-is-spawn: <gold>這座[prefix_island]是世界出生點。確定要繼續嗎？請再次執行此指令以確認。</gold>
+    undelete:
+      description: 取消目前所在未擁有[prefix_island]的待刪除狀態
+      not-in-deletion: <red>這座[prefix_island]目前未處於待刪除狀態。</red>
+      undeleted-island: <green>已移除位於 [xyz] 的[prefix_island]待刪除狀態。該島嶼現在為無人擁有。</green>
+    unregister:
+      parameters: <島主> [x,y,z]
+      description: 解除[prefix_island]島主的註冊，但保留[prefix_island]上的方塊
+      unregistered-island: <green>已解除 [name] 對位於 [xyz] 的[prefix_island]的註冊。</green>
+      errors:
+        unknown-island-location: <red>找不到[prefix_island]的位置。</red>
+        specify-island-location: <red>請以 x,y,z 格式指定[prefix_island]的位置。</red>
+        player-has-more-than-one-island: <red>該玩家擁有多座[prefix_islands]，請指定要解除註冊的島嶼。</red>
+    info:
+      parameters: <玩家>
+      description: 查看目前所在或指定玩家的[prefix_island]資訊
+      no-island: <red>你目前不在[prefix_an-island]上……</red>
+      title: ========== [prefix_Island]資訊 ==========
+      island-uuid: 'UUID： [uuid]'
+      owner: '島主： [owner]（[uuid]）'
+      last-login: '最後登入： [date]'
+      last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
+      deaths: '死亡次數： [number]'
+      resets-left: '重置次數： [number]（上限： [total]）'
+      max-homes: '家的數量上限： [number]'
+      team-members-title: '隊伍成員：'
+      team-owner-format: <green>[name] [rank]</green>
+      team-member-format: <aqua>[name] [rank]</aqua>
+      max-team-size: '隊伍人數上限： [number]'
+      max-coop-size: 'Coop 人數上限： [number]'
+      max-trusted-size: 'Trusted 人數上限： [number]'
+      island-protection-center: '保護區域中心： [xyz]'
+      island-center: '[prefix_Island]中心： [xyz]'
+      island-coords: '[prefix_Island]座標： [xz1] ～ [xz2]'
+      islands-in-trash: <light_purple>玩家有島嶼位於回收區。</light_purple>
+      protection-range: '保護範圍： [range]'
+      protection-range-bonus-title: <aqua>包含以下額外保護範圍：</aqua>
+      protection-range-bonus: '額外保護範圍： [number]'
+      purge-protected: '[prefix_Island]已啟用清除保護'
+      deletable: <red>[prefix_Island]已標記為待刪除，等待區域檔案清除。</red>
+      max-protection-range: '歷史最大保護範圍： [range]'
+      protection-coords: '保護範圍座標： [xz1] ～ [xz2]'
+      is-spawn: '[prefix_Island]為世界出生點[prefix_island]'
+      banned-players: '已封鎖的玩家：'
+      banned-format: <red>[name]</red>
+      unowned: <red>無人擁有</red>
+      bundle: '<green>建立島嶼所使用的藍圖套件： </green><aqua>[name]</aqua>'
+    switch:
+      description: 切換保護繞過模式
+      op: <red>OP 玩家永遠可以繞過保護。若要使用此指令，請先取消 OP 權限。</red>
+      removing: <green>正在停用保護繞過模式……</green>
+      adding: <green>正在啟用保護繞過模式……</green>
+    switchto:
+      parameters: <玩家> <編號>
+      description: 將玩家的[prefix_island]切換為回收區中的指定編號島嶼
+      out-of-range: <red>編號必須介於 1 到 [number] 之間。請使用 <bold>[label] trash [player]</bold></red><red> 查看[prefix_island]編號。</red>
+      cannot-switch: <red>切換失敗，請查看主控台以取得錯誤資訊。</red>
+      success: <green>已成功將玩家的[prefix_island]切換為指定的島嶼。</green>
+    trash:
+      no-unowned-in-trash: <red>回收區中沒有無人擁有的[prefix_islands]。</red>
+      no-islands-in-trash: <red>該玩家的回收區中沒有[prefix_islands]。</red>
+      parameters: '[玩家]'
+      description: 顯示回收區中的無主島嶼或指定玩家的島嶼
+      title: <light_purple>=========== 回收區中的島嶼 ===========</light_purple>
+      count: <bold><light_purple>[prefix_Island] [number]：</light_purple></bold>
+      use-switch: <green>請使用 <bold>[label] switchto <player> <number></bold></green><green> 將玩家切換至回收區中的[prefix_island]。</green>
+      use-emptytrash: <green>請使用 <bold>[label] emptytrash [player]</bold></green><green> 永久清除回收區中的島嶼。</green>
+    emptytrash:
+      parameters: '[玩家]'
+      description: 清空指定玩家的回收區，或清空所有無人擁有的回收區島嶼
+      success: <green>已成功清空回收區。</green>
+    version:
+      description: 顯示 BentoBox 與附加元件版本資訊
+    setrange:
+      parameters: <玩家> <範圍>
+      description: 設定玩家[prefix_island]的保護範圍
+      range-updated: <green>已將[prefix_Island]保護範圍設為 </green><aqua>[number]</aqua><green>。</green>
+    reload:
+      description: 重新載入
+    tp:
+      parameters: <玩家> [玩家的島嶼]
+      description: 傳送至玩家的[prefix_island]
+      manual: <red>找不到安全的傳送點！請手動傳送至 </red><aqua>[location]</aqua><red> 附近並檢查。</red>
+    tpuser:
+      parameters: <傳送玩家> <島嶼玩家> [玩家的島嶼]
+      description: 將一名玩家傳送至另一名玩家的[prefix_island]
+    getrank:
+      parameters: <玩家> [[prefix_island]島主]
+      description: 查詢玩家在自己的[prefix_island]或指定島主[prefix_island]中的權限等級
+      rank-is: <green>權限等級為 </green><aqua>[rank] </aqua><green>（</green><aqua>[name]</aqua><green> 的[prefix_island]）。</green>
+    setrank:
+      parameters: <玩家> <權限等級> [[prefix_island]島主]
+      description: 設定玩家在自己的[prefix_island]或指定島主[prefix_island]中的權限等級
+      unknown-rank: <red>未知的權限等級！</red>
+      not-possible: <red>權限等級必須高於訪客。</red>
+      rank-set: <green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]權限等級從 </green><aqua>[from] </aqua><green>變更為 </green><aqua>[to]</aqua><green>。</green>
+    setprotectionlocation:
+      parameters: '[x y z 座標]'
+      description: 將目前位置或指定的 [x y z] 座標設為[prefix_island]的保護區域中心
+      island: <red>此操作將影響位於 [xyz]、由「[name]」擁有的[prefix_island]。</red>
+      confirmation: <red>確定要將 [xyz] 設為保護區域中心嗎？</red>
+      success: <green>已成功將 [xyz] 設為保護區域中心。</green>
+      fail: <red>無法將 [xyz] 設為保護區域中心。</red>
+      island-location-changed: <green>[user] 已將[prefix_island]的保護區域中心變更為 [xyz]。</green>
+      xyz-error: '<red>請指定三個整數座標，例如：100 120 100</red>'
+    setspawn:
+      description: 將[prefix_an-island]設為此遊戲模式的出生島
+      already-spawn: <red>這座[prefix_island]已經是出生島！</red>
+      no-island-here: <red>此處沒有[prefix_island]。</red>
+      confirmation: <red>確定要將這座[prefix_island]設為此世界的出生島嗎？</red>
+      success: <green>已成功將這座[prefix_island]設為此世界的出生島。</green>
+    setspawnpoint:
+      description: 將目前位置設為此[prefix_island]的出生點
+      no-island-here: <red>此處沒有[prefix_island]。</red>
+      confirmation: <red>確定要將目前位置設為這座[prefix_island]的出生點嗎？</red>
+      success: <green>已成功將目前位置設為這座[prefix_island]的出生點。</green>
+      island-spawnpoint-changed: <green>[user] 已變更[prefix_island]的出生點。</green>
+    settings:
+      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
+      description: 開啟設定介面或修改設定
+      unknown-setting: <red>未知的設定項目。</red>
+    blueprint:
+      parameters: <load/copy/paste/pos1/pos2/save>
+      description: 管理藍圖
+      bedrock-required: <red>藍圖中至少必須包含一個基岩方塊！</red>
+      copy-first: <red>請先複製藍圖！</red>
+      file-exists: <red>檔案已存在，是否覆蓋？</red>
+      no-such-file: <red>找不到該檔案！</red>
+      could-not-load: <red>無法載入該檔案！</red>
+      could-not-save: '<red>嗯，儲存檔案時發生錯誤：[message]</red>'
+      set-pos1: <green>已將位置 1 設為 [vector]</green>
+      set-pos2: <green>已將位置 2 設為 [vector]</green>
+      set-different-pos: <red>請設定其他位置，目前位置已設定！</red>
+      need-pos1-pos2: <red>請先設定 pos1 和 pos2！</red>
+      copying: <aqua>正在複製方塊……</aqua>
+      copied-blocks: <aqua>已複製 [number] 個方塊到剪貼簿。</aqua>
+      look-at-a-block: <red>請看向 20 格內的一個方塊以進行設定。</red>
+      mid-copy: <red>目前正在複製中，請等待複製完成。</red>
+      copied-percent: <gold>已複製 [number]%</gold>
+      copy:
+        parameters: '[air] [biome] [nowater]'
+        description: 複製由 pos1 與 pos2 選取的區域至剪貼簿，並可選擇包含空氣、生態域及水方塊
+      sink:
+        description: 設定此藍圖貼上時是否下沉至海底
+        status: <green>貼上藍圖時將會[status]</green>
+        sink: <red>下沉至海底</red>
+        not-sink: <aqua>不下沉至海底</aqua>
+        no-clipboard: <red>剪貼簿中沒有藍圖。請先載入或複製藍圖。</red>
+      delete:
+        parameters: <name>
+        description: 刪除藍圖
+        no-blueprint: <aqua>[name] </aqua><red>不存在。</red>
+        confirmation: |
+          <red>確定要刪除此藍圖嗎？</red>
+          <red>刪除後將無法復原。</red>
+        success: <green>已成功刪除藍圖 </green><aqua>[name]</aqua><green>。</green>
+      load:
+        parameters: <name>
+        description: 將藍圖載入剪貼簿
+      list:
+        description: 列出可用的藍圖
+        no-blueprints: <red>blueprints 資料夾中沒有任何藍圖！</red>
+        available-blueprints: <green>可載入的藍圖如下：</green>
+      origin:
+        description: 將藍圖的原點設為目前位置
+      paste:
+        description: 將剪貼簿中的藍圖貼上至目前位置
+        pasting: <green>正在貼上……</green>
+      pos1:
+        description: 設定剪貼簿選取區域的第一個角落
+      pos2:
+        description: 設定剪貼簿選取區域的第二個角落
+      save:
+        parameters: <blueprint name>
+        description: 儲存已複製的剪貼簿內容
+      rename:
+        parameters: <blueprint name> <new name>
+        description: 重新命名藍圖
+        success: <green>已成功將藍圖 </green><aqua>[old] </aqua><green>重新命名為 </green><aqua>[display]</aqua><green>。檔案名稱現在為 </green><aqua>[name]</aqua><green>。</green>
+        pick-different-name: <red>請指定一個與目前藍圖名稱不同的新名稱。</red>
+      management:
+        back: 返回
+        instruction: 先點選藍圖，再點擊這裡
+        title: 藍圖套件管理器
+        edit: 點擊以編輯
+        rename: 右鍵點擊以重新命名
+        edit-description: 點擊以編輯說明
+        world-name-syntax: '[name] 世界'
+        world-instructions: |
+          將藍圖放置
+          到右側以設定
+        trash: 刪除
+        no-trash: 無法刪除
+        trash-instructions: 在此右鍵點擊即可刪除
+        no-trash-instructions: 預設套件無法刪除
+        permission: 權限
+        no-permission: 無權限
+        perm-required: 必須具備
+        no-perm-required: 預設套件無法設定權限
+        perm-not-required: 不需要
+        perm-format: <yellow></yellow>
+        remove: 右鍵點擊以移除
+        blueprint-instruction: |
+          點擊以選取，
+          然後加入套件。
+          右鍵點擊以重新命名。
+        select-first: 請先選取藍圖
+        new-bundle: 新增套件
+        new-bundle-instructions: 點擊以建立新的套件
+        name:
+          quit: 結束
+          prompt: 請輸入名稱，或輸入「quit」結束
+          too-long: <red>名稱過長，最多只能使用 32 個字元。</red>
+          pick-a-unique-name: 請選擇一個更具唯一性的名稱
+          stripped-char-in-unique-name: <red>部分字元因不符合規定而已被移除。</red><green>新的 ID 將為 </green><aqua>[name]</aqua><green>。</green>
+          success: 成功！
+          conversation-prefix: '>'
+        description:
+          quit: 結束
+          instructions: |
+            請輸入 [name] 的多行說明，
+            完成後請在單獨一行輸入「quit」。
+          default-color: ''
+          success: 成功！
+          cancelling: 已取消
+
+        slot: <white>偏好的欄位 [number]</white>
+        slot-instructions: |
+          <green>左鍵點擊增加</green>
+          <green>右鍵點擊減少</green>
+
+        times: |
+          <green>每位玩家可同時使用的最大次數</green>
+          <green>左鍵點擊增加</green>
+          <green>右鍵點擊減少</green>
+
+        unlimited-times: 無限制
+        maximum-times: 最多 [number] 次
+
+        cost: |
+          <green>[prefix_Island] 花費</green>
+          <green>左鍵點擊 +1</green>
+          <green>右鍵點擊 -1</green>
+          <green>按住 Shift 可 ±100</green>
+
+        no-cost: 免費
+        cost-amount: '花費：[cost]'
+
+        edit-commands: 點擊以編輯指令
+        no-commands: 尚未設定任何指令
+
+        next-page: <white>下一頁</white>
+        previous-page: <white>上一頁</white>
+
+        commands:
+          quit: 結束
+          clear: 清除
+          instructions: |
+            <white>請輸入在貼上藍圖 [name] 時要執行的指令。</white>
+            <white>支援 <green>[player]</green> 與 <green>[owner]</green> 佔位符。</white>
+            <white>在指令前加上 <green>[SUDO]</green> 可改為以玩家身分執行。</white>
+            <white>輸入「clear」可清除本次工作階段中的所有指令。</white>
+            <white>完成後請在單獨一行輸入「quit」。</white>
+          default-color: ''
+          success: 成功！
+          cancelling: 已取消
+    resetflags:
+      parameters: '[flag]'
+      description: 將所有[prefix_Islands]的旗標重設為 config.yml 中的預設設定
+      confirm: <dark_red>此操作將會把所有[prefix_Islands]的旗標重設為預設值！</dark_red>
+      success: <green>已成功將所有[prefix_Islands]的旗標重設為預設設定。</green>
+      success-one: <green>已將所有[prefix_Islands]的 [name] 旗標重設為預設值。</green>
+    world:
+      description: 管理世界設定
+    delete:
+      parameters: '[player]'
+      description: 刪除指定玩家的[prefix_island]；若未指定玩家，則刪除你目前所在的[prefix_island]
+      cannot-delete-owner: <red>刪除[prefix_island]前，必須先將所有隊伍成員移出[prefix_island]。</red>
+      deleted-island: <green>已成功刪除位於 </green><yellow>[xyz]</yellow><green> 的[prefix_Island]。</green>
+    deletehomes:
+      parameters: <player>
+      description: 刪除[prefix_an-island]上的所有已命名的家
+      warning: <red>[prefix_island]上的所有已命名的家都將被刪除！</red>
+    why:
+      parameters: <player>
+      description: 切換主控台保護偵錯訊息
+      turning-on: <green>已為 </green><aqua>[name]</aqua><green> 啟用主控台偵錯。</green>
+      turning-off: <green>已為 </green><aqua>[name]</aqua><green> 停用主控台偵錯。</green>
+    deaths:
+      description: 編輯玩家的死亡次數
+      reset:
+        description: 重設玩家的死亡次數
+        parameters: <player>
+        success: <green>已成功將 </green><aqua>[name]</aqua><green> 的死亡次數重設為 </green><aqua>0</aqua><green>。</green>
+      set:
+        description: 設定玩家的死亡次數
+        parameters: <player> <deaths>
+        success: <green>已成功將 </green><aqua>[name]</aqua><green> 的死亡次數設為 </green><aqua>[number]</aqua><green>。</green>
+      add:
+        description: 增加玩家的死亡次數
+        parameters: <player> <deaths>
+        success: <green>已成功為 </green><aqua>[name]</aqua><green> 增加 </green><aqua>[number]</aqua><green> 次死亡，目前總計為 </green><aqua>[total]</aqua><green> 次。</green>
+      remove:
+        description: 減少玩家的死亡次數
+        parameters: <player> <deaths>
+        success: <green>已成功為 </green><aqua>[name]</aqua><green> 減少 </green><aqua>[number]</aqua><green> 次死亡，目前總計為 </green><aqua>[total]</aqua><green> 次。</green>
+    resetname:
+      description: 重設玩家的[prefix_island]名稱
+      success: <green>已成功重設 [name] 的[prefix_island]名稱。</green>
+  bentobox:
+    description: BentoBox 管理指令
+    perms:
+      description: 以 YAML 格式顯示 BentoBox 與附加元件的實際權限
+    about:
+      description: 顯示版權與授權資訊
+    reload:
+      description: 重新載入 BentoBox、所有附加元件、設定及語言檔
+      locales-reloaded: '[prefix_bentobox]<dark_green>已重新載入語言檔。</dark_green>'
+      addons-reloaded: '[prefix_bentobox]<dark_green>已重新載入附加元件。</dark_green>'
+      settings-reloaded: '[prefix_bentobox]<dark_green>已重新載入設定。</dark_green>'
+      addon: '[prefix_bentobox]<gold>正在重新載入 </gold><aqua>[name]</aqua><dark_green>……</dark_green>'
+      addon-reloaded: '[prefix_bentobox]<aqua>[name] </aqua><dark_green>已重新載入。</dark_green>'
+      warning: '[prefix_bentobox]<red>警告：重新載入可能導致系統不穩定，若之後出現錯誤，請重新啟動伺服器。</red>'
+      unknown-addon: '[prefix_bentobox]<red>未知的附加元件！</red>'
+      locales:
+        description: 重新載入語言檔
+    version:
+      plugin-version: '<dark_green>BentoBox 版本：</dark_green><dark_aqua>[version]</dark_aqua>'
+      description: 顯示 BentoBox 與附加元件版本資訊
+      loaded-addons: '已載入的附加元件：'
+      loaded-game-worlds: '已載入的遊戲世界：'
+      addon-syntax: <dark_green>[name] </dark_green><dark_aqua>[version] </dark_aqua><gray>(</gray><dark_aqua>[state]</dark_aqua><gray>)</gray>
+      game-world: '<dark_green>[name] </dark_green><gray>(</gray><dark_aqua>[addon]</dark_aqua><gray>)： </gray><dark_aqua>[worlds]</dark_aqua>'
+      server: <dark_green>執行於 </dark_green><dark_aqua>[name] [version]</dark_aqua><dark_green>。</dark_green>
+      database: '<dark_green>資料庫：</dark_green><dark_aqua>[database]</dark_aqua>'
+    manage:
+      description: 顯示管理面板
+    catalog:
+      description: 顯示目錄
+    locale:
+      description: 分析語言檔
+      see-console: |-
+        [prefix_bentobox]<green>請查看主控台以檢視分析結果。</green>
+        [prefix_bentobox]<green>此指令輸出的內容過多，聊天視窗無法完整顯示。</green>
+    migrate:
+      description: 將資料從一個資料庫遷移至另一個資料庫
+      players: '[prefix_bentobox]<gold>正在遷移玩家資料</gold>'
+      names: '[prefix_bentobox]<gold>正在遷移名稱資料</gold>'
+      addons: '[prefix_bentobox]<gold>正在遷移附加元件資料</gold>'
+      class: '[prefix_bentobox]<gold>正在遷移 [description]</gold>'
+      migrated: '[prefix_bentobox]<green>遷移完成</green>'
+      completed: '[prefix_bentobox]<green>全部完成</green>'
+    rank:
+      description: 列出、新增或移除權限等級
+      parameters: <green>[list | add | remove] [權限等級名稱] [權限等級值]</green>
+      add:
+        success: <green>已新增權限等級 [rank]，數值為 [number]。</green>
+        failure: <red>無法新增權限等級 [rank]，數值為 [number]。可能已存在相同的權限等級。</red>
+      remove:
+        success: <green>已移除權限等級 [rank]。</green>
+        failure: <red>無法移除權限等級 [rank]。未知的權限等級。</red>
+      list: <green>已註冊的權限等級如下：</green>
+
+    placeholders:
+      description: 開啟 Placeholder 瀏覽器介面
+    dump-placeholders:
+      description: 將所有已註冊的 Placeholder 匯出為 Markdown 檔案
+      dumped: <green>Placeholder 清單已寫入 [file]</green>
+      error: '<red>無法寫入 Placeholder 清單：[message]</red>'
+  confirmation:
+    confirm: <red>請在 </red><aqua>[seconds] 秒</aqua><red>內再次輸入此指令以確認。</red>
+    previous-request-cancelled: <gold>已取消上一個確認請求。</gold>
+    request-cancelled: <red>確認逾時，</red><aqua>已取消此請求。</aqua>
+  delay:
+    previous-command-cancelled: <red>已取消上一個指令。</red>
+    stand-still: <gold>請勿移動！將於 [seconds] 秒後傳送。</gold>
+    moved-so-command-cancelled: <red>你移動了，傳送已取消！</red>
+  island:
+    about:
+      description: 顯示授權資訊
+    go:
+      parameters: '[home name]'
+      description: 傳送至你的[prefix_island]
+      teleport: <green>正在將你傳送至你的[prefix_island]。</green>
+      in-progress: <green>傳送進行中，請稍候……</green>
+      teleported: <green>已將你傳送至家 </green><yellow>[number]</yellow><green>。</green>
+      failure: <red>傳送失敗，請稍後再試。</red>
+      unknown-home: <red>未知的家名稱！</red>
+    help:
+      description: 島嶼主指令
+    spawn:
+      description: 傳送到出生島
+      teleporting: <green>正在將你傳送到出生島。</green>
+      no-spawn: <red>此遊戲模式沒有設定出生島。</red>
+    create:
+      description: 建立[prefix_an-island]，可選擇使用指定藍圖（需具備權限）
+      parameters: <blueprint>
+      too-many-islands: <red>此世界中的[prefix_Islands]數量已達上限，沒有足夠的空間建立你的[prefix_island]。</red>
+      cannot-create-island: <red>在限定時間內找不到可建立[prefix_island]的位置，請稍後再試……</red>
+      unable-create-island: <red>無法建立你的[prefix_island]，請聯絡管理員。</red>
+      creating-island: <green>正在為你的[prefix_island]尋找合適的位置……</green>
+      you-cannot-make: <red>你不能再建立更多[prefix_Islands]了！</red>
+      max-uses: <red>你不能再建立更多此類型的[prefix_island]了！</red>
+      you-cannot-make-team: <red>隊伍成員無法在與隊伍[prefix_island]相同的世界中建立新的[prefix_Islands]。</red>
+      pasting:
+        estimated-time: '<green>預估時間：</green><aqua>[number] </aqua><green>秒。</green>'
+        blocks: '<green>正在逐一放置方塊：</green><aqua>[number] </aqua><green>個方塊……</green>'
+        entities: '<green>正在生成實體：</green><aqua>[number] </aqua><green>個實體……</green>'
+        dimension-done: <green>[world] 中的[prefix_Island]已建造完成。</green>
+        done: <green>完成！你的[prefix_island]已準備就緒，等著你前往！</green>
+      pick: <dark_green>選擇[prefix_an-island]</dark_green>
+      cannot-afford: '<red>你的金額不足！需要：[cost]</red>'
+      unknown-blueprint: <red>該藍圖尚未載入。</red>
+      on-first-login: <green>歡迎！幾秒後我們將開始為你準備[prefix_island]。</green>
+      you-can-teleport-to-your-island: <green>你可以隨時傳送到你的[prefix_island]。</green>
+    deletehome:
+      description: 刪除一個家的位置
+      parameters: '[home name]'
+    homes:
+      description: 列出你的家
+    info:
+      description: 顯示你的[prefix_island]或指定玩家[prefix_island]的資訊
+      parameters: <player>
+    near:
+      description: 顯示你周圍鄰近[prefix_islands]的名稱
+      parameters: ''
+      the-following-islands: <green>附近有以下[prefix_islands]：</green>
+      syntax: '<gold>[direction]：</gold><green>[name]</green>'
+      north: 北
+      south: 南
+      east: 東
+      west: 西
+      no-neighbors: <red>附近沒有相鄰的[prefix_islands]！</red>
+    reset:
+      description: 重建你的[prefix_island]並刪除目前的島嶼
+      parameters: <blueprint>
+      none-left: <red>你的重建次數已用完！</red>
+      resets-left: <red>你還剩下 </red><aqua>[number] </aqua><red>次重建機會。</red>
+      confirmation: |-
+        <red>確定要這麼做嗎？</red>
+        <red>所有[prefix_island]隊伍成員都將被移出[prefix_island]，之後需要重新邀請他們加入。</red>
+        <red>此操作無法復原：目前的[prefix_island]一旦刪除，之後<bold>將無法</bold></red><red>再恢復。</red>
+      kicked-from-island: <red>由於島主正在重建[prefix_island]，你已從 [gamemode] 的[prefix_island]中移出。</red>
+    sethome:
+      description: 設定家的傳送點
+      must-be-on-your-island: <red>你必須位於自己的[prefix_island]上才能設定家！</red>
+      too-many-homes: <red>無法設定，你的[prefix_island]已達到 [number] 個家的上限。</red>
+      home-set: <gold>已將你的[prefix_island]家設為目前位置。</gold>
+      homes-are: <gold>[prefix_Island]的家如下：</gold>
+      home-list-syntax: <gold>[name]</gold>
+      click-to-teleport: <green>點擊即可傳送！</green>
+      nether:
+        not-allowed: <red>你不能將家設在地獄。</red>
+        confirmation: <red>確定要將家設在地獄嗎？</red>
+      the-end:
+        not-allowed: <red>你不能將家設在終界。</red>
+        confirmation: <red>確定要將家設在終界嗎？</red>
+      parameters: '[home name]'
+    setname:
+      description: 設定你的[prefix_island]名稱
+      name-too-short: <red>名稱太短，至少需要 [number] 個字元。</red>
+      name-too-long: <red>名稱太長，最多只能使用 [number] 個字元。</red>
+      name-already-exists: <red>此遊戲模式中已經有一座[prefix_an-island]使用這個名稱。</red>
+      parameters: <name>
+      success: <green>已成功將你的[prefix_island]名稱設為 </green><aqua>[name]</aqua><green>。</green>
+    renamehome:
+      description: 重新命名家的位置
+      parameters: '[home name]'
+      enter-new-name: <gold>請輸入新的名稱</gold>
+      already-exists: <red>該名稱已存在，請使用其他名稱。</red>
+    resetname:
+      description: 重設你的[prefix_island]名稱
+      success: <green>已成功重設你的[prefix_island]名稱。</green>
+    team:
+      description: 管理你的隊伍
+      errors:
+        teams-disabled: <red>此世界未啟用隊伍功能。請改用信任或合作功能。</red>
+      gui:
+        titles:
+          team-panel: 隊伍管理
+        buttons:
+          status:
+            name: 狀態
+            description: 隊伍目前的狀態
+          rank-filter:
+            name: 權限等級篩選
+            description: <green>點擊以切換權限等級</green>
+          invitation: 邀請
+          invite:
+            name: 邀請玩家
+            description: |
+              <green>只有與你位於</green>
+              <green>相同世界的玩家</green>
+              <green>才會顯示在清單中。</green>
+          member:
+            # Name shown on a member's head in the team panel. Placeholders: [name], [display_name], [last_seen].
+            name: '[display_name][last_seen]'
+            # First line of a member's description (their rank). Placeholder: [rank].
+            description: '[rank]'
+            # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
+            last-seen: ' <gray>([last_seen])</gray>'
+        tips:
+          LEFT:
+            name: <aqua>左鍵點擊</aqua>
+            invite: <green>邀請玩家</green>
+          RIGHT:
+            name: <aqua>右鍵點擊</aqua>
+          SHIFT_RIGHT:
+            name: <aqua>Shift + 右鍵點擊</aqua>
+            reject: <green>拒絕</green>
+            kick: <green>移出玩家</green>
+            leave: <green>離開隊伍</green>
+          SHIFT_LEFT:
+            name: <aqua>Shift + 左鍵點擊</aqua>
+            accept: <green>接受</green>
+            setowner: |
+              <green>將此玩家設為</green>
+              <green>島主</green>
+      info:
+        description: 顯示隊伍詳細資訊
+        member-layout:
+          online: <green><bold> o </bold></green><white>[name]</white>
+          offline: <red><bold> o </bold></red><white>[name] </white><gray>([last_seen])</gray>
+          offline-not-last-seen: <red><bold> o </bold></red><white>[name]</white>
+        last-seen:
+          layout: <aqua>[number] </aqua><gray>[unit]前</gray>
+          days: 天
+          hours: 小時
+          minutes: 分鐘
+        header: |
+          <white>--- </white><green>隊伍資訊 </green><white>---</white>
+          <green>隊伍成員：</green><aqua>[total]</aqua><gray>/</gray><aqua>[max]</aqua>
+          <green>在線成員：</green><aqua>[online]</aqua>
+        rank-layout:
+          owner: <gold>[rank]：</gold>
+          generic: <gold>[rank] </gold><gray>(</gray><aqua>[number]</aqua><gray>)</gray><gold>：</gold>
+      coop:
+        description: 將玩家設為你[prefix_island]的合作成員
+        parameters: <player>
+        cannot-coop-yourself: <red>你不能將自己設為合作成員！</red>
+        already-has-rank: <red>該玩家已有權限等級！</red>
+        you-are-a-coop-member: <dark_green>你已被 </dark_green><aqua>[name]</aqua><green> 設為合作成員。</green>
+        success: <green>已將 </green><aqua>[name]</aqua><green> 設為合作成員。</green>
+        name-has-invited-you: |
+          <green>[name] 邀請你</green>
+          <green>以合作成員身分加入</green>
+          <green>他的[prefix_island]。</green>
+      uncoop:
+        description: 移除玩家的合作成員權限
+        parameters: <player>
+        cannot-uncoop-yourself: <red>你不能移除自己的合作成員權限！</red>
+        cannot-uncoop-member: <red>你不能移除隊伍成員的合作成員權限！</red>
+        player-not-cooped: <red>該玩家不是合作成員！</red>
+        you-are-no-longer-a-coop-member: <red>你已不再是 [name] 的[prefix_island]合作成員。</red>
+        all-members-logged-off: <red>由於所有[prefix_island]成員都已離線，你已不再是 [name] 的[prefix_island]合作成員。</red>
+        success: <aqua>[name] </aqua><green>已不再是你[prefix_island]的合作成員。</green>
+        is-full: <red>你無法再新增合作成員。</red>
+      trust:
+        description: 將玩家設為你[prefix_island]的信任成員
+        parameters: <player>
+        trust-in-yourself: <red>相信你自己！</red>
+        name-has-invited-you: |
+          <green>[name] 邀請你</green>
+          <green>以信任成員身分加入</green>
+          <green>他的[prefix_island]。</green>
+        player-already-trusted: <red>該玩家已是信任成員！</red>
+        you-are-trusted: <dark_green>你已被 </dark_green><aqua>[name]</aqua><green> 設為信任成員！</green>
+        success: <green>已將 </green><aqua>[name]</aqua><green> 設為信任成員。</green>
+        is-full: <red>你無法再新增信任成員，小心點！</red>
+      untrust:
+        description: 移除玩家的信任成員權限
+        parameters: <player>
+        cannot-untrust-yourself: <red>你不能移除自己的信任成員權限！</red>
+        cannot-untrust-member: <red>你不能移除隊伍成員的信任成員權限！</red>
+        player-not-trusted: <red>該玩家不是信任成員！</red>
+        you-are-no-longer-trusted: <red>你已不再受到 </red><aqua>[name]</aqua><red> 的信任！</red>
+        success: <aqua>[name] </aqua><green>已不再是你[prefix_island]的信任成員。</green>
+      invite:
+        description: 邀請玩家加入你的[prefix_island]
+        invitation-sent: <green>已向 </green><aqua>[name]</aqua><green> 發送邀請。</green>
+        removing-invite: <red>正在取消邀請。</red>
+        name-has-invited-you: |
+          <green>[name] 邀請你</green>
+          <green>加入他的[prefix_island]。</green>
+        to-accept-or-reject: <green>輸入 /[label] team accept 以接受，或輸入 /[label] team reject 以拒絕。</green>
+        you-will-lose-your-island: |
+          <red>警告！接受邀請後，</red>
+          <red>你將失去所有[prefix_islands]！</red>
+        gui:
+          titles:
+            team-invite-panel: 邀請玩家
+          button:
+            already-invited: <red>已邀請</red>
+            search: <green>搜尋玩家</green>
+            searching: |
+              <aqua>正在搜尋</aqua>
+              <red>[name]</red>
+          buttons:
+            member:
+              # Name shown on a prospect's head in the invite panel. Placeholders: [name], [display_name].
+              name: '[display_name]'
+              # Optional description line shown above the click tips. Placeholders: [name], [display_name].
+              description: ''
+          enter-name: <green>請輸入玩家名稱：</green>
+          tips:
+            LEFT:
+              name: <aqua>左鍵點擊</aqua>
+              search: <green>輸入玩家名稱</green>
+              back: <green>返回</green>
+              invite: |
+                <green>邀請玩家</green>
+                <green>加入你的隊伍</green>
+            RIGHT:
+              name: <aqua>右鍵點擊</aqua>
+              coop: <green>將玩家設為合作成員</green>
+            SHIFT_LEFT:
+              name: <aqua>Shift + 左鍵點擊</aqua>
+              trust: <green>將玩家設為信任成員</green>
+        errors:
+          cannot-invite-self: <red>你不能邀請自己！</red>
+          cooldown: <red>你必須再等 [number] 秒才能再次邀請該玩家。</red>
+          island-is-full: <red>你的[prefix_island]已滿，無法再邀請其他玩家。</red>
+          none-invited-you: <red>沒有人邀請你 :c</red>
+          you-already-are-in-team: <red>你已經加入隊伍了！</red>
+          already-on-team: <red>該玩家已經加入其他隊伍了！</red>
+          invalid-invite: <red>抱歉，該邀請已失效。</red>
+          you-have-already-invited: <red>你已經邀請過該玩家了！</red>
+        parameters: <player>
+        you-can-invite: <green>你還可以邀請 [number] 位玩家。</green>
+        accept:
+          description: 接受邀請
+          you-joined-island: <green>你已加入[prefix_an-island]！輸入 </green><aqua>/[label] team </aqua><green>即可查看其他隊伍成員。</green>
+          name-joined-your-island: <green>[name] 已加入你的[prefix_island]！</green>
+          confirmation: |
+            <red>確定要接受</red>
+            <red>這個邀請嗎？</red>
+        reject:
+          description: 拒絕邀請
+          you-rejected-invite: <green>你已拒絕加入[prefix_an-island]的邀請。</green>
+          name-rejected-your-invite: <red>[name] 拒絕了你加入[prefix_island]的邀請！</red>
+        cancel:
+          description: 取消尚未處理的[prefix_island]加入邀請
+      leave:
+        cannot-leave: <red>島主無法離開隊伍！請先將島主身分轉讓，或移除所有隊伍成員。</red>
+        description: 離開你的[prefix_island]
+        left-your-island: <red>[name] 已離開你的[prefix_island]。</red>
+        success: <green>你已離開這座[prefix_island]。</green>
+      kick:
+        description: 將成員移出你的[prefix_island]
+        parameters: <player>
+        player-kicked: <red>[name] 已將你從 [gamemode] 的[prefix_island]中移出！</red>
+        cannot-kick: <red>你不能移除自己！</red>
+        cannot-kick-rank: <red>你的權限等級不足，無法移除 [name]！</red>
+        success: <aqua>[name] </aqua><green>已從你的[prefix_island]中移出。</green>
+      demote:
+        description: 降低你[prefix_island]上玩家的權限等級
+        parameters: <player>
+        errors:
+          cant-demote-yourself: <red>你不能降低自己的權限等級！</red>
+          cant-demote: <red>你不能降低權限等級比你高的玩家！</red>
+          must-be-member: <red>該玩家必須是[prefix_an-island]成員！</red>
+        failure: <red>該玩家的權限等級已無法再降低！</red>
+        success: <green>已將 [name] 降為 [rank]。</green>
+      promote:
+        description: 提升你[prefix_island]上玩家的權限等級
+        parameters: <player>
+        errors:
+          cant-promote-yourself: <red>你不能提升自己的權限等級！</red>
+          cant-promote: <red>你不能將玩家提升至高於自己權限等級！</red>
+          must-be-member: <red>該玩家必須是[prefix_an-island]成員！</red>
+        failure: <red>該玩家的權限等級已無法再提升！</red>
+        success: <green>已將 [name] 提升為 [rank]。</green>
+      setowner:
+        description: 將你的[prefix_island]島主身分轉讓給一位成員
+        errors:
+          cant-transfer-to-yourself: <red>你不能將島主身分轉讓給自己！</red><gray>(<italic>雖然理論上可以……但我們不想讓你這麼做，因為這麼做毫無意義。</italic></gray><gray>)</gray>
+          target-is-not-member: <red>該玩家不是你[prefix_island]隊伍的成員！</red>
+          at-max: <red>該玩家已達到可擁有[prefix_islands]的數量上限！</red>
+        name-is-the-owner: <green>[name] 現在是[prefix_island]的島主！</green>
+        parameters: <player>
+        you-are-the-owner: <green>你現在是[prefix_island]的島主！</green>
+    ban:
+      description: 封鎖玩家進入你的[prefix_island]
+      parameters: <player>
+      cannot-ban-yourself: <red>你不能封鎖自己！</red>
+      cannot-ban: <red>無法封鎖該玩家。</red>
+      cannot-ban-member: <red>請先將該隊伍成員移出，再進行封鎖。</red>
+      cannot-ban-more-players: <red>你已達到封鎖人數上限，無法再封鎖其他玩家進入你的[prefix_island]。</red>
+      player-already-banned: <red>該玩家已被封鎖。</red>
+      player-banned: <aqua>[name]</aqua><red> 已被封鎖，無法進入你的[prefix_island]。</red>
+      owner-banned-you: <aqua>[name]</aqua><red> 已禁止你進入他的[prefix_island]！</red>
+      you-are-banned: <aqua>你已被禁止進入這座[prefix_island]！</aqua>
+    unban:
+      description: 解除玩家進入你的[prefix_island]的封鎖
+      parameters: <player>
+      cannot-unban-yourself: <red>你不能解除自己的封鎖！</red>
+      player-not-banned: <red>該玩家未被封鎖。</red>
+      player-unbanned: <aqua>[name]</aqua><green> 已解除進入你[prefix_island]的封鎖。</green>
+      you-are-unbanned: <aqua>[name]</aqua><green> 已解除你進入他的[prefix_island]的封鎖！</green>
+    banlist:
+      description: 顯示封鎖名單
+      noone: <green>目前沒有任何玩家被封鎖。</green>
+      the-following: <aqua>以下玩家已被封鎖：</aqua>
+      names: <red>[line]</red>
+      you-can-ban: <aqua>你還可以封鎖 </aqua><yellow>[number] </yellow><aqua> 位玩家。</aqua>
+    settings:
+      description: 開啟[prefix_island]設定
+    language:
+      description: 選擇語言
+      parameters: '[language]'
+      not-available: <red>此語言無法使用。</red>
+      already-selected: <red>你目前已使用此語言。</red>
+    expel:
+      description: 驅離你[prefix_island]上的玩家
+      parameters: <player>
+      cannot-expel-yourself: <red>你不能驅離自己！</red>
+      cannot-expel: <red>無法驅離該玩家。</red>
+      cannot-expel-member: <red>你不能驅離隊伍成員！</red>
+      not-on-island: <red>該玩家目前不在你的[prefix_island]上！</red>
+      player-expelled-you: <aqua>[name]</aqua><red> 已將你驅離[prefix_island]！</red>
+      success: <green>已將 </green><aqua>[name] </aqua><green>驅離[prefix_island]。</green>
+    lock:
+      description: 鎖定或解除鎖定你的[prefix_island]
+      locked: <green>你的[prefix_island]已鎖定。</green>
+      unlocked: <green>你的[prefix_island]已解除鎖定。</green>
+      you-are-locked-out: <red>這座[prefix_island]已鎖定，你已被驅離。</red>
+ranks:
+  owner: 島主
+  sub-owner: 副島主
+  member: 成員
+  trusted: 信任成員
+  coop: 合作成員
+  visitor: 訪客
+  banned: 已封鎖
+  admin: 管理員
+  mod: 管理員
+
+protection:
+  command-is-banned: 此指令已禁止訪客使用
+  flags:
+    ALLAY:
+      name: 悅靈與銅魔像互動
+      description: 允許與悅靈及銅魔像互相給予或取回物品
+      hint: 已停用悅靈與銅魔像互動
+    ANIMAL_NATURAL_SPAWN:
+      name: 動物自然生成
+      description: 切換是否允許動物自然生成
+    ANIMAL_SPAWNERS_SPAWN:
+      name: 生怪磚生成動物
+      description: 切換是否允許生怪磚生成動物
+    ANVIL:
+      description: 切換是否允許互動
+      name: 鐵砧
+      hint: 已停用鐵砧使用
+    ARMOR_STAND:
+      description: 切換是否允許互動
+      name: 盔甲座
+      hint: 已停用盔甲座使用
+    AXOLOTL_SCOOPING:
+      name: 六角恐龍裝桶
+      description: 允許使用水桶裝起六角恐龍
+      hint: 已停用六角恐龍裝桶
+    BEACON:
+      description: 切換是否允許互動
+      name: 烽火台
+      hint: 已停用烽火台使用
+    BELL_RINGING:
+      description: 切換是否允許互動
+      name: 允許敲響鐘
+      hint: 已停用敲鐘
+    BED:
+      description: 切換是否允許互動
+      name: 床
+      hint: 已停用床的使用
+    BED_ANCHOR_RESPAWN:
+      name: 床／重生錨重生
+      description: |-
+        <green>允許玩家在所屬島嶼上的有效床或</green>
+        <green>重生錨重生。</green>
+    BOAT:
+      name: 船
+      description: |-
+        <green>切換是否允許放置、破壞及</green>
+        <green>乘坐船。</green>
+      hint: 不允許與船互動
+    BOOKSHELF:
+      name: 雕紋書櫃
+      description: |-
+        <green>允許放入物品</green>
+        <green>或取出物品。</green>
+      hint: 無法放入或取出物品。
+    BREAK_BLOCKS:
+      description: 切換是否允許破壞
+      name: 破壞方塊
+      hint: 已停用方塊破壞
+    BREAK_SPAWNERS:
+      description: |-
+        <green>切換是否允許破壞生怪磚。</green>
+        <green>此設定會覆蓋「破壞方塊」旗標。</green>
+      name: 破壞生怪磚
+      hint: 已停用生怪磚破壞
+    BREAK_HOPPERS:
+      description: |-
+        <green>切換是否允許破壞漏斗。</green>
+        <green>此設定會覆蓋「破壞方塊」旗標。</green>
+      name: 破壞漏斗
+      hint: 已停用漏斗破壞
+    BREEDING:
+      description: 切換是否允許繁殖
+      name: 動物繁殖
+      hint: 已保護動物繁殖
+    BREWING:
+      description: 切換是否允許互動
+      name: 釀造台
+      hint: 已停用釀造
+    BUCKET:
+      description: 切換是否允許互動
+      name: 水桶
+      hint: 已停用水桶使用
+    BUTTON:
+      description: 切換是否允許使用按鈕
+      name: 按鈕
+      hint: 已停用按鈕使用
+    CANDLES:
+      description: 切換是否允許與蠟燭互動
+      name: 蠟燭
+      hint: 已停用蠟燭互動
+    CAKE:
+      description: 切換是否允許與蛋糕互動
+      name: 蛋糕
+      hint: 已停用食用蛋糕
+    CARTOGRAPHY:
+      name: 製圖台
+      description: 切換是否允許使用
+      hint: 已停用製圖台使用
+    CONTAINER:
+      name: 所有容器
+      description: |-
+        <green>切換是否允許與所有容器互動。</green>
+        <green>包含：木桶、蜂箱、釀造台、</green>
+        <green>儲物箱、堆肥桶、發射器、投擲器、</green>
+        <green>花盆、熔爐、漏斗、物品展示框、</green>
+        <green>唱片機、儲物箱礦車、界伏盒、</green>
+        <green>陷阱儲物箱。</green>
+        <gray>個別設定會覆蓋</gray>
+        <gray>此旗標。</gray>
+      hint: 已停用容器存取
+    CHEST:
+      name: 儲物箱與儲物箱礦車
+      description: |-
+        <green>切換是否允許與儲物箱</green>
+        <green>及儲物箱礦車互動。</green>
+        <green>（不包含陷阱儲物箱）</green>
+      hint: 已停用儲物箱存取
+    BARREL:
+      name: 木桶
+      description: 切換是否允許與木桶互動
+      hint: 已停用木桶存取
+    CRAFTER:
+      name: 合成器
+      description: 切換是否允許使用
+      hint: 已停用合成器使用
+    BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        <green>允許床與重生錨</green>
+        <green>破壞方塊並對</green>
+        <green>實體造成傷害。</green>
+      name: 方塊爆炸傷害
+    COMPOSTER:
+      name: 堆肥桶
+      description: 切換是否允許與堆肥桶互動
+      hint: 已停用堆肥桶互動
+    LOOM:
+      name: 織布機
+      description: 切換是否允許使用
+      hint: 已停用織布機使用
+    FLOWER_POT:
+      name: 花盆
+      description: 切換是否允許與花盆互動
+      hint: 已停用花盆互動
+    GRINDSTONE:
+      name: 砂輪
+      description: 切換是否允許使用
+      hint: 已停用砂輪使用
+    SHULKER_BOX:
+      name: 界伏盒
+      description: 切換是否允許與界伏盒互動
+      hint: 已停用界伏盒存取
+    SHULKER_TELEPORT:
+      description: |-
+        <green>允許界伏蚌在啟用時</green>
+        <green>進行瞬移。</green>
+      name: 界伏蚌瞬移
+    SMITHING:
+      name: 鍛造台
+      description: 切換是否允許使用
+      hint: 已停用鍛造台使用
+    STONECUTTING:
+      name: 切石機
+      description: 切換是否允許使用
+      hint: 已停用切石機使用
+    TRAPPED_CHEST:
+      name: 陷阱儲物箱
+      description: 切換是否允許與陷阱儲物箱互動
+      hint: 已停用陷阱儲物箱存取
+    DISPENSER:
+      name: 發射器
+      description: 切換是否允許與發射器互動
+      hint: 已停用發射器互動
+    DROPPER:
+      name: 投擲器
+      description: 切換是否允許與投擲器互動
+      hint: 已停用投擲器互動
+    ELYTRA:
+      name: 鞘翅
+      description: 切換是否允許使用鞘翅
+      hint: '<red>警告：此處無法使用鞘翅！</red>'
+    HOPPER:
+      name: 漏斗
+      description: 切換是否允許與漏斗互動
+      hint: 已停用漏斗互動
+    CHEST_DAMAGE:
+      description: 切換是否允許爆炸破壞儲物箱
+      name: 儲物箱爆炸損壞
+    CHORUS_FRUIT:
+      description: 切換是否允許瞬移
+      name: 歌萊果
+      hint: 已停用歌萊果瞬移
+    CLEAN_SUPER_FLAT:
+      description: |-
+        <green>啟用後會清除</green>
+        <green>[prefix_island] 世界中的</green>
+        <green>所有超平坦區塊。</green>
+      name: 清理超平坦區塊
+    COARSE_DIRT_TILLING:
+      description: |-
+        <green>切換是否允許耕作粗泥</green>
+        <green>及破壞灰壤</green>
+        <green>以取得泥土。</green>
+      name: 耕作粗泥
+      hint: 已停用粗泥耕作
+    COLLECT_LAVA:
+      description: |-
+        <green>切換是否允許收集熔岩</green>
+        <green>（覆蓋「水桶」旗標）</green>
+      name: 收集熔岩
+      hint: 已停用熔岩收集
+    COLLECT_WATER:
+      description: |-
+        <green>切換是否允許收集水</green>
+        <green>（覆蓋「水桶」旗標）</green>
+      name: 收集水
+      hint: 已停用收集水
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        <green>切換是否允許收集粉雪</green>
+        <green>（覆蓋「水桶」旗標）</green>
+      name: 收集粉雪
+      hint: 已停用粉雪桶使用
+    COMMAND_RANKS:
+      name: <yellow>指令權限等級</yellow>
+      description: <green>設定指令權限等級</green>
+    CRAFTING:
+      description: 切換是否允許使用
+      name: 工作台
+      hint: 已停用工作台使用
+    CREEPER_DAMAGE:
+      description: |-
+        <green>切換是否允許苦力怕</green>
+        <green>造成傷害。</green>
+      name: 苦力怕傷害
+    CREEPER_GRIEFING:
+      description: |-
+        <green>切換是否保護島嶼免受</green>
+        <green>由 [prefix_island] 訪客引爆的</green>
+        <green>苦力怕破壞地形。</green>
+      name: 苦力怕地形破壞保護
+      hint: 已停用苦力怕地形破壞保護
+    CROP_PLANTING:
+      description: <green>設定誰可以種植作物。</green>
+      name: 種植作物
+      hint: 已停用作物種植
+    CROP_TRAMPLE:
+      description: 切換是否允許踩踏作物
+      name: 踩踏作物
+      hint: 已停用作物踩踏
+    DOOR:
+      description: 切換是否允許使用門
+      name: 使用門
+      hint: 已停用門互動
+    DRAGON_EGG:
+      name: 龍蛋
+      description: |-
+        <green>防止與龍蛋互動。</green>
+        <red>此設定無法防止龍蛋</red>
+        <red>被放置或破壞。</red>
+      hint: 已停用龍蛋互動
+    DYE:
+      description: 防止使用染料
+      name: 使用染料
+      hint: 已停用染色
+    EGGS:
+      description: 切換是否允許投擲雞蛋
+      name: 投擲雞蛋
+      hint: 已停用雞蛋投擲
+    ENCHANTING:
+      description: 切換是否允許使用
+      name: 附魔台
+      hint: 已停用附魔台使用
+    ENDER_CHEST:
+      description: 切換是否允許使用／製作
+      name: 終界箱
+      hint: 此世界已停用終界箱
+    ENDERMAN_DEATH_DROP:
+      description: |-
+        <green>終界使者死亡時，</green>
+        <green>會掉落其手上</green>
+        <green>持有的方塊。</green>
+      name: 終界使者死亡掉落
+    ENDERMAN_GRIEFING:
+      description: |-
+        <green>允許終界使者</green>
+        <green>從 [prefix_island]</green>
+        <green>移除方塊。</green>
+      name: 終界使者地形破壞
+    ENDERMAN_TELEPORT:
+      description: |-
+        <green>允許終界使者</green>
+        <green>進行瞬移。</green>
+      name: 終界使者瞬移
+    ENDER_PEARL:
+      description: 切換是否允許使用
+      name: 終界珍珠
+      hint: 已停用終界珍珠使用
+    ENTER_EXIT_MESSAGES:
+      description: 顯示進入與離開訊息
+      island: '[name] 的[prefix_island]'
+      name: 進入／離開訊息
+      now-entering: <green>正在進入 </green><aqua>[name]</aqua><green>。</green>
+      now-entering-your-island: '<green>正在進入你的[prefix_island]：</green><aqua>[name]</aqua>'
+      now-leaving: <green>正在離開 </green><aqua>[name]</aqua><green>。</green>
+      now-leaving-your-island: '<green>正在離開你的[prefix_island]：</green><aqua>[name]</aqua>'
+    EXPERIENCE_BOTTLE_THROWING:
+      name: 投擲經驗瓶
+      description: 切換是否允許投擲經驗瓶
+      hint: 已停用經驗瓶投擲
+    FIRE_BURNING:
+      name: 火焰燃燒
+      description: |-
+        <green>切換是否允許火焰</green>
+        <green>燃燒方塊。</green>
+    FIRE_EXTINGUISH:
+      description: 切換是否允許熄滅火焰
+      name: 熄滅火焰
+      hint: 已停用熄滅火焰
+    FIRE_IGNITE:
+      name: 火焰點燃
+      description: |-
+        <green>切換是否允許火焰</green>
+        <green>透過非玩家方式點燃。</green>
+    FIRE_SPREAD:
+      name: 火焰蔓延
+      description: |-
+        <green>切換是否允許火焰</green>
+        <green>蔓延至附近的方塊。</green>
+    FISHING:
+      name: 釣魚
+      description: 允許使用釣竿釣魚
+      hint: 已停用釣魚
+    FISH_SCOOPING:
+      name: 裝魚入桶
+      description: 允許使用水桶將魚裝入桶中
+      hint: 已停用裝魚入桶
+    FLINT_AND_STEEL:
+      name: 打火石
+      description: |-
+        <green>允許玩家使用打火石</green>
+        <green>或火焰彈點燃火焰</green>
+        <green>或營火。</green>
+      hint: 已停用打火石與火焰彈
+    FURNACE:
+      description: 切換是否允許使用
+      name: 熔爐
+      hint: 已停用熔爐使用
+    GATE:
+      description: 切換是否允許使用
+      name: 柵欄門
+      hint: 已停用柵欄門使用
+    GEO_LIMIT_MOBS:
+      description: |-
+        <green>移除離開受保護</green>
+        <green>[prefix_island]</green>
+        <green>範圍的生物。</green>
+      name: <yellow>限制生物於[prefix_island]內</yellow>
+    HARVEST:
+      description: |-
+        <green>設定誰可以收成作物。</green>
+        <green>別忘了也要允許</green>
+        <green>拾取物品！</green>
+      name: 收成作物
+      hint: 已停用作物收成
+    HIVE:
+      description: <green>切換是否允許採收蜂巢。</green>
+      name: 採收蜂巢
+      hint: 已停用蜂巢採收
+    HURT_TAMED_ANIMALS:
+      description: |-
+        <green>切換是否允許造成傷害。</green>
+        <green>啟用表示馴服的動物</green>
+        <green>可以受到傷害；停用則為無敵。</green>
+      name: 傷害馴服的動物
+      hint: 已停用傷害馴服的動物
+    HURT_ANIMALS:
+      description: 切換是否允許造成傷害
+      name: 傷害動物
+      hint: 已停用傷害動物
+    HURT_MONSTERS:
+      description: 切換是否允許造成傷害
+      name: 傷害怪物
+      hint: 已停用傷害怪物
+    HURT_VILLAGERS:
+      description: 切換是否允許造成傷害
+      name: 傷害村民
+      hint: 已停用傷害村民
+    ITEM_FRAME:
+      name: 展示框
+      description: |-
+        <green>切換是否允許互動。</green>
+        <green>此設定會覆蓋放置或破壞方塊權限。</green>
+      hint: 已停用展示框互動
+    ITEM_FRAME_DAMAGE:
+      description: |-
+        <green>允許生物破壞</green>
+        <green>展示框。</green>
+      name: 展示框傷害
+    INVINCIBLE_VISITORS:
+      description: |-
+        <green>設定訪客無敵</green>
+        <green>相關選項。</green>
+      name: <yellow>訪客無敵</yellow>
+      hint: <red>訪客受到保護</red>
+    ISLAND_RESPAWN:
+      description: |-
+        <green>玩家會在</green>
+        <green>[prefix_island]重生。</green>
+      name: '[prefix_island]重生'
+    ITEM_DROP:
+      description: 切換是否允許丟棄
+      name: 丟棄物品
+      hint: 已停用丟棄物品
+    ITEM_PICKUP:
+      description: 切換是否允許拾取
+      name: 拾取物品
+      hint: 已停用拾取物品
+    JUKEBOX:
+      description: 切換是否允許使用
+      name: 使用唱片機
+      hint: 已停用唱片機使用
+    LEAF_DECAY:
+      name: 樹葉腐化
+      description: 允許樹葉自然腐化
+    LEASH:
+      description: 切換是否允許使用
+      name: 使用拴繩
+      hint: 已停用拴繩使用
+    LECTERN:
+      name: 講台
+      description: |-
+        <green>允許在講台上放置書籍</green>
+        <green>或從講台取下書籍。</green>
+        <red>此設定無法防止玩家</red>
+        <red>閱讀書籍。</red>
+      hint: 無法在講台放置書籍或從講台取下書籍。
+    LEVER:
+      description: 切換是否允許使用
+      name: 使用拉桿
+      hint: 已停用拉桿使用
+    LIMIT_MOBS:
+      description: |-
+        <green>限制此遊戲模式中</green>
+        <green>各類實體的</green>
+        <green>生成。</green>
+      name: <yellow>限制實體類型生成</yellow>
+      can: <green>可生成</green>
+      cannot: <red>不可生成</red>
+    LIQUIDS_FLOWING_OUT:
+      name: 液體流出[prefix_island]
+      description: |-
+        <green>切換是否允許液體流出</green>
+        <green>[prefix_island]的保護範圍。</green>
+        <green>停用後可避免熔岩與水</green>
+        <green>在兩座[prefix_island]之間</green>
+        <green>生成鵝卵石。</green>
+        <red>請注意，液體仍可垂直流動。</red>
+        <red>此外，若液體放置於</red>
+        <red>[prefix_an-island]的保護範圍外，</red>
+        <red>也不會水平擴散。</red>
+    LOCK:
+      description: 切換是否鎖定
+      name: 鎖定[prefix_island]
+    CHANGE_SETTINGS:
+      name: 變更設定
+      description: |-
+        <green>允許設定哪個成員</green>
+        <green>權限等級可以變更</green>
+        <green>[prefix_island]設定。</green>
+    MILKING:
+      description: 切換是否允許擠牛奶
+      name: 擠牛奶
+      hint: 已停用擠牛奶
+    MINECART:
+      name: 礦車
+      description: |-
+        切換是否允許放置、破壞
+        及進入礦車。
+      hint: 已停用礦車互動
+    MONSTER_NATURAL_SPAWN:
+      description: 切換是否允許怪物自然生成
+      name: 怪物自然生成
+    MONSTER_SPAWNERS_SPAWN:
+      description: 切換是否允許生怪磚生成怪物
+      name: 生怪磚生成怪物
+    MOUNT_INVENTORY:
+      description: |-
+        <green>切換是否允許存取</green>
+        <green>坐騎的物品欄。</green>
+      name: 坐騎物品欄
+      hint: 已停用坐騎物品欄存取
+    NAME_TAG:
+      name: 命名牌
+      description: 切換是否允許使用
+      hint: 已停用命名牌互動
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: 保護範圍外自然生成生物
+      description: |-
+        <green>切換是否允許生物（動物與</green>
+        <green>怪物）在[prefix_an-island]</green>
+        <green>保護範圍外自然生成。</green>
+        <red>請注意，此設定不會阻止生物</red>
+        <red>透過生怪磚或生怪蛋</red>
+        <red>生成。</red>
+    NOTE_BLOCK:
+      description: 切換是否允許使用
+      name: 音階盒
+      hint: 已停用音階盒互動
+    OBSIDIAN_SCOOPING:
+      name: 回收黑曜石
+      description: |-
+        <green>允許玩家使用空水桶將黑曜石</green>
+        <green>回收成熔岩。</green>
+        <green>這可幫助那些建造</green>
+        <green>鵝卵石生成器失敗的新手玩家。</green>
+        <green>請注意，若設定半徑內</green>
+        <green>還有其他黑曜石方塊，</green>
+        <green>則無法回收。</green>
+      scooping: <green>已將黑曜石變回熔岩，下次請小心！</green>
+      cooldown: <red>請稍候片刻，再回收另一個黑曜石方塊。</red>
+      obsidian-nearby: <red>此黑曜石周圍 [radius] 格範圍內仍有其他黑曜石方塊，因此無法回收成熔岩。</red>
+      lavaTip: |-
+        <gold>如果需要，請使用水桶</gold>
+        <gold>將它回收成熔岩！</gold>
+    OFFLINE_GROWTH:
+      description: |-
+        <green>停用後，當</green>
+        <green>[prefix_island]所有成員皆離線時，</green>
+        <green>植物將不會生長。</green>
+        <green>有助於降低伺服器延遲。</green>
+      name: 離線生長
+    OFFLINE_REDSTONE:
+      description: |-
+        <green>停用後，當</green>
+        <green>[prefix_island]所有成員皆離線時，</green>
+        <green>紅石將不會運作。</green>
+        <green>有助於降低伺服器延遲。</green>
+        <green>不影響出生[prefix_island]。</green>
+      name: 離線紅石
+    PETS_STAY_AT_HOME:
+      description: |-
+        <green>啟用後，馴服的寵物</green>
+        <green>只能前往</green>
+        <green>主人所在的</green>
+        <green>家[prefix_island]，且無法離開。</green>
+      name: 寵物待在家
+    PISTON_PUSH:
+      description: |-
+        <green>啟用此設定可防止</green>
+        <green>活塞將方塊推到</green>
+        <green>[prefix_island]保護範圍外。</green>
+      name: 活塞推動保護
+    PLACE_BLOCKS:
+      description: 切換是否允許放置
+      name: 放置方塊
+      hint: 已停用方塊放置
+    PODZOL:
+      name: 灰壤生成
+      description: |-
+        <green>停用後，可防止</green>
+        <green>大型樹木生長時</green>
+        <green>生成灰壤。</green>
+    POTION_THROWING:
+      name: 投擲藥水
+      description: |-
+        <green>切換是否允許投擲藥水。</green>
+        <green>包含飛濺藥水與滯留藥水。</green>
+      hint: 已停用投擲藥水
+    NETHER_PORTAL:
+      description: 切換是否允許使用
+      name: 地獄傳送門
+      hint: 已停用傳送門使用
+    END_PORTAL:
+      description: 切換是否允許使用
+      name: 終界傳送門
+      hint: 已停用傳送門使用
+    PAUSE_MOB_GROWTH:
+      name: 暫停生物成長
+      description: |-
+        <green>切換是否允許使用金色蒲公英</green>
+        <green>暫停或恢復幼年生物</green>
+        <green>的成長。</green>
+      hint: 已停用暫停生物成長
+    PRESSURE_PLATE:
+      description: 切換是否允許使用
+      name: 壓力板
+      hint: 已停用壓力板使用
+    PVP_END:
+      description: |-
+        <red>啟用／停用終界</red>
+        <red>PVP。</red>
+      name: 終界 PVP
+      hint: 已停用終界 PVP
+      enabled: <red>終界 PVP 已啟用。</red>
+      disabled: <green>終界 PVP 已停用。</green>
+    PVP_NETHER:
+      description: |-
+        <red>啟用／停用地獄</red>
+        <red>PVP。</red>
+      name: 地獄 PVP
+      hint: 已停用地獄 PVP
+      enabled: <red>地獄 PVP 已啟用。</red>
+      disabled: <green>地獄 PVP 已停用。</green>
+    PVP_OVERWORLD:
+      description: |-
+        <red>啟用／停用</red>
+        <red>[prefix_island]上的 PVP。</red>
+      name: 主世界 PVP
+      hint: <red>已停用主世界 PVP</red>
+      enabled: <red>主世界 PVP 已啟用。</red>
+      disabled: <green>主世界 PVP 已停用。</green>
+    REDSTONE:
+      description: 切換是否允許使用
+      name: 紅石物品
+      hint: 已停用紅石物品互動
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        <green>防止終界出口</green>
+        <green>[prefix_island]生成於</green>
+        <green>座標 0,0。</green>
+      name: 移除終界出口[prefix_island]
+    REMOVE_MOBS:
+      description: |-
+        <green>傳送至[prefix_island]時</green>
+        <green>將怪物推離玩家。</green>
+      name: 擊退怪物
+    RIDING:
+      description: 切換是否允許騎乘
+      name: 騎乘動物
+      hint: 已停用騎乘動物
+    SHEARING:
+      description: 切換是否允許剪毛
+      name: 剪毛
+      hint: 已停用剪毛
+    SPAWN_EGGS:
+      description: 切換是否允許使用
+      name: 生怪蛋
+      hint: 已停用生怪蛋
+    SPAWNER_SPAWN_EGGS:
+      description: |-
+        <green>允許使用生怪蛋</green>
+        <green>變更生怪磚的生物種類。</green>
+      name: 生怪蛋設定生怪磚
+      hint: 不允許使用生怪蛋變更生怪磚的生物種類
+    SCULK_SENSOR:
+      description: |-
+        <green>切換伏聆振測器</green>
+        <green>是否啟動。</green>
+      name: 伏聆振測器
+      hint: 已停用伏聆振測器啟動
+    SCULK_SHRIEKER:
+      description: |-
+        <green>切換是否允許啟動</green>
+        <green>伏聆嘯口。</green>
+      name: 伏聆嘯口
+      hint: 已停用伏聆嘯口啟動
+    SIGN_EDITING:
+      description: |-
+        <green>允許編輯</green>
+        <green>告示牌文字。</green>
+      name: 編輯告示牌
+      hint: 已停用告示牌編輯
+    TNT_DAMAGE:
+      description: |-
+        <green>允許 TNT 與 TNT 礦車</green>
+        <green>破壞方塊並對</green>
+        <green>實體造成傷害。</green>
+      name: TNT 傷害
+    TNT_PRIMING:
+      description: |-
+        <green>防止引燃 TNT。</green>
+        <green>此設定不會覆蓋</green>
+        <green>打火石保護。</green>
+      name: TNT 引燃
+      hint: 已停用 TNT 引燃
+    TRADING:
+      description: 切換是否允許交易
+      name: 村民交易
+      hint: 已停用村民交易
+    TRAPDOOR:
+      description: 切換是否允許使用
+      name: 地板門
+      hint: 已停用地板門使用
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: 保護範圍外樹木生長
+      description: |-
+        <green>切換是否允許樹木生長至</green>
+        <green>[prefix_island]保護範圍外。</green>
+        <green>此設定不僅會防止種植於</green>
+        <green>[prefix_an-island]保護範圍外的樹苗</green>
+        <green>生長，也會阻止樹葉與原木</green>
+        <green>生成至[prefix_island]保護範圍外，</green>
+        <green>使樹木在邊界處停止生長。</green>
+    TURTLE_EGGS:
+      description: 切換是否允許踩碎
+      name: 海龜蛋
+      hint: 已停用踩碎海龜蛋
+    FROST_WALKER:
+      description: 切換是否允許使用冰霜行者附魔
+      name: 冰霜行者
+      hint: 已停用冰霜行者
+    EXPERIENCE_PICKUP:
+      name: 拾取經驗
+      description: 切換是否允許拾取經驗球
+      hint: 已停用拾取經驗
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: 防止掉落時傳送
+      description: |-
+        <green>防止玩家在掉落時</green>
+        <green>使用指令傳送回</green>
+        <green>[prefix_island]。</green>
+      hint: <red>掉落時無法執行此操作。</red>
+    VISITOR_KEEP_INVENTORY:
+      name: 訪客死亡保留物品欄
+      description: |-
+        <green>防止玩家以訪客身分在</green>
+        <green>[prefix_an-island]死亡時失去</green>
+        <green>物品與經驗。</green>
+        <green></green>
+        <green>但[prefix_island]成員在自己的</green>
+        <green>[prefix_island]死亡時，仍會失去物品</green>
+        <green>與經驗！</green>
+    SPAWN_PROTECTION:
+      name: 出生島虛空保護
+      description: |-
+        <green>啟用後，玩家在出生島</green>
+        <green>掉入虛空時，將會傳送回</green>
+        <green>出生點，而不是死亡。</green>
+    RAID_TRIGGER:
+      name: 觸發突襲
+      description: 設定觸發突襲所需的最低島嶼權限等級
+      hint: 不允許觸發突襲
+    ENTITY_PORTAL_TELEPORT:
+      name: 實體傳送門使用
+      description: |-
+        <green>切換是否允許實體（非玩家）</green>
+        <green>使用傳送門在不同維度間</green>
+        <green>傳送。</green>
+    WIND_CHARGE:
+      name: 風彈
+      description: |-
+        <green>切換是否允許使用風彈。</green>
+        <green>停用後，訪客將無法在</green>
+        <green>此島嶼使用風彈。</green>
+      hint: 已停用風彈使用
+    WITHER_DAMAGE:
+      name: 凋零怪傷害
+      description: |-
+        <green>啟用後，凋零怪可以</green>
+        <green>破壞方塊並對玩家</green>
+        <green>造成傷害。</green>
+    WORLD_BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        <green>允許床與重生錨</green>
+        <green>在[prefix_island]保護範圍外</green>
+        <green>破壞方塊並對實體造成傷害。</green>
+      name: 世界方塊爆炸傷害
+    WORLD_TNT_DAMAGE:
+      description: |-
+        <green>允許 TNT 與 TNT 礦車</green>
+        <green>在[prefix_island]保護範圍外</green>
+        <green>破壞方塊並對實體造成傷害。</green>
+      name: 世界 TNT 傷害
+  locked: <red>此[prefix_island]已鎖定！</red>
+  locked-island-bypass: <gold>此[prefix_island]已鎖定，但你有權限繞過限制。</gold>
+  deletable-island-admin: <red>[管理員] 此[prefix_island]已標記為待刪除，正等待清除區域檔案。</red>
+  protected: '<red>[prefix_island]保護： [description]。</red>'
+  world-protected: '<red>世界保護： [description]。</red>'
+  spawn-protected: '<red>出生點保護： [description]。</red>'
+  
+  panel:
+    next: <white>下一頁</white>
+    previous: <white>上一頁</white>
+    mode:
+      advanced:
+        name: <gold>進階設定</gold>
+        description: <green>顯示適量的設定選項。</green>
+      basic:
+        name: <green>基本設定</green>
+        description: <green>顯示最常用的設定選項。</green>
+      expert:
+        name: <red>專家設定</red>
+        description: <green>顯示所有可用的設定。</green>
+      click-to-switch: <yellow>點擊</yellow><gray>切換至</gray>[next]<gray>。</gray>
+    reset-to-default:
+      name: <red>重設為預設值</red>
+      description: |
+        <green>將</green><red><bold>所有</bold></red><green>設定重設為</green>
+        <green>預設值。</green>
+      confirm: confirm
+      instructions: <green>確定要重設嗎？請輸入 </green><red>"confirm"</red><green> 以重設所有設定。</green>
+    PROTECTION:
+      title: <gold>保護</gold>
+      description: |-
+        <green>此[prefix_island]的</green>
+        <green>保護設定</green>
+    SETTING:
+      title: <gold>設定</gold>
+      description: |-
+        <green>此[prefix_island]的</green>
+        <green>一般設定</green>
+    WORLD_SETTING:
+      title: <aqua>[world_name] </aqua><gold>設定</gold>
+      description: <green>此遊戲世界的設定</green>
+    WORLD_DEFAULTS:
+      title: <aqua>[world_name] </aqua><gold>世界保護</gold>
+      description: |
+        <green>玩家位於自己的</green>
+        <green>[prefix_island]保護範圍外時的</green>
+        <green>保護設定</green>
+    ISLAND_DEFAULTS:
+      title: <aqua>[world_name] </aqua><gold>島嶼預設值</gold>
+      description: |
+        <green>新[prefix_island]的</green>
+        <green>預設保護設定</green>
+    flag-item:
+      name-layout: <green>[name]</green>
+      # Add commands to this list as required
+      command-instructions:
+        setname: |
+          <green>選擇可設定</green>
+          <green>名稱的最低權限等級</green>
+        ban: |
+          <green>選擇可封鎖</green>
+          <green>玩家的最低權限等級</green>
+        unban: |
+          <green>選擇可解除封鎖</green>
+          <green>玩家的最低權限等級</green>
+        expel: |
+          <green>選擇可驅離</green>
+          <green>訪客的最低權限等級</green>
+        team-invite: |
+          <green>選擇可邀請</green>
+          <green>玩家加入隊伍的最低權限等級</green>
+        team-kick: |
+          <green>選擇可將成員</green>
+          <green>踢出隊伍的最低權限等級</green>
+        team-coop: |
+          <green>選擇可設為</green>
+          <green>合作成員的最低權限等級</green>
+        team-trust: |
+          <green>選擇可設為</green>
+          <green>信任成員的最低權限等級</green>
+        team-uncoop: |
+          <green>選擇可取消</green>
+          <green>合作成員的最低權限等級</green>
+        team-untrust: |
+          <green>選擇可取消</green>
+          <green>信任成員的最低權限等級</green>
+        team-promote: |
+          <green>選擇可提升玩家</green>
+          <green>權限等級的最低權限等級</green>
+        team-demote: |
+          <green>選擇可降低玩家</green>
+          <green>權限等級的最低權限等級</green>
+        sethome: |
+          <green>選擇可設定</green>
+          <green>家的最低權限等級</green>
+        deletehome: |
+          <green>選擇可刪除</green>
+          <green>家的最低權限等級</green>
+        renamehome: |
+          <green>選擇可重新命名</green>
+          <green>家的最低權限等級</green>
+        setcount: |
+          <green>選擇可變更</green>
+          <green>階段的最低權限等級</green>
+        border: |
+          <green>選擇可使用</green>
+          <green>border 指令的最低權限等級</green>
+      description-layout: |
+        [description]
+
+        <yellow>左鍵點擊 </yellow><gray>可切換至較低的權限等級。</gray>
+        <yellow>右鍵點擊 </yellow><gray>可切換至較高的權限等級。</gray>
+        <gray>允許：</gray>
+      allowed-rank: <dark_aqua>- </dark_aqua><green>[rank]</green>
+      blocked-rank: <dark_aqua>- </dark_aqua><red>[rank]</red>
+      minimal-rank: <dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>
+      menu-layout: |
+        [description]
+
+        <yellow>點擊 </yellow><gray>即可開啟。</gray>
+      setting-cooldown: <red>設定正在冷卻中</red>
+      setting-layout: |
+        [description]
+
+        <yellow>點擊 </yellow><gray>即可切換。</gray>
+
+        <gray>目前設定：[setting]</gray>
+      setting-active: <green>已啟用</green>
+      setting-disabled: <red>已停用</red>
+
+management:
+  panel:
+    title: BentoBox 管理
+    views:
+      gamemodes:
+        name: <gold>遊戲模式</gold>
+        description: <yellow>點擊 </yellow><green>顯示目前已載入的遊戲模式。</green>
+        blueprints:
+          name: <gold>藍圖</gold>
+          description: <green>開啟管理員藍圖選單。</green>
+        gamemode:
+          name: <white>[name]</white>
+          description: |
+            <green>[prefix_Islands]：</green><aqua>[islands]</aqua>
+      addons:
+        name: <gold>附加元件</gold>
+        description: <yellow>點擊 </yellow><green>顯示目前已載入的附加元件。</green>
+      hooks:
+        name: <gold>Hooks</gold>
+        description: <yellow>點擊 </yellow><green>顯示目前已載入的 Hooks。</green>
+    actions:
+      reload:
+        name: <red>重新載入</red>
+        description: <yellow>點擊 </yellow><red><bold>兩次 </bold></red><green>即可重新載入 BentoBox。</green>
+    buttons:
+      catalog:
+        name: <gold>附加元件目錄</gold>
+        description: <green>開啟附加元件目錄。</green>
+      credits:
+        name: <gold>製作名單</gold>
+        description: <green>開啟 BentoBox 的製作名單。</green>
+      empty-here:
+        name: <aqua>這裡看起來空空的……</aqua>
+        description: <green>不妨到我們的附加元件目錄看看吧！</green>
+    information:
+      state:
+        name: <gold>相容性</gold>
+        description:
+          COMPATIBLE: |
+            <green>目前執行於 </green><yellow>[name] [version]</yellow><green>。</green>
+
+            <green>BentoBox 目前執行於</green>
+            <green><bold>完全相容的 </bold></green><green>伺服器軟體與</green>
+            <green>版本。</green>
+
+            <green>所有功能皆已針對此環境</green>
+            <green>完整設計與最佳化。</green>
+          SUPPORTED: |
+            <green>目前執行於 </green><yellow>[name] [version]</yellow><green>。</green>
+
+            <green>BentoBox 目前執行於</green>
+            <green><bold>支援的 </bold></green><green>伺服器軟體與</green>
+            <green>版本。</green>
+
+            <green>大部分功能都能在此環境中</green>
+            <green>穩定運作。</green>
+          NOT_SUPPORTED: |
+            <green>目前執行於 </green><yellow>[name] [version]</yellow><green>。</green>
+
+            <green>BentoBox 目前執行於</green>
+            <gold><bold>不受支援的 </bold></gold><green>伺服器軟體或</green>
+            <green>版本。</green>
+
+            <green>雖然大部分功能仍可正常運作，</green>
+            <gold>但仍可能出現平台相關的錯誤</gold>
+            <gold>或其他問題。</gold>
+          INCOMPATIBLE: |
+            <green>目前執行於 </green><yellow>[name] [version]</yellow><green>。</green>
+
+            <green>BentoBox 目前執行於</green>
+            <red><bold>不相容的 </bold></red><green>伺服器軟體或</green>
+            <green>版本。</green>
+
+            <red>可能會出現異常行為與錯誤，</red>
+            <red>且大部分功能可能無法穩定運作。</red>
+catalog:
+  panel:
+    GAMEMODES:
+      title: 遊戲模式目錄
+    ADDONS:
+      title: 附加元件目錄
+    views:
+      gamemodes:
+        name: <gold>遊戲模式</gold>
+        description: |
+          <yellow>點擊 </yellow><green>瀏覽官方提供的</green>
+          <green>遊戲模式。</green>
+      addons:
+        name: <gold>附加元件</gold>
+        description: |
+          <yellow>點擊 </yellow><green>瀏覽官方提供的</green>
+          <green>附加元件。</green>
+    icon:
+      description-template: |
+        <dark_gray>[topic]</dark_gray>
+        <green>[install]</green>
+
+        <gray><italic>[description]</italic></gray>
+
+        <yellow>點擊 </yellow><green>取得最新版本的</green>
+        <green>下載連結。</green>
+
+      already-installed: 已安裝！
+
+      install-now: 立即安裝！
+    
+    empty-here:
+      name: <aqua>這裡看起來空空的……</aqua>
+      description: |
+        <red>BentoBox 無法連線至 GitHub。</red>
+
+        <green>請在設定檔中允許 BentoBox 連線至 GitHub，</green>
+        <green>或稍後再試一次。</green>
+enums:
+  DamageCause:
+    CONTACT: 接觸
+    ENTITY_ATTACK: 生物攻擊
+    ENTITY_SWEEP_ATTACK: 橫掃攻擊
+    PROJECTILE: 投射物
+    SUFFOCATION: 窒息
+    FALL: 掉落
+    FIRE: 火焰
+    FIRE_TICK: 燃燒
+    MELTING: 融化
+    LAVA: 熔岩
+    DROWNING: 溺水
+    BLOCK_EXPLOSION: 方塊爆炸
+    ENTITY_EXPLOSION: 實體爆炸
+    VOID: 虛空
+    LIGHTNING: 閃電
+    SUICIDE: 自殺
+    STARVATION: 飢餓
+    POISON: 中毒
+    MAGIC: 魔法
+    WITHER: 凋零
+    FALLING_BLOCK: 掉落中的方塊
+    THORNS: 尖刺
+    DRAGON_BREATH: 龍之吐息
+    CUSTOM: 自訂
+    FLY_INTO_WALL: 撞牆
+    HOT_FLOOR: 岩漿塊
+    CRAMMING: 擠壓
+    DRYOUT: 脫水
+    FREEZE: 冰凍
+    KILL: 擊殺
+    SONIC_BOOM: 音爆
+    WORLD_BORDER: 世界邊界
+
+panel:
+  credits:
+    title: <dark_gray>[name] </dark_gray><dark_green>製作名單</dark_green>
+    contributor:
+      name: <green>[name]</green>
+      description: |
+        <green>提交次數：</green><aqua>[commits]</aqua>
+    empty-here:
+      name: <red>這裡看起來空空的……</red>
+      description: |
+        <red>BentoBox 無法取得此附加元件的</red>
+        <red>貢獻者資訊。</red>
+
+        <green>請在設定檔中允許 BentoBox 連線至 GitHub，</green>
+        <green>或稍後再試一次。</green>
+
+# This section contains values for BentoBox panels.
+panels:
+  # The section of translations used in [prefix_Island] Homes Panel
+  island_homes:
+    title: <dark_green><bold>你的[prefix_island]家</bold></dark_green>
+    buttons:
+      # This button is used for displaying islands to teleport to
+      name: <bold>[name]</bold>
+  # The section of translations used in [prefix_Island] Creation Panel
+  island_creation:
+    title: <dark_green><bold>選擇[prefix_an-island]</bold></dark_green>
+    buttons:
+      # This button is used for displaying blueprint bundle in the island creation panel.
+      bundle:
+        name: <bold>[name]</bold>
+        description: '[description]'
+        uses: <green>已使用 [number]/[max]</green>
+        unlimited: <green>可無限制使用</green>
+        cost: '<yellow>費用：[cost]</yellow>'
+  # The section of translations used in Language Panel
+  language:
+    title: <dark_green><bold>選擇你的語言</bold></dark_green>
+    edited: <red>已切換為 [lang]</red>
+    buttons:
+      # This button is used for displaying different locales that are available in language selection panel.
+      language:
+        name: <white><bold>[name]</bold></white>
+        description: |-
+          [authors]
+          |[selected]
+        authors: '<gray>作者：</gray>'
+        author: <gray>- </gray><aqua>[name]</aqua>
+        selected: <green>目前使用中。</green>
+  # The section of translations used in the Placeholder Browser panel (top-level addon list)
+  placeholder:
+    title: <dark_aqua><bold>Placeholder 瀏覽器</bold></dark_aqua>
+    buttons:
+      # Button representing the BentoBox core placeholder group
+      bentobox:
+        name: <white><bold>BentoBox</bold></white>
+        description: <gray>[number] 個核心 Placeholder</gray>
+      # Button representing a single addon's placeholder group; [name] = addon name, [number] = count
+      addon:
+        name: <white><bold>[name]</bold></white>
+        description: <gray>[number] 個 Placeholder</gray>
+  # The section of translations used in the Placeholder List panel (per-source placeholder list)
+  placeholder-list:
+    title: <dark_aqua><bold>[name]</bold></dark_aqua>
+    buttons:
+      # LEAF — a single placeholder; [placeholder] = full %expansion_id_key% string
+      leaf:
+        name: <aqua>[placeholder]</aqua>
+        description: <gray>[description]</gray>
+        disabled: <red><italic>（已停用）</italic></red>
+        hint: <yellow>點擊 </yellow><gray>即可切換。</gray>
+      # FOLDER — a group of sub-placeholders; [label] = compressed segment, [count] = total items
+      folder:
+        name: <white><bold>[label]</bold></white>
+        description: <gray>[count] 個 Placeholder</gray>
+        hint: <yellow>點擊 </yellow><gray>即可瀏覽。</gray>
+      # LEAF_FOLDER — a placeholder AND a folder; left-click to toggle, right-click to explore
+      leaf-folder:
+        hint: <yellow>左鍵 </yellow><gray>即可切換 · </gray><yellow>右鍵 </yellow><gray>即可瀏覽。</gray>
+      # SERIES — a collapsed numeric series; [placeholder] includes {N}, [count]/[min]/[max] = range info
+      series:
+        name: <aqua>[placeholder]</aqua>
+        description: <gray>[description]</gray>
+        range: '<dark_gray>#[min] – #[max] · 共 [count] 個項目</dark_gray>'
+        disabled: <red><italic>（部分已停用）</italic></red>
+        hint: <yellow>點擊 </yellow><gray>即可全部切換。</gray>
+        # Value samples for series; [index] = numeric suffix, [value] = resolved value
+        sample: <dark_gray>#[index] → </dark_gray><white>[value]</white>
+        sample-empty: <dark_gray>#[index] → </dark_gray><dark_gray>（空）</dark_gray>
+      # LEAF_SERIES — a placeholder AND a series; left-click to toggle leaf, right-click to toggle all
+      leaf-series:
+        hint: <yellow>左鍵 </yellow><gray>即可切換 · </gray><yellow>右鍵 </yellow><gray>即可全部切換。</gray>
+      # Current resolved value of a placeholder for the viewing player
+      value: <dark_gray>→ </dark_gray><white>[value]</white>
+      value-empty: <dark_gray>→ </dark_gray><dark_gray>（空）</dark_gray>
+      back:
+        name: <white><bold>返回</bold></white>
+        description: <gray>返回附加元件清單</gray>
+  # The set of common buttons used in multiple panels.
+  buttons:
+    # Button that is used in multi-page GUIs which allows to return to previous page.
+    previous:
+      name: <white><bold>上一頁</bold></white>
+      description: <gray>切換至第 [number] 頁</gray>
+    # Button that is used in multi-page GUIs which allows to go to next page.
+    next:
+      name: <white><bold>下一頁</bold></white>
+      description: <gray>切換至第 [number] 頁</gray>
+  tips:
+    click-to-next: <yellow>點擊 </yellow><gray>即可前往下一頁。</gray>
+    click-to-previous: <yellow>點擊 </yellow><gray>即可返回上一頁。</gray>
+    click-to-choose: <yellow>點擊 </yellow><gray>即可選擇。</gray>
+    click-to-toggle: <yellow>點擊 </yellow><gray>即可切換。</gray>
+    left-click-to-cycle-down: <yellow>左鍵點擊 </yellow><gray>即可循環切換至上一個。</gray>
+    right-click-to-cycle-up: <yellow>右鍵點擊 </yellow><gray>即可循環切換至下一個。</gray>
+
+successfully-loaded: |2
+
+  <gold>  ____             _        ____</gold>
+  <gold> |  _ \           | |      |  _ \             </gold><gray>by </gray><green>tastybento </green><gray>and </gray><green>Poslovitch</green>
+  <gold> | |_) | ___ _ __ | |_ ___ | |_) | _____  __  </gold><gray>2017 - 2023</gray>
+  <gold> |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /</gold>
+  <gold> | |_) |  __/ | | | || (_) | |_) | (_) >  <   </gold><aqua>v</aqua><yellow>[version]</yellow>
+  <gold> |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  </gold><dark_gray>載入完成，耗時 </dark_gray><yellow>[time]</yellow><dark_gray> 毫秒。</dark_gray>
