@@ -2,8 +2,10 @@ package world.bentobox.bentobox.managers;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -50,15 +52,32 @@ public class CommandsManager {
         this.brigadier = registrar;
     }
 
+    /**
+     * Registers a top level command with the server.
+     * <p>
+     * The command goes into the Bukkit command map whatever Brigadier does with it
+     * afterwards. The command map is what every other plugin dispatches BentoBox
+     * commands through - NPC plugins, command signs, GUI plugins - and Paper builds
+     * its command map entries from whatever it finds in the Brigadier dispatcher. A
+     * node put there outside Paper's own command API carries no {@code
+     * APICommandMeta}, so Paper wraps it as a {@code VanillaCommandWrapper}, which
+     * demands {@code minecraft.command.<label>} and answers with the server's
+     * no-permission message before the command ever runs (#3050).
+     * <p>
+     * Order matters: Paper's command map removes whatever node already holds a
+     * label before installing its own, so the command map has to go first and
+     * Brigadier merges the sub-command tree onto Paper's node afterwards.
+     *
+     * @param command top level command
+     */
     public void registerCommand(@NonNull CompositeCommand command) {
         commands.put(command.getLabel(), command);
+        registerWithCommandMap(command);
         if (brigadier != null) {
             // Commands created before the lifecycle window opens are picked up by
             // the registrar when it opens, so nothing more is needed here.
             brigadier.registerCommand(command);
-            return;
         }
-        registerWithCommandMap(command);
     }
 
     // Reflection is required to access Bukkit's internal command map for dynamic command registration
@@ -108,26 +127,38 @@ public class CommandsManager {
      */
     public void unregisterCommands() {
         if (brigadier != null) {
-            // Brigadier has no API for removing a node, so the nodes stay put and
-            // instead resolve to nothing: their requires predicate hides them from
-            // clients and their executor becomes a no-op. Any command re-registered
-            // after this reuses the node it already has.
+            // The nodes go with the command map entries below - on Paper the two are
+            // the same thing. Forget what was registered so that a command coming
+            // back gets its sub-command tree grafted on again rather than being
+            // skipped as already known.
+            brigadier.reset();
+        }
+        if (commandMap == null) {
+            // Nothing was ever registered, so there is nothing to take out
             commands.clear();
-            brigadier.refreshClients();
             return;
         }
         // Use reflection to obtain the knownCommands in the commandMap
         try {
             @SuppressWarnings("unchecked")
             Map<String, Command> knownCommands = (Map<String, Command>) commandMap.getClass().getMethod("getKnownCommands").invoke(commandMap);
-            //noinspection SuspiciousMethodCalls
-            knownCommands.values().removeIf(commands.values()::contains);
+            // Remove by key rather than through the values() view. On Paper the known
+            // commands are a facade over the Brigadier dispatcher rather than a real
+            // map, and removing a key is the only operation that reliably takes the
+            // node out with it.
+            List<String> labels = knownCommands.entrySet().stream().filter(e -> commands.containsValue(e.getValue()))
+                    .map(Entry::getKey).toList();
+            labels.forEach(knownCommands::remove);
             // Not sure if this is needed, but it clears out all references
             commands.values().forEach(c -> c.unregister(commandMap));
             // Zap everything
             commands.clear();
         } catch(Exception e){
             BentoBox.getInstance().logError("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
+        }
+        if (brigadier != null) {
+            // Clients are still offering the commands that have just gone away
+            brigadier.refreshClients();
         }
     }
 
