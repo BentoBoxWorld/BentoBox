@@ -2,9 +2,11 @@ package world.bentobox.bentobox.commands.brigadier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -56,6 +58,16 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
  * therefore leaves no stale references behind, and a label that disappears
  * entirely is hidden from clients because its {@code requires} predicate stops
  * matching.
+ * <p>
+ * <b>Why this class merges rather than owning its labels.</b> Every command is
+ * registered with the Bukkit command map first, and on Paper that means Paper
+ * has already put a node of its own under the label - the command map is a view
+ * over this very dispatcher. That node has to stay: it is the one that carries
+ * the {@link CompositeCommand} back to anything dispatching through the command
+ * map, and replacing it with a plain literal turns the command into a
+ * {@code VanillaCommandWrapper} that demands {@code minecraft.command.<label>}
+ * (#3050). Brigadier merges same-named literals, so registering the tree grafts
+ * the sub-commands onto Paper's node and leaves the node itself alone.
  *
  * @author tastybento
  * @since 3.22.0
@@ -83,6 +95,16 @@ public class BrigadierCommandRegistrar {
     /** Top level labels and aliases already given a node in the dispatcher. */
     private final Set<String> registeredLabels = new HashSet<>();
 
+    /**
+     * The last tree built for each top level label, keyed by label.
+     * <p>
+     * These are the nodes handed to {@link CommandDispatcher#register}, i.e. a
+     * detached copy of exactly what was grafted into the dispatcher. They are kept
+     * because the live nodes cannot be walked back: Paper hands out its own nodes
+     * wrapped in a shadow that refuses {@code getChildren()}.
+     */
+    private final Map<String, LiteralCommandNode<CommandSourceStack>> trees = new HashMap<>();
+
     public BrigadierCommandRegistrar(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
@@ -95,7 +117,7 @@ public class BrigadierCommandRegistrar {
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             dispatcher = event.registrar().getDispatcher();
             // A reload rebuilds the tree, so anything registered before has gone.
-            registeredLabels.clear();
+            reset();
             // Register everything already known. Commands created later come
             // through registerCommand() directly.
             new ArrayList<>(plugin.getCommandsManager().getCommands().values()).forEach(this::registerCommand);
@@ -123,11 +145,14 @@ public class BrigadierCommandRegistrar {
         }
         String label = command.getLabel().toLowerCase(Locale.ENGLISH);
         boolean added = false;
-        LiteralCommandNode<CommandSourceStack> main = null;
         if (registeredLabels.add(label)) {
-            main = dispatcher.register(buildTopLevel(label));
+            trees.put(label, dispatcher.register(buildTopLevel(label)));
             added = true;
         }
+        // The live node, which is not necessarily the one just built: Brigadier
+        // merges a same-named literal onto whatever is already there, so a redirect
+        // has to point at the node in the tree rather than at the discarded copy.
+        CommandNode<CommandSourceStack> main = dispatcher.getRoot().getChild(label);
         if (main != null) {
             // Aliases and the namespaced form redirect rather than duplicating the
             // tree - a game mode admin tree runs to dozens of nodes and every one
@@ -142,6 +167,21 @@ public class BrigadierCommandRegistrar {
             // /bentobox reload - need the new tree pushed to them.
             Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
         }
+    }
+
+    /**
+     * Forgets everything registered so far, so that commands coming back after a
+     * reload have their tree grafted on again.
+     * <p>
+     * The nodes themselves are not removed - Brigadier has no API for that - but
+     * the command map removal that goes with this does take the top level ones out
+     * on Paper, and anything left over resolves to nothing.
+     *
+     * @since 3.22.0
+     */
+    public void reset() {
+        registeredLabels.clear();
+        trees.clear();
     }
 
     /**
@@ -174,27 +214,15 @@ public class BrigadierCommandRegistrar {
                 registerCommand(command);
                 continue;
             }
-            int before = childCount(label);
-            dispatcher.register(buildTopLevel(label));
+            LiteralCommandNode<CommandSourceStack> rebuilt = dispatcher.register(buildTopLevel(label));
+            LiteralCommandNode<CommandSourceStack> previous = trees.put(label, rebuilt);
             // Merging is a no-op when nothing new turned up, and pushing the tree to
             // every online player for no reason is not free.
-            changed |= childCount(label) != before;
+            changed |= previous == null || countNodes(previous) != countNodes(rebuilt);
         }
         if (changed) {
             refreshClients();
         }
-    }
-
-    /**
-     * Total number of nodes in a top level command's tree, used to tell whether a
-     * rebuild actually added anything.
-     *
-     * @param label top level label
-     * @return node count, 0 if the label has no node
-     */
-    private int childCount(@NonNull String label) {
-        CommandNode<CommandSourceStack> node = dispatcher == null ? null : dispatcher.getRoot().getChild(label);
-        return node == null ? 0 : countNodes(node);
     }
 
     private static int countNodes(@NonNull CommandNode<CommandSourceStack> node) {
@@ -224,10 +252,17 @@ public class BrigadierCommandRegistrar {
      * @param topLabel main label, used to resolve the command at runtime
      * @return {@code true} if a node was added
      */
-    private boolean registerRedirect(@NonNull String alias, @NonNull LiteralCommandNode<CommandSourceStack> main,
+    private boolean registerRedirect(@NonNull String alias, @NonNull CommandNode<CommandSourceStack> main,
             @NonNull String topLabel) {
         String key = alias.toLowerCase(Locale.ENGLISH);
         if (!registeredLabels.add(key)) {
+            return false;
+        }
+        if (dispatcher.getRoot().getChild(key) != null) {
+            // Something already holds this label. On Paper that is the command map
+            // entry for this very command, which dispatches it perfectly well by
+            // itself - and if it belongs to another plugin, merging a redirect onto
+            // it would take its executor over. Either way, leave it alone.
             return false;
         }
         dispatcher.register(Commands.literal(key).requires(source -> canUse(resolve(topLabel), source))
@@ -388,21 +423,24 @@ public class BrigadierCommandRegistrar {
     /**
      * The names of the literal children Brigadier holds at the node the given
      * tokens lead to, which are exactly the ones it will suggest by itself.
+     * <p>
+     * This walks the tree as it was built rather than the live one. The live top
+     * level node may be Paper's, and Paper hands those out wrapped in a shadow node
+     * that throws rather than let the API see its children. What was built is what
+     * was grafted on, so the two agree on the literals.
      *
      * @param consumed tokens consumed by literal nodes, label first
      * @return literal child names, lower case, or an empty set if the path does
-     *         not exist in the dispatcher
+     *         not exist in the tree
      */
     private Set<String> advertisedChildren(String[] consumed) {
         if (dispatcher == null || consumed.length == 0) {
             return Set.of();
         }
-        CommandNode<CommandSourceStack> node = dispatcher.getRoot()
-                .getChild(consumed[0].toLowerCase(Locale.ENGLISH));
-        if (node != null && node.getRedirect() != null) {
-            // An alias or the namespaced form - the children live on the main node.
-            node = node.getRedirect();
-        }
+        // An alias or the namespaced form leads to the same tree as the main label
+        CompositeCommand top = resolve(consumed[0]);
+        CommandNode<CommandSourceStack> node = top == null ? null
+                : trees.get(top.getLabel().toLowerCase(Locale.ENGLISH));
         for (int i = 1; i < consumed.length && node != null; i++) {
             node = node.getChild(consumed[i].toLowerCase(Locale.ENGLISH));
         }
