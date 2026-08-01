@@ -1050,7 +1050,12 @@ public class Island implements DataObject, MetaDataAble {
      * @param doSubflags - whether to set subflags
      */
     public void setFlag(Flag flag, int value, boolean doSubflags) {
-        if (flags.containsKey(flag.getID()) && flags.get(flag.getID()) != value) {
+        // Only mark the island changed when the value actually differs, but do
+        // set flags that are not in the map yet: islands can be created with an
+        // empty flag map, and skipping absent flags silently discarded the
+        // write and left the flag on its default rank.
+        Integer current = flags.get(flag.getID());
+        if (current == null || current != value) {
             flags.put(flag.getID(), value);
             setChanged();
         }
