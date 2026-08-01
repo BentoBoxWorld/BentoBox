@@ -508,6 +508,75 @@ class PlayersManagerTest extends CommonTestSetup {
     }
 
     /**
+     * Names are unique ignoring case in Minecraft, so any capitalization of a known name
+     * must resolve to the same player. See BentoBox issue #3052.
+     */
+    @Test
+    void testGetUUIDIgnoresCase() {
+        assertEquals(uuid, pm.getUUID("tastybento"));
+        assertEquals(uuid, pm.getUUID("TastyBento"));
+        assertEquals(uuid, pm.getUUID("TASTYBENTO"));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    void testGetUUIDOnlinePlayerBeatsStaleRecord() {
+        // The stored record points at someone else, e.g. a previous holder of the name
+        Player online = mock(Player.class);
+        when(online.getUniqueId()).thenReturn(notUUID);
+        mockedBukkit.when(() -> Bukkit.getPlayerExact("tastybento")).thenReturn(online);
+        assertEquals(notUUID, pm.getUUID("tastybento"));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    void testGetUUIDFallsBackToCachedOfflinePlayer() {
+        OfflinePlayer cached = mock(OfflinePlayer.class);
+        when(cached.getUniqueId()).thenReturn(notUUID);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayerIfCached("someoneelse")).thenReturn(cached);
+        assertEquals(notUUID, pm.getUUID("someoneelse"));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    void testGetUUIDBlankName() {
+        assertNull(pm.getUUID(""));
+        assertNull(pm.getUUID("   "));
+    }
+
+    /**
+     * A record stored under a different spelling of the same name must be deleted, otherwise
+     * it shadows the current one on a case sensitive file system.
+     */
+    @Test
+    void testSetPlayerNameRemovesDifferentlyCasedRecord() throws Exception {
+        when(user.getName()).thenReturn("TastyBento");
+        pm.setPlayerName(user);
+        verify(namesHandler).deleteID("tastybento");
+        assertEquals(uuid, pm.getUUID("tastybento"));
+        assertEquals(uuid, pm.getUUID("TastyBento"));
+    }
+
+    /**
+     * Re-saving the same name must not delete the record that was just written.
+     */
+    @Test
+    void testSetPlayerNameKeepsUnchangedRecord() throws Exception {
+        pm.setPlayerName(user);
+        verify(namesHandler, never()).deleteID("tastybento");
+        assertEquals(uuid, pm.getUUID("tastybento"));
+    }
+
+    /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.PlayersManager#isInTeleport(java.util.UUID)}.
      */
