@@ -54,6 +54,53 @@ class NotifierTest {
     }
 
     /**
+     * Two different messages in quick succession should both be sent - only repeats are throttled.
+     */
+    @Test
+    void testNotifyDifferentMessagesBothSent() {
+        User user = mock(User.class);
+        assertTrue(n.notify(user, "message one"));
+        assertTrue(n.notify(user, "message two"));
+        Mockito.verify(user).sendRawMessage("message one");
+        Mockito.verify(user).sendRawMessage("message two");
+    }
+
+    /**
+     * Alternating between two messages must not defeat the throttle. Previously only the last
+     * message was remembered, so two different repeating messages (e.g. two different limits
+     * being hit back-to-back) would spam through unthrottled.
+     */
+    @Test
+    void testNotifyAlternatingMessagesThrottled() {
+        User user = mock(User.class);
+        assertTrue(n.notify(user, "message one"));
+        assertTrue(n.notify(user, "message two"));
+        // Spam
+        for (int i = 0; i < 10; i++) {
+            assertFalse(n.notify(user, "message one"));
+            assertFalse(n.notify(user, "message two"));
+        }
+        Mockito.verify(user).sendRawMessage("message one");
+        Mockito.verify(user).sendRawMessage("message two");
+    }
+
+    /**
+     * The same message to different users is throttled per user, not globally.
+     */
+    @Test
+    void testNotifyDifferentUsersIndependent() {
+        User user1 = mock(User.class);
+        User user2 = mock(User.class);
+        String message = "a message";
+        assertTrue(n.notify(user1, message));
+        assertTrue(n.notify(user2, message));
+        assertFalse(n.notify(user1, message));
+        assertFalse(n.notify(user2, message));
+        Mockito.verify(user1).sendRawMessage(message);
+        Mockito.verify(user2).sendRawMessage(message);
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
