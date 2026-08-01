@@ -56,7 +56,9 @@ public class IslandSettingsCommand extends CompositeCommand {
      * <ul>
      *   <li>If player is in the game world: Uses location to find island</li>
      *   <li>If player is in different world: Uses player's owned island</li>
-     *   <li>Fails if no island is found</li>
+     *   <li>If no island is found, the panel still opens and shows the world's
+     *       settings and default flags - useful when standing in the
+     *       wilderness and wondering what rules apply</li>
      * </ul>
      */
     @Override
@@ -67,10 +69,8 @@ public class IslandSettingsCommand extends CompositeCommand {
         } else {
             island = getIslands().getIsland(getWorld(), user);
         }
-        if (island == null) {
-            user.sendMessage("general.errors.no-island");
-            return false;
-        }
+        // A null island is fine: the panel falls back to world settings and
+        // the world's default island flags
         return true;
     }
 
@@ -88,7 +88,7 @@ public class IslandSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
                 .island(island)
-        .world(island.getWorld())
+        .world(island == null ? getWorld() : island.getWorld())
                 .tab(1, new SettingsTab(getWorld(), user, Flag.Type.PROTECTION))
                 .tab(2, new SettingsTab(getWorld(), user, Flag.Type.SETTING))
         .startingSlot(1)

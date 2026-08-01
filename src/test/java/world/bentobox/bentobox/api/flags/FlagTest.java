@@ -363,6 +363,34 @@ class FlagTest extends RanksManagerTestSetup {
     }
     
     /**
+     * A protection flag with no island falls back to the world's default island
+     * flag rank, so the settings panel still shows what applies (e.g. when a
+     * player is in the wilderness).
+     */
+    @Test
+    void testToPanelItemWithoutIslandUsesWorldDefaults() {
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        Answer<String> answer = invocation -> {
+            StringBuilder sb = new StringBuilder();
+            Arrays.stream(invocation.getArguments()).forEach(sb::append);
+            sb.append("mock");
+            return sb.toString();
+        };
+        when(user.getTranslation(any(String.class), any(), any())).thenAnswer(answer);
+        when(user.getTranslation(any(String.class))).thenAnswer(answer);
+        when(iwm.getDefaultIslandFlags(world)).thenReturn(Map.of(f, RanksManager.VISITOR_RANK));
+        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
+        when(rm.getRanks()).thenReturn(Map.of("ranks.visitor", RanksManager.VISITOR_RANK));
+
+        PanelItem pi = f.toPanelItem(plugin, user, world, null, false);
+
+        assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
+        // The rank lines were rendered from the world defaults
+        verify(user).getTranslation(eq("protection.panel.flag-item.description-layout"), eq("[description]"), any());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedName(java.util.Locale, String)}.
      */
     @Test
