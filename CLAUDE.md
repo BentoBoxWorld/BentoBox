@@ -29,18 +29,6 @@ BentoBox is a Bukkit/Paper library plugin (Java 25) that provides the core platf
 
 The main plugin class is `BentoBox.java` (extends `JavaPlugin`). Almost all subsystems are accessed via singleton managers held by the plugin instance.
 
-### Key Packages
-
-- **`api/`** — Public API surface for addons: events, commands, panels (GUIs), user management, flags, configuration
-- **`managers/`** — Core subsystems: `IslandsManager`, `IslandWorldManager`, `PlayersManager`, `AddonsManager`, `LocalesManager`, `FlagsManager`, `BlueprintsManager`, `BlueprintClipboardManager`, `HooksManager`, `PlaceholdersManager`, `RanksManager`, `CommandsManager`, `IslandDeletionManager`, `HousekeepingManager`, `ChunkPregenManager`, `MapManager`, `WebManager`
-- **`database/`** — Database abstraction supporting MongoDB, MySQL, MariaDB, PostgreSQL (via HikariCP), and SQLite
-- **`blueprints/`** — Island schematic handling and pasting
-- **`listeners/`** — Bukkit event handlers (teleport, death, join/leave, panel clicks, spawn protection)
-- **`commands/`** — Admin and user command implementations
-- **`panels/`** — Inventory GUI panel system
-- **`hooks/`** — Integrations with external plugins (Vault, PlaceholderAPI, MythicMobs, Multiverse, LuckPerms, ItemsAdder, Slimefun, Oraxen, ZNPCsPlus, FancyNpcs, BlueMap, Dynmap, LangUtils, etc.)
-- **`nms/`** — NMS (Native Minecraft Server) version-specific code
-
 ### Island Data Flow
 
 Islands are the central domain object. `IslandsManager` owns the island cache and database layer. `IslandWorldManager` holds per-world configuration. Protection logic is handled via `FlagsManager` and a rank system (`RanksManager`).
@@ -68,6 +56,30 @@ public class MyListener extends FlagListener {
 ```
 
 `checkIsland()` handles rank comparison, event cancellation, and player notification automatically. All protection flag listeners live in `listeners/flags/protection/`.
+
+#### Off-island, a PROTECTION flag is a world on/off switch
+
+A protection flag has a rank only *on an island*. Off-island — the wilderness, or
+any location with no island — `FlagListener.checkIsland` falls through to
+`flag.isSetForWorld(world)`, a plain boolean held in `WorldSettings.getWorldFlags()`.
+That is the value an admin edits on the **World Protections** tab
+(`WorldDefaultSettingsTab` / `WorldToggleClick`), and it is what any UI must show
+when there is no island — see `Flag.createProtectionFlag` and
+`WorldProtectionInfoTab`, the read-only player-facing view of it.
+
+Do **not** reach for `IWM.getDefaultIslandFlags()` here. Despite the name, that map
+is the rank each *new island* is created with — the admin panel's **Island Defaults**
+tab (`IslandDefaultSettingsTab`) — and has no bearing on what is allowed outside an
+island. It is also sparse: it only contains flags listed under `default-island-flags`
+in the game mode config, so a lookup miss is normal and must not render as "no rules".
+
+The three concepts are distinct and easy to conflate:
+
+| Question | Source | Admin tab |
+| --- | --- | --- |
+| What rank may do this on *this* island? | `island.getFlag(flag)` | Protection (per island) |
+| What may anyone do *off*-island in this world? | `flag.isSetForWorld(world)` | World Protections |
+| What rank will a *new* island start with? | `IWM.getDefaultIslandFlags(world)` | Island Defaults |
 
 ### Key API Patterns
 
@@ -148,12 +160,7 @@ A template like `<green>[description]</green>` looks harmless but is a trap. Tra
 
 ### Minecraft 26.x / Java 25 toolchain
 
-Supporting Minecraft 26.x forced a chain of build changes — keep these in mind before touching versions in `build.gradle.kts`:
-
-- **Java 25.** The 26.x `paper-api` is Java 25 bytecode and its Gradle metadata requires consumers to target Java 25, so BentoBox now compiles to Java 25 (`javaVersion = "25"`, `options.release = 25`). **Addons that compile against BentoBox must also move to Java 25.**
-- **paperweight `2.0.0-SNAPSHOT`.** All 26.x dev bundles are dev-bundle *data version 8*, which no released paperweight (`<= 2.0.0-beta.21`) can read. The snapshot is resolved via a `pluginManagement` block in `settings.gradle.kts` pointing at Paper's repo. The paperweight tool launcher is pinned to Java 25 (the 26.1+ paperclip patch step requires it). Revisit once a stable paperweight reads data-version-8 bundles.
-- **Compile target vs. runtime support.** `paperVersion` is the latest **stable 26.1.2** dev bundle, not 26.2 — because MockBukkit has no 26.2 build and its registry mock throws on 26.2's new `minecraft:sulfur_cube_archetype` registry. Minecraft **26.2 is supported at runtime** (see `ServerCompatibility` and the Modrinth `game-versions` list); 26.2-only blocks/entities are referenced via `Enums.getIfPresent(...)` by name, never a compile-time symbol. The forward "compile against literal 26.2" work is parked in a draft PR until MockBukkit ships a 26.2 build.
-- **MockBukkit coordinate.** Tests use `org.mockbukkit.mockbukkit:mockbukkit-v26.1.2:<ver>` (from Paper's repo), which **must match `paperVersion`'s MC line** — a mismatched MockBukkit fails every test at init with `InternalDataLoadException` (it validates the live API's registries against its bundled per-version data). When bumping the MC version, bump both together.
+See `.claude/rules/build-toolchain.md` — loaded automatically when working with the Gradle build files.
 
 ## Dependency Source Lookup
 
@@ -170,76 +177,6 @@ In general, the latest version of BentoBox should be targeted.
 
 ## Project Layout
 
-Related projects are checked out as siblings under `~/git/`:
-
-**Core:**
-- `bentobox/` — core BentoBox framework
-
-**Game modes:**
-- `addon-acidisland/` — AcidIsland game mode
-- `addon-bskyblock/` — BSkyBlock game mode
-- `Boxed/` — Boxed game mode (expandable box area)
-- `CaveBlock/` — CaveBlock game mode
-- `OneBlock/` — AOneBlock game mode
-- `SkyGrid/` — SkyGrid game mode
-- `RaftMode/` — Raft survival game mode
-- `StrangerRealms/` — StrangerRealms game mode
-- `Brix/` — plot game mode
-- `parkour/` — Parkour game mode
-- `poseidon/` — Poseidon game mode
-- `gg/` — gg game mode
-
-**Addons:**
-- `addon-level/` — island level calculation
-- `addon-challenges/` — challenges system
-- `addon-welcomewarpsigns/` — warp signs
-- `addon-limits/` — block/entity limits
-- `addon-invSwitcher/` / `invSwitcher/` — inventory switcher
-- `addon-biomes/` / `Biomes/` — biomes management
-- `Bank/` — island bank
-- `Border/` — world border for islands
-- `Chat/` — island chat
-- `CheckMeOut/` — island submission/voting
-- `ControlPanel/` — game mode control panel
-- `Converter/` — ASkyBlock to BSkyBlock converter
-- `DimensionalTrees/` — dimension-specific trees
-- `discordwebhook/` — Discord integration
-- `Downloads/` — BentoBox downloads site
-- `DragonFights/` — per-island ender dragon fights
-- `ExtraMobs/` — additional mob spawning rules
-- `FarmersDance/` — twerking crop growth
-- `GravityFlux/` — gravity addon
-- `Greenhouses-addon/` — greenhouse biomes
-- `IslandFly/` — island flight permission
-- `IslandRankup/` — island rankup system
-- `Likes/` — island likes/dislikes
-- `Limits/` — block/entity limits
-- `lost-sheep/` — lost sheep adventure
-- `MagicCobblestoneGenerator/` — custom cobblestone generator
-- `PortalStart/` — portal-based island start
-- `pp/` — pp addon
-- `Regionerator/` — region management
-- `Residence/` — residence addon
-- `TopBlock/` — top ten for OneBlock
-- `TwerkingForTrees/` — twerking tree growth
-- `Upgrades/` — island upgrades (Vault)
-- `Visit/` — island visiting
-- `weblink/` — web link addon
-- `CrowdBound/` — CrowdBound addon
-
-**Data packs:**
-- `BoxedDataPack/` — advancement datapack for Boxed
-
-**Documentation & tools:**
-- `docs/` — main documentation site
-- `docs-chinese/` — Chinese documentation
-- `docs-french/` — French documentation
-- `BentoBoxWorld.github.io/` — GitHub Pages site
-- `website/` — website
-- `translation-tool/` — translation tool
-
-Check these for source before any network fetch.
-
-## Key Dependencies (source locations)
-
-- `world.bentobox:bentobox` → `~/git/bentobox/src/`
+Related BentoBox projects — the core, game modes, addons, docs and tooling — are checked out as
+siblings under `~/git/`. Run `ls ~/git/` for the current list; check there for source before any
+network fetch.
