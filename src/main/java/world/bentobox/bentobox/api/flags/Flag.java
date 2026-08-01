@@ -465,7 +465,7 @@ public class Flag implements Comparable<Flag> {
         }
 
         return switch (getType()) {
-        case PROTECTION -> createProtectionFlag(plugin, user, world, island, pib).build();
+        case PROTECTION -> createProtectionFlag(user, world, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
         case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
 
@@ -496,27 +496,20 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * Renders a protection flag. With no island (the player is in the wilderness,
-     * or looking at a world they have no island in) the world's default island
-     * flag rank is shown instead, so the panel still answers "what applies
-     * here" rather than showing nothing.
+     * Renders a protection flag. With no island - the player is in the wilderness,
+     * or looking at a world they have no island in - there are no island ranks to
+     * show, so the world's own on/off state for this flag is shown instead. That
+     * matches how the flag is actually evaluated off-island: see
+     * {@link FlagListener#checkIsland(org.bukkit.event.Event, org.bukkit.entity.Player, org.bukkit.Location, Flag, boolean)},
+     * which falls back to {@link #isSetForWorld(World)} when there is no island
+     * at the location.
      */
-    private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, World world, Island island,
-            PanelItemBuilder pib) {
-        // Not a ternary: mixing int and Integer would unbox the map lookup and
-        // NPE when the world has no default for this flag
-        Integer rank;
-        if (island != null) {
-            rank = island.getFlag(this);
-        } else if (world != null) {
-            rank = plugin.getIWM().getDefaultIslandFlags(world).get(this);
-        } else {
-            rank = null;
+    private PanelItemBuilder createProtectionFlag(User user, World world, Island island, PanelItemBuilder pib) {
+        if (island == null) {
+            // Off-island the world setting decides, not any island's ranks
+            return createWorldSettingFlag(user, world, pib);
         }
-        if (rank == null) {
-            return pib;
-        }
-        int y = rank;
+        int y = island.getFlag(this);
         // Protection flag
 
         pib.description(user.getTranslation("protection.panel.flag-item.description-layout",

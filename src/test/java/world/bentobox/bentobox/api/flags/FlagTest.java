@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -363,12 +364,41 @@ class FlagTest extends RanksManagerTestSetup {
     }
     
     /**
-     * A protection flag with no island falls back to the world's default island
-     * flag rank, so the settings panel still shows what applies (e.g. when a
-     * player is in the wilderness).
+     * A protection flag with no island shows the world's on/off state for the
+     * flag - that is what applies off-island - and not any island ranks.
      */
     @Test
-    void testToPanelItemWithoutIslandUsesWorldDefaults() {
+    void testToPanelItemWithoutIslandShowsWorldSettingActive() {
+        User user = mockTranslatingUser();
+        // Flag is on for the world, so it is allowed outside islands
+        worldFlags.put("flagID", true);
+
+        PanelItem pi = f.toPanelItem(plugin, user, world, null, false);
+
+        assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
+        verify(user).getTranslation("protection.panel.flag-item.setting-active");
+        verify(user, never()).getTranslation("protection.panel.flag-item.setting-disabled");
+        verify(user).getTranslation(eq("protection.panel.flag-item.setting-layout"), eq("[description]"), any(),
+                eq("[setting]"), any());
+        // No island means no ranks to show
+        verify(user, never()).getTranslation(eq("protection.panel.flag-item.description-layout"), any(), any());
+    }
+
+    /**
+     * As above, but the flag is off for the world.
+     */
+    @Test
+    void testToPanelItemWithoutIslandShowsWorldSettingDisabled() {
+        User user = mockTranslatingUser();
+        worldFlags.put("flagID", false);
+
+        f.toPanelItem(plugin, user, world, null, false);
+
+        verify(user).getTranslation("protection.panel.flag-item.setting-disabled");
+        verify(user, never()).getTranslation("protection.panel.flag-item.setting-active");
+    }
+
+    private User mockTranslatingUser() {
         User user = mock(User.class);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
         Answer<String> answer = invocation -> {
@@ -379,15 +409,7 @@ class FlagTest extends RanksManagerTestSetup {
         };
         when(user.getTranslation(any(String.class), any(), any())).thenAnswer(answer);
         when(user.getTranslation(any(String.class))).thenAnswer(answer);
-        when(iwm.getDefaultIslandFlags(world)).thenReturn(Map.of(f, RanksManager.VISITOR_RANK));
-        mockedRanksManager.when(RanksManager::getInstance).thenReturn(rm);
-        when(rm.getRanks()).thenReturn(Map.of("ranks.visitor", RanksManager.VISITOR_RANK));
-
-        PanelItem pi = f.toPanelItem(plugin, user, world, null, false);
-
-        assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
-        // The rank lines were rendered from the world defaults
-        verify(user).getTranslation(eq("protection.panel.flag-item.description-layout"), eq("[description]"), any());
+        return user;
     }
 
     /**
