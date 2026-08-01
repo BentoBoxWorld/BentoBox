@@ -465,7 +465,7 @@ public class Flag implements Comparable<Flag> {
         }
 
         return switch (getType()) {
-        case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
+        case PROTECTION -> createProtectionFlag(plugin, user, world, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
         case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
 
@@ -495,25 +495,43 @@ public class Flag implements Comparable<Flag> {
         return pib;
     }
 
-    private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
+    /**
+     * Renders a protection flag. With no island (the player is in the wilderness,
+     * or looking at a world they have no island in) the world's default island
+     * flag rank is shown instead, so the panel still answers "what applies
+     * here" rather than showing nothing.
+     */
+    private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, World world, Island island,
+            PanelItemBuilder pib) {
+        // Not a ternary: mixing int and Integer would unbox the map lookup and
+        // NPE when the world has no default for this flag
+        Integer rank;
         if (island != null) {
-            int y = island.getFlag(this);
-            // Protection flag
-
-            pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
-                    TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-
-            RanksManager.getInstance().getRanks().forEach((reference, score) -> {
-                String rankName = user.getTranslation(reference);
-                if (score > RanksManager.BANNED_RANK && score < y) {
-                    pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
-                } else if (score <= RanksManager.OWNER_RANK && score > y) {
-                    pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
-                } else if (score == y) {
-                    pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
-                }
-            });
+            rank = island.getFlag(this);
+        } else if (world != null) {
+            rank = plugin.getIWM().getDefaultIslandFlags(world).get(this);
+        } else {
+            rank = null;
         }
+        if (rank == null) {
+            return pib;
+        }
+        int y = rank;
+        // Protection flag
+
+        pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
+                TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+
+        RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+            String rankName = user.getTranslation(reference);
+            if (score > RanksManager.BANNED_RANK && score < y) {
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
+            } else if (score <= RanksManager.OWNER_RANK && score > y) {
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
+            } else if (score == y) {
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
+            }
+        });
 
         return pib;
     }
