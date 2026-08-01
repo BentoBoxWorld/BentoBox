@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.database.sql;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,6 +14,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +26,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -50,6 +53,7 @@ class SQLDatabaseHandlerTest extends CommonTestSetup {
         }
         Queue<Runnable> queue() { return processQueue; }
         boolean isShutdown()    { return shutdown; }
+        boolean isDraining()    { return draining; }
     }
 
     /** Handler whose type parameter is NOT a DataObject — used to exercise that branch. */
@@ -366,6 +370,152 @@ class SQLDatabaseHandlerTest extends CommonTestSetup {
 
         assertFalse(future.get());
         verify(plugin).logError(contains("Could not save object"));
+    }
+
+    // ── saveObjectNow ────────────────────────────────────────────────────────
+
+    /**
+     * A queued write is discarded if BentoBox is disabled before the queue drains, so anything
+     * saved while the server is shutting down can be lost. saveObjectNow must bypass the queue and
+     * write on the calling thread even while the plugin is still enabled.
+     */
+    @Test
+    void testSaveObjectNow_pluginEnabled_storesSynchronouslyAndSkipsQueue() throws Exception {
+        when(plugin.isEnabled()).thenReturn(true);
+        clearInvocations(ps);
+
+        CompletableFuture<Boolean> future = handler.saveObjectNow(new TestDataObject());
+
+        assertTrue(future.isDone());
+        assertTrue(future.get(5, TimeUnit.SECONDS));
+        assertTrue(handler.queue().isEmpty());
+        verify(ps).execute();
+    }
+
+    @Test
+    void testSaveObjectNow_pluginDisabled_storesSynchronously() throws Exception {
+        when(plugin.isEnabled()).thenReturn(false);
+        clearInvocations(ps);
+
+        CompletableFuture<Boolean> future = handler.saveObjectNow(new TestDataObject());
+
+        assertTrue(future.get(5, TimeUnit.SECONDS));
+        assertTrue(handler.queue().isEmpty());
+        verify(ps).execute();
+    }
+
+    @Test
+    void testSaveObjectNow_null_completesFalseAndLogsError() throws Exception {
+        CompletableFuture<Boolean> future = handler.saveObjectNow(null);
+
+        assertFalse(future.get(5, TimeUnit.SECONDS));
+        verify(plugin).logError(contains("null"));
+    }
+
+    @Test
+    void testSaveObjectNow_notDataObject_completesFalseAndLogsError() throws Exception {
+        StringHandler sh = new StringHandler(plugin, connector, sqlConfig);
+
+        CompletableFuture<Boolean> future = sh.saveObjectNow("not-a-data-object");
+
+        assertFalse(future.get(5, TimeUnit.SECONDS));
+        verify(plugin).logError(contains("This class is not a DataObject"));
+    }
+
+    @Test
+    void testSaveObjectNow_sqlException_completesFalse() throws Exception {
+        when(plugin.isEnabled()).thenReturn(true);
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException("write error"));
+
+        CompletableFuture<Boolean> future = handler.saveObjectNow(new TestDataObject());
+
+        assertFalse(future.get(5, TimeUnit.SECONDS));
+        verify(plugin).logError(contains("Could not save object"));
+    }
+
+    // ── flush ────────────────────────────────────────────────────────────────
+
+    /**
+     * The async task that drains the queue stops once BentoBox is disabled, and queued writes then
+     * refuse to run. Pladdons are disabled by the server before BentoBox, so everything they save
+     * from onDisable() sits in a queue that is about to be abandoned. flush() must run those writes
+     * even though the plugin is already disabled.
+     */
+    @Test
+    void testFlush_writesQueuedSavesAfterPluginDisabled() throws Exception {
+        // Addon queues a save while BentoBox is still enabled
+        when(plugin.isEnabled()).thenReturn(true);
+        clearInvocations(ps);
+        CompletableFuture<Boolean> future = handler.saveObject(new TestDataObject());
+        assertFalse(handler.queue().isEmpty());
+        verify(ps, never()).execute();
+
+        // BentoBox is now disabling. Without flush() this write would be discarded.
+        when(plugin.isEnabled()).thenReturn(false);
+        handler.flush();
+
+        assertTrue(handler.queue().isEmpty());
+        assertTrue(future.get(5, TimeUnit.SECONDS));
+        verify(ps).execute();
+    }
+
+    @Test
+    void testFlush_emptyQueue_doesNothing() {
+        assertTrue(handler.queue().isEmpty());
+
+        assertDoesNotThrow(() -> handler.flush());
+    }
+
+    /**
+     * A write that throws must not abandon the rest of the queue.
+     */
+    @Test
+    void testFlush_writeThrows_continuesAndLogs() throws Exception {
+        when(plugin.isEnabled()).thenReturn(true);
+        handler.saveObject(new TestDataObject());
+        handler.queue().add(() -> {
+            throw new IllegalStateException("boom");
+        });
+        CompletableFuture<Boolean> last = handler.saveObject(new TestDataObject());
+
+        when(plugin.isEnabled()).thenReturn(false);
+        handler.flush();
+
+        assertTrue(handler.queue().isEmpty());
+        assertTrue(last.get(5, TimeUnit.SECONDS));
+        verify(plugin).logError(contains("Could not flush a queued database write"));
+    }
+
+    /**
+     * draining must be cleared afterwards, so a handler that survives the flush does not keep
+     * bypassing the disabled-plugin guard.
+     */
+    @Test
+    void testFlush_clearsDrainingFlag() {
+        when(plugin.isEnabled()).thenReturn(true);
+        handler.saveObject(new TestDataObject());
+        assertFalse(handler.isDraining());
+
+        when(plugin.isEnabled()).thenReturn(false);
+        handler.flush();
+
+        assertFalse(handler.isDraining());
+    }
+
+    /**
+     * draining must be cleared even when a queued write throws.
+     */
+    @Test
+    void testFlush_clearsDrainingFlagAfterThrow() {
+        when(plugin.isEnabled()).thenReturn(true);
+        handler.queue().add(() -> {
+            throw new IllegalStateException("boom");
+        });
+
+        when(plugin.isEnabled()).thenReturn(false);
+        handler.flush();
+
+        assertFalse(handler.isDraining());
     }
 
     // ── deleteID ─────────────────────────────────────────────────────────────

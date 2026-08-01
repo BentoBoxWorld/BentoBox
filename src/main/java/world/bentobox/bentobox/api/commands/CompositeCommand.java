@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +21,8 @@ import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.BStats;
+import world.bentobox.bentobox.BStats.CommandFailure;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -211,13 +214,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.parent = parent;
         subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
-        parent.getSubCommands().put(label.toLowerCase(java.util.Locale.ENGLISH), this);
+        parent.getSubCommands().put(label.toLowerCase(Locale.ENGLISH), this);
         setAliases(new ArrayList<>(Arrays.asList(aliases)));
         subCommands = new LinkedHashMap<>();
         subCommandAliases = new LinkedHashMap<>();
         // Add aliases to the parent for this command
         for (String alias : aliases) {
-            parent.getSubCommandAliases().put(alias.toLowerCase(java.util.Locale.ENGLISH), this);
+            parent.getSubCommandAliases().put(alias.toLowerCase(Locale.ENGLISH), this);
         }
         setUsage("");
         // Inherit permission prefix
@@ -270,6 +273,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                     ? " " + String.join(" ", Arrays.asList(args).subList(0, cmd.subCommandLevel))
                     : "");
             if (plugin.getSuggestionsManager().suggestSubcommand(user, cmd, typedPrefix, cmdArgs)) {
+                cmd.recordFailure(CommandFailure.UNKNOWN_SUBCOMMAND);
                 return true;
             }
         }
@@ -290,22 +294,70 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Check for console and permissions
         if (isOnlyPlayer() && !user.isPlayer()) {
             user.sendMessage("general.errors.use-in-game");
+            recordFailure(CommandFailure.WRONG_CONTEXT);
             return false;
         }
 
         if (isOnlyConsole() && user.isPlayer()) {
             user.sendMessage("general.errors.use-in-console");
+            recordFailure(CommandFailure.WRONG_CONTEXT);
             return false;
         }
 
         if (!this.runPermissionCheck(user)) {
             // Error message is displayed by permission check.
+            recordFailure(CommandFailure.NO_PERMISSION);
             return false;
         }
         // Set the user's addon context
         user.setAddon(addon);
         // Execute and trim args
-        return canExecute(user, cmdLabel, cmdArgs) && execute(user, cmdLabel, cmdArgs);
+        if (!canExecute(user, cmdLabel, cmdArgs)) {
+            recordFailure(CommandFailure.CANNOT_EXECUTE);
+            return false;
+        }
+        if (!execute(user, cmdLabel, cmdArgs)) {
+            recordFailure(CommandFailure.BAD_ARGS);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Records that this command could not be run to completion, so that the
+     * aggregate failure counts can be reported to bStats. Nothing the user typed is
+     * recorded - see {@link BStats#recordCommandFailure(CommandFailure, String)}.
+     *
+     * @param failure kind of failure
+     * @since 3.22.0
+     */
+    private void recordFailure(@NonNull CommandFailure failure) {
+        plugin.getMetrics().ifPresent(bStats -> bStats.recordCommandFailure(failure, getStatsKey()));
+    }
+
+    /**
+     * Returns a stable identifier for this command, suitable for aggregating
+     * statistics across servers.
+     * <p>
+     * Labels cannot be used for this: the top level label is set in the game mode's
+     * config, and {@link #getLabel()} is overwritten with whatever alias the player
+     * typed. The permission, however, is hard coded in {@link #setup()} and carries
+     * the addon's prefix, so {@code bskyblock.island.team.invite} means the same
+     * thing on every server. Commands without a permission fall back to their class
+     * name, which is equally stable.
+     *
+     * @return stable identifier of this command
+     * @since 3.22.0
+     */
+    public @NonNull String getStatsKey() {
+        String perm = getPermission();
+        if (perm != null && !perm.isEmpty()) {
+            // Addon permissions already carry the addon's prefix. BentoBox's own
+            // commands have no prefix, so give them one to keep the keys distinct.
+            return (permissionPrefix == null || permissionPrefix.isEmpty()) ? "bentobox." + perm : perm;
+        }
+        String addonName = addon == null ? "bentobox" : addon.getDescription().getName();
+        return addonName.toLowerCase(Locale.ENGLISH) + "." + getClass().getSimpleName();
     }
 
     /**
@@ -459,7 +511,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return CompositeCommand or null if none found
      */
     public Optional<CompositeCommand> getSubCommand(String label) {
-        label = label.toLowerCase(java.util.Locale.ENGLISH);
+        label = label.toLowerCase(Locale.ENGLISH);
         if (subCommands.containsKey(label)) {
             return Optional.ofNullable(subCommands.get(label));
         }

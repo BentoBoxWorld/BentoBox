@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -362,6 +363,55 @@ class FlagTest extends RanksManagerTestSetup {
         assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
     }
     
+    /**
+     * A protection flag with no island shows the world's on/off state for the
+     * flag - that is what applies off-island - and not any island ranks.
+     */
+    @Test
+    void testToPanelItemWithoutIslandShowsWorldSettingActive() {
+        User user = mockTranslatingUser();
+        // Flag is on for the world, so it is allowed outside islands
+        worldFlags.put("flagID", true);
+
+        PanelItem pi = f.toPanelItem(plugin, user, world, null, false);
+
+        assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
+        verify(user).getTranslation("protection.panel.flag-item.setting-active");
+        verify(user, never()).getTranslation("protection.panel.flag-item.setting-disabled");
+        verify(user).getTranslation(eq("protection.panel.flag-item.setting-layout"), eq("[description]"), any(),
+                eq("[setting]"), any());
+        // No island means no ranks to show
+        verify(user, never()).getTranslation(eq("protection.panel.flag-item.description-layout"), any(), any());
+    }
+
+    /**
+     * As above, but the flag is off for the world.
+     */
+    @Test
+    void testToPanelItemWithoutIslandShowsWorldSettingDisabled() {
+        User user = mockTranslatingUser();
+        worldFlags.put("flagID", false);
+
+        f.toPanelItem(plugin, user, world, null, false);
+
+        verify(user).getTranslation("protection.panel.flag-item.setting-disabled");
+        verify(user, never()).getTranslation("protection.panel.flag-item.setting-active");
+    }
+
+    private User mockTranslatingUser() {
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        Answer<String> answer = invocation -> {
+            StringBuilder sb = new StringBuilder();
+            Arrays.stream(invocation.getArguments()).forEach(sb::append);
+            sb.append("mock");
+            return sb.toString();
+        };
+        when(user.getTranslation(any(String.class), any(), any())).thenAnswer(answer);
+        when(user.getTranslation(any(String.class))).thenAnswer(answer);
+        return user;
+    }
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedName(java.util.Locale, String)}.
      */

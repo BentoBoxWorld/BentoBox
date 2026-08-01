@@ -49,6 +49,20 @@ class UtilTest extends CommonTestSetup {
     }
 
     /**
+     * A null world on either side must compare as not-the-same rather than throwing —
+     * a game mode addon that never enabled (e.g. missing dependency) leaves its island
+     * world null, and a listener that outlived it may still call inWorld() with that.
+     */
+    @Test
+    void testSameWorldNullSafe() {
+        when(world.getName()).thenReturn("world_name");
+        assertFalse(Util.sameWorld(null, world));
+        assertFalse(Util.sameWorld(world, null));
+        assertFalse(Util.sameWorld(null, null));
+        assertTrue(Util.sameWorld(world, world));
+    }
+
+    /**
      * Sulfur Cube (Minecraft 26.2) is slime-like but passive. When the SULFUR_CUBE entity type is
      * present, {@link Util#isPassiveEntity(org.bukkit.entity.Entity)} must classify it as passive
      * and {@link Util#isHostileEntity(org.bukkit.entity.Entity)} must not treat it as hostile,

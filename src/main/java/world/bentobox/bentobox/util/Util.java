@@ -331,6 +331,11 @@ public class Util {
      * @return true if the same
      */
     public static boolean sameWorld(World world, World world2) {
+        if (world == null || world2 == null) {
+            // A null world, e.g. from a game mode addon that never made its worlds,
+            // matches nothing
+            return false;
+        }
         return stripName(world).equals(stripName(world2));
     }
 
@@ -1145,7 +1150,7 @@ public class Util {
                                         || tag.equals("strikethrough") || tag.equals("obfuscated")) {
                                     // Close decoration temporarily to maintain nesting
                                     result.append("</").append(tag).append(">");
-                                    decorationsToReopen.add(0, tag);
+                                    decorationsToReopen.addFirst(tag);
                                     openTags.remove(j);
                                 } else {
                                     // Named color or color:# tag — close it
@@ -1182,7 +1187,7 @@ public class Util {
                                 || tag.equals("strikethrough") || tag.equals("obfuscated")) {
                             // Close decoration temporarily to maintain nesting
                             result.append("</").append(tag).append(">");
-                            decorationsToReopen.add(0, tag);
+                            decorationsToReopen.addFirst(tag);
                             openTags.remove(j);
                         } else {
                             result.append("</").append(tag).append(">");

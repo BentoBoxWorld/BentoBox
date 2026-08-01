@@ -564,6 +564,9 @@ public class User implements MetaDataAble {
      * @return legacy §-coded string
      */
     static String computeLegacy(String raw) {
+        if (raw == null || raw.isEmpty()) {
+            return raw;
+        }
         boolean hasLegacy = Util.isLegacyFormat(raw);
         boolean hasMiniMessage = raw.contains("<") && raw.contains(">");
         if (hasLegacy && !hasMiniMessage) {

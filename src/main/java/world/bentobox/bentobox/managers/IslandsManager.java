@@ -303,7 +303,7 @@ public class IslandsManager {
             // Mark island as deletable - physical cleanup is handled later by
             // the region-file purge (see PurgeRegionsService / HousekeepingManager).
             island.setDeletable(true);
-            handler.saveObject(island);
+            handler.saveObjectAsync(island);
             // Fire the deletion event immediately so listeners (hooks, maps, etc.)
             // can update now that the island is orphaned.
             IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();

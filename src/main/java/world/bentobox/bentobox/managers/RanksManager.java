@@ -80,7 +80,7 @@ public class RanksManager {
     }
 
     private void save() {
-        handler.saveObject(new Ranks(ranks));
+        handler.saveObjectAsync(new Ranks(ranks));
     }
 
     /**

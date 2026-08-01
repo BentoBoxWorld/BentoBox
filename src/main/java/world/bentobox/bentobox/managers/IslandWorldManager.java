@@ -60,26 +60,13 @@ public class IslandWorldManager {
     public void registerWorldsToMultiverse(boolean reg) {
         gameModes.values().stream().distinct().forEach(gm -> {
             registerToWorldManagementPlugins(gm.getOverWorld(), true, reg);
-            registerSeedWorld(gm.getOverWorld(), reg);
             if (gm.getWorldSettings().isNetherGenerate()) {
                 registerToWorldManagementPlugins(gm.getNetherWorld(), gm.getWorldSettings().isNetherIslands(), reg);
-                registerSeedWorld(gm.getNetherWorld(), reg);
             }
             if (gm.getWorldSettings().isEndGenerate()) {
                 registerToWorldManagementPlugins(gm.getEndWorld(), gm.getWorldSettings().isEndIslands(), reg);
-                registerSeedWorld(gm.getEndWorld(), reg);
             }
         });
-    }
-
-    private void registerSeedWorld(World world, boolean reg) {
-        if (world == null) {
-            return;
-        }
-        World seed = Bukkit.getWorld(world.getName() + "/bentobox");
-        if (seed != null) {
-            registerToWorldManagementPlugins(seed, true, reg);
-        }
     }
 
     private void registerToWorldManagementPlugins(@NonNull World world, boolean islandWorld, boolean reg) {

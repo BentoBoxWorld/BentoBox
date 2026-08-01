@@ -164,6 +164,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.did-you-mean.subcommands", since = "3.20.0")
     private boolean didYouMeanSubcommands = true;
 
+    @ConfigComment("Register commands with Paper's Brigadier command system instead of the legacy command map.")
+    @ConfigComment("Brigadier lets the client show subcommands and completions as the player types, rather than")
+    @ConfigComment("only after they press enter or TAB. Turn this off to go back to the legacy registration if")
+    @ConfigComment("another plugin conflicts with it.")
+    @ConfigEntry(path = "general.brigadier-commands", since = "3.22.0")
+    private boolean useBrigadierCommands = true;
+
     /* PANELS */
     @ConfigComment("Panel click cooldown. Value is in milliseconds. Prevents players spamming button presses in GUIs.")
     @ConfigEntry(path = "panel.click-cooldown-ms")
@@ -535,14 +542,22 @@ public class Settings implements ConfigObject {
     @ConfigComment("skip in structure searches (/locate, Eyes of Ender, explorer/treasure maps,")
     @ConfigComment("dolphins and villager cartographer trades). Suppressing a structure this way also")
     @ConfigComment("prevents those searches scanning to the world border and freezing the server.")
-    @ConfigComment("Keys may use '-' or '_' and any case, e.g. trial_chambers, ancient-city.")
+    @ConfigComment("Keys are the vanilla structure ids: tab-complete '/locate structure ' in-game for")
+    @ConfigComment("the full list ('minecraft:mansion' is listed here as 'mansion'). Keys may use '-'")
+    @ConfigComment("or '_' and any case, e.g. trial_chambers, ancient-city.")
+    @ConfigComment("To stop the map searches that most commonly freeze servers with void worlds")
+    @ConfigComment("(villager cartographer explorer-map trades, dolphins, chest treasure maps),")
+    @ConfigComment("disable the structures those maps look for:")
+    @ConfigComment("  disabled-structures:")
+    @ConfigComment("  - monument")
+    @ConfigComment("  - mansion")
+    @ConfigComment("  - trial_chambers")
+    @ConfigComment("  - buried_treasure")
+    @ConfigComment("Worlds whose generator places no structures at all (e.g. classic skyblock void")
+    @ConfigComment("worlds) skip these searches automatically — no entries are needed for them.")
     @ConfigComment("A game mode can override this per structure in its own config, both to disable")
     @ConfigComment("more structures and to force-enable one that this list disables.")
     @ConfigComment("Empty (the default) disables nothing, so behaviour is unchanged.")
-    @ConfigComment("Example:")
-    @ConfigComment("  disabled-structures:")
-    @ConfigComment("  - trial_chambers")
-    @ConfigComment("  - ancient_city")
     @ConfigEntry(path = "world.disabled-structures", since = "3.19.1")
     private List<String> disabledStructures = new ArrayList<>();
 
@@ -1918,6 +1933,22 @@ public class Settings implements ConfigObject {
      */
     public void setDidYouMeanSubcommands(boolean didYouMeanSubcommands) {
         this.didYouMeanSubcommands = didYouMeanSubcommands;
+    }
+
+    /**
+     * @return whether commands are registered with Paper's Brigadier system
+     * @since 3.22.0
+     */
+    public boolean isUseBrigadierCommands() {
+        return useBrigadierCommands;
+    }
+
+    /**
+     * @param useBrigadierCommands the useBrigadierCommands to set
+     * @since 3.22.0
+     */
+    public void setUseBrigadierCommands(boolean useBrigadierCommands) {
+        this.useBrigadierCommands = useBrigadierCommands;
     }
 
 }

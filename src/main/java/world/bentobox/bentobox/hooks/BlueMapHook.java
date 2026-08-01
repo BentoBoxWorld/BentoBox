@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
@@ -45,6 +46,14 @@ public class BlueMapHook extends MapHook implements Listener {
      * One marker set per game mode; key is the friendly name of the game mode.
      */
     private final Map<String, MarkerSet> markerSets = new HashMap<>();
+    /**
+     * Worlds each addon-created marker set (see {@link #createMarkerSet(String, String)}) has
+     * markers in, so a set is only attached to the maps of those worlds rather than to every
+     * map on the server. Populated lazily as markers are added, because
+     * {@link MapHook#createMarkerSet(String, String)} carries no world. Game mode marker sets
+     * are not tracked here - they are attached directly in {@link #registerGameMode}.
+     */
+    private final Map<String, Set<World>> markerSetWorlds = new HashMap<>();
 
     public BlueMapHook() {
         super("BlueMap", Material.MAP);
@@ -87,11 +96,13 @@ public class BlueMapHook extends MapHook implements Listener {
             gameModeNames.add(addon.getWorldSettings().getFriendlyName());
             registerGameMode(addon);
         });
-        // Re-attach any addon-created marker sets (created via createMarkerSet) to all maps,
-        // since a BlueMap reload drops them from the freshly built maps too
+        // Re-attach any addon-created marker sets (created via createMarkerSet), since a BlueMap
+        // reload drops them from the freshly built maps too. Only to the worlds they actually
+        // have markers in - attaching them to every map put unrelated sets on every world's map.
         markerSets.forEach((id, markerSet) -> {
             if (!gameModeNames.contains(id)) {
-                api.getMaps().forEach(map -> map.getMarkerSets().put(id, markerSet));
+                markerSetWorlds.getOrDefault(id, Set.of())
+                        .forEach(world -> addMarkerSetToWorld(world, id, markerSet));
             }
         });
     }
@@ -103,17 +114,11 @@ public class BlueMapHook extends MapHook implements Listener {
     public void registerGameMode(@NonNull GameModeAddon addon) {
         String friendlyName = addon.getWorldSettings().getFriendlyName();
 
-        MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName, k -> {
-
-            return MarkerSet.builder().toggleable(true).defaultHidden(false).label(k).build();
-        });
+        MarkerSet markerSet = markerSets.computeIfAbsent(friendlyName, k -> MarkerSet.builder().toggleable(true).defaultHidden(false).label(k).build());
         // Create a marker for each owned island in this addon's overworld
         plugin.getIslands().getIslands(addon.getOverWorld()).stream()
                 .filter(is -> is.getOwner() != null)
-                .forEach(island -> {
-
-                    setMarker(markerSet, island);
-                });
+                .forEach(island -> setMarker(markerSet, island));
         // Overworld
         addMarkerSetToWorld(addon.getOverWorld(), friendlyName, markerSet);
         // Nether
@@ -129,6 +134,9 @@ public class BlueMapHook extends MapHook implements Listener {
     }
 
     private void addMarkerSetToWorld(World world, String markerSetId, MarkerSet markerSet) {
+        if (api == null || world == null) {
+            return;
+        }
         api.getWorld(world).ifPresent(bmWorld -> {
 
             for (BlueMapMap map : bmWorld.getMaps()) {
@@ -136,6 +144,25 @@ public class BlueMapHook extends MapHook implements Listener {
                 map.getMarkerSets().put(markerSetId, markerSet);
             }
         });
+    }
+
+    /**
+     * Records that an addon-created marker set has markers in the given world and attaches the
+     * set to that world's maps. Called as markers are added, since
+     * {@link MapHook#createMarkerSet(String, String)} has no world parameter to scope by.
+     * No-op for unknown marker set IDs or a null world.
+     * @param markerSetId the marker set ID
+     * @param world the world a marker was just added in
+     */
+    private void trackAndAttach(String markerSetId, World world) {
+        MarkerSet markerSet = markerSets.get(markerSetId);
+        if (markerSet == null || world == null) {
+            return;
+        }
+        // Track regardless of whether BlueMap is loaded, so populateAll() can attach it later
+        markerSetWorlds.computeIfAbsent(markerSetId, k -> new HashSet<>()).add(world);
+        // Attaching is an idempotent put, so this is safe to repeat
+        addMarkerSetToWorld(world, markerSetId, markerSet);
     }
 
     private void setMarker(MarkerSet markerSet, Island island) {
@@ -235,9 +262,13 @@ public class BlueMapHook extends MapHook implements Listener {
 
     /**
      * Returns the BlueMapAPI instance for addons to create custom markers directly.
-     * @return the BlueMapAPI instance
+     * <p>
+     * This is {@code null} until BlueMap has finished loading, and again while BlueMap is
+     * reloading, so callers must null-check it. Prefer the {@link MapHook} methods, which
+     * handle the API being unavailable and re-attach marker sets after a BlueMap reload.
+     * @return the BlueMapAPI instance, or {@code null} if BlueMap is not currently loaded
      */
-    @NonNull
+    @Nullable
     public BlueMapAPI getBlueMapAPI() {
         return api;
     }
@@ -255,15 +286,22 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @Override
     public void createMarkerSet(@NonNull String id, @NonNull String label) {
-        MarkerSet markerSet = markerSets.computeIfAbsent(id,
+        // The set is only created here. It is attached to a world's maps when the first marker
+        // for that world is added - MapHook#createMarkerSet has no world to scope by, and
+        // attaching to every map put e.g. a warps set on unrelated game modes' maps.
+        markerSets.computeIfAbsent(id,
                 k -> MarkerSet.builder().label(label).toggleable(true).defaultHidden(false).build());
-        api.getMaps().forEach(map -> map.getMarkerSets().put(id, markerSet));
     }
 
     @Override
     public void removeMarkerSet(@NonNull String id) {
         markerSets.remove(id);
-        api.getMaps().forEach(map -> map.getMarkerSets().remove(id));
+        Set<World> worlds = markerSetWorlds.remove(id);
+        if (api == null || worlds == null) {
+            return;
+        }
+        worlds.forEach(world -> api.getWorld(world)
+                .ifPresent(bmWorld -> bmWorld.getMaps().forEach(map -> map.getMarkerSets().remove(id))));
     }
 
     @Override
@@ -283,6 +321,7 @@ public class BlueMapHook extends MapHook implements Listener {
             POIMarker marker = POIMarker.builder().label(label).listed(true).defaultIcon()
                     .position(location.getX(), location.getY(), location.getZ()).build();
             markerSet.put(markerId, marker);
+            trackAndAttach(markerSetId, location.getWorld());
         }
     }
 
@@ -305,6 +344,7 @@ public class BlueMapHook extends MapHook implements Listener {
                     .lineColor(toBlueMapColor(lineColor)).fillColor(toBlueMapColor(fillColor)).lineWidth(lineWidth)
                     .build();
             markerSet.put(markerId, area);
+            trackAndAttach(markerSetId, world);
         }
     }
 
@@ -323,6 +363,7 @@ public class BlueMapHook extends MapHook implements Listener {
                     .lineColor(toBlueMapColor(lineColor)).fillColor(toBlueMapColor(fillColor)).lineWidth(lineWidth)
                     .build();
             markerSet.put(markerId, area);
+            trackAndAttach(markerSetId, world);
         }
     }
 

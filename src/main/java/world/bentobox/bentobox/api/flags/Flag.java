@@ -465,7 +465,7 @@ public class Flag implements Comparable<Flag> {
         }
 
         return switch (getType()) {
-        case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
+        case PROTECTION -> createProtectionFlag(user, world, island, pib).build();
         case SETTING -> createSettingFlag(user, island, pib).build();
         case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
 
@@ -495,25 +495,36 @@ public class Flag implements Comparable<Flag> {
         return pib;
     }
 
-    private PanelItemBuilder createProtectionFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
-        if (island != null) {
-            int y = island.getFlag(this);
-            // Protection flag
-
-            pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
-                    TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-
-            RanksManager.getInstance().getRanks().forEach((reference, score) -> {
-                String rankName = user.getTranslation(reference);
-                if (score > RanksManager.BANNED_RANK && score < y) {
-                    pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
-                } else if (score <= RanksManager.OWNER_RANK && score > y) {
-                    pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
-                } else if (score == y) {
-                    pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
-                }
-            });
+    /**
+     * Renders a protection flag. With no island - the player is in the wilderness,
+     * or looking at a world they have no island in - there are no island ranks to
+     * show, so the world's own on/off state for this flag is shown instead. That
+     * matches how the flag is actually evaluated off-island: see
+     * {@link FlagListener#checkIsland(org.bukkit.event.Event, org.bukkit.entity.Player, org.bukkit.Location, Flag, boolean)},
+     * which falls back to {@link #isSetForWorld(World)} when there is no island
+     * at the location.
+     */
+    private PanelItemBuilder createProtectionFlag(User user, World world, Island island, PanelItemBuilder pib) {
+        if (island == null) {
+            // Off-island the world setting decides, not any island's ranks
+            return createWorldSettingFlag(user, world, pib);
         }
+        int y = island.getFlag(this);
+        // Protection flag
+
+        pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
+                TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+
+        RanksManager.getInstance().getRanks().forEach((reference, score) -> {
+            String rankName = user.getTranslation(reference);
+            if (score > RanksManager.BANNED_RANK && score < y) {
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
+            } else if (score <= RanksManager.OWNER_RANK && score > y) {
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
+            } else if (score == y) {
+                pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
+            }
+        });
 
         return pib;
     }

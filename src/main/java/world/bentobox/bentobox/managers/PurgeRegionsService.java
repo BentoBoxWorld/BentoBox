@@ -449,6 +449,9 @@ public class PurgeRegionsService {
             return;
         }
         World overworld = scan.world();
+        if (overworld == null) {
+            return;
+        }
         World netherWorld = scan.isNether() ? plugin.getIWM().getNetherWorld(overworld) : null;
         World endWorld = scan.isEnd() ? plugin.getIWM().getEndWorld(overworld) : null;
 

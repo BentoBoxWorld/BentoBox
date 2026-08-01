@@ -143,6 +143,6 @@ public final class PlaceholderGrouper {
      * </p>
      */
     static String stripTrailingHashNumber(String description) {
-        return description.replaceAll("\\s*#\\d+", "").trim();
+        return description.replaceAll("\\s*+#\\d++", "").trim();
     }
 }

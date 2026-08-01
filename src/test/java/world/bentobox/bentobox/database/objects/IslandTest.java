@@ -458,10 +458,30 @@ class IslandTest extends CommonTestSetup {
     @Test
     void testSetFlag() {
         Flag flag = new Flag.Builder("TEST_FLAG", Material.STONE).build();
-        // Must first put the flag so setFlag sees it exists
         island.getFlags().put(flag.getID(), RanksManager.MEMBER_RANK);
         island.setFlag(flag, RanksManager.VISITOR_RANK);
         assertEquals(RanksManager.VISITOR_RANK, island.getFlag(flag));
+    }
+
+    @Test
+    void testSetFlagWhenNotAlreadyInTheMap() {
+        // Islands can be created with an empty flag map; setting a flag that is
+        // not in it must still take effect, not silently leave the default rank
+        Flag flag = new Flag.Builder("TEST_ABSENT_FLAG", Material.STONE)
+                .defaultRank(RanksManager.MEMBER_RANK).build();
+        assertFalse(island.getFlags().containsKey(flag.getID()));
+        island.setFlag(flag, RanksManager.VISITOR_RANK);
+        assertEquals(RanksManager.VISITOR_RANK, island.getFlag(flag));
+    }
+
+    @Test
+    void testSetFlagMarksChangedOnlyWhenValueDiffers() {
+        Flag flag = new Flag.Builder("TEST_CHANGED_FLAG", Material.STONE).build();
+        island.setFlag(flag, RanksManager.VISITOR_RANK);
+        assertTrue(island.isChanged(), "Setting a new flag value must mark the island changed");
+        island.clearChanged();
+        island.setFlag(flag, RanksManager.VISITOR_RANK);
+        assertFalse(island.isChanged(), "Re-setting the same value must not mark the island changed");
     }
 
     @Test

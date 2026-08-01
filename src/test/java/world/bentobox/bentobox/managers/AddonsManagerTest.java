@@ -562,6 +562,24 @@ class AddonsManagerTest extends CommonTestSetup {
         verify(plugin).log("Enabling game mode addons...");
     }
 
+    /**
+     * Addons add their sub-commands while enabling, after the Brigadier tree was handed to
+     * Paper, so the tree has to be rebuilt once they are all up or the client never sees them.
+     * See issue #3039.
+     */
+    @Test
+    void testEnableAddonsRefreshesTheCommandTree() {
+        GameModeAddon gma = new MyGameMode();
+        AddonDescription desc = new AddonDescription.Builder("main", "TestGM", "1.0").apiVersion("1").build();
+        gma.setDescription(desc);
+        gma.setState(State.LOADED);
+        am.getAddons().add(gma);
+
+        am.enableAddons();
+
+        verify(cm).refreshCommandTrees();
+    }
+
     @Test
     void testEnableAddonsSkipsDisabledAddons() {
         Addon addon = mock(Addon.class);
@@ -669,6 +687,17 @@ class AddonsManagerTest extends CommonTestSetup {
 
         am.allLoaded();
         verify(addon).allLoaded();
+    }
+
+    /**
+     * allLoaded() runs later than enableAddons(), so anything an addon registered there needs
+     * another pass over the command tree.
+     */
+    @Test
+    void testAllLoadedRefreshesTheCommandTree() {
+        am.allLoaded();
+
+        verify(cm).refreshCommandTrees();
     }
 
     @Test

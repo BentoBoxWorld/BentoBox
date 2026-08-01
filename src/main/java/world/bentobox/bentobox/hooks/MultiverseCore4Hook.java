@@ -25,6 +25,9 @@ public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
      */
     @Override
     public void registerWorld(World world, boolean islandWorld) {
+        if (world == null) {
+            return;
+        }
         MultiverseCore core = (MultiverseCore) Bukkit.getPluginManager().getPlugin(MV_CORE);
         if (core == null) {
             return;

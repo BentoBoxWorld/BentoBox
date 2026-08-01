@@ -96,10 +96,7 @@ public class DynmapHook extends MapHook implements Listener {
         // Create a marker for each owned island in this addon's overworld
         plugin.getIslands().getIslands(addon.getOverWorld()).stream()
                 .filter(is -> is.getOwner() != null)
-                .forEach(island -> {
-
-                    setMarker(markerSet, island);
-                });
+                .forEach(island -> setMarker(markerSet, island));
     }
 
     private void setMarker(MarkerSet markerSet, Island island) {

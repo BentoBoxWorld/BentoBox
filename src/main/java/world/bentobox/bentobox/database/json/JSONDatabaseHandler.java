@@ -99,6 +99,20 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public CompletableFuture<Boolean> saveObject(T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+        return save(instance, false);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> saveObjectNow(T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+        return save(instance, true);
+    }
+
+    /**
+     * @param instance the object to write
+     * @param forceSync true to write on the calling thread instead of queuing the write
+     * @return completable future that is true if saved
+     */
+    private CompletableFuture<Boolean> save(T instance, boolean forceSync) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
@@ -131,7 +145,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
 
         String toStore = getGson().toJson(instance);
-        if (plugin.isEnabled()) {
+        if (!forceSync && plugin.isEnabled()) {
             // Async
             processQueue.add(() -> store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, true));
         } else {
@@ -142,8 +156,9 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, File backupTableFolder, String fileName, boolean async) {
-        // Do not save anything if plug is disabled and this was an async request
-        if (async && !plugin.isEnabled()) return;
+        // Do not save anything if plug is disabled and this was an async request, unless we are
+        // deliberately flushing the queue on shutdown (see AbstractDatabaseHandler#flush)
+        if (async && !plugin.isEnabled() && !draining) return;
         File tmpFile = new File(backupTableFolder, fileName);
         if (file.exists()) {
             // Make a backup of file

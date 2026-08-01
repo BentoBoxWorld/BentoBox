@@ -268,7 +268,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         // 2. Case/colour/whitespace-insensitive exact match, if unambiguous
         List<String> exact = names.stream().filter(n -> normalize(n).equals(norm)).toList();
         if (exact.size() == 1) {
-            return exact.get(0);
+            return exact.getFirst();
         }
         if (!exact.isEmpty()) {
             // Several names collapse to the same normalized form - too ambiguous to guess
@@ -276,7 +276,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         }
         // 3. Unique prefix match
         List<String> prefix = names.stream().filter(n -> normalize(n).startsWith(norm)).toList();
-        return prefix.size() == 1 ? prefix.get(0) : null;
+        return prefix.size() == 1 ? prefix.getFirst() : null;
     }
 
     /**

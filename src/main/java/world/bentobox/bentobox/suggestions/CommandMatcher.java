@@ -118,7 +118,7 @@ public final class CommandMatcher {
     }
 
     private static boolean validTokens(List<String> tokens) {
-        return !tokens.isEmpty() && !tokens.get(0).isBlank() && tokens.get(0).length() <= MAX_TOKEN_LENGTH;
+        return !tokens.isEmpty() && !tokens.getFirst().isBlank() && tokens.getFirst().length() <= MAX_TOKEN_LENGTH;
     }
 
     /**
@@ -150,7 +150,7 @@ public final class CommandMatcher {
      */
     private static void tryMatch(List<String> tokens, CompositeCommand entry, String canonicalPath,
             int implicitDepth, double worldBonus, Predicate<CompositeCommand> accessible, List<Match> results) {
-        double quality = tokenQuality(tokens.get(0), entry);
+        double quality = tokenQuality(tokens.getFirst(), entry);
         if (quality < MIN_TOKEN_QUALITY) {
             return;
         }
