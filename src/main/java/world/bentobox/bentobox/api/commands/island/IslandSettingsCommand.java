@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
+import world.bentobox.bentobox.panels.settings.WorldProtectionInfoTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -56,9 +57,9 @@ public class IslandSettingsCommand extends CompositeCommand {
      * <ul>
      *   <li>If player is in the game world: Uses location to find island</li>
      *   <li>If player is in different world: Uses player's owned island</li>
-     *   <li>If no island is found, the panel still opens and shows the world's
-     *       settings and default flags - useful when standing in the
-     *       wilderness and wondering what rules apply</li>
+     *   <li>If no island is found, the panel still opens and shows the
+     *       protection flags that apply out in the world - useful when standing
+     *       in the wilderness and wondering what rules apply there</li>
      * </ul>
      */
     @Override
@@ -69,31 +70,52 @@ public class IslandSettingsCommand extends CompositeCommand {
         } else {
             island = getIslands().getIsland(getWorld(), user);
         }
-        // A null island is fine: the panel falls back to world settings and
-        // the world's default island flags
+        // A null island is fine: the panel falls back to the world's protection
+        // flags, which are what applies off-island
         return true;
     }
 
     /**
      * Opens the settings GUI panel.
      * <p>
-     * Creates a tabbed panel with:
+     * With an island, creates a tabbed panel with:
      * <ul>
      *   <li>Tab 1: Protection flags</li>
      *   <li>Tab 2: Settings flags</li>
      * </ul>
+     * Without an island there is nothing to configure, so a single read-only tab
+     * of the world's protection flags is shown instead. That answers the only
+     * question a player can ask out in the world: what am I allowed to do here?
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        new TabbedPanelBuilder()
-        .user(user)
+        buildPanel(user).build().openPanel();
+        return true;
+    }
+
+    /**
+     * Builds the panel shown by this command.
+     * @param user user to show it to
+     * @return the panel builder for the island the player is on, or for the world
+     *         if they are not on one
+     * @since 3.22.0
+     */
+    protected TabbedPanelBuilder buildPanel(User user) {
+        if (island == null) {
+            return new TabbedPanelBuilder()
+                    .user(user)
+                    .world(getWorld())
+                    .tab(1, new WorldProtectionInfoTab(getWorld(), user))
+                    .startingSlot(1)
+                    .size(54);
+        }
+        return new TabbedPanelBuilder()
+                .user(user)
                 .island(island)
-        .world(island == null ? getWorld() : island.getWorld())
+                .world(island.getWorld())
                 .tab(1, new SettingsTab(getWorld(), user, Flag.Type.PROTECTION))
                 .tab(2, new SettingsTab(getWorld(), user, Flag.Type.SETTING))
-        .startingSlot(1)
-        .size(54)
-        .build().openPanel();
-        return true;
+                .startingSlot(1)
+                .size(54);
     }
 }
