@@ -132,3 +132,63 @@ dependencies {
 ```
 **Note:** Due to a Gradle issue with versions for Maven, you need to use -SNAPSHOT at the end.
 
+## Building from Source
+
+BentoBox builds with Gradle. You do **not** need to install Gradle — the repository ships
+the Gradle wrapper, which downloads the exact version the project is built with.
+
+### Requirements
+
+* **JDK 25** — BentoBox compiles to Java 25 bytecode, because the Paper API it builds against does.
+* **Git** and an internet connection for the first build.
+
+### Quick start
+
+```bash
+git clone https://github.com/BentoBoxWorld/BentoBox.git
+cd BentoBox
+./gradlew clean build          # use gradlew.bat on Windows
+```
+
+The shaded (fat) jar is written to `build/libs/`, named `BentoBox-<version>.jar` — for example
+`build/libs/BentoBox-3.22.1-SNAPSHOT-LOCAL.jar`. Drop that straight into your test server's
+`plugins` folder.
+
+`build` runs the tests and produces the shaded jar. If you only want the jar, run
+`./gradlew clean shadowJar` instead.
+
+> **The first build is slow.** The Paperweight plugin downloads and remaps a Paper development
+> bundle before anything compiles. This is a one-off cost — later builds reuse the cached bundle.
+
+### Other useful tasks
+
+| Command | What it does |
+| --- | --- |
+| `./gradlew test` | Run the JUnit 5 test suite |
+| `./gradlew test --tests "world.bentobox.bentobox.managers.IslandsManagerTest"` | Run a single test class |
+| `./gradlew test jacocoTestReport` | Test with a coverage report in `build/reports/jacoco/` |
+| `./gradlew javadocJar` | Build `BentoBox-<version>-javadoc.jar` |
+| `./gradlew sourcesJar` | Build `BentoBox-<version>-sources.jar` |
+| `./gradlew publishToMavenLocal` | Install to `~/.m2` so a local addon can build against it |
+
+Tasks can be combined on one command line, e.g. `./gradlew clean build javadocJar sourcesJar`.
+
+### If Gradle can't find a Java 25 toolchain
+
+Compilation always happens on Java 25 regardless of which JVM runs Gradle itself. If Gradle
+reports that no matching toolchain is available, point it at your JDK 25 installation:
+
+```bash
+./gradlew build -Porg.gradle.java.installations.paths=/path/to/jdk-25
+```
+
+This is what CI does — it runs the Gradle daemon on Java 21 and compiles on a separate
+Java 25 install discovered via `-Porg.gradle.java.installations.fromEnv=JAVA_HOME_25_X64`.
+
+### Version numbers
+
+The version is derived from `buildVersion` in `build.gradle.kts`:
+
+* local builds → `3.22.1-SNAPSHOT-LOCAL`
+* CI builds → `3.22.1-SNAPSHOT` (with the build number recorded separately)
+* release builds from `origin/master` → `3.22.1`

@@ -88,10 +88,27 @@ public class BentoBox extends JavaPlugin implements Listener {
     // Notifier
     private Notifier notifier;
 
-    // Click limiter. The value tracks whether the "slow down" notice has already been sent for
-    // the current cooldown window, so a spam-clicked panel translates that message at most once
-    // per window instead of on every rejected click.
-    private ExpiringMap<Pair<UUID, String>, AtomicBoolean> lastClick ;
+    // Click limiter. See ClickWindow and onTimeout.
+    private ExpiringMap<Pair<UUID, String>, ClickWindow> lastClick ;
+
+    /**
+     * A panel click cooldown window.
+     * <p>
+     * Records the server tick the window opened on, whether a click that can actually do something
+     * has already been let through in that tick, and whether the "slow down" notice has been sent
+     * for the window - so a spam-clicked panel translates that message at most once per window
+     * instead of on every rejected click.
+     */
+    private static final class ClickWindow {
+        private final int tick;
+        private final AtomicBoolean actioned;
+        private final AtomicBoolean notified = new AtomicBoolean();
+
+        ClickWindow(int tick, boolean actioned) {
+            this.tick = tick;
+            this.actioned = new AtomicBoolean(actioned);
+        }
+    }
 
     private HeadGetter headGetter;
 
@@ -682,21 +699,46 @@ public class BentoBox extends JavaPlugin implements Listener {
      * @return false if they can click and the timeout is started, otherwise true.
      */
     public boolean onTimeout(User user, Panel panel) {
+        return onTimeout(user, panel, true);
+    }
+
+    /**
+     * Checks if a user can click a GUI or needs to slow down.
+     * @param user user
+     * @param panel panel being clicked
+     * @param actionable whether this click lands on something that can actually do work, e.g. a
+     *        panel item with a click handler, as opposed to a filler icon or the player's own
+     *        inventory
+     * @return false if they can click and the timeout is started, otherwise true.
+     * @since 3.22.1
+     */
+    public boolean onTimeout(User user, Panel panel, boolean actionable) {
         Pair<UUID, String> key = new Pair<>(user.getUniqueId(), panel.getName());
-        AtomicBoolean notified = lastClick.get(key);
-        if (notified != null) {
-            // Still within the cooldown window: reject the click. Only translate and send the
-            // "slow down" notice once per window (on the first rejected click). Re-translating
-            // it on every spam click is what needlessly raised MSPT - the message itself is
-            // already throttled by the Notifier, so the player sees no difference.
-            if (notified.compareAndSet(false, true)) {
-                user.notify("general.errors.slow-down");
-            }
-            return true;
+        ClickWindow window = lastClick.get(key);
+        if (window == null) {
+            // First click of a new window - allow it. Do not re-put on later rejected clicks so
+            // the window still expires one cooldown period after this click, not after the last
+            // spam click.
+            lastClick.put(key, new ClickWindow(Bukkit.getCurrentTick(), actionable));
+            return false;
         }
-        // First click of a new window - allow it. Do not re-put on later rejected clicks so the
-        // window still expires one cooldown period after this click, not after the last spam click.
-        lastClick.put(key, new AtomicBoolean(false));
-        return false;
+        if (window.tick == Bukkit.getCurrentTick()) {
+            // Same tick, so this is all one physical gesture: a player cannot click twice inside
+            // a single tick. Clients that expand one click into several packets - notably Geyser,
+            // which turns a single Bedrock tap into a take and a place-back - deliver them all in
+            // the same tick, and the packet that lands on the button is not necessarily the first
+            // one. Let the first click of the gesture that can actually do something through, and
+            // drop the remainder silently instead of telling the player to slow down (#3049).
+            return !actionable || !window.actioned.compareAndSet(false, true);
+        }
+        // A later tick, but still inside the cooldown window: this is genuine spam, so reject the
+        // click. Only translate and send the "slow down" notice once per window (on the first
+        // rejected click). Re-translating it on every spam click is what needlessly raised MSPT -
+        // the message itself is already throttled by the Notifier, so the player sees no
+        // difference.
+        if (window.notified.compareAndSet(false, true)) {
+            user.notify("general.errors.slow-down");
+        }
+        return true;
     }
 }
