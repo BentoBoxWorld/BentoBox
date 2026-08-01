@@ -141,6 +141,10 @@ public abstract class CommonTestSetup {
         mockedBukkit.when(Bukkit::getPluginManager).thenReturn(pim);
         mockedBukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
         mockedBukkit.when(Bukkit::getServer).thenReturn(server);
+        // Nobody is online and nothing is in the user cache unless a test says so. Without
+        // this RETURNS_DEEP_STUBS hands back a mock player for every name ever looked up.
+        mockedBukkit.when(() -> Bukkit.getPlayerExact(anyString())).thenReturn(null);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayerIfCached(anyString())).thenReturn(null);
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);

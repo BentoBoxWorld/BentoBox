@@ -3,13 +3,19 @@ package world.bentobox.bentobox.managers;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
@@ -32,7 +38,16 @@ public class PlayersManager {
     private Database<Players> handler;
     private final Database<Names> names;
     private final ExpiringMap<UUID, Players> playerCache = new ExpiringMap<>(2, TimeUnit.HOURS);
-    private final @NonNull List<Names> nameCache;
+    /**
+     * Name to UUID lookup, keyed on the lower cased name so that lookups never depend
+     * on how the name happened to be capitalized when it was stored. Minecraft names are
+     * unique ignoring case, so the key is unambiguous.
+     * <p>
+     * This table is the whole reason {@link #getUUID(String)} can be called from a command:
+     * it is loaded once at startup and kept current as players join, so a lookup never has
+     * to hit the database. Keep {@code getUUID} free of blocking calls.
+     */
+    private final @NonNull Map<String, Names> nameCache = new ConcurrentHashMap<>();
     private final Set<UUID> inTeleport; // this needs databasing
 
     /**
@@ -48,8 +63,25 @@ public class PlayersManager {
         handler = new Database<>(plugin, Players.class);
         // Set up the names database
         names = new Database<>(plugin, Names.class);
-        nameCache = names.loadObjects();
+        names.loadObjects().forEach(this::cacheName);
         inTeleport = new HashSet<>();
+    }
+
+    /**
+     * Key used for name lookups. Names are matched ignoring case throughout.
+     */
+    private static String nameKey(@NonNull String name) {
+        return name.toLowerCase(Locale.ENGLISH);
+    }
+
+    /**
+     * Puts a name record into the lookup cache, ignoring records that cannot be used.
+     */
+    private void cacheName(@Nullable Names name) {
+        if (name != null && name.getUuid() != null && name.getUniqueId() != null
+                && !name.getUniqueId().isEmpty()) {
+            nameCache.put(nameKey(name.getUniqueId()), name);
+        }
     }
 
     /**
@@ -133,6 +165,10 @@ public class PlayersManager {
 
     /**
      * Attempts to return a UUID for a given player's name.
+     * <p>
+     * Names are matched ignoring case: Minecraft names are unique ignoring case, so
+     * {@code Oli713664} and {@code oli713664} are the same player and both must resolve.
+     *
      * @param name - name of player
      * @return UUID of player or null if unknown
      */
@@ -147,8 +183,29 @@ public class PlayersManager {
                 // Not used
             }
         }
-        return nameCache.stream().filter(n -> n.getUniqueId().equalsIgnoreCase(name)).findFirst()
-                .map(Names::getUuid).orElse(null);
+        if (name.isBlank()) {
+            return null;
+        }
+        // Every step below is an in-memory lookup. The Names table exists precisely so that
+        // resolving a name never blocks the calling thread, so nothing here may touch the
+        // database or the network - see the class comment on nameCache.
+
+        // An online player is authoritative. Bukkit matches the name ignoring case, and this
+        // beats anything stored, which may be a leftover record from a previous holder of the
+        // name or predate a rename.
+        Player online = Bukkit.getPlayerExact(name);
+        if (online != null) {
+            return online.getUniqueId();
+        }
+        Names cached = nameCache.get(nameKey(name));
+        if (cached != null) {
+            return cached.getUuid();
+        }
+        // Last resort: the server's own user cache, which knows players BentoBox has never
+        // seen. Unlike the deprecated getOfflinePlayer(String), this never makes a web
+        // request - it returns null on a miss rather than going looking.
+        OfflinePlayer offline = Bukkit.getOfflinePlayerIfCached(name);
+        return offline == null ? null : offline.getUniqueId();
     }
 
     /**
@@ -166,9 +223,19 @@ public class PlayersManager {
         handler.saveObjectAsync(player);
         // Update names
         Names newName = new Names(user.getName(), user.getUniqueId());
+        // Drop any record that still points at this player under some other spelling - an old
+        // name, or this name stored with different capitalization. Left in place it keeps
+        // resolving to a UUID that is no longer correct for that name, and on a case sensitive
+        // file system it shadows the record written below.
+        for (Iterator<Names> it = nameCache.values().iterator(); it.hasNext();) {
+            Names old = it.next();
+            if (user.getUniqueId().equals(old.getUuid()) && !user.getName().equals(old.getUniqueId())) {
+                names.deleteID(old.getUniqueId());
+                it.remove();
+            }
+        }
         // Add to cache
-        nameCache.removeIf(name -> user.getUniqueId().equals(name.getUuid()));
-        nameCache.add(newName);
+        cacheName(newName);
         // Add to names database
         return names.saveObjectAsync(newName);
     }
@@ -342,6 +409,15 @@ public class PlayersManager {
      */
     public void removePlayer(Player player) {
         handler.deleteID(player.getUniqueId().toString());
+        // Drop the name lookup too, otherwise the name keeps resolving to a player that
+        // no longer has any data.
+        for (Iterator<Names> it = nameCache.values().iterator(); it.hasNext();) {
+            Names name = it.next();
+            if (player.getUniqueId().equals(name.getUuid())) {
+                names.deleteID(name.getUniqueId());
+                it.remove();
+            }
+        }
     }
 
     /**
