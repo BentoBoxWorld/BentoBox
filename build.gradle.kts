@@ -53,9 +53,13 @@ val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
 // CI/CD Logic (Translates Maven <profiles>)
-// Default version format: 3.10.2-LOCAL-SNAPSHOT
-var finalBuildNumber = buildNumberDefault
-var finalRevision = "$buildVersion$snapshotSuffix$finalBuildNumber"
+// Invariant: plugin.yml renders ${project.version}${build.number}, so exactly one of the
+// two must carry the build marker. Locally the marker is baked into the revision (it keeps
+// the jar filename distinguishable from a CI snapshot), so the build number stays empty --
+// setting both is what produced the doubled '3.22.1-SNAPSHOT-LOCAL-LOCAL' in plugin.yml.
+// Default version format: 3.22.1-SNAPSHOT-LOCAL
+var finalBuildNumber = ""
+var finalRevision = "$buildVersion$snapshotSuffix$buildNumberDefault"
 
 // 'ci' profile logic: Activated by env.BUILD_NUMBER from CI/CD pipeline
 // Overrides build number with actual CI build number

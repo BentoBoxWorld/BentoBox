@@ -158,7 +158,9 @@ A template like `<green>[description]</green>` looks harmless but is a trap. Tra
 - Java preview features are enabled for both compilation and test execution.
 - The authoritative version is `buildVersion` in `build.gradle.kts` (current: `3.22.1`). Two related but different strings come out of it:
   - **Gradle artifact version** (`project.version`, and so the jar name): `{buildVersion}-SNAPSHOT-LOCAL` locally, `{buildVersion}-SNAPSHOT` on CI (when `BUILD_NUMBER` is set), and the bare `{buildVersion}` when `GIT_BRANCH=origin/master`. So a local build yields `build/libs/BentoBox-3.22.1-SNAPSHOT-LOCAL.jar`.
-  - **`plugin.yml` version**, the one `/bentobox version` reports: the template is `${project.version}${build.number}`, so CI appends the build number — `3.22.1-SNAPSHOT-b1234`. Locally this doubles the marker (`3.22.1-SNAPSHOT-LOCAL-LOCAL`) because `project.version` already ends in `-LOCAL`; cosmetic, but expected, so don't "fix" it by guessing.
+  - **`plugin.yml` version**, the one `/bentobox version` reports: the template is `${project.version}${build.number}`, so CI appends the build number — `3.22.1-SNAPSHOT-b1234`. Locally it matches the artifact version, `3.22.1-SNAPSHOT-LOCAL`.
+
+  The invariant to preserve when editing this block: **exactly one** of `project.version` and `build.number` carries the build marker. Locally the marker is baked into the revision so the jar filename stays distinguishable from a CI snapshot, which is why `finalBuildNumber` is empty there; setting both is what once stamped `3.22.1-SNAPSHOT-LOCAL-LOCAL` into `plugin.yml`.
 
 ### Minecraft 26.x / Java 25 toolchain
 
