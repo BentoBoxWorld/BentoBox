@@ -224,6 +224,26 @@ public class TabbedPanel extends Panel implements PanelListener {
     }
 
     /**
+     * Checks whether a click on a raw slot of this panel can actually do any work, i.e. whether it
+     * lands on a tab icon in the top row or on a panel item that has a click handler. Filler icons,
+     * the footer and clicks in the player's own inventory are no-ops.
+     * <p>
+     * This is used to decide which click of a burst gets priority when a client sends several
+     * click packets for one physical click - see {@link BentoBox#onTimeout(User, Panel, boolean)}.
+     * @param rawSlot raw slot that was clicked
+     * @return {@code true} if a click on this slot does work
+     * @since 3.22.1
+     */
+    public boolean isActionableSlot(int rawSlot) {
+        // Top row tab icons are trapped by onInventoryClick rather than by a click handler
+        if (tpb.getTabs().containsKey(rawSlot)) {
+            return true;
+        }
+        PanelItem item = getItems().get(rawSlot);
+        return item != null && item.getClickHandler().isPresent();
+    }
+
+    /**
      * @return the active tab being shown to the user
      */
     public Tab getActiveTab() {

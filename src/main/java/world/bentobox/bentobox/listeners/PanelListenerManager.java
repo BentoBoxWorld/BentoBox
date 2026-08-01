@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.entity.HumanEntity;
@@ -47,8 +48,13 @@ public class PanelListenerManager implements Listener {
             // early return, every click - even the throttled ones - would still pay for a
             // view.getTitle() render and a MiniMessage title parse below, which is what keeps MSPT
             // high while a settings GUI is being spam-clicked.
-            if (panel.getListener().filter(TabbedPanel.class::isInstance).isPresent()
-                    && BentoBox.getInstance().onTimeout(user, panel)) {
+            // Whether the clicked slot can actually do anything is passed along so that when a
+            // client sends several click packets for one physical click, the cooldown keeps the
+            // one that lands on a button rather than whichever arrived first (#3049).
+            Optional<TabbedPanel> tabbedPanel = panel.getListener().filter(TabbedPanel.class::isInstance)
+                    .map(TabbedPanel.class::cast);
+            if (tabbedPanel.isPresent() && BentoBox.getInstance().onTimeout(user, panel,
+                    tabbedPanel.get().isActionableSlot(event.getRawSlot()))) {
                 return;
             }
 
