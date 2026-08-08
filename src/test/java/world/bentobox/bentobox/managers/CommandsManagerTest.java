@@ -18,6 +18,8 @@ import org.mockito.Mock;
 
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 
 /**
@@ -36,6 +38,8 @@ class CommandsManagerTest extends CommonTestSetup {
 
     @Mock
     private LifecycleEventManager<Plugin> lifecycleManager;
+    @Mock
+    private Addon addon;
 
     private CommandsManager cm;
     private CompositeCommand command;
@@ -48,6 +52,10 @@ class CommandsManagerTest extends CommonTestSetup {
         // the legacy path, which would make these tests prove nothing
         when(plugin.getLifecycleManager()).thenReturn(lifecycleManager);
         assertTrue(plugin.getSettings().isUseBrigadierCommands(), "Brigadier registration is on by default");
+
+        AddonDescription description = mock(AddonDescription.class);
+        when(description.getName()).thenReturn("ChunkBlock");
+        when(addon.getDescription()).thenReturn(description);
 
         cm = new CommandsManager();
         command = mock(CompositeCommand.class);
@@ -110,5 +118,65 @@ class CommandsManagerTest extends CommonTestSetup {
         cm.unregisterCommands();
 
         assertTrue(cm.getCommands().isEmpty());
+    }
+
+    /**
+     * An addon that never enables must not leave its commands behind. A game mode's
+     * commands are only given their world when the addon enables, so a leftover
+     * command throws for every player who runs it - see #3059.
+     */
+    @Test
+    void testUnregisterByAddonTakesThatAddonsCommandsOutOfTheCommandMap() {
+        when(command.<Addon>getAddon()).thenReturn(addon);
+        cm.registerCommand(command);
+        assertSame(command, server.getCommandMap().getCommand("ai"), "Precondition: the command was registered");
+
+        cm.unregisterCommands(addon);
+
+        assertNull(server.getCommandMap().getCommand("ai"), "The command must not still be runnable");
+        assertNull(cm.getCommand("ai"), "A leftover entry would keep the Brigadier node alive");
+    }
+
+    @Test
+    void testUnregisterByAddonLeavesOtherAddonsAlone() {
+        when(command.<Addon>getAddon()).thenReturn(addon);
+        CompositeCommand other = mock(CompositeCommand.class);
+        when(other.getLabel()).thenReturn("bsb");
+        when(other.getName()).thenReturn("bsb");
+        when(other.getAliases()).thenReturn(new ArrayList<>());
+        when(other.getSubCommands()).thenReturn(new LinkedHashMap<>());
+        // Built outside the when() - stubbing a mock inside another stubbing call
+        // trips Mockito's unfinished stubbing check
+        Addon otherAddon = namedAddon("BSkyBlock");
+        when(other.<Addon>getAddon()).thenReturn(otherAddon);
+        cm.registerCommand(command);
+        cm.registerCommand(other);
+
+        cm.unregisterCommands(addon);
+
+        assertNull(server.getCommandMap().getCommand("ai"));
+        assertSame(other, server.getCommandMap().getCommand("bsb"), "Only the failed addon's commands go");
+    }
+
+    @Test
+    void testUnregisterByAddonWithNoCommandsIsSafe() {
+        when(command.<Addon>getAddon()).thenReturn(addon);
+        cm.registerCommand(command);
+
+        cm.unregisterCommands(namedAddon("Level"));
+
+        assertSame(command, server.getCommandMap().getCommand("ai"));
+    }
+
+    /**
+     * An addon mock complete enough to be registered with: the command map prefix
+     * comes from the addon's description.
+     */
+    private static Addon namedAddon(String name) {
+        Addon a = mock(Addon.class);
+        AddonDescription description = mock(AddonDescription.class);
+        when(description.getName()).thenReturn(name);
+        when(a.getDescription()).thenReturn(description);
+        return a;
     }
 }

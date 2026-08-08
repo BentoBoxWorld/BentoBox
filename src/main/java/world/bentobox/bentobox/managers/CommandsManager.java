@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.commands.brigadier.BrigadierCommandRegistrar;
@@ -119,6 +120,53 @@ public class CommandsManager {
     public void refreshCommandTrees() {
         if (brigadier != null) {
             brigadier.refreshTrees();
+        }
+    }
+
+    /**
+     * Unregisters the top level commands owned by an addon.
+     * <p>
+     * Addons commonly build their commands in {@code onLoad()}, and a
+     * {@link CompositeCommand} registers itself the moment it is constructed. An
+     * addon that never gets as far as being enabled - a missing dependency, an
+     * incompatibility, an exception on the way up - therefore leaves live commands
+     * behind whose world was never set, and a game mode command with a null world
+     * throws as soon as anyone runs it (#3059). This takes them back out again.
+     * <p>
+     * Brigadier keeps its nodes, because it has no API for removing one, but a
+     * node whose label no longer resolves to a command is refused by its
+     * {@code requires} predicate and does nothing if it is run anyway, so it is
+     * invisible to clients from here on.
+     *
+     * @param addon addon whose commands should be removed
+     * @since 3.22.2
+     */
+    public void unregisterCommands(@NonNull Addon addon) {
+        List<CompositeCommand> owned = commands.values().stream().filter(c -> addon.equals(c.getAddon())).toList();
+        if (owned.isEmpty()) {
+            return;
+        }
+        owned.forEach(c -> commands.remove(c.getLabel()));
+        if (commandMap != null) {
+            // Use reflection to obtain the knownCommands in the commandMap
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Command> knownCommands = (Map<String, Command>) commandMap.getClass()
+                        .getMethod("getKnownCommands").invoke(commandMap);
+                // Remove by key rather than through the values() view - see
+                // unregisterCommands() for why.
+                List<String> labels = knownCommands.entrySet().stream().filter(e -> owned.contains(e.getValue()))
+                        .map(Entry::getKey).toList();
+                labels.forEach(knownCommands::remove);
+                owned.forEach(c -> c.unregister(commandMap));
+            } catch (Exception e) {
+                BentoBox.getInstance()
+                        .logError("Could not unregister commands for " + addon.getDescription().getName() + ": " + e);
+            }
+        }
+        if (brigadier != null) {
+            // Clients are still offering the commands that have just gone away
+            brigadier.refreshClients();
         }
     }
 

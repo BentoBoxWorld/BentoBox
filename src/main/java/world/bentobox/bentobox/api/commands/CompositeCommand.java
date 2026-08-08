@@ -26,6 +26,7 @@ import world.bentobox.bentobox.BStats.CommandFailure;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -291,6 +292,16 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @since 1.5.3
      */
     public boolean call(User user, String cmdLabel, List<String> cmdArgs) {
+        // A game mode's commands are handed their world when the addon enables. If
+        // the addon never got that far its commands are still live but have nothing
+        // behind them, and the first island or world settings lookup throws (#3059).
+        if (addon instanceof GameModeAddon && getWorld() == null) {
+            user.sendMessage("general.errors.general");
+            plugin.logError(addon.getDescription().getName() + " is not enabled, so /" + cmdLabel
+                    + " has no world to act on. Check the startup log for why the addon did not load.");
+            recordFailure(CommandFailure.CANNOT_EXECUTE);
+            return false;
+        }
         // Check for console and permissions
         if (isOnlyPlayer() && !user.isPlayer()) {
             user.sendMessage("general.errors.use-in-game");
