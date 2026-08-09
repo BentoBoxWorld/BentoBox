@@ -453,9 +453,13 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         else
         {
             // Cannot be portal. Should recalculate position.
-            // TODO: Currently, it is always spawn location. However, default home must be assigned.
+            // Prefer the island's spawn point, but most islands never get one because it is only
+            // set by a {spawn here} sign in the blueprint. Fall back to the island's home so that
+            // players returning from a standard nether always land on their own island instead of
+            // the world spawn, which is usually somebody else's island near 0,0.
             Location toLocation = this.getIsland(overWorld, event.getPlayer()).
-                    map(island -> island.getSpawnPoint(World.Environment.NORMAL)).
+                    map(island -> Objects.requireNonNullElseGet(island.getSpawnPoint(World.Environment.NORMAL),
+                            () -> this.plugin.getIslands().getHomeLocation(island))).
                     orElseGet(() -> {
                         // If player do not have island, try spawn.
                         Location spawnLocation = this.getSpawnLocation(overWorld);
