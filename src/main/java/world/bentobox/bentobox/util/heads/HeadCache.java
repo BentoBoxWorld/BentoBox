@@ -83,6 +83,30 @@ public class HeadCache
 
 
     /**
+     * Checks if this cache holds a usable skin texture.
+     * <p>
+     * A profile that has a name and a UUID but no texture property is worse than no
+     * profile at all: the server resolves it against the Mojang session server every time
+     * the head is shown, which quickly earns an HTTP 429 and still renders a default skin.
+     *
+     * @return {@code true} if the cached profile has a skin texture.
+     * @since 3.23.0
+     */
+    public boolean hasTexture()
+    {
+        try
+        {
+            return this.playerProfile != null && this.playerProfile.getTextures().getSkin() != null;
+        }
+        catch (Exception e)
+        {
+            // Treat an unreadable profile as having no texture.
+            return false;
+        }
+    }
+
+
+    /**
      * Returns a new Player head with a cached texture. Be AWARE, usage does not use clone
      * method. If for some reason item stack is stored directly, then use clone in return
      * :)
@@ -94,8 +118,8 @@ public class HeadCache
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
 
-        // Set correct Skull texture
-        if (meta != null && this.playerProfile != null)
+        // Set correct Skull texture. Only if the texture is actually known - see hasTexture.
+        if (meta != null && this.hasTexture())
         {
             try {
                 meta.setOwnerProfile(this.playerProfile);
