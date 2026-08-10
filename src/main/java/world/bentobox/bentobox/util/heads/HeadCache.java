@@ -90,7 +90,7 @@ public class HeadCache
      * the head is shown, which quickly earns an HTTP 429 and still renders a default skin.
      *
      * @return {@code true} if the cached profile has a skin texture.
-     * @since 3.23.0
+     * @since 3.22.3
      */
     public boolean hasTexture()
     {
