@@ -258,9 +258,11 @@ public class AddonsManager {
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
             handleAddonIncompatibility(addon, e);
+            withdrawAddon(addon);
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
+            withdrawAddon(addon);
         }
 
     }
@@ -360,10 +362,37 @@ public class AddonsManager {
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
             handleAddonIncompatibility(addon, e);
+            withdrawAddon(addon);
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
+            withdrawAddon(addon);
         }
+    }
+
+    /**
+     * Takes back everything an addon registered on its way up, for an addon that
+     * will never be enabled.
+     * <p>
+     * An addon's {@code onLoad()} runs before anything knows whether the addon can
+     * actually be enabled, and addons routinely register listeners, flags and
+     * commands there. If the addon then never enables - a missing dependency, an
+     * incompatibility, an exception - those registrations are left behind pointing
+     * at an addon that is not running. For a game mode that is not merely untidy:
+     * its commands are live but their world is only set once the addon enables, and
+     * a game mode command with a null world throws a {@code NullPointerException}
+     * as soon as a player runs it (#3059).
+     *
+     * @param addon addon that is being given up on
+     * @since 3.22.2
+     */
+    private void withdrawAddon(@NonNull Addon addon) {
+        if (listeners.containsKey(addon)) {
+            listeners.get(addon).forEach(HandlerList::unregisterAll);
+            listeners.remove(addon);
+        }
+        plugin.getFlagsManager().unregister(addon);
+        plugin.getCommandsManager().unregisterCommands(addon);
     }
 
     /**
@@ -595,11 +624,12 @@ public class AddonsManager {
                 if (!names.contains(dependency)) {
                     plugin.logError(a.getDescription().getName() + " has dependency on " + dependency
                             + " that does not exist. Addon will not load!");
-                    // The addon's onLoad has already run and may have registered flags whose
-                    // listeners would otherwise stay active for an addon that never enables,
-                    // firing with no worlds behind them
+                    // The addon's onLoad has already run and may have registered listeners,
+                    // flags and commands that would otherwise stay live for an addon that
+                    // never enables - and a game mode's commands only get their world when
+                    // it does enable, so they throw for every player who runs one (#3059).
                     a.setState(State.MISSING_DEPENDENCY);
-                    plugin.getFlagsManager().unregister(a);
+                    withdrawAddon(a);
                     addonsIterator.remove();
                     break;
                 }

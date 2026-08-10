@@ -875,6 +875,47 @@ class AddonsManagerTest extends CommonTestSetup {
         verify(cm).unregisterCommands();
     }
 
+    // ---- an addon that will never enable leaves nothing behind ----
+
+    /**
+     * A game mode builds its commands in {@code onLoad()}, which has already run by
+     * the time the missing dependency is spotted, but only gets its world when it
+     * enables - which it now never will. Leaving the commands registered means a
+     * {@code NullPointerException} for every player who runs one (#3059).
+     */
+    @Test
+    void testMissingDependencyUnregistersTheAddonsCommands() {
+        GameModeAddon gma = new MyGameMode();
+        gma.setDescription(new AddonDescription.Builder("main", "ChunkBlock", "1.0")
+                .dependencies(List.of("Level")).build());
+        gma.setState(State.LOADED);
+        am.getAddons().add(gma);
+
+        am.loadAddons();
+
+        verify(cm).unregisterCommands(gma);
+        assertEquals(State.MISSING_DEPENDENCY, gma.getState());
+        assertFalse(am.getAddons().contains(gma), "The addon is dropped entirely");
+    }
+
+    @Test
+    void testSatisfiedDependencyKeepsTheAddonsCommands() {
+        GameModeAddon gma = new MyGameMode();
+        gma.setDescription(new AddonDescription.Builder("main", "ChunkBlock", "1.0")
+                .dependencies(List.of("Level")).build());
+        gma.setState(State.LOADED);
+        Addon level = mock(Addon.class);
+        when(level.getDescription()).thenReturn(new AddonDescription.Builder("main", "Level", "1.0").build());
+        when(level.getState()).thenReturn(State.LOADED);
+        am.getAddons().add(gma);
+        am.getAddons().add(level);
+
+        am.loadAddons();
+
+        verify(cm, never()).unregisterCommands(gma);
+        assertEquals(State.LOADED, gma.getState());
+    }
+
     class MyGameMode extends GameModeAddon {
 
         @Override

@@ -229,8 +229,11 @@ public class IslandWorldManager {
      */
     @NonNull
     public WorldSettings getWorldSettings(@NonNull World world) {
-        return Objects.requireNonNull(gameModes.get(world),
-                "Attempt to get WorldSettings for non-game world " + world.getName()).getWorldSettings();
+        // Lazy message: a null world used to throw here while building the very
+        // string meant to explain the problem, which said nothing about the world
+        // being null (#3059).
+        return Objects.requireNonNull(gameModes.get(world), () -> "Attempt to get WorldSettings for non-game world "
+                + (world == null ? "null" : world.getName())).getWorldSettings();
     }
 
     /**

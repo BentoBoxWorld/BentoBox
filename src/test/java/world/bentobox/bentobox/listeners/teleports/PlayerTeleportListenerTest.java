@@ -47,6 +47,7 @@ import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -309,6 +310,84 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.createEndPlatform(dest);
 
         verify(normalWorld, times(0)).getBlockAt(anyInt(), anyInt(), anyInt());
+    }
+
+    /**
+     * Sets up a return trip from a standard (non-island) nether: the player portals from the
+     * nether world back to the overworld, with nether islands and portal linking both off.
+     *
+     * @return the portal event, ready to be passed to
+     *         {@link PlayerTeleportListener#onPlayerPortalEvent(PlayerPortalEvent)}
+     */
+    private PlayerPortalEvent standardNetherReturnEvent() {
+        World netherWorld = mock(World.class);
+        when(netherWorld.getEnvironment()).thenReturn(Environment.NETHER);
+        mockedUtil.when(() -> Util.getWorld(netherWorld)).thenReturn(world);
+        // Standard nether: no island nethers. Portal linking is off by default in TestWorldSettings.
+        when(iwm.isNetherIslands(world)).thenReturn(false);
+
+        Location from = mock(Location.class);
+        when(from.getWorld()).thenReturn(netherWorld);
+        when(from.toVector()).thenReturn(new Vector(0, 0, 0));
+        return new PlayerPortalEvent(mockPlayer, from, location, TeleportCause.NETHER_PORTAL, 0, false, 0);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortalEvent(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Islands only have a spawn point if their blueprint contains a {spawn here} sign, which
+     * most do not. Without one, a player returning from a standard nether must still be sent
+     * to their own island's home and not to the world spawn.
+     * Regression test for AOneBlock issue #549.
+     */
+    @Test
+    void testPortalProcessFromStandardNetherNoSpawnPointUsesHome() {
+        PlayerPortalEvent e = standardNetherReturnEvent();
+        when(im.getIsland(world, uuid)).thenReturn(island);
+        // No {spawn here} sign was pasted, so the island has no spawn point
+        when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(null);
+        Location home = mock(Location.class);
+        when(home.getWorld()).thenReturn(world);
+        when(home.clone()).thenReturn(home);
+        when(im.getHomeLocation(island)).thenReturn(home);
+
+        ptl.onPlayerPortalEvent(e);
+
+        assertSame(home, e.getTo());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortalEvent(org.bukkit.event.player.PlayerPortalEvent)}.
+     * If the island does have a spawn point, it still wins over the home location.
+     */
+    @Test
+    void testPortalProcessFromStandardNetherSpawnPointWins() {
+        PlayerPortalEvent e = standardNetherReturnEvent();
+        when(im.getIsland(world, uuid)).thenReturn(island);
+        Location spawnPoint = mock(Location.class);
+        when(spawnPoint.getWorld()).thenReturn(world);
+        when(spawnPoint.clone()).thenReturn(spawnPoint);
+        when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(spawnPoint);
+
+        ptl.onPlayerPortalEvent(e);
+
+        assertSame(spawnPoint, e.getTo());
+        verify(im, never()).getHomeLocation(any(Island.class));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#onPlayerPortalEvent(org.bukkit.event.player.PlayerPortalEvent)}.
+     * A player without an island still falls back to the world spawn.
+     */
+    @Test
+    void testPortalProcessFromStandardNetherNoIslandUsesSpawn() {
+        PlayerPortalEvent e = standardNetherReturnEvent();
+        when(im.getIsland(world, uuid)).thenReturn(null);
+        // No spawn island, but the world spawn is safe
+        when(im.isSafeLocation(location)).thenReturn(true);
+
+        ptl.onPlayerPortalEvent(e);
+
+        assertSame(location, e.getTo());
     }
 
     /**

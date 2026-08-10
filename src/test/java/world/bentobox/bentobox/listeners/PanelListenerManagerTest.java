@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -405,10 +406,11 @@ class PanelListenerManagerTest extends CommonTestSetup {
         // Set up panel with a TabbedPanel listener
         TabbedPanel tabbedPanel = mock(TabbedPanel.class);
         when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
+        when(tabbedPanel.isActionableSlot(0)).thenReturn(true);
         PanelListenerManager.getOpenPanels().put(uuid, panel);
 
         // Mock BentoBox.onTimeout to return true (on timeout)
-        when(plugin.onTimeout(any(User.class), eq(panel))).thenReturn(true);
+        when(plugin.onTimeout(any(User.class), eq(panel), anyBoolean())).thenReturn(true);
 
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
@@ -426,10 +428,11 @@ class PanelListenerManagerTest extends CommonTestSetup {
         // Set up panel with a TabbedPanel listener
         TabbedPanel tabbedPanel = mock(TabbedPanel.class);
         when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
+        when(tabbedPanel.isActionableSlot(0)).thenReturn(true);
         PanelListenerManager.getOpenPanels().put(uuid, panel);
 
         // Mock BentoBox.onTimeout to return false (no timeout)
-        when(plugin.onTimeout(any(User.class), eq(panel))).thenReturn(false);
+        when(plugin.onTimeout(any(User.class), eq(panel), anyBoolean())).thenReturn(false);
 
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
@@ -437,6 +440,28 @@ class PanelListenerManagerTest extends CommonTestSetup {
         // Click handler and panel listener should be called
         verify(ch).onClick(eq(panel), any(User.class), eq(click), eq(0));
         verify(tabbedPanel).onInventoryClick(any(), any());
+    }
+
+    /**
+     * Test that whether the clicked slot can do anything is passed to the cooldown check, so that a
+     * client that sends several click packets for one physical click does not have the click that
+     * matters thrown away. See #3049.
+     */
+    @Test
+    void testOnInventoryClickTabbedPanelPassesSlotActionability() {
+        TabbedPanel tabbedPanel = mock(TabbedPanel.class);
+        when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+
+        // Slot 0 holds an item with a click handler, slot 1 does not
+        when(tabbedPanel.isActionableSlot(0)).thenReturn(true);
+        when(tabbedPanel.isActionableSlot(1)).thenReturn(false);
+
+        plm.onInventoryClick(new InventoryClickEvent(view, type, 0, click, inv));
+        verify(plugin).onTimeout(any(User.class), eq(panel), eq(true));
+
+        plm.onInventoryClick(new InventoryClickEvent(view, type, 1, click, inv));
+        verify(plugin).onTimeout(any(User.class), eq(panel), eq(false));
     }
 
     /**
@@ -454,7 +479,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
         verify(ch).onClick(eq(panel), any(User.class), eq(click), eq(0));
         verify(pl).onInventoryClick(any(), any());
         // onTimeout should NOT be called for non-TabbedPanel
-        verify(plugin, never()).onTimeout(any(User.class), any(Panel.class));
+        verify(plugin, never()).onTimeout(any(User.class), any(Panel.class), anyBoolean());
     }
 
 }
