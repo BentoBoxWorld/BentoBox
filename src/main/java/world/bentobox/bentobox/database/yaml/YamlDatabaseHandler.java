@@ -686,17 +686,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (clazz.equals(value.getClass())) {
             return value;
         }
-        // Numeric widening. YAML types a number by how it is written, so "20"
-        // loads as Integer and "20.0" as Double - but a config field declared
-        // double is perfectly entitled to be written without a decimal point.
-        // Without this, such a value reaches the setter as an Integer; inside a
-        // collection, generic erasure means nothing complains until the first
-        // read throws ClassCastException, a long way from the cause.
-        if (value instanceof Number number) {
-            Object widened = widen(number, clazz);
-            if (widened != null) {
-                return widened;
-            }
+        // Integer to Long promotion
+        if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
+            return Long.valueOf((Integer) value);
         }
         // String-based conversions
         if (value instanceof String stringValue) {
@@ -710,33 +702,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             return deserializeEnum((String) value, (Class<Enum>) clazz);
         }
         return value;
-    }
-
-    /**
-     * Widen a YAML-loaded number to the field's declared numeric type, or null if
-     * the target is not a numeric type this handles.
-     * <p>
-     * Widening only. There is deliberately no case for {@code int}: a value written
-     * with a decimal point against an integer field is a mistake in the config, and
-     * narrowing it with {@code intValue()} would silently discard the fraction. Left
-     * alone, it fails visibly instead.
-     *
-     * @param number the value as YAML typed it
-     * @param clazz the declared type
-     * @return the converted value, or null to leave it alone
-     */
-    @Nullable
-    private Object widen(Number number, Class<?> clazz) {
-        if (clazz.equals(Long.class) || clazz.equals(long.class)) {
-            return number.longValue();
-        }
-        if (clazz.equals(Double.class) || clazz.equals(double.class)) {
-            return number.doubleValue();
-        }
-        if (clazz.equals(Float.class) || clazz.equals(float.class)) {
-            return number.floatValue();
-        }
-        return null;
     }
 
     /**
