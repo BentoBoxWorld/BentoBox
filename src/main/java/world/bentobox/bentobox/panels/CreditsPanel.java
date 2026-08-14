@@ -3,7 +3,6 @@ package world.bentobox.bentobox.panels;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -52,7 +51,7 @@ public class CreditsPanel {
                         .description(user.getTranslation(LOCALE_REF + "contributor.description",
                                 "[commits]", String.valueOf(contributor.getCommits())))
                         .clickHandler((panel, user1, clickType, slot1) -> {
-                            user.sendRawMessage(NamedTextColor.GRAY + contributor.getURL());
+                            user.sendRawMessage("<gray>" + contributor.getURL());
                             return true;
                         })
                         .build();

@@ -118,6 +118,49 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
     }
 
     @Test
+    void testDeserializeIntegerToDouble() throws Exception {
+        // YAML types a number by how it is WRITTEN: "20" loads as Integer even
+        // where the field is a double. Without widening, that Integer reaches the
+        // setter, and inside a collection generic erasure hides it until the first
+        // read throws ClassCastException a long way from the cause.
+        Object result = deserializeMethod.invoke(handler, 20, Double.class);
+        assertEquals(20.0, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeIntegerToFloat() throws Exception {
+        Object result = deserializeMethod.invoke(handler, 20, Float.class);
+        assertEquals(20.0f, result);
+        assertEquals(Float.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeDoubleToIntegerIsNotNarrowed() throws Exception {
+        // The other direction is deliberately NOT converted. A decimal written
+        // against an int field is a config mistake, and intValue() would discard
+        // the fraction silently - 20.9 becoming 20 with nothing said. Left alone,
+        // it fails visibly instead.
+        Object result = deserializeMethod.invoke(handler, 20.9, Integer.class);
+        assertEquals(20.9, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeLongToDouble() throws Exception {
+        Object result = deserializeMethod.invoke(handler, 20L, Double.class);
+        assertEquals(20.0, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeNumberToNonNumericTypeIsUntouched() throws Exception {
+        // Widening must not hijack values whose target is not numeric
+        Object result = deserializeMethod.invoke(handler, 20, String.class);
+        assertEquals(20, result);
+    }
+
+    @Test
     void testDeserializeIntegerToLong() throws Exception {
         Object result = deserializeMethod.invoke(handler, 42, Long.class);
         assertEquals(42L, result);

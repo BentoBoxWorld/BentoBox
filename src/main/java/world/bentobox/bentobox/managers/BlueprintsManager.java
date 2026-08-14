@@ -36,7 +36,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -275,14 +274,14 @@ public class BlueprintsManager {
         bb.setIcon(Material.PAPER);
         bb.setUniqueId(DEFAULT_BUNDLE_NAME);
         bb.setDisplayName("Default bundle");
-        bb.setDescription(Collections.singletonList(NamedTextColor.AQUA + "Default bundle of blueprints"));
+        bb.setDescription(Collections.singletonList("<aqua>Default bundle of blueprints"));
         return bb;
     }
 
     private Blueprint getDefaultBlueprint() {
         Blueprint defaultBp = new Blueprint();
         defaultBp.setName("bedrock");
-        defaultBp.setDescription(Collections.singletonList(NamedTextColor.AQUA + "A bedrock block"));
+        defaultBp.setDescription(Collections.singletonList("<aqua>A bedrock block"));
         defaultBp.setBedrock(new Vector(0, 0, 0));
         Map<Vector, BlueprintBlock> map = new HashMap<>();
         map.put(new Vector(0, 0, 0), new BlueprintBlock("minecraft:bedrock"));

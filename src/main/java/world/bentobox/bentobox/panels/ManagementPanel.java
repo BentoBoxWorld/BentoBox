@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -98,7 +97,7 @@ public class ManagementPanel {
                 for (Addon addon : addons) {
                     PanelItem addonItem = new PanelItemBuilder()
                             .icon(addon.getDescription().getIcon())
-                            .name(NamedTextColor.WHITE + addon.getDescription().getName())
+                            .name("<white>" + addon.getDescription().getName())
                             .clickHandler((panel, user1, clickType, slot) -> {
                                 if (clickType.equals(ClickType.MIDDLE)) {
                                     CreditsPanel.openPanel(user, addon);
@@ -122,7 +121,7 @@ public class ManagementPanel {
                 for (Hook hook : plugin.getHooks().getHooks()) {
                     PanelItem hookItem = new PanelItemBuilder()
                             .icon(hook.getIcon())
-                            .name(NamedTextColor.WHITE + hook.getPluginName())
+                            .name("<white>" + hook.getPluginName())
                             .build();
 
                     builder.item(startSlot + i, hookItem);
