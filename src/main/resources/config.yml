@@ -11,6 +11,13 @@ general:
   # Whether to charge the blueprint bundle cost when a player resets their island.
   # If false, only island creation will charge the cost.
   charge-for-blueprint-on-reset: false
+  # Submit anonymous, aggregate usage statistics to bStats (https://bstats.org/plugin/bukkit/BentoBox/3555).
+  # No personal data is ever sent - see https://github.com/BentoBoxWorld/.github/blob/master/PRIVACY.md
+  # Setting this to false disables metrics for BentoBox only; the global switch in
+  # plugins/bStats/config.yml disables bStats for every plugin on the server.
+  # Changing this setting requires a server restart.
+  # Added since 3.22.3.
+  metrics: true
   # Console commands to run when BentoBox has loaded all worlds and addons.
   # Commands are run as the console.
   # e.g. set aliases for worlds in Multiverse here, or anything you need to

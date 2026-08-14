@@ -44,6 +44,14 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.charge-for-blueprint-on-reset")
     private boolean chargeForBlueprintOnReset = false;
 
+    @ConfigComment("Submit anonymous, aggregate usage statistics to bStats (https://bstats.org/plugin/bukkit/BentoBox/3555).")
+    @ConfigComment("No personal data is ever sent - see https://github.com/BentoBoxWorld/.github/blob/master/PRIVACY.md")
+    @ConfigComment("Setting this to false disables metrics for BentoBox only; the global switch in")
+    @ConfigComment("plugins/bStats/config.yml disables bStats for every plugin on the server.")
+    @ConfigComment("Changing this setting requires a server restart.")
+    @ConfigEntry(path = "general.metrics", since = "3.22.3")
+    private boolean metrics = true;
+
     /* COMMANDS */
     @ConfigComment("Console commands to run when BentoBox has loaded all worlds and addons.")
     @ConfigComment("Commands are run as the console.")
@@ -607,6 +615,22 @@ public class Settings implements ConfigObject {
 
     public void setChargeForBlueprintOnReset(boolean chargeForBlueprintOnReset) {
         this.chargeForBlueprintOnReset = chargeForBlueprintOnReset;
+    }
+
+    /**
+     * @return whether anonymous usage statistics are submitted to bStats
+     * @since 3.22.3
+     */
+    public boolean isMetrics() {
+        return metrics;
+    }
+
+    /**
+     * @param metrics whether anonymous usage statistics are submitted to bStats
+     * @since 3.22.3
+     */
+    public void setMetrics(boolean metrics) {
+        this.metrics = metrics;
     }
 
     public DatabaseType getDatabaseType() {
