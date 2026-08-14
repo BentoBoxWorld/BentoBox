@@ -68,6 +68,23 @@ class SettingsTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.Settings#isMetrics()}.
+     */
+    @Test
+    void testIsMetrics() {
+        assertTrue(s.isMetrics());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.Settings#setMetrics(boolean)}.
+     */
+    @Test
+    void testSetMetrics() {
+        s.setMetrics(false);
+        assertFalse(s.isMetrics());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.Settings#getDatabaseType()}.
      */
     @Test
