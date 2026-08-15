@@ -314,8 +314,11 @@ class DidYouMeanScenarioTest extends CommonTestSetup {
     }
 
     private boolean hasClickRunning(Component component, String command) {
-        ClickEvent click = component.clickEvent();
-        if (click != null && click.action() == ClickEvent.Action.RUN_COMMAND && command.equals(click.value())) {
+        // Adventure 5 made the click event generic: what used to be a bare string value is
+        // now a typed payload
+        ClickEvent<?> click = component.clickEvent();
+        if (click != null && click.action() == ClickEvent.Action.RUN_COMMAND
+                && click.payload() instanceof ClickEvent.Payload.Text text && command.equals(text.value())) {
             return true;
         }
         return component.children().stream().anyMatch(child -> hasClickRunning(child, command));

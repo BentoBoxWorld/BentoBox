@@ -87,8 +87,8 @@ class JoinLeaveListenerTest extends RanksManagerTestSetup {
 
     private AddonDescription desc;
     
-    @Mock
-    private Component component;
+    // Adventure 5 seals Component, so join/quit messages are real components now
+    private final Component component = Component.empty();
 
     @Override
     @BeforeEach

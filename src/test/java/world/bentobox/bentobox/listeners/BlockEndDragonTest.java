@@ -131,7 +131,8 @@ class BlockEndDragonTest extends CommonTestSetup {
      */
     @Test
     void testOnPlayerJoinWorld() {
-        Component component = mock(Component.class);
+        // Adventure 5 seals Component, so it cannot be mocked
+        Component component = Component.empty();
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         bed.onPlayerJoinWorld(event);
         verify(block).setType(Material.END_PORTAL, false);
