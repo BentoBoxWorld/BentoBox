@@ -21,8 +21,24 @@ import world.bentobox.bentobox.util.Util;
  */
 public class DialogButton {
 
+    /**
+     * Width of a button that has not asked for one. A button left at this width is built
+     * without an explicit width at all, so the client lays it out however it normally
+     * would.
+     *
+     * @since 3.22.3
+     */
+    public static final int DEFAULT_WIDTH = 150;
+
+    /** Narrowest button the client accepts */
+    private static final int MIN_WIDTH = 1;
+
+    /** Widest button the client accepts */
+    private static final int MAX_WIDTH = 1024;
+
     private final Component label;
     private final @Nullable Component tooltip;
+    private final int width;
     private final @Nullable Consumer<User> onClick;
 
     /**
@@ -33,8 +49,33 @@ public class DialogButton {
      * @param onClick the action to run when clicked, or null for a button that just closes the dialog
      */
     public DialogButton(@NonNull Component label, @Nullable Component tooltip, @Nullable Consumer<User> onClick) {
+        this(label, tooltip, DEFAULT_WIDTH, onClick);
+    }
+
+    /**
+     * Creates a button of a given width.
+     * <p>
+     * Width matters when buttons are laid out in a grid with
+     * {@link DialogBuilder#columns(int)}: narrow buttons let a row hold more of them
+     * before the client squeezes the outer columns off the screen.
+     *
+     * @param label   the button label, not null
+     * @param tooltip the hover tooltip, or null for none
+     * @param width   the button width, 1 to 1024, or {@link #DEFAULT_WIDTH} to leave it to
+     *                the client
+     * @param onClick the action to run when clicked, or null for a button that just closes the dialog
+     * @throws IllegalArgumentException if the width is outside 1 to 1024
+     * @since 3.22.3
+     */
+    public DialogButton(@NonNull Component label, @Nullable Component tooltip, int width,
+            @Nullable Consumer<User> onClick) {
+        if (width < MIN_WIDTH || width > MAX_WIDTH) {
+            throw new IllegalArgumentException(
+                    "Button width must be between " + MIN_WIDTH + " and " + MAX_WIDTH + ", not " + width);
+        }
         this.label = label;
         this.tooltip = tooltip;
+        this.width = width;
         this.onClick = onClick;
     }
 
@@ -64,6 +105,20 @@ public class DialogButton {
     }
 
     /**
+     * Returns a copy of this button at the given width, so a button made by
+     * {@link #of(User, String, Consumer)} can still be sized.
+     *
+     * @param width the button width, 1 to 1024
+     * @return a new button, identical but for its width
+     * @throws IllegalArgumentException if the width is outside 1 to 1024
+     * @since 3.22.3
+     */
+    @NonNull
+    public DialogButton withWidth(int width) {
+        return new DialogButton(label, tooltip, width, onClick);
+    }
+
+    /**
      * @return the button label
      */
     @NonNull
@@ -77,6 +132,14 @@ public class DialogButton {
     @Nullable
     public Component tooltip() {
         return tooltip;
+    }
+
+    /**
+     * @return the button width, or {@link #DEFAULT_WIDTH} if none was asked for
+     * @since 3.22.3
+     */
+    public int width() {
+        return width;
     }
 
     /**
