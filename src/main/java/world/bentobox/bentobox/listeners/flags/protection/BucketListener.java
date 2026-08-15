@@ -29,11 +29,9 @@ public class BucketListener extends FlagListener {
 
     /**
      * The Sulfur Cube entity type (Minecraft 26.2), resolved at runtime so the code still
-     * compiles against earlier API versions. {@code null} when absent. Non-final so tests can
-     * inject a stand-in type (the JVM constant-folds {@code static final} fields).
+     * compiles against earlier API versions. {@code null} when absent.
      */
-    @SuppressWarnings("java:S3008") // non-final by design; see Javadoc (test injection)
-    private static EntityType SULFUR_CUBE = Enums.getIfPresent(EntityType.class, "SULFUR_CUBE")
+    private static final EntityType SULFUR_CUBE = Enums.getIfPresent(EntityType.class, "SULFUR_CUBE")
             .orNull();
 
     /**
