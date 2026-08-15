@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bentobox.world/schemas/blueprint-bundle.schema.json",
+  "title": "BentoBox Blueprint Bundle Format",
+  "description": "Schema describing the on-disk JSON format of a BentoBox blueprint bundle file.\n\nA bundle groups up to three `.blueprint` files — one per world environment (overworld / nether / end) — into a single option that appears in the island-creation UI. It also controls the cost, permission, GUI slot, usage cap, and post-creation commands for that option.\n\nFILE FORMAT:\n  - Plain UTF-8 JSON.\n  - One bundle per file. Filename MUST be `<uniqueId>.json` (the stem matches the `uniqueId` field).\n  - Location: the `blueprints/` folder of a game-mode addon (e.g. `plugins/BentoBox/addons/BSkyBlock/blueprints/default.json`). The referenced blueprints live alongside as `<name>.blueprint` files and are validated by the sibling `blueprint.schema.json`.\n\nSERIALIZATION NOTES (Gson-based):\n  - Only fields explicitly tagged `@Expose` in the Java source are emitted; producers must not emit other keys.\n  - The `blueprints` map is keyed by the Java `World.Environment` enum and is written as a normal JSON object with the enum NAME (e.g. `NORMAL`) as the key.\n  - Pretty-printing is enabled by the writer; consumers must not rely on whitespace.",
+  "type": "object",
+  "properties": {
+    "uniqueId": {
+      "description": "Unique identifier for this bundle. Must equal the filename stem (e.g. `default` for `default.json`). Used as the permission suffix when `requirePermission` is true: `<gamemode>.island.create.<uniqueId>`.",
+      "type": "string",
+      "minLength": 1
+    },
+    "displayName": {
+      "description": "Human-readable name shown in the selection GUI. May contain legacy `§` colour codes or MiniMessage tags per locale conventions.",
+      "type": "string"
+    },
+    "icon": {
+      "description": "Icon material. One of: a plain Bukkit Material enum name (e.g. `DIAMOND`), a vanilla namespaced key (e.g. `minecraft:diamond`), or a resource-pack custom model key (e.g. `myserver:island_tropical`). Default: `PAPER`.",
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "description": "Lore lines shown under the icon. One string per line.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "blueprints": {
+      "description": "Map from world environment to the `name` of a Blueprint in the same folder. Environments with no entry are not generated for this bundle; keys correspond to Bukkit `World.Environment` enum names.",
+      "type": "object",
+      "propertyNames": {
+        "enum": ["NORMAL", "NETHER", "THE_END", "CUSTOM"]
+      },
+      "additionalProperties": {
+        "description": "The `name` field of a sibling Blueprint (i.e. the file's stem without the `.blueprint` extension).",
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requirePermission": {
+      "description": "If true, a player must hold `<gamemode>.island.create.<uniqueId>` to use this bundle.",
+      "type": "boolean"
+    },
+    "slot": {
+      "description": "Preferred slot (0-based) in the selection GUI. Runtime clamps to the visible inventory size.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "times": {
+      "description": "Maximum number of islands a single player may create with this bundle. `0` means unlimited.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "cost": {
+      "description": "Vault-economy cost to use this bundle. `0` means free. Requires a Vault-compatible economy plugin at runtime.",
+      "type": "number",
+      "minimum": 0
+    },
+    "commands": {
+      "description": "Commands executed when an island is created with this bundle. Placeholders `[player]` and `[owner]` are substituted. Entries prefixed with `[SUDO]` run as the creating player; others run as console. (Added in BentoBox 2.6.0.)",
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["uniqueId"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "uniqueId": "default",
+      "displayName": "Default Island",
+      "icon": "GRASS_BLOCK",
+      "description": ["A standard island", "with grass and dirt"],
+      "blueprints": {
+        "NORMAL": "island",
+        "NETHER": "nether",
+        "THE_END": "end"
+      },
+      "requirePermission": false,
+      "slot": 0,
+      "times": 0,
+      "cost": 0.0,
+      "commands": ["[SUDO] me has arrived!"]
+    }
+  ]
+}

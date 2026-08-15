@@ -1,0 +1,579 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bentobox.world/schemas/blueprint.schema.json",
+  "title": "BentoBox Blueprint Format",
+  "description": "Schema describing the on-disk JSON format used by BentoBox for island blueprints (.blueprint files) and blueprint bundles (bundle .json files).\n\nFILE FORMATS:\n  - `.blueprint` files are plain UTF-8 JSON and MUST validate against `#/$defs/Blueprint`.\n  - `.blu` files are a legacy format: a ZIP archive containing a single entry whose content is plain JSON that validates against `#/$defs/Blueprint`.\n  - Bundle files (e.g. `default.json` inside a game mode's `blueprints/` folder) MUST validate against `#/$defs/BlueprintBundle`.\n\nSERIALIZATION NOTES (Gson-based):\n  - Only fields explicitly tagged `@Expose` in the Java source are serialized; producers must not emit other keys.\n  - `org.bukkit.util.Vector` values are emitted as a 3-element JSON array of numbers: `[x, y, z]`.\n  - Maps keyed by `Vector` use Gson's complex-map-key form: a JSON array of 2-element arrays, i.e. `[[<vector>, <value>], ...]` — NOT a JSON object. This applies to `Blueprint.blocks`, `Blueprint.attached`, and `Blueprint.entities`.\n  - Maps keyed by an enum (e.g. `BlueprintBundle.blueprints` keyed by `World.Environment`) ARE emitted as normal JSON objects with the enum NAME as the key.\n  - Maps keyed by `Integer` (inventory slot -> ItemStack) are emitted as JSON objects with stringified integer keys.\n  - `org.bukkit.inventory.ItemStack` values are serialized to Bukkit YAML (via ConfigurationSerializable) and stored as a JSON string. They cannot be validated structurally by this schema; treat the value as an opaque YAML document.\n  - Enum values are serialized by their Java `name()`.\n  - `org.bukkit.Color` is serialized as `{\"ALPHA\": int, \"RED\": int, \"GREEN\": int, \"BLUE\": int}` via ConfigurationSerializable.\n  - Pretty-printing is enabled by the writer; consumers must not rely on whitespace.",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/Blueprint" },
+    { "$ref": "#/$defs/BlueprintBundle" }
+  ],
+  "$defs": {
+    "Vector": {
+      "title": "Vector",
+      "description": "A Bukkit Vector serialized as a 3-element JSON array of doubles: [x, y, z]. For block positions, integer values are customary but the underlying type is double. For entity positions, sub-block fractional components are allowed.",
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "description": "x" },
+        { "type": "number", "description": "y" },
+        { "type": "number", "description": "z" }
+      ],
+      "minItems": 3,
+      "maxItems": 3
+    },
+
+    "ItemStackYaml": {
+      "title": "ItemStack (YAML-encoded)",
+      "description": "A Bukkit ItemStack serialized via Bukkit's ConfigurationSerializable as a YAML document and stored as a JSON string. The string SHOULD be parseable by `org.bukkit.inventory.ItemStack#deserialize` or by `YamlConfiguration#loadFromString`. No structural validation is performed by this schema.",
+      "type": "string"
+    },
+
+    "Color": {
+      "title": "Color",
+      "description": "An RGBA color, serialized via Bukkit's ConfigurationSerializable.",
+      "type": "object",
+      "properties": {
+        "ALPHA": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "RED":   { "type": "integer", "minimum": 0, "maximum": 255 },
+        "GREEN": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "BLUE":  { "type": "integer", "minimum": 0, "maximum": 255 }
+      },
+      "required": ["RED", "GREEN", "BLUE"]
+    },
+
+    "NamespacedKey": {
+      "title": "NamespacedKey",
+      "description": "A Bukkit NamespacedKey such as `minecraft:chests/simple_dungeon`.",
+      "type": "string",
+      "pattern": "^[a-z0-9._-]+:[a-z0-9/._-]+$"
+    },
+
+    "Icon": {
+      "title": "Icon",
+      "description": "Icon material. One of: a plain Bukkit Material enum name (e.g. `DIAMOND`), a vanilla namespaced key (e.g. `minecraft:diamond`), or a resource pack custom model key (e.g. `myserver:island_tropical`). Default: `PAPER`.",
+      "type": "string",
+      "minLength": 1
+    },
+
+    "EnvironmentKey": {
+      "description": "A Bukkit World.Environment name.",
+      "type": "string",
+      "enum": ["NORMAL", "NETHER", "THE_END", "CUSTOM"]
+    },
+
+    "VectorKeyedBlockMap": {
+      "title": "Vector-keyed block map",
+      "description": "Gson complex-map-key form: an array of [VectorKey, BlueprintBlock] pairs.",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          { "$ref": "#/$defs/Vector" },
+          { "$ref": "#/$defs/BlueprintBlock" }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+
+    "VectorKeyedEntityListMap": {
+      "title": "Vector-keyed entity-list map",
+      "description": "Gson complex-map-key form: an array of [VectorKey, BlueprintEntity[]] pairs. Multiple entities can share the same tile (e.g. a villager and an item frame in one block space).",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          { "$ref": "#/$defs/Vector" },
+          {
+            "type": "array",
+            "items": { "$ref": "#/$defs/BlueprintEntity" }
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+
+    "InventoryMap": {
+      "title": "Inventory slot map",
+      "description": "Map of zero-based inventory slot to ItemStack (YAML-encoded). Keys are stringified integers; absent slots are empty.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[0-9]+$" },
+      "additionalProperties": { "$ref": "#/$defs/ItemStackYaml" }
+    },
+
+    "Blueprint": {
+      "title": "Blueprint",
+      "description": "Top-level object written to a `.blueprint` file. Describes a block volume, attached blocks, and entities relative to an anchor (`bedrock`).",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Unique identifier for this blueprint; used to look it up from a BlueprintBundle. Conventionally matches the filename stem. Non-null; default empty string.",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Human-readable name shown in UIs. May contain legacy `§` colour codes or MiniMessage tags depending on locale conventions.",
+          "type": "string"
+        },
+        "icon": { "$ref": "#/$defs/Icon" },
+        "description": {
+          "description": "Lore lines shown under the icon in selection UIs.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "bedrock": {
+          "description": "Anchor point of the blueprint. When pasted, blueprint (0,0,0) is translated so `bedrock` lands on the paste target. If omitted at load-time, BentoBox auto-creates one at `(xSize/2, ySize/2, zSize/2)`.",
+          "$ref": "#/$defs/Vector"
+        },
+        "xSize": {
+          "description": "Width of the bounding box in blocks (X axis).",
+          "type": "integer",
+          "minimum": 0
+        },
+        "ySize": {
+          "description": "Height of the bounding box in blocks (Y axis).",
+          "type": "integer",
+          "minimum": 0
+        },
+        "zSize": {
+          "description": "Depth of the bounding box in blocks (Z axis).",
+          "type": "integer",
+          "minimum": 0
+        },
+        "sink": {
+          "description": "If true, at paste time the blueprint will descend until it finds a surface, rather than pasting at the exact Y of the anchor.",
+          "type": "boolean"
+        },
+        "blocks": {
+          "description": "Primary blocks of the blueprint, keyed by position relative to the blueprint origin (0..size-1 on each axis).",
+          "$ref": "#/$defs/VectorKeyedBlockMap"
+        },
+        "attached": {
+          "description": "Blocks that must be pasted AFTER `blocks` because they attach to a supporting block (torches, ladders, rails, beds, doors, signs, etc.). Same coordinate conventions as `blocks`.",
+          "$ref": "#/$defs/VectorKeyedBlockMap"
+        },
+        "entities": {
+          "description": "Entities to spawn at each position. The position key is the block the entity resides in; fine-grained in-block offsets live on BlueprintEntity (x/y/z fields). Multiple entities may share a key.",
+          "$ref": "#/$defs/VectorKeyedEntityListMap"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "BlueprintBundle": {
+      "title": "BlueprintBundle",
+      "description": "A bundle groups up to three blueprints — one per world environment — into a single selectable option in the island-create UI. Persisted as `<uniqueId>.json` inside a game mode's `blueprints/` folder (alongside the `.blueprint` files it references).",
+      "type": "object",
+      "properties": {
+        "uniqueId": {
+          "description": "Unique identifier for this bundle. Must equal the filename stem (e.g. `default` for `default.json`). Used as a permission suffix when `requirePermission` is true.",
+          "type": "string",
+          "minLength": 1
+        },
+        "displayName": {
+          "description": "Human-readable name for UI display.",
+          "type": "string"
+        },
+        "icon": { "$ref": "#/$defs/Icon" },
+        "description": {
+          "description": "Lore shown under the icon in the selection UI.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "blueprints": {
+          "description": "Map from world environment to the `name` of a Blueprint present in the same folder. Environments with no entry are not generated for this bundle.",
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/EnvironmentKey" },
+          "additionalProperties": { "type": "string" }
+        },
+        "requirePermission": {
+          "description": "If true, using this bundle requires the permission `<gamemode>.island.create.<uniqueId>`.",
+          "type": "boolean"
+        },
+        "slot": {
+          "description": "Preferred slot in the selection GUI (0-based). Slots are clamped at runtime.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "times": {
+          "description": "Maximum number of islands a single player may create with this bundle. `0` means unlimited.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "cost": {
+          "description": "Vault-economy cost a player pays to use this bundle. `0` means free. Requires a Vault-compatible economy plugin at runtime.",
+          "type": "number",
+          "minimum": 0
+        },
+        "commands": {
+          "description": "Commands executed when an island is created with this bundle. Placeholders `[player]` and `[owner]` are substituted. Entries prefixed with `[SUDO]` run as the player; others run as console.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["uniqueId"],
+      "additionalProperties": false
+    },
+
+    "BlueprintBlock": {
+      "title": "BlueprintBlock",
+      "description": "One block cell of a blueprint. The `blockData` string is required; all other fields are applied only when the block type supports them.",
+      "type": "object",
+      "properties": {
+        "blockData": {
+          "description": "Bukkit BlockData string, i.e. the output of `BlockData#getAsString()`. Examples: `minecraft:bedrock`, `minecraft:oak_log[axis=y]`, `minecraft:chest[facing=north,type=single,waterlogged=false]`.",
+          "type": "string",
+          "minLength": 1
+        },
+        "signLines": {
+          "description": "Front-side sign lines (up to 4). Supports legacy `§` colour codes. DEPRECATED since BentoBox 1.24.0 in favour of side-specific serialisation; still written and read for backwards compatibility.",
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 4
+        },
+        "signLines2": {
+          "description": "Back-side sign lines (up to 4). Added in 1.24.0 when dual-sided signs were introduced.",
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 4
+        },
+        "glowingText": {
+          "description": "Whether the front side of this sign has glowing text.",
+          "type": "boolean"
+        },
+        "glowingText2": {
+          "description": "Whether the back side of this sign has glowing text.",
+          "type": "boolean"
+        },
+        "inventory": {
+          "description": "Container contents (chests, barrels, hoppers, shulker boxes, furnaces, brewing stands, etc.). Keyed by slot index.",
+          "$ref": "#/$defs/InventoryMap"
+        },
+        "bannerPatterns": {
+          "description": "Banner pattern layers, applied in order. Each entry is a Bukkit Pattern serialized via ConfigurationSerializable with keys `pattern` (legacy short code, e.g. `bri`) and `color` (DyeColor name).",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": { "type": "string" },
+              "color":   { "$ref": "#/$defs/DyeColor" }
+            }
+          }
+        },
+        "biome": {
+          "description": "Biome override for this specific block cell (Bukkit `Biome` enum name). Optional.",
+          "type": "string"
+        },
+        "creatureSpawner": {
+          "description": "Present only when `blockData` is a spawner. Describes the spawner configuration.",
+          "$ref": "#/$defs/BlueprintCreatureSpawner"
+        },
+        "trialSpawner": {
+          "description": "Present only when `blockData` is a trial spawner (1.21+). Mutually exclusive with `creatureSpawner`.",
+          "$ref": "#/$defs/BlueprintTrialSpawner"
+        },
+        "itemsAdderBlock": {
+          "description": "ItemsAdder custom block namespace identifier (e.g. `myserver:custom_ore`). Only meaningful when the ItemsAdder plugin is installed; otherwise the block falls back to `blockData`.",
+          "type": "string"
+        }
+      },
+      "required": ["blockData"],
+      "additionalProperties": false
+    },
+
+    "BlueprintCreatureSpawner": {
+      "title": "BlueprintCreatureSpawner",
+      "description": "Vanilla (non-trial) mob spawner configuration.",
+      "type": "object",
+      "properties": {
+        "spawnedType": { "$ref": "#/$defs/EntityType" },
+        "delay": {
+          "description": "Current countdown (ticks) until the next spawn attempt.",
+          "type": "integer"
+        },
+        "maxNearbyEntities": {
+          "description": "Spawner will stop spawning while at least this many entities of the spawned type exist within its tracking radius.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxSpawnDelay": {
+          "description": "Upper bound (ticks) of the randomised delay picked after a spawn.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "minSpawnDelay": {
+          "description": "Lower bound (ticks) of the randomised delay picked after a spawn.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "requiredPlayerRange": {
+          "description": "Maximum distance (blocks) from which a player keeps the spawner active.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "spawnRange": {
+          "description": "Radius (blocks) around the spawner within which mobs may spawn.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "BlueprintTrialSpawner": {
+      "title": "BlueprintTrialSpawner",
+      "description": "Trial spawner configuration (1.21+). Added in BentoBox 3.4.2.",
+      "type": "object",
+      "properties": {
+        "ominous": {
+          "description": "Whether the spawner is in its ominous (cursed) state.",
+          "type": "boolean"
+        },
+        "spawnedType": {
+          "description": "Single entity type to spawn. Use this OR `potentialSpawns`.",
+          "$ref": "#/$defs/EntityType"
+        },
+        "delay": { "type": "integer" },
+        "addSimulEnts": {
+          "description": "Additional simultaneous entities granted per player (scaling factor).",
+          "type": "number"
+        },
+        "addSpawnsB4Cool": {
+          "description": "Additional total spawns granted per player before cooldown.",
+          "type": "number"
+        },
+        "baseSimEnts": {
+          "description": "Base number of simultaneous entities the spawner will keep alive.",
+          "type": "number"
+        },
+        "baseSpawnsB4Cool": {
+          "description": "Base number of total spawns before entering cooldown.",
+          "type": "number"
+        },
+        "spawnRange": { "type": "integer", "minimum": 0 },
+        "requiredPlayerRange": { "type": "integer", "minimum": 0 },
+        "playerRange": { "type": "integer", "minimum": 0 },
+        "lootTableMap": {
+          "description": "Candidate reward loot tables with relative weights. Keyed by a loot-table NamespacedKey object.",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "object",
+                "properties": {
+                  "nameSpace": { "type": "string" },
+                  "key":       { "type": "string" }
+                },
+                "required": ["nameSpace", "key"],
+                "additionalProperties": false
+              },
+              { "type": "integer", "minimum": 1 }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "potentialSpawns": {
+          "description": "Weighted list of possible spawns. Use this OR `spawnedType`.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "snapshot": {
+                "description": "EntitySnapshot serialised as a string (Bukkit `EntitySnapshot#getAsString`). Opaque to this schema.",
+                "type": "string"
+              },
+              "spawnrule": {
+                "description": "Bukkit SpawnRule serialised via ConfigurationSerializable. Keys depend on server version; typically includes block-light / sky-light / min/max Y fields.",
+                "type": "object",
+                "additionalProperties": true
+              },
+              "spawnWeight": {
+                "description": "Relative weight of this candidate.",
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": ["spawnWeight"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "BlueprintEntity": {
+      "title": "BlueprintEntity",
+      "description": "One entity to spawn. Only `type` is required; all other fields are applied only when the Bukkit entity class supports them. Nullable wrappers indicate a tri-state: unset means \"do not modify Bukkit default\".",
+      "type": "object",
+      "properties": {
+        "type": { "$ref": "#/$defs/EntityType" },
+        "customName": {
+          "description": "Custom display name; supports legacy `§` colour codes.",
+          "type": "string"
+        },
+        "x": {
+          "description": "Fine offset within the position cell (typically 0.0 ≤ x < 1.0 for relative placement, but absolute values are allowed).",
+          "type": "number"
+        },
+        "y": { "type": "number" },
+        "z": { "type": "number" },
+
+        "glowing":      { "type": "boolean", "description": "Glow effect on the entity." },
+        "gravity":      { "type": "boolean", "description": "Whether gravity applies." },
+        "visualFire":   { "type": "boolean", "description": "Render a fire effect regardless of `fireTicks`." },
+        "silent":       { "type": "boolean", "description": "Suppress ambient sounds." },
+        "invulnerable": { "type": "boolean", "description": "Immune to all damage sources." },
+        "fireTicks":    { "type": "integer", "description": "Remaining fire duration (ticks)." },
+
+        "adult":          { "type": "boolean", "description": "Ageable entities only — set false to spawn as baby." },
+        "color":          { "$ref": "#/$defs/DyeColor", "description": "Colourable entities only (sheep, shulker, collar colour for wolves, etc.)." },
+        "tamed":          { "type": "boolean", "description": "Tameable entities only. Owner is not restored." },
+        "chest":          { "type": "boolean", "description": "Chest-carrying horses and llamas only." },
+        "domestication":  { "type": "integer", "description": "Horse domestication level.", "minimum": 0, "maximum": 100 },
+        "inventory":      { "$ref": "#/$defs/InventoryMap", "description": "Horse/llama inventory." },
+
+        "profession":   { "type": "string", "description": "Villager profession (enum name or namespaced key string)." },
+        "level":        { "type": "integer", "description": "Villager level.", "minimum": 1, "maximum": 5 },
+        "experience":   { "type": "integer", "description": "Villager experience points." },
+        "villagerType": { "type": "string", "description": "Villager biome/type variant (enum name or namespaced key string)." },
+        "style":        { "type": "string", "description": "Horse coat style — Bukkit `Horse.Style` enum name.", "enum": ["WHITE", "WHITEFIELD", "WHITE_DOTS", "BLACK_DOTS", "NONE"] },
+
+        "npc":     { "type": "string", "description": "Citizens plugin NPC id. Only meaningful when Citizens is installed." },
+        "MMtype":  { "type": "string", "description": "MythicMobs mob type identifier." },
+        "MMLevel": { "type": "number", "description": "MythicMobs mob level." },
+        "MMpower": { "type": "number", "description": "MythicMobs mob power." },
+        "MMStance":{ "type": "string", "description": "MythicMobs mob stance." },
+
+        "displayRec": { "$ref": "#/$defs/DisplayRec", "description": "Properties common to all DisplayEntity subtypes." },
+        "blockDisp":  { "$ref": "#/$defs/BlueprintBlock", "description": "BlockDisplay payload — the displayed block." },
+        "itemDisp":   { "$ref": "#/$defs/ItemDispRec",   "description": "ItemDisplay payload." },
+        "textDisp":   { "$ref": "#/$defs/TextDisplayRec","description": "TextDisplay payload." },
+        "itemFrame":  { "$ref": "#/$defs/ItemFrameRec",  "description": "ItemFrame payload (since BentoBox 3.2.6)." }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+
+    "DisplayRec": {
+      "title": "DisplayRec",
+      "description": "Properties shared by all Display entities (BlockDisplay, ItemDisplay, TextDisplay).",
+      "type": "object",
+      "properties": {
+        "billboard": {
+          "type": "string",
+          "enum": ["FIXED", "VERTICAL", "HORIZONTAL", "CENTER"],
+          "description": "How the display rotates to face the viewer."
+        },
+        "brightness": {
+          "description": "Bukkit Display.Brightness — typically `{\"block\": int, \"sky\": int}` via ConfigurationSerializable. Opaque.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "height": { "type": "number" },
+        "width":  { "type": "number" },
+        "glowColorOverride": { "$ref": "#/$defs/Color" },
+        "interpolationDelay":    { "type": "integer" },
+        "interpolationDuration": { "type": "integer" },
+        "shadowRadius":   { "type": "number" },
+        "shadowStrength": { "type": "number" },
+        "teleportDuration": { "type": "integer" },
+        "transformation": {
+          "description": "Bukkit Transformation (translation, leftRotation, scale, rightRotation) via ConfigurationSerializable. Opaque.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "range": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+
+    "ItemDispRec": {
+      "type": "object",
+      "properties": {
+        "item":          { "$ref": "#/$defs/ItemStackYaml" },
+        "itemDispTrans": {
+          "type": "string",
+          "description": "Bukkit ItemDisplay.ItemDisplayTransform enum name.",
+          "enum": [
+            "NONE",
+            "THIRDPERSON_LEFTHAND", "THIRDPERSON_RIGHTHAND",
+            "FIRSTPERSON_LEFTHAND", "FIRSTPERSON_RIGHTHAND",
+            "HEAD", "GUI", "GROUND", "FIXED"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "TextDisplayRec": {
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "description": "Displayed text. Legacy `§` colour codes accepted." },
+        "alignment": {
+          "type": "string",
+          "enum": ["CENTER", "LEFT", "RIGHT"]
+        },
+        "bgColor":      { "$ref": "#/$defs/Color" },
+        "face":         { "$ref": "#/$defs/BlockFace" },
+        "lWidth":       { "type": "integer", "description": "Line-wrap width in pixels." },
+        "opacity":      { "type": "integer", "minimum": -128, "maximum": 127, "description": "Signed byte: -1 renders the default opacity." },
+        "isShadowed":   { "type": "boolean" },
+        "isSeeThrough": { "type": "boolean" },
+        "isDefaultBg":  { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "ItemFrameRec": {
+      "type": "object",
+      "properties": {
+        "item":      { "$ref": "#/$defs/ItemStackYaml" },
+        "rotation": {
+          "type": "string",
+          "description": "Bukkit Rotation enum name.",
+          "enum": [
+            "NONE",
+            "CLOCKWISE_45",  "CLOCKWISE",       "CLOCKWISE_135",
+            "FLIPPED",       "FLIPPED_45",
+            "COUNTER_CLOCKWISE_45", "COUNTER_CLOCKWISE", "COUNTER_CLOCKWISE_135"
+          ]
+        },
+        "isFixed":    { "type": "boolean", "description": "Immovable and unrotatable when true." },
+        "isVisible":  { "type": "boolean" },
+        "dropChance": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+      },
+      "additionalProperties": false
+    },
+
+    "DyeColor": {
+      "description": "Bukkit DyeColor enum name.",
+      "type": "string",
+      "enum": [
+        "WHITE", "ORANGE", "MAGENTA", "LIGHT_BLUE",
+        "YELLOW", "LIME", "PINK", "GRAY",
+        "LIGHT_GRAY", "CYAN", "PURPLE", "BLUE",
+        "BROWN", "GREEN", "RED", "BLACK"
+      ]
+    },
+
+    "BlockFace": {
+      "description": "Bukkit BlockFace enum name.",
+      "type": "string",
+      "enum": [
+        "NORTH", "EAST", "SOUTH", "WEST", "UP", "DOWN",
+        "NORTH_EAST", "NORTH_WEST", "SOUTH_EAST", "SOUTH_WEST",
+        "WEST_NORTH_WEST", "NORTH_NORTH_WEST", "NORTH_NORTH_EAST", "EAST_NORTH_EAST",
+        "EAST_SOUTH_EAST", "SOUTH_SOUTH_EAST", "SOUTH_SOUTH_WEST", "WEST_SOUTH_WEST",
+        "SELF"
+      ]
+    },
+
+    "EntityType": {
+      "description": "Bukkit EntityType enum name (e.g. `VILLAGER`, `ZOMBIE`, `ARMOR_STAND`, `ITEM_FRAME`, `ITEM_DISPLAY`, `BLOCK_DISPLAY`, `TEXT_DISPLAY`, `TRIAL_SPAWNER`). The exact set depends on the server version.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    }
+  }
+}
