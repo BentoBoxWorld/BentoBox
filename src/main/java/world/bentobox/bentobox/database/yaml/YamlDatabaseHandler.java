@@ -222,11 +222,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // Floats need special handling because the database returns them as doubles
                     Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
                     switch (setType.getTypeName()) {
-                        case "float" -> {
-                            double d = (double) setTo;
-                            float f = (float) d;
-                            method.invoke(instance, f);
-                        }
+                        case "float" -> method.invoke(instance, ((Number) setTo).floatValue());
                         case "org.bukkit.Sound" -> {
                             Sound s = Registry.SOUNDS
                                     .get(NamespacedKey.fromString(((String) setTo).toLowerCase(Locale.ENGLISH)));
@@ -686,9 +682,17 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (clazz.equals(value.getClass())) {
             return value;
         }
-        // Integer to Long promotion
-        if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
-            return Long.valueOf((Integer) value);
+        // Numeric widening. YAML types a number by how it is written, so "20"
+        // loads as Integer and "20.0" as Double - but a config field declared
+        // double is perfectly entitled to be written without a decimal point.
+        // Without this, such a value reaches the setter as an Integer; inside a
+        // collection, generic erasure means nothing complains until the first
+        // read throws ClassCastException, a long way from the cause.
+        if (value instanceof Number number) {
+            Object widened = widen(number, clazz);
+            if (widened != null) {
+                return widened;
+            }
         }
         // String-based conversions
         if (value instanceof String stringValue) {
@@ -702,6 +706,44 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             return deserializeEnum((String) value, (Class<Enum>) clazz);
         }
         return value;
+    }
+
+    /**
+     * Widen a YAML-loaded number to the field's declared numeric type, or null if
+     * the target is not a numeric type this handles.
+     * <p>
+     * Widening only. There is deliberately no case for {@code int}, and the
+     * {@code long} case only accepts integral sources: a value written with a
+     * decimal point against an integer field is a mistake in the config, and
+     * narrowing it would silently discard the fraction. Left alone, it fails
+     * visibly instead. Double to float is the one accepted narrowing, because
+     * YAML always types decimals as Double and a float field must still load.
+     *
+     * @param number the value as YAML typed it
+     * @param clazz the declared type
+     * @return the converted value, or null to leave it alone
+     */
+    @Nullable
+    private Object widen(Number number, Class<?> clazz) {
+        if ((clazz.equals(Long.class) || clazz.equals(long.class)) && isIntegral(number)) {
+            return number.longValue();
+        }
+        if (clazz.equals(Double.class) || clazz.equals(double.class)) {
+            return number.doubleValue();
+        }
+        if (clazz.equals(Float.class) || clazz.equals(float.class)) {
+            return number.floatValue();
+        }
+        return null;
+    }
+
+    /**
+     * @param number a YAML-loaded number
+     * @return true if the value carries no fraction to lose, i.e. YAML typed it as an integer
+     */
+    private boolean isIntegral(Number number) {
+        return number instanceof Byte || number instanceof Short || number instanceof Integer
+                || number instanceof Long;
     }
 
     /**

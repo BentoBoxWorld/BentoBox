@@ -50,6 +50,7 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
         private String uniqueId = "test";
         private String name = "";
         private int count = 0;
+        private float speed = 0f;
         private Map<String, Integer> scores = new HashMap<>();
         private Set<String> tags = new HashSet<>();
         private List<String> items = new java.util.ArrayList<>();
@@ -63,6 +64,8 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
         public void setName(String name) { this.name = name; }
         public int getCount() { return count; }
         public void setCount(int count) { this.count = count; }
+        public float getSpeed() { return speed; }
+        public void setSpeed(float speed) { this.speed = speed; }
         public Map<String, Integer> getScores() { return scores; }
         public void setScores(Map<String, Integer> scores) { this.scores = scores; }
         public Set<String> getTags() { return tags; }
@@ -115,6 +118,57 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
     void testDeserializeSameClassReturnsValue() throws Exception {
         String value = "hello";
         assertSame(value, deserializeMethod.invoke(handler, value, String.class));
+    }
+
+    @Test
+    void testDeserializeIntegerToDouble() throws Exception {
+        // YAML types a number by how it is WRITTEN: "20" loads as Integer even
+        // where the field is a double. Without widening, that Integer reaches the
+        // setter, and inside a collection generic erasure hides it until the first
+        // read throws ClassCastException a long way from the cause.
+        Object result = deserializeMethod.invoke(handler, 20, Double.class);
+        assertEquals(20.0, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeIntegerToFloat() throws Exception {
+        Object result = deserializeMethod.invoke(handler, 20, Float.class);
+        assertEquals(20.0f, result);
+        assertEquals(Float.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeDoubleToIntegerIsNotNarrowed() throws Exception {
+        // The other direction is deliberately NOT converted. A decimal written
+        // against an int field is a config mistake, and intValue() would discard
+        // the fraction silently - 20.9 becoming 20 with nothing said. Left alone,
+        // it fails visibly instead.
+        Object result = deserializeMethod.invoke(handler, 20.9, Integer.class);
+        assertEquals(20.9, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeDoubleToLongIsNotNarrowed() throws Exception {
+        // Same principle for long fields: 5.5 must not silently become 5L
+        Object result = deserializeMethod.invoke(handler, 5.5, Long.class);
+        assertEquals(5.5, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeLongToDouble() throws Exception {
+        Object result = deserializeMethod.invoke(handler, 20L, Double.class);
+        assertEquals(20.0, result);
+        assertEquals(Double.class, result.getClass());
+    }
+
+    @Test
+    void testDeserializeNumberToNonNumericTypeIsUntouched() throws Exception {
+        // Widening must not hijack values whose target is not numeric
+        Object result = deserializeMethod.invoke(handler, 20, String.class);
+        assertEquals(20, result);
     }
 
     @Test
@@ -400,6 +454,26 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
         assertEquals(2, result.getTags().size());
         assertTrue(result.getTags().contains("tag1"));
         assertEquals(3, result.getItems().size());
+    }
+
+    @Test
+    void testLoadObjectPrimitiveFloatField() throws Exception {
+        // A primitive float field must load whether the admin wrote the value
+        // with a decimal point (YAML types it Double) or without (Integer).
+        // Exercises the "float" arm in deserializeValue, which deserialize()
+        // now feeds a boxed Float rather than the raw YAML Double.
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("uniqueId", "float-test");
+        config.set("speed", 2.5);
+        when(connector.loadYamlFile(anyString(), eq("float-test"))).thenReturn(config);
+
+        TestDataObject result = handler.loadObject("float-test");
+        assertNotNull(result);
+        assertEquals(2.5f, result.getSpeed());
+
+        config.set("speed", 3);
+        result = handler.loadObject("float-test");
+        assertEquals(3.0f, result.getSpeed());
     }
 
     @Test
