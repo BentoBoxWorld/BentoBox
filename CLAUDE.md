@@ -156,11 +156,11 @@ A template like `<green>[description]</green>` looks harmless but is a trap. Tra
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
 - Locale translations are produced with Claude, not GitLocalize. When a key is added to `en-US.yml`, translate it into every other `src/main/resources/locales/*.yml` file in the same PR, preserving each file's existing style (e.g. the MiniMessage-tagged names in `zh-CN.yml` / `zh-HK.yml`).
 - Java preview features are enabled for both compilation and test execution.
-- The authoritative version is `buildVersion` in `build.gradle.kts` (current: `3.22.2`). Two related but different strings come out of it:
-  - **Gradle artifact version** (`project.version`, and so the jar name): `{buildVersion}-SNAPSHOT-LOCAL` locally, `{buildVersion}-SNAPSHOT` on CI (when `BUILD_NUMBER` is set), and the bare `{buildVersion}` when `GIT_BRANCH=origin/master`. So a local build yields `build/libs/BentoBox-3.22.2-SNAPSHOT-LOCAL.jar`.
-  - **`plugin.yml` version**, the one `/bentobox version` reports: the template is `${project.version}${build.number}`, so CI appends the build number — `3.22.2-SNAPSHOT-b1234`. Locally it matches the artifact version, `3.22.2-SNAPSHOT-LOCAL`.
+- The authoritative version is `buildVersion` in `build.gradle.kts` (current: `3.22.3`). Two related but different strings come out of it:
+  - **Gradle artifact version** (`project.version`, and so the jar name): `{buildVersion}-SNAPSHOT-LOCAL` locally, `{buildVersion}-SNAPSHOT` on CI (when `BUILD_NUMBER` is set), and the bare `{buildVersion}` when `GIT_BRANCH=origin/master`. So a local build yields `build/libs/BentoBox-3.22.3-SNAPSHOT-LOCAL.jar`.
+  - **`plugin.yml` version**, the one `/bentobox version` reports: the template is `${project.version}${build.number}`, so CI appends the build number — `3.22.3-SNAPSHOT-b1234`. Locally it matches the artifact version, `3.22.3-SNAPSHOT-LOCAL`.
 
-  The invariant to preserve when editing this block: **exactly one** of `project.version` and `build.number` carries the build marker. Locally the marker is baked into the revision so the jar filename stays distinguishable from a CI snapshot, which is why `finalBuildNumber` is empty there; setting both is what once stamped `3.22.2-SNAPSHOT-LOCAL-LOCAL` into `plugin.yml`.
+  The invariant to preserve when editing this block: **exactly one** of `project.version` and `build.number` carries the build marker. Locally the marker is baked into the revision so the jar filename stays distinguishable from a CI snapshot, which is why `finalBuildNumber` is empty there; setting both is what once stamped `3.22.3-SNAPSHOT-LOCAL-LOCAL` into `plugin.yml`.
 
 ### Minecraft 26.x / Java 25 toolchain
 
