@@ -176,11 +176,21 @@ public class HeadGetter {
                                     HeadGetter.createProfile(userName, userId, HeadGetter.getTextureFromUUID(userId)));
                         }
 
-                        // Save in cache
-                        HeadGetter.cachedHeads.put(userName, cache);
+                        // Save in cache. A failed lookup must not evict a texture we already
+                        // have, otherwise one rate-limited call costs a working head for the
+                        // whole cache period.
+                        HeadCache previous = HeadGetter.cachedHeads.get(userName);
+
+                        if (cache.hasTexture() || previous == null || !previous.hasTexture()) {
+                            HeadGetter.cachedHeads.put(userName, cache);
+                        } else {
+                            cache = previous;
+                        }
 
                         // Tell requesters the head came in, but only if the texture is usable.
-                        if (cache.playerProfile != null && HeadGetter.headRequesters.containsKey(userName)) {
+                        // Handing out a profile with no texture makes the server look it up at
+                        // Mojang every time the head is shown, which ends in HTTP 429s.
+                        if (cache.hasTexture() && HeadGetter.headRequesters.containsKey(userName)) {
                             for (HeadRequester req : HeadGetter.headRequesters.get(userName)) {
                                 elementEntry.getValue().setHead(cache.getPlayerHead());
 

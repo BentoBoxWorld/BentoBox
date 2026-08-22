@@ -48,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.22.2"
+val buildVersion = "3.22.3"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -89,19 +89,18 @@ val javaVersion = "25"
 val junitVersion = "5.10.2"
 val mockitoVersion = "5.11.0"
 // MockBukkit's modern, per-Minecraft-version artifacts are published to Paper's Maven repo
-// under org.mockbukkit.mockbukkit (see the testImplementation coordinate below). The closest
-// available to Paper 26.2 is the 26.1.2 line (no 26.2 build exists yet); 4.113.2 is the latest.
-val mockBukkitVersion = "4.113.2"
+// under org.mockbukkit.mockbukkit (see the testImplementation coordinate below). 4.116.1 is the
+// first release with a 26.2 artifact, built against 26.2.build.111-stable.
+val mockBukkitVersion = "4.116.1"
 val mongodbVersion = "3.12.12"
 val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
 val postgresqlVersion = "42.2.18"
 val hikaricpVersion = "5.0.1"
-// Compile against the latest stable 26.1.2 dev bundle. This is the newest Paper API that has a
-// matching MockBukkit release (mockbukkit-v26.1.2); MockBukkit does not yet support 26.2's new
-// registries. Minecraft 26.2 is still fully supported at runtime (see ServerCompatibility and
-// the Modrinth game-versions list); 26.2-only blocks/entities are accessed via Enums.getIfPresent.
-val paperVersion = "26.1.2.build.72-stable"
+// Compile against the 26.2 dev bundle MockBukkit 4.116.1 was built against, so the API under
+// test and the API compiled against are the same. Note 26.2 brings Adventure 5, which makes
+// ClickEvent generic (payload() rather than value()) and seals Component so it cannot be mocked.
+val paperVersion = "26.2.build.111-stable"
 val bstatsVersion = "3.0.0"
 val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
@@ -257,7 +256,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
-    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.1.2:$mockBukkitVersion")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:$mockBukkitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testImplementation("io.papermc.paper:paper-api:$paperVersion")
     testImplementation("com.github.MilkBowl:VaultAPI:$vaultVersion")

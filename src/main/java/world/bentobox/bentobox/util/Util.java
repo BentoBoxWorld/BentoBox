@@ -93,12 +93,8 @@ public class Util {
      * The Sulfur Cube entity type (Minecraft 26.2), resolved at runtime so the code still
      * compiles against earlier API versions where the constant does not exist. {@code null}
      * when absent, in which case the {@code ==} comparisons against it are simply false.
-     * Intentionally non-final: assigned once at class load, but left non-final so tests can
-     * inject a stand-in type (the JVM constant-folds {@code static final} fields, defeating
-     * reflective injection).
      */
-    @SuppressWarnings("java:S3008") // non-final by design; see Javadoc (test injection)
-    private static EntityType SULFUR_CUBE = Enums.getIfPresent(EntityType.class, "SULFUR_CUBE")
+    private static final EntityType SULFUR_CUBE = Enums.getIfPresent(EntityType.class, "SULFUR_CUBE")
             .orNull();
 
     /**

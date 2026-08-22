@@ -16,6 +16,7 @@ import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
+import io.papermc.paper.registry.data.dialog.type.MultiActionType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
@@ -45,6 +46,17 @@ import world.bentobox.bentobox.util.Util;
  *     .build()
  *     .show(user);
  * }</pre>
+ * <p>
+ * A multi-action dialog can be laid out as a grid rather than the default two-wide
+ * list, by asking for {@link #columns(int) columns} and giving the buttons a
+ * {@link DialogButton#DialogButton(Component, Component, int, Consumer) width}:
+ * <pre>{@code
+ * DialogBuilder grid = new DialogBuilder().title(user, "mygame.map.title").columns(9);
+ * for (Tile tile : tiles) {
+ *     grid.button(new DialogButton(tile.glyph(), tile.tooltip(), 26, u -> select(u, tile)));
+ * }
+ * grid.build().show(user);
+ * }</pre>
  *
  * @author tastybento
  * @since 3.21.0
@@ -54,10 +66,20 @@ public class DialogBuilder {
     /** How long a button's server-side click callback stays valid after the dialog is shown. */
     private static final Duration CALLBACK_LIFETIME = Duration.ofMinutes(10);
 
+    /**
+     * Columns a multi-action dialog falls into when it does not ask for a number. This is
+     * the client's own default, and a dialog left at it is built without stating a column
+     * count at all.
+     *
+     * @since 3.22.3
+     */
+    public static final int DEFAULT_COLUMNS = 2;
+
     private Component title = Component.empty();
     private final List<Component> body = new ArrayList<>();
     private boolean escapable = true;
     private boolean pause = false;
+    private int columns = DEFAULT_COLUMNS;
 
     private DialogButton yesButton;
     private DialogButton noButton;
@@ -161,6 +183,31 @@ public class DialogBuilder {
     }
 
     /**
+     * Lays the buttons of a multi-action dialog out in this many columns, so they form a
+     * grid rather than the default two-wide list. Defaults to {@link #DEFAULT_COLUMNS}.
+     * <p>
+     * How wide a grid actually fits depends on how wide its buttons are — see
+     * {@link DialogButton#DialogButton(Component, Component, int, Consumer) the width
+     * constructor}. Ask for more than the screen holds and the client squeezes the outer
+     * columns off it, so a map-like grid wants narrow buttons.
+     * <p>
+     * Has no effect on a {@link #confirmation(DialogButton, DialogButton) confirmation}
+     * dialog, whose two buttons are laid out by the client.
+     *
+     * @param columns the number of columns, at least 1
+     * @return this builder
+     * @throws IllegalArgumentException if columns is less than 1
+     * @since 3.22.3
+     */
+    public DialogBuilder columns(int columns) {
+        if (columns < 1) {
+            throw new IllegalArgumentException("A dialog needs at least one column, not " + columns);
+        }
+        this.columns = columns;
+        return this;
+    }
+
+    /**
      * Builds the dialog.
      *
      * @return the built dialog, ready to {@link BBDialog#show(User) show}
@@ -178,10 +225,20 @@ public class DialogBuilder {
                 .afterAction(DialogBase.DialogAfterAction.CLOSE).body(bodyLines).build();
 
         DialogType type = confirmation ? DialogType.confirmation(toActionButton(yesButton), toActionButton(noButton))
-                : DialogType.multiAction(buttons.stream().map(this::toActionButton).toList()).build();
+                : multiAction();
 
         Dialog dialog = Dialog.create(factory -> factory.empty().base(base).type(type));
         return new BBDialog(dialog);
+    }
+
+    private MultiActionType multiAction() {
+        MultiActionType.Builder type = DialogType.multiAction(buttons.stream().map(this::toActionButton).toList());
+        // A dialog that never asked for a column count is built without one, so the client
+        // keeps deciding — this API does not pin the default it happens to use today
+        if (columns != DEFAULT_COLUMNS) {
+            type.columns(columns);
+        }
+        return type.build();
     }
 
     private ActionButton toActionButton(DialogButton button) {
@@ -190,6 +247,9 @@ public class DialogBuilder {
                         ClickCallback.Options.builder().uses(1).lifetime(CALLBACK_LIFETIME).build()));
         if (button.tooltip() != null) {
             b.tooltip(button.tooltip());
+        }
+        if (button.width() != DialogButton.DEFAULT_WIDTH) {
+            b.width(button.width());
         }
         return b.build();
     }

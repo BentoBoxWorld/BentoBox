@@ -77,14 +77,15 @@ You can contribute by:
 * Donating or sponsoring the developers
 * Coding new addons
 * Adopting an Addon and maintaining it
-* Translating text for BentoBox and Addons (We use GitLocalize to make this easier)
+* Translating text for BentoBox and Addons — native speakers only, please (see the [AI policy](https://github.com/BentoBoxWorld/.github/blob/master/AI_POLICY.md#translations))
 * Submitting good bug reports or helpful feature requests
 * Fixing bugs and submitting Pull Requests for the fixes
 
 If you contribute code it **must be in agreement** with:
 * our [license](https://github.com/BentoBoxWorld/BentoBox/blob/develop/LICENSE)
 * our [code of conduct](https://github.com/BentoBoxWorld/.github/blob/master/CODE_OF_CONDUCT.md)
-* our contribution guidelines
+* our [contribution guidelines](https://github.com/BentoBoxWorld/.github/blob/master/CONTRIBUTING.md)
+* our [AI policy](https://github.com/BentoBoxWorld/.github/blob/master/AI_POLICY.md)
 
 ### Report bugs and suggest features
 Bugs and feature requests must be filed on our [issue tracker](https://github.com/BentoBoxWorld/BentoBox/issues).
@@ -92,6 +93,15 @@ Bugs and feature requests must be filed on our [issue tracker](https://github.co
 ### Pull requests
 We consider Pull Requests from non-collaborators that contain actual code improvements or bug fixes.
 Do not submit PRs that only address code formatting because they will not be accepted.
+AI-assisted PRs are welcome — there is no restriction on using AI tools, but you must be able to
+stand behind your code, at least until it is accepted. See the [AI policy](https://github.com/BentoBoxWorld/.github/blob/master/AI_POLICY.md).
+
+## Policies
+
+* [Privacy Policy](https://github.com/BentoBoxWorld/.github/blob/master/PRIVACY.md) — what anonymous usage data BentoBox submits to bStats, what is never collected, and how to opt out
+* [AI Policy](https://github.com/BentoBoxWorld/.github/blob/master/AI_POLICY.md) — how the project uses AI and the rules for AI-assisted contributions
+* [Contributing Guide](https://github.com/BentoBoxWorld/.github/blob/master/CONTRIBUTING.md)
+* [Code of Conduct](https://github.com/BentoBoxWorld/.github/blob/master/CODE_OF_CONDUCT.md)
 
 ## API
 
