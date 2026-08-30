@@ -272,10 +272,7 @@ public class Island implements DataObject, MetaDataAble {
     public Island(Island island) {
         this.center = island.getCenter().clone();
         this.createdDate = island.getCreatedDate();
-        Optional.ofNullable(island.getCommandRanks()).ifPresent(cr -> {
-            this.commandRanks = new HashMap<>();
-            this.commandRanks.putAll(cr);
-        });
+        this.commandRanks = island.getCommandRanks() == null ? null : new HashMap<>(island.getCommandRanks());
         Optional.ofNullable(island.getCooldowns()).ifPresent(c -> {
             this.cooldowns = new HashMap<>();
             this.cooldowns.putAll(c);
@@ -293,10 +290,7 @@ public class Island implements DataObject, MetaDataAble {
         this.maxHomes = island.getMaxHomes();
         this.maxMembers = new HashMap<>(island.getMaxMembers());
         this.members.putAll(island.getMembers());
-        island.getMetaData().ifPresent(m -> {
-            this.metaData = new HashMap<>();
-            this.metaData.putAll(m);
-        });
+        this.metaData = island.getMetaData().<Map<String, MetaDataValue>>map(HashMap::new).orElse(null);
         this.name = island.getName();
         this.owner = island.getOwner();
         this.protectionRange = island.getProtectionRange();
@@ -304,7 +298,7 @@ public class Island implements DataObject, MetaDataAble {
         this.range = island.getRange();
         this.reserved = island.isReserved();
         this.spawn = island.isSpawn();
-        island.getSpawnPoint().forEach((k, v) -> island.spawnPoint.put(k, v.clone()));
+        island.getSpawnPoint().forEach((k, v) -> this.spawnPoint.put(k, v.clone()));
         this.uniqueId = island.getUniqueId();
         this.updatedDate = island.getUpdatedDate();
         this.world = island.getWorld();

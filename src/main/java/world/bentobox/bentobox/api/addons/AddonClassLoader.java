@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -157,11 +158,11 @@ public class AddonClassLoader extends URLClassLoader {
 
         String depend = data.getString("depend");
         if (depend != null) {
-            builder.dependencies(Arrays.asList(depend.split("\\s*+,\\s*+")));
+            builder.dependencies(splitCommaSeparated(depend));
         }
         String softDepend = data.getString("softdepend");
         if (softDepend != null) {
-            builder.softDependencies(Arrays.asList(softDepend.split("\\s*+,\\s*+")));
+            builder.softDependencies(splitCommaSeparated(softDepend));
         }
         Material icon = Material.getMaterial(data.getString("icon", "PAPER").toUpperCase(Locale.ENGLISH));
         if (icon == null) {
@@ -185,6 +186,15 @@ public class AddonClassLoader extends URLClassLoader {
         }
 
         return builder.build();
+    }
+
+    /**
+     * Splits a comma-separated list, trimming whitespace around each entry.
+     * Splitting on the literal comma and stripping afterwards avoids the
+     * super-linear {@code \s*,\s*} regex scan (Sonar S8786).
+     */
+    private static List<String> splitCommaSeparated(String value) {
+        return Arrays.stream(value.split(",")).map(String::strip).toList();
     }
 
     /* (non-Javadoc)
