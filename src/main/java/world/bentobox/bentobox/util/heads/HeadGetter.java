@@ -31,7 +31,7 @@ import world.bentobox.bentobox.util.Pair;
 
 /**
  * This class manages getting player heads for requester.
- * 
+ *
  * @author tastybento, BONNe1704
  */
 public class HeadGetter {
@@ -52,6 +52,9 @@ public class HeadGetter {
             TimeUnit.SECONDS);
 
     private static final String TEXTURES = "textures";
+
+    // Gson construction is expensive, don't rebuild it per head lookup
+    private static final Gson GSON = new Gson();
 
     private static final String NAME = "name";
 
@@ -151,7 +154,7 @@ public class HeadGetter {
     /**
      * This method allows to add HeadCache object into local cache. It will provide
      * addons to use HeadGetter cache directly.
-     * 
+     *
      * @param cache Cache object that need to be added into local cache.
      * @since 1.14.1
      */
@@ -290,7 +293,7 @@ public class HeadGetter {
 
     /**
      * This method gets and returns userId from mojang web API based on user name.
-     * 
+     *
      * @param name user which Id must be returned.
      * @return String value for user Id.
      * @since 1.14.1
@@ -299,10 +302,8 @@ public class HeadGetter {
         UUID userId;
 
         try {
-            Gson gsonReader = new Gson();
-
             // Get mojang user-id from given nickname
-            JsonObject jsonObject = gsonReader.fromJson(
+            JsonObject jsonObject = GSON.fromJson(
                     HeadGetter.getURLContent("https://api.mojang.com/users/profiles/minecraft/" + name),
                     JsonObject.class);
             /*
@@ -335,10 +336,8 @@ public class HeadGetter {
      */
     private static @Nullable String getTextureFromUUID(UUID userId) {
         try {
-            Gson gsonReader = new Gson();
-
             // Get user encoded texture value.
-            JsonObject jsonObject = gsonReader.fromJson(
+            JsonObject jsonObject = GSON.fromJson(
                     HeadGetter.getURLContent(
                             "https://sessionserver.mojang.com/session/minecraft/profile/" + userId.toString()),
                     JsonObject.class);
@@ -379,13 +378,11 @@ public class HeadGetter {
      */
     private static @NonNull Pair<UUID, String> getTextureFromName(String userName, @Nullable UUID userId) {
         try {
-            Gson gsonReader = new Gson();
-
             // Get user encoded texture value.
             // mc-heads returns correct skin with providing just a name, unlike mojang api,
             // which
             // requires UUID.
-            JsonObject jsonObject = gsonReader.fromJson(HeadGetter.getURLContent(
+            JsonObject jsonObject = GSON.fromJson(HeadGetter.getURLContent(
                     "https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
                     JsonObject.class);
 
@@ -449,7 +446,7 @@ public class HeadGetter {
          */
         try {
             String decoded = new String(Base64.getDecoder().decode(base64));
-            JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
+            JsonObject json = GSON.fromJson(decoded, JsonObject.class);
             String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
             return new URI(url).toURL();
         } catch (Exception e) {
