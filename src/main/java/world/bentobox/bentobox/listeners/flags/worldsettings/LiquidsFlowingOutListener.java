@@ -32,8 +32,7 @@ public class LiquidsFlowingOutListener extends FlagListener {
         }
 
         // https://github.com/BentoBoxWorld/BentoBox/issues/511#issuecomment-460040287
-        // Time to do some maths! We've got the vector FromTo, let's check if its y coordinate is different from zero.
-        if (to.getLocation().toVector().subtract(from.getLocation().toVector()).getY() != 0) {
+        if (to.getY() != from.getY()) {
             // We do not run any checks if this is a vertical flow - would be too much resource consuming.
             return;
         }

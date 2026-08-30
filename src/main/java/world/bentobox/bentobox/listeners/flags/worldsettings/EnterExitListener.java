@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -24,7 +23,6 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class EnterExitListener extends FlagListener {
 
-    private static final Vector XZ = new Vector(1,0,1);
     private static final String ISLAND_MESSAGE = "protection.flags.ENTER_EXIT_MESSAGES.island";
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -39,9 +37,11 @@ public class EnterExitListener extends FlagListener {
 
     private void handleEnterExit(@NonNull User user, @NonNull Location from, @Nullable Location to,
             @NonNull PlayerMoveEvent e) {
-        // Only process if there is a change in X or Z coords
+        // Only process if there is a change in X or Z coords. Island protection bounds
+        // are block-based, so same-block moves cannot change the result; comparing block
+        // coordinates avoids allocating vectors on every move event.
         if (from.getWorld() != null && to != null && from.getWorld().equals(to.getWorld())
-                && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ))) {
+                && from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ()) {
             return;
         }
 
