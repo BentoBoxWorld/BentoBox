@@ -190,7 +190,7 @@ public class Island implements DataObject, MetaDataAble {
      * Maximum number of {@link LogEntry} kept in {@link #history}. Oldest entries are
      * dropped first. Prevents unbounded per-island memory and database growth.
      */
-    private static final int MAX_HISTORY_SIZE = 500;
+    private static final int MAX_HISTORY_SIZE = 100;
 
     @Adapter(LogEntryListAdapter.class)
     @Expose
