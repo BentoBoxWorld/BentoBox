@@ -96,8 +96,10 @@ public class MobSpawnListener extends FlagListener
      */
     void onMobSpawn(CreatureSpawnEvent e)
     {
+        // Entity#getLocation allocates a new Location on every call, so fetch it once
+        Location location = e.getLocation();
         // If not in the right world, or spawning is not natural return
-        if (!this.getIWM().inWorld(e.getEntity().getLocation()))
+        if (!this.getIWM().inWorld(location))
         {
             return;
         }
@@ -109,7 +111,7 @@ public class MobSpawnListener extends FlagListener
                  RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION ->
             {
                 boolean cancelNatural = this.shouldCancel(e.getEntity(),
-                    e.getLocation(),
+                    location,
                     Flags.ANIMAL_NATURAL_SPAWN,
                     Flags.MONSTER_NATURAL_SPAWN);
                 e.setCancelled(cancelNatural);
@@ -118,7 +120,7 @@ public class MobSpawnListener extends FlagListener
             case SPAWNER, TRIAL_SPAWNER ->
             {
                 boolean cancelSpawners = this.shouldCancel(e.getEntity(),
-                    e.getLocation(),
+                    location,
                     Flags.ANIMAL_SPAWNERS_SPAWN,
                     Flags.MONSTER_SPAWNERS_SPAWN);
                 e.setCancelled(cancelSpawners);
