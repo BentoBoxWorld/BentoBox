@@ -186,6 +186,12 @@ public class Island implements DataObject, MetaDataAble {
     private Map<String, Integer> flags = new HashMap<>();
 
     //// Island History ////
+    /**
+     * Maximum number of {@link LogEntry} kept in {@link #history}. Oldest entries are
+     * dropped first. Prevents unbounded per-island memory and database growth.
+     */
+    private static final int MAX_HISTORY_SIZE = 500;
+
     @Adapter(LogEntryListAdapter.class)
     @Expose
     private List<LogEntry> history = new LinkedList<>();
@@ -1437,11 +1443,17 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Adds a {@link LogEntry} to the history of this island.
-     * 
+     * History is capped at {@link #MAX_HISTORY_SIZE} entries; the oldest entry is
+     * dropped when the cap is reached so long-lived islands do not grow without bound
+     * in memory and in the database.
+     *
      * @param logEntry the LogEntry to add.
      */
     public void log(LogEntry logEntry) {
         history.add(logEntry);
+        while (history.size() > MAX_HISTORY_SIZE) {
+            history.remove(0);
+        }
         setChanged();
     }
 
