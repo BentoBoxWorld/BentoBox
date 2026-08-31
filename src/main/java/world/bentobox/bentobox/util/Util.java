@@ -8,10 +8,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -332,17 +334,31 @@ public class Util {
             // matches nothing
             return false;
         }
+        // Same instance is the overwhelmingly common case on the event path
+        if (world == world2) {
+            return true;
+        }
         return stripName(world).equals(stripName(world2));
     }
 
+    /**
+     * Cache of world name -> name with any _nether/_the_end suffix stripped.
+     * The mapping is a pure function of the name, so it never needs invalidation.
+     */
+    private static final Map<String, String> STRIPPED_NAMES = new ConcurrentHashMap<>();
+
     private static String stripName(World world) {
-        if (world.getName().endsWith(NETHER)) {
-            return world.getName().substring(0, world.getName().length() - NETHER.length());
+        return STRIPPED_NAMES.computeIfAbsent(world.getName(), Util::stripSuffix);
+    }
+
+    private static String stripSuffix(String name) {
+        if (name.endsWith(NETHER)) {
+            return name.substring(0, name.length() - NETHER.length());
         }
-        if (world.getName().endsWith(THE_END)) {
-            return world.getName().substring(0, world.getName().length() - THE_END.length());
+        if (name.endsWith(THE_END)) {
+            return name.substring(0, name.length() - THE_END.length());
         }
-        return world.getName();
+        return name;
     }
 
     /**
@@ -350,12 +366,23 @@ public class Util {
      * @param world - world
      * @return over world or null if world is null or a world cannot be found
      */
+    /**
+     * Cache of world name -> overworld name (suffixes replaced). Pure string
+     * function, so entries never go stale. The World itself is still resolved
+     * live via {@link Bukkit#getWorld(String)}.
+     */
+    private static final Map<String, String> OVERWORLD_NAMES = new ConcurrentHashMap<>();
+
     @Nullable
     public static World getWorld(@Nullable World world) {
         if (world == null) {
             return null;
         }
-        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replace(NETHER, "").replace(THE_END, ""));
+        if (world.getEnvironment() == Environment.NORMAL) {
+            return world;
+        }
+        return Bukkit.getWorld(OVERWORLD_NAMES.computeIfAbsent(world.getName(),
+                n -> n.replace(NETHER, "").replace(THE_END, "")));
     }
 
     /**
