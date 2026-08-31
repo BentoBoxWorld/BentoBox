@@ -26,19 +26,20 @@ public class LiquidsFlowingOutListener extends FlagListener {
         Block from = e.getBlock();
         Block to = e.getToBlock();
 
-        if (!getIWM().inWorld(from.getLocation()) || Flags.LIQUIDS_FLOWING_OUT.isSetForWorld(from.getWorld())) {
-            // We do not want to run any check if this is not the right world or if it is allowed.
-            return;
-        }
-
         // https://github.com/BentoBoxWorld/BentoBox/issues/511#issuecomment-460040287
         if (to.getY() != from.getY()) {
             // We do not run any checks if this is a vertical flow - would be too much resource consuming.
             return;
         }
 
+        Location fromLocation = from.getLocation();
+        if (!getIWM().inWorld(fromLocation) || Flags.LIQUIDS_FLOWING_OUT.isSetForWorld(from.getWorld())) {
+            // We do not want to run any check if this is not the right world or if it is allowed.
+            return;
+        }
+
         // Only prevent if it is flowing into the area between islands or into another island.
-        Optional<Island> fromIsland = getIslands().getProtectedIslandAt(from.getLocation());
+        Optional<Island> fromIsland = getIslands().getProtectedIslandAt(fromLocation);
         Optional<Island> toIsland = getIslands().getProtectedIslandAt(to.getLocation());
         if (toIsland.isEmpty() || (fromIsland.isPresent() && !fromIsland.equals(toIsland))) {
             e.setCancelled(true);

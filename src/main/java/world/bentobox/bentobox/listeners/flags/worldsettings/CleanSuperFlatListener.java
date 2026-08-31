@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 import org.bukkit.Bukkit;
@@ -11,7 +13,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -55,6 +56,12 @@ public class CleanSuperFlatListener extends FlagListener {
 
     private WorldRegenerator regenerator;
 
+    /**
+     * Per-world cache of whether a default world generator exists, so the addon
+     * lookup does not run for every superflat chunk load.
+     */
+    private final Map<String, Boolean> hasGenerator = new HashMap<>();
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
         this.regenerator = Util.getRegenerator();
@@ -75,9 +82,10 @@ public class CleanSuperFlatListener extends FlagListener {
             return;
         }
         
-        ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
-        
-        if (cg == null) 
+        boolean cg = hasGenerator.computeIfAbsent(world.getName(),
+                name -> plugin.getAddonsManager().getDefaultWorldGenerator(name, "") != null);
+
+        if (!cg)
         {
             Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
 
