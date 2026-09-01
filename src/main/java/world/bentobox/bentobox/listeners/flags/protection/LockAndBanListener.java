@@ -112,14 +112,21 @@ public class LockAndBanListener extends FlagListener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        // For each Player in the vehicle
-        Optional<Island> island = getIslands().getProtectedIslandAt(e.getTo());
+        // For each Player in the vehicle. Resolve the island lazily on the first Player
+        // passenger so unmanned/mob-ridden vehicles pay no grid lookup, and reuse it for
+        // any further player passengers (the rare multi-player case).
+        Optional<Island> island = null;
         for (Entity passenger : e.getVehicle().getPassengers()) {
-            if (passenger instanceof Player p && !checkAndNotify(p, e.getTo(), island).isAllowed()) {
-                p.leaveVehicle();
-                p.teleport(e.getFrom());
-                e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
-                eject(p);
+            if (passenger instanceof Player p) {
+                if (island == null) {
+                    island = getIslands().getProtectedIslandAt(e.getTo());
+                }
+                if (!checkAndNotify(p, e.getTo(), island).isAllowed()) {
+                    p.leaveVehicle();
+                    p.teleport(e.getFrom());
+                    e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+                    eject(p);
+                }
             }
         }
     }
