@@ -312,11 +312,12 @@ commands:
         specify-island-location: '<red>Geef de locatie van [prefix_island] op in x,y,z formaat</red>'
         player-has-more-than-one-island: '<red>Speler heeft meer dan één [prefix_island]. Geef aan welke.</red>'
     info:
-      parameters: <speler>
+      parameters: <speler> [eilandnaam]
       description: informatie krijgen over waar je bent of over het eiland van de speler
       no-island: '<red>Je bent nu niet op een eiland ...</red>'
       title: '========== Eilandinformatie ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Naam: [name]'
       owner: 'Eigenaar: [owner] ([uuid])'
       last-login: 'Laatste login: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

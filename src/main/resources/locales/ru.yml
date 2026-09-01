@@ -304,11 +304,12 @@ commands:
         player-has-more-than-one-island: <red>Игрок имеет более одного [prefix_island].
           Укажите, какой именно.</red>
     info:
-      parameters: <игрок>
+      parameters: <игрок> [название острова]
       description: получите информацию где вы или на чьем вы острове
       no-island: <red>Вы не на острове в данный момент...</red>
       title: ========== Информация об острове ============
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Название: [name]'
       owner: 'Владелец: [owner] ([uuid])'
       last-login: 'Последний вход: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
