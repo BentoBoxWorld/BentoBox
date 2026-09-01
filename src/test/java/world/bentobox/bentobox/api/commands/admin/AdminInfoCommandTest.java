@@ -8,11 +8,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -99,6 +101,7 @@ class AdminInfoCommandTest extends RanksManagerTestSetup {
         Optional<Island> optionalIsland = Optional.of(testIsland);
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(testIsland);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(List.of(testIsland));
 
         // Players manager
         when(plugin.getPlayers()).thenReturn(pm);
@@ -120,12 +123,57 @@ class AdminInfoCommandTest extends RanksManagerTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link AdminInfoCommand#execute(User, String, List)} with an island name that does not exist.
      */
     @Test
-    void testExecuteUserStringListOfStringTooManyArgs() {
-        assertFalse(iic.execute(user, "", Arrays.asList("hdhh", "hdhdhd")));
-        verify(user).sendMessage("commands.help.header", "[label]", "commands.help.console");
+    void testExecuteUserStringListOfStringUnknownIslandName() {
+        testIsland.setName("myisland");
+        assertFalse(iic.execute(user, "", Arrays.asList("tastybento", "nosuchisland")));
+        verify(user).sendMessage("commands.island.go.unknown-home");
+        verify(user).sendMessage("commands.island.sethome.homes-are");
+        verify(user).sendMessage("commands.island.sethome.home-list-syntax", "[name]", "myisland");
+        verify(user, never()).sendMessage("commands.admin.info.title");
+    }
+
+    /**
+     * Test method for {@link AdminInfoCommand#execute(User, String, List)} with an exact island name.
+     */
+    @Test
+    void testExecuteUserStringListOfStringIslandName() {
+        testIsland.setName("myisland");
+        Island other = new Island(location, user.getUniqueId(), 100);
+        other.setName("other");
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(List.of(testIsland, other));
+        assertTrue(iic.execute(user, "", Arrays.asList("tastybento", "other")));
+        verify(user, times(1)).sendMessage("commands.admin.info.title");
+        verify(user).sendMessage("commands.admin.info.island-name", "[name]", "other");
+        verify(user, never()).sendMessage("commands.admin.info.island-name", "[name]", "myisland");
+    }
+
+    /**
+     * Test method for {@link AdminInfoCommand#execute(User, String, List)} with a multi-word, case-insensitive island name.
+     */
+    @Test
+    void testExecuteUserStringListOfStringIslandNameForgiving() {
+        testIsland.setName("My Big Island");
+        assertTrue(iic.execute(user, "", Arrays.asList("tastybento", "my", "big", "island")));
+        verify(user).sendMessage("commands.admin.info.title");
+        verify(user).sendMessage("commands.admin.info.island-name", "[name]", "My Big Island");
+    }
+
+    /**
+     * Test method for {@link AdminInfoCommand#execute(User, String, List)} when the player has several islands.
+     */
+    @Test
+    void testExecuteUserStringListOfStringArgsMultipleIslands() {
+        testIsland.setName("first");
+        Island second = new Island(location, user.getUniqueId(), 100);
+        second.setName("second");
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(List.of(testIsland, second));
+        assertTrue(iic.execute(user, "", Collections.singletonList("tastybento")));
+        verify(user, times(2)).sendMessage("commands.admin.info.title");
+        verify(user).sendMessage("commands.admin.info.island-name", "[name]", "first");
+        verify(user).sendMessage("commands.admin.info.island-name", "[name]", "second");
     }
 
     /**
@@ -206,7 +254,7 @@ class AdminInfoCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteUserStringListOfStringArgsNoIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(List.of());
         assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.player-has-no-island");
     }
@@ -220,6 +268,25 @@ class AdminInfoCommandTest extends RanksManagerTestSetup {
         assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
 
+    }
+
+    /**
+     * Test method for {@link AdminInfoCommand#tabComplete(User, String, List)} - second arg offers island names.
+     */
+    @Test
+    void testTabCompleteIslandNames() {
+        testIsland.setName("myisland");
+        Optional<List<String>> result = iic.tabComplete(user, "", Arrays.asList("tastybento", "my"));
+        assertTrue(result.isPresent());
+        assertTrue(result.get().contains("myisland"));
+    }
+
+    /**
+     * Test method for {@link AdminInfoCommand#tabComplete(User, String, List)} - no args gives nothing.
+     */
+    @Test
+    void testTabCompleteNoArgs() {
+        assertTrue(iic.tabComplete(user, "", Collections.emptyList()).isEmpty());
     }
 
 }

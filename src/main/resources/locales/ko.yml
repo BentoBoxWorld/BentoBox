@@ -279,11 +279,12 @@ commands:
         specify-island-location: '<red>[prefix_island] 위치를 x,y,z 형식으로 지정하세요</red>'
         player-has-more-than-one-island: '<red>플레이어가 하나 이상의 [prefix_island]를 가지고 있습니다. 어느 것을 지정하세요.</red>'
     info:
-      parameters: <플레이어>
+      parameters: <플레이어> [섬 이름]
       description: 현재 위치에 있는 섬이나 플레이어의 섬의 정보를 봅니다
       no-island: '<red>당신은 섬에 있지 않습니다...</red>'
       title: '========== 섬 정보 ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: '이름: [name]'
       owner: '주인: [owner] ([uuid])'
       last-login: '마지막 로그인: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

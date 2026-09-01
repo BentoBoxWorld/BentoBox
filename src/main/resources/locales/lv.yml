@@ -306,11 +306,12 @@ commands:
           <red>Spēlētājam ir vairāk nekā viens [prefix_island]. Lūdzu, norādiet,</red>
           kuru.
     info:
-      parameters: <spēlētājs>
+      parameters: <spēlētājs> [salas nosaukums]
       description: atgriež informāciju par spēlētāja salu vai esošo pozīciju
       no-island: '<red>Tu neesi uz salas šobrīd...</red>'
       title: '========== Salas informācija ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Nosaukums: [name]'
       owner: 'Īpašnieks: [owner] ([uuid])'
       last-login: 'Pēdējā pieslēgšanās: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

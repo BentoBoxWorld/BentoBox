@@ -299,11 +299,12 @@ commands:
         specify-island-location: '<red>Specificirajte [prefix_island] lokaciju u x,y,z formatu</red>'
         player-has-more-than-one-island: '<red>Igrač ima više od jednog [prefix_island]. Odredite koji.</red>'
     info:
-      parameters: <igrač>
+      parameters: <igrač> [ime otoka]
       description: dobiti informacije o tome gdje se nalazite ili igračev otok
       no-island: '<red>Trenutno nisi na otoku...</red>'
       title: '========== Informacije o otoku ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Ime: [name]'
       owner: 'Vlasnik: [owner] ([uuid])'
       last-login: 'Zadnja prijava: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

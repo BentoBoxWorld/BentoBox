@@ -50,6 +50,9 @@ public class IslandInfo {
     public void showAdminInfo(User user, Addon addon) {
         user.sendMessage("commands.admin.info.title");
         user.sendMessage("commands.admin.info.island-uuid", TextVariables.UUID, island.getUniqueId());
+        if (island.getName() != null && !island.getName().isBlank()) {
+            user.sendMessage("commands.admin.info.island-name", TextVariables.NAME, island.getName());
+        }
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
         } else {

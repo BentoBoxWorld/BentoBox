@@ -270,11 +270,12 @@ commands:
         specify-island-location: '<red>以x,y,z格式选定岛屿位置</red>'
         player-has-more-than-one-island: '<red>玩家拥有多个岛屿, 请指定一个岛屿.</red>'
     info:
-      parameters: <玩家>
+      parameters: <玩家> [岛屿名称]
       description: 获取当前岛屿或指定玩家的岛屿信息
       no-island: '<red>你当前没有岛屿...</red>'
       title: '========== 岛屿信息 ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: '名称: [name]'
       owner: '岛主: [owner] ([uuid])'
       last-login: '最后登录: [date]'
       last-login-date-time-format: yyyy-MM-dd HH:mm:ss zzz

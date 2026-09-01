@@ -262,11 +262,12 @@ commands:
         specify-island-location: '<red>x、y、z形式の[prefix_island]を指定します</red>'
         player-has-more-than-one-island: '<red>プレーヤーには複数の[prefix_island]があります。どれを指定します。</red>'
     info:
-      parameters: <プレーヤー>
+      parameters: <プレーヤー> [島の名前]
       description: あなたがどこにいるか、プレイヤーの島に関する情報を取得する
       no-island: '<red>あなたは今、島にいません...</red>'
       title: ' ========== 島情報 ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: '名前: [name]'
       owner: '所有者: [owner] ([uuid])'
       last-login: '最終ログイン: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

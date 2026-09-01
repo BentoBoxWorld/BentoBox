@@ -291,11 +291,12 @@ commands:
         specify-island-location: '<red>Určete [prefix_island] Umístění ve formátu X, Y, Z</red>'
         player-has-more-than-one-island: '<red>Hráč má více než jeden [prefix_island]. Zadejte, který z nich.</red>'
     info:
-      parameters: <Player>
+      parameters: <Player> [název ostrova]
       description: získat info, kde se nacházíš ty nebo hráčův ostrov
       no-island: '<red>Právě nejsi na žádném ostrovu...</red>'
       title: '========== Info o ostrovu ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Název: [name]'
       owner: 'Vlastník: [owner] ([uuid])'
       last-login: 'Naposledy spatřen: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
