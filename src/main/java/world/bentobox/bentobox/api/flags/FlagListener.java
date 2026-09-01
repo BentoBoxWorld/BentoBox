@@ -162,7 +162,7 @@ public abstract class FlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag, boolean silent) {
-        
+
         // Set user
         user = player == null ? null : User.getInstance(player);
         if (loc == null) {
@@ -180,7 +180,7 @@ public abstract class FlagListener implements Listener {
 
         // Get the island and if present
         Optional<Island> island = getIslands().getProtectedIslandAt(loc);
-        
+
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
             return processSetting(flag, island, e, loc);
@@ -374,8 +374,9 @@ public abstract class FlagListener implements Listener {
         String prefix = addon != null ? "[" + addon.getDescription().getName() + "] " : "";
         String whyMessage = WHY + prefix + message + " - " + reason.name() + " in world "
                 + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
+        String whyDebugKey = whyDebugKey(loc.getWorld().getName());
         Bukkit.getOnlinePlayers().stream()
-                .filter(p -> p.getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+                .filter(p -> p.hasMetadata(whyDebugKey) && p.getMetadata(whyDebugKey).stream()
                         .filter(m -> m.getOwningPlugin().equals(getPlugin()))
                         .findFirst().map(MetadataValue::asBoolean).orElse(false))
                 .forEach(p -> {
