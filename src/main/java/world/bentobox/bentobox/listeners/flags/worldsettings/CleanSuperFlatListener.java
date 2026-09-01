@@ -64,6 +64,8 @@ public class CleanSuperFlatListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
+        // Clear the generator cache so a reload picks up newly assigned/registered generators.
+        hasGenerator.clear();
         this.regenerator = Util.getRegenerator();
         if (regenerator == null) {
             plugin.logError("Could not start CleanSuperFlat because of NMS error");
