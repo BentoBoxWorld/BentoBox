@@ -44,6 +44,7 @@ class FlagListenerTest extends CommonTestSetup {
         when(location.toVector()).thenReturn(new Vector(10, 64, 20));
 
         // Enable why-debug on mockPlayer for this world, issuer is the same player (uuid)
+        when(mockPlayer.hasMetadata("bskyblock_world_why_debug")).thenReturn(true);
         when(mockPlayer.getMetadata("bskyblock_world_why_debug"))
                 .thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
         when(mockPlayer.getMetadata("bskyblock_world_why_debug_issuer"))
