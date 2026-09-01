@@ -186,11 +186,6 @@ public class Island implements DataObject, MetaDataAble {
     private Map<String, Integer> flags = new HashMap<>();
 
     //// Island History ////
-    /**
-     * Maximum number of {@link LogEntry} kept in {@link #history}. Oldest entries are
-     * dropped first. Prevents unbounded per-island memory and database growth.
-     */
-    private static final int MAX_HISTORY_SIZE = 100;
 
     @Adapter(LogEntryListAdapter.class)
     @Expose
@@ -511,7 +506,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedX() {
-        return Math.min(getMaxX(), getProtectionCenter().getBlockX() + this.getProtectionRange());
+        return Math.min(getMaxX(), rawProtectionCenter().getBlockX() + this.getProtectionRange());
     }
 
     /**
@@ -543,7 +538,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedZ() {
-        return Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + this.getProtectionRange());
+        return Math.min(getMaxZ(), rawProtectionCenter().getBlockZ() + this.getProtectionRange());
     }
 
     /**
@@ -1475,16 +1470,19 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Adds a {@link LogEntry} to the history of this island.
-     * History is capped at {@link #MAX_HISTORY_SIZE} entries; the oldest entry is
-     * dropped when the cap is reached so long-lived islands do not grow without bound
-     * in memory and in the database.
+     * History is capped at the {@code island.history.max-entries} config setting; the
+     * oldest entry is dropped when the cap is reached so long-lived islands do not grow
+     * without bound in memory and in the database. A cap of 0 or less means unlimited.
      *
      * @param logEntry the LogEntry to add.
      */
     public void log(LogEntry logEntry) {
         history.add(logEntry);
-        while (history.size() > MAX_HISTORY_SIZE) {
-            history.remove(0);
+        int max = BentoBox.getInstance().getSettings().getIslandHistoryMaxEntries();
+        if (max > 0) {
+            while (history.size() > max) {
+                history.remove(0);
+            }
         }
         setChanged();
     }
