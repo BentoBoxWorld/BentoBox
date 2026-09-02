@@ -1,12 +1,14 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -110,15 +112,23 @@ public class LockAndBanListener extends FlagListener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        // For each Player in the vehicle
-        e.getVehicle().getPassengers().stream().filter(Player.class::isInstance).map(Player.class::cast).forEach(p -> {
-            if (!checkAndNotify(p, e.getTo()).isAllowed()) {
-                p.leaveVehicle();
-                p.teleport(e.getFrom());
-                e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
-                eject(p);
+        // For each Player in the vehicle. Resolve the island lazily on the first Player
+        // passenger so unmanned/mob-ridden vehicles pay no grid lookup, and reuse it for
+        // any further player passengers (the rare multi-player case).
+        Optional<Island> island = null;
+        for (Entity passenger : e.getVehicle().getPassengers()) {
+            if (passenger instanceof Player p) {
+                if (island == null) {
+                    island = getIslands().getProtectedIslandAt(e.getTo());
+                }
+                if (!checkAndNotify(p, e.getTo(), island).isAllowed()) {
+                    p.leaveVehicle();
+                    p.teleport(e.getFrom());
+                    e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+                    eject(p);
+                }
             }
-        });
+        }
     }
 
     // Login check
@@ -145,6 +155,19 @@ public class LockAndBanListener extends FlagListener {
      */
     private CheckResult check(@NonNull Player player, Location loc)
     {
+        return check(player, loc, this.getIslands().getProtectedIslandAt(loc));
+    }
+
+    /**
+     * Check if a player is banned or the island is locked, using an already-resolved island
+     * to avoid repeated island lookups for the same location.
+     * @param player - player
+     * @param loc - location to check
+     * @param island - island at the location, if any
+     * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
+     */
+    private CheckResult check(@NonNull Player player, Location loc, Optional<Island> island)
+    {
         // Ops or NPC's are allowed everywhere
         if (player.isOp() || player.hasMetadata("NPC"))
         {
@@ -152,7 +175,7 @@ public class LockAndBanListener extends FlagListener {
         }
 
         // See if the island is locked to non-members or player is banned
-        return this.getIslands().getProtectedIslandAt(loc).
+        return island.
                 map(is ->
                 {
                     if (is.isBanned(player.getUniqueId()))
@@ -181,7 +204,19 @@ public class LockAndBanListener extends FlagListener {
      */
     private CheckResult checkAndNotify(@NonNull Player player, Location loc)
     {
-        CheckResult result = this.check(player, loc);
+        return checkAndNotify(player, loc, this.getIslands().getProtectedIslandAt(loc));
+    }
+
+    /**
+     * Same as {@link #checkAndNotify(Player, Location)} but reuses an already-resolved island.
+     * @param player - player
+     * @param loc - location to check
+     * @param island - island at the location, if any
+     * @return CheckResult
+     */
+    private CheckResult checkAndNotify(@NonNull Player player, Location loc, Optional<Island> island)
+    {
+        CheckResult result = this.check(player, loc, island);
         if (result == CheckResult.OPEN) {
             // Player is in an open area, clear notification state
             notifiedPlayers.remove(player.getUniqueId());
@@ -195,7 +230,7 @@ public class LockAndBanListener extends FlagListener {
                 User.getInstance(player).notify("protection.locked-island-bypass");
             }
         }
-        notifyIfDeletable(player, loc);
+        notifyIfDeletable(player, island);
         return result;
     }
 
@@ -208,13 +243,12 @@ public class LockAndBanListener extends FlagListener {
      * <p>Fires at most once per entry, using the same "move out to reset"
      * pattern as the lock notification.
      */
-    private void notifyIfDeletable(@NonNull Player player, Location loc) {
+    private void notifyIfDeletable(@NonNull Player player, Optional<Island> island) {
         if (!player.isOp()) {
             deletableNotified.remove(player.getUniqueId());
             return;
         }
-        boolean deletable = getIslands().getProtectedIslandAt(loc)
-                .map(Island::isDeletable).orElse(false);
+        boolean deletable = island.map(Island::isDeletable).orElse(false);
         if (deletable) {
             if (deletableNotified.add(player.getUniqueId())) {
                 User.getInstance(player).notify("protection.deletable-island-admin");

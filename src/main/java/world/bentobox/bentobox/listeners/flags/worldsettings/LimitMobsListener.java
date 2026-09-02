@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,7 +29,9 @@ public class LimitMobsListener extends FlagListener {
     }
 
     private void check(CreatureSpawnEvent e, EntityType type) {
-        if (getIWM().inWorld(e.getLocation()) && getIWM().getMobLimitSettings(e.getLocation().getWorld()).contains(type.name())) {
+        // Entity#getLocation allocates a new Location on every call, so fetch it once
+        Location location = e.getLocation();
+        if (getIWM().inWorld(location) && getIWM().getMobLimitSettings(location.getWorld()).contains(type.name())) {
             e.setCancelled(true);
         }
     }

@@ -264,6 +264,39 @@ class LockAndBanListenerTest extends CommonTestSetup {
     }
 
     @Test
+    void testVehicleMoveNoPlayerPassengersSkipsIslandLookup() {
+        // A vehicle carrying only non-player entities (e.g. a mob-ridden horse or an
+        // empty minecart) must not trigger an island lookup when it crosses a boundary.
+        Vehicle vehicle = mock(Vehicle.class);
+        Entity mob = mock(Entity.class); // not a Player
+        List<Entity> passengers = new ArrayList<>();
+        passengers.add(mob);
+        when(vehicle.getPassengers()).thenReturn(passengers);
+        // Horizontal move across a block boundary
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+        // Lazy lookup: no player passenger, so the grid is never queried
+        verify(im, never()).getProtectedIslandAt(any());
+    }
+
+    @Test
+    void testVehicleMoveResolvesIslandOnceForMultiplePlayers() {
+        // Two players in one vehicle should share a single island lookup, not one each.
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        Vehicle vehicle = mock(Vehicle.class);
+        Player player2 = mock(Player.class);
+        when(player2.isOp()).thenReturn(false);
+        when(player2.hasPermission(anyString())).thenReturn(false);
+        List<Entity> passengers = new ArrayList<>();
+        passengers.add(mockPlayer);
+        passengers.add(player2);
+        when(vehicle.getPassengers()).thenReturn(passengers);
+        // Horizontal move across a block boundary into an open island
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+        // Resolved lazily on the first player and reused for the second
+        verify(im, org.mockito.Mockito.times(1)).getProtectedIslandAt(inside);
+    }
+
+    @Test
     void testPlayerMoveIntoBannedIsland() {
         // Make player
         when(mockPlayer.getUniqueId()).thenReturn(uuid);

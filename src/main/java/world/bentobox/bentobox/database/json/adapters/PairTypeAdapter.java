@@ -11,6 +11,9 @@ import com.google.gson.stream.JsonWriter;
 import world.bentobox.bentobox.util.Pair;
 
 public class PairTypeAdapter<X, Z> extends TypeAdapter<Pair<X, Z>> {
+    // Gson construction is expensive and this adapter runs per field on every database load
+    private static final Gson GSON = new Gson();
+
     private final Type xType;
     private final Type zType;
 
@@ -23,10 +26,9 @@ public class PairTypeAdapter<X, Z> extends TypeAdapter<Pair<X, Z>> {
     public void write(JsonWriter out, Pair<X, Z> pair) throws IOException {
         out.beginObject();
         out.name("x");
-        Gson gson = new Gson();
-        gson.toJson(pair.getKey(), xType, out);
+        GSON.toJson(pair.getKey(), xType, out);
         out.name("z");
-        gson.toJson(pair.getValue(), zType, out);
+        GSON.toJson(pair.getValue(), zType, out);
         out.endObject();
     }
 
@@ -39,9 +41,9 @@ public class PairTypeAdapter<X, Z> extends TypeAdapter<Pair<X, Z>> {
         while (in.hasNext()) {
             String name = in.nextName();
             if (name.equals("x")) {
-                x = new Gson().fromJson(in, xType);
+                x = GSON.fromJson(in, xType);
             } else if (name.equals("z")) {
-                z = new Gson().fromJson(in, zType);
+                z = GSON.fromJson(in, zType);
             }
         }
         in.endObject();

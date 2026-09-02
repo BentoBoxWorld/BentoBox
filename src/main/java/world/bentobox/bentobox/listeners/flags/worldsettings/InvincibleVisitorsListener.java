@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,6 +29,7 @@ import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
@@ -156,13 +158,14 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         e.setCancelled(true);
         // Handle the void - teleport player back to island in a safe spot
         if(e.getCause().equals(DamageCause.VOID)) {
-            if (getIslands().getIslandAt(p.getLocation()).isPresent()) {
-                getIslands().getIslandAt(p.getLocation()).ifPresent(island ->
+            // Single lookup - getIslandAt walks the grid and getLocation copies, no need to do either twice
+            Optional<Island> island = getIslands().getIslandAt(p.getLocation());
+            if (island.isPresent()) {
                 // Teleport
                 new SafeSpotTeleport.Builder(getPlugin())
                 .entity(p)
-                .location(island.getProtectionCenter().toVector().toLocation(p.getWorld()))
-                .build());
+                .location(island.get().getProtectionCenter().toVector().toLocation(p.getWorld()))
+                .build();
             } else if (getIslands().hasIsland(p.getWorld(), p.getUniqueId())) {
                 // No island in this location - if the player has an island try to teleport them back
                 getIslands().homeTeleportAsync(p.getWorld(), p);

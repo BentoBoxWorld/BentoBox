@@ -218,7 +218,8 @@ public class IslandDeletion implements DataObject {
     }
 
     public boolean inBounds(int x, int z) {
-        return box.contains(new Vector(x, 0, z));
+        // Called per block during deletion scans - avoid allocating a vector
+        return box.contains(x, 0, z);
     }
 
     /**

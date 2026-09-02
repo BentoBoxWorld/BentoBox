@@ -120,8 +120,9 @@ class LiquidsFlowingOutListenerTest extends CommonTestSetup {
     @Test
     void testLiquidFlowsVertically() {
         // "To" is at (1,0,0)
-        // Set "from" at (1,1,0) so that the vector's y coordinate != 0, which means the liquid flows vertically.
+        // Set "from" at (1,1,0) so that the y coordinates differ, which means the liquid flows vertically.
         when(from.getLocation()).thenReturn(new Location(world, 1, 1, 0));
+        when(from.getY()).thenReturn(1);
 
         // Run
         new LiquidsFlowingOutListener().onLiquidFlow(event);

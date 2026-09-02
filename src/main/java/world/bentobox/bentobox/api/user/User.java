@@ -79,10 +79,12 @@ public class User implements MetaDataAble {
 
     // Used for particle validation
     private static final Map<Particle, Class<?>> VALIDATION_CHECK;
+    // Resolved once - the enum lookup chain is too costly to run per spawned particle
+    private static final Particle DUST_PARTICLE = Enums.getIfPresent(Particle.class, "DUST")
+            .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME));
     static {
         Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
-        v.put(Enums.getIfPresent(Particle.class, "DUST")
-                .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)), Particle.DustOptions.class);
+        v.put(DUST_PARTICLE, Particle.DustOptions.class);
         if (Enums.getIfPresent(Particle.class, "ITEM").isPresent()) {
             // 1.20.6 Particles
             v.put(Particle.ITEM, ItemStack.class);
@@ -110,7 +112,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets an instance of User from a CommandSender
-     * 
+     *
      * @param sender - command sender, e.g. console
      * @return user - user
      */
@@ -125,7 +127,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets an instance of User from a Player object.
-     * 
+     *
      * @param player - the player
      * @return user - user
      */
@@ -140,7 +142,7 @@ public class User implements MetaDataAble {
     /**
      * Gets an instance of User from a UUID. This will always return a user object.
      * If the player is offline then the getPlayer value will be null.
-     * 
+     *
      * @param uuid - UUID
      * @return user - user
      */
@@ -155,7 +157,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets an instance of User from an OfflinePlayer
-     * 
+     *
      * @param offlinePlayer offline Player
      * @return user
      * @since 1.3.0
@@ -170,7 +172,7 @@ public class User implements MetaDataAble {
 
     /**
      * Removes this player from the User cache and player manager cache
-     * 
+     *
      * @param player the player
      */
     public static void removePlayer(Player player) {
@@ -222,7 +224,7 @@ public class User implements MetaDataAble {
 
     /**
      * Used for testing
-     * 
+     *
      * @param p - plugin
      */
     public static void setPlugin(BentoBox p) {
@@ -235,7 +237,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's inventory
-     * 
+     *
      * @return player's inventory
      */
     @NonNull
@@ -245,7 +247,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's location
-     * 
+     *
      * @return location
      */
     @NonNull
@@ -257,7 +259,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's name
-     * 
+     *
      * @return player's name
      */
     @NonNull
@@ -267,7 +269,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's display name
-     * 
+     *
      * @return player's display name if the player is online otherwise just their
      *         name
      * @since 1.22.1
@@ -280,7 +282,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's display name as a text Component
-     * 
+     *
      * @return player's display name if the player is online otherwise just their
      *         name
      * @since 3.4.0
@@ -291,7 +293,7 @@ public class User implements MetaDataAble {
 
     /**
      * Check if the User is a player before calling this method. {@link #isPlayer()}
-     * 
+     *
      * @return the player
      */
     @NonNull
@@ -308,7 +310,7 @@ public class User implements MetaDataAble {
 
     /**
      * Use {@link #isOfflinePlayer()} before calling this method
-     * 
+     *
      * @return the offline player
      * @since 1.3.0
      */
@@ -345,7 +347,7 @@ public class User implements MetaDataAble {
 
     /**
      * Removes permission from user
-     * 
+     *
      * @param name - Name of the permission to remove
      * @return true if successful
      * @since 1.5.0
@@ -366,7 +368,7 @@ public class User implements MetaDataAble {
 
     /**
      * Add a permission to user
-     * 
+     *
      * @param name - Name of the permission to attach
      * @return The PermissionAttachment that was just created
      * @since 1.5.0
@@ -382,7 +384,7 @@ public class User implements MetaDataAble {
 
     /**
      * Checks if user is Op
-     * 
+     *
      * @return true if user is Op
      */
     public boolean isOp() {
@@ -399,7 +401,7 @@ public class User implements MetaDataAble {
      * Get the maximum value of a numerical permission setting. If a player is given
      * an explicit negative number then this is treated as "unlimited" and returned
      * immediately.
-     * 
+     *
      * @param permissionPrefix the start of the perm, e.g.,
      *                         {@code plugin.mypermission}
      * @param defaultValue     the default value; the result may be higher or lower
@@ -467,7 +469,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets a translation for a specific world
-     * 
+     *
      * @param world     - world of translation
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go
@@ -488,7 +490,7 @@ public class User implements MetaDataAble {
      * Gets a translation of this reference for this user with colors converted.
      * Translations may be overridden by Addons by using the same reference prefixed
      * by the addon name (from the Addon Description) in lower case.
-     * 
+     *
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go
      *                  in pairs, for example "[name]", "tastybento"
@@ -596,7 +598,7 @@ public class User implements MetaDataAble {
      * Gets a translation of this reference for this user without colors translated.
      * Translations may be overridden by Addons by using the same reference prefixed
      * by the addon name (from the Addon Description) in lower case.
-     * 
+     *
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go
      *                  in pairs, for example "[name]", "tastybento"
@@ -704,7 +706,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets a translation of this reference for this user.
-     * 
+     *
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go
      *                  in pairs, for example "[name]", "tastybento"
@@ -718,7 +720,7 @@ public class User implements MetaDataAble {
 
     /**
      * Send a message to sender if message is not empty.
-     * 
+     *
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      */
@@ -967,7 +969,7 @@ public class User implements MetaDataAble {
     /**
      * Sends a message to sender if message is not empty and if the same wasn't sent
      * within the previous Notifier.NOTIFICATION_DELAY seconds.
-     * 
+     *
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      *
@@ -983,7 +985,7 @@ public class User implements MetaDataAble {
     /**
      * Sends a message to sender if message is not empty and if the same wasn't sent
      * within the previous Notifier.NOTIFICATION_DELAY seconds.
-     * 
+     *
      * @param world     - the world the translation should come from
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
@@ -1000,7 +1002,7 @@ public class User implements MetaDataAble {
 
     /**
      * Sets the user's game mode
-     * 
+     *
      * @param mode - GameMode
      */
     public void setGameMode(GameMode mode) {
@@ -1012,7 +1014,7 @@ public class User implements MetaDataAble {
     /**
      * Teleports user to this location. If the user is in a vehicle, they will exit
      * first.
-     * 
+     *
      * @param location - the location
      */
     public void teleport(Location location) {
@@ -1023,7 +1025,7 @@ public class User implements MetaDataAble {
 
     /**
      * Gets the current world this entity resides in
-     * 
+     *
      * @return World - world
      */
     @NonNull
@@ -1041,7 +1043,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get the user's locale
-     * 
+     *
      * @return Locale
      */
     public Locale getLocale() {
@@ -1078,7 +1080,7 @@ public class User implements MetaDataAble {
 
     /**
      * Performs a command as the player
-     * 
+     *
      * @param command - command to execute
      * @return true if the command was successful, otherwise false
      */
@@ -1097,7 +1099,7 @@ public class User implements MetaDataAble {
 
     /**
      * Checks if a user is in one of the game worlds
-     * 
+     *
      * @return true if user is, false if not
      */
     public boolean inWorld() {
@@ -1107,7 +1109,7 @@ public class User implements MetaDataAble {
     /**
      * Spawn particles to the player. They are only displayed if they are within the
      * server's view distance.
-     * 
+     *
      * @param particle    Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
@@ -1126,11 +1128,19 @@ public class User implements MetaDataAble {
                     + " must be provided when using Particle." + particle + " as particle.");
         }
 
-        // Check if this particle is beyond the viewing distance of the server
-        if (this.player != null && this.player.getLocation().toVector().distanceSquared(new Vector(x, y,
-                z)) < (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance())) {
-            if (particle.equals(Enums.getIfPresent(Particle.class, "DUST")
-                    .or(Enums.getIfPresent(Particle.class, "REDSTONE").or(Particle.FLAME)))) {
+        // Check if this particle is beyond the viewing distance of the server.
+        // Plain coordinate math can run hundreds of times per tick when
+        // range/clipboard displays are active, so avoid vector allocations.
+        if (this.player == null) {
+            return;
+        }
+        Location l = this.player.getLocation();
+        double dx = l.getX() - x;
+        double dy = l.getY() - y;
+        double dz = l.getZ() - z;
+        if (dx * dx + dy * dy + dz * dz < (Bukkit.getServer().getViewDistance() * 256
+                * Bukkit.getServer().getViewDistance())) {
+            if (particle.equals(DUST_PARTICLE)) {
                 player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
             } else if (dustOptions != null) {
                 player.spawnParticle(particle, x, y, z, 1, dustOptions);
@@ -1145,7 +1155,7 @@ public class User implements MetaDataAble {
     /**
      * Spawn particles to the player. They are only displayed if they are within the
      * server's view distance. Compatibility method for older usages.
-     * 
+     *
      * @param particle    Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
@@ -1159,7 +1169,7 @@ public class User implements MetaDataAble {
     /**
      * Spawn particles to the player. They are only displayed if they are within the
      * server's view distance.
-     * 
+     *
      * @param particle    Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
      * @param x           X coordinate of the particle to display.
@@ -1172,7 +1182,7 @@ public class User implements MetaDataAble {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -1185,7 +1195,7 @@ public class User implements MetaDataAble {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -1207,7 +1217,7 @@ public class User implements MetaDataAble {
 
     /**
      * Set the addon context when a command is executed
-     * 
+     *
      * @param addon - the addon executing the command
      */
     public void setAddon(Addon addon) {
@@ -1216,7 +1226,7 @@ public class User implements MetaDataAble {
 
     /**
      * Get all the metadata for this user
-     * 
+     *
      * @return the metaData
      * @since 1.15.4
      */

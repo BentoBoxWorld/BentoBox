@@ -9,6 +9,9 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -18,7 +21,7 @@ import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.panels.BlueprintManagementPanel;
 
-public class AdminBlueprintCommand extends ConfirmableCommand {
+public class AdminBlueprintCommand extends ConfirmableCommand implements Listener {
     // Clipboards
     private Map<UUID, BlueprintClipboard> clipboards;
 
@@ -39,6 +42,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
         clipboards = new HashMap<>();
         displayClipboards = new HashMap<>();
+        Bukkit.getPluginManager().registerEvents(this, getPlugin());
 
         // Sub commands
         new AdminBlueprintLoadCommand(this);
@@ -62,6 +66,17 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     protected Map<UUID, BlueprintClipboard> getClipboards() {
         return clipboards;
+    }
+
+    /**
+     * Releases the quitting player's clipboard. A clipboard can hold a full copied
+     * island (tens of thousands of block objects), so it must not outlive the player.
+     *
+     * @param e Player quit event
+     */
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        clipboards.remove(e.getPlayer().getUniqueId());
     }
 
 

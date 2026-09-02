@@ -265,10 +265,11 @@ public class IslandCache {
      */
     public boolean isIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
-        if (w == null || !grids.containsKey(w)) {
+        if (w == null) {
             return false;
         }
-        return grids.get(w).isIslandAt(location.getBlockX(), location.getBlockZ());
+        IslandGrid grid = grids.get(w);
+        return grid != null && grid.isIslandAt(location.getBlockX(), location.getBlockZ());
     }
 
     /**
@@ -281,10 +282,11 @@ public class IslandCache {
     @Nullable
     public Island getIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
-        if (w == null || !grids.containsKey(w)) {
+        if (w == null) {
             return null;
         }
-        return grids.get(w).getIslandAt(location.getBlockX(), location.getBlockZ());
+        IslandGrid grid = grids.get(w);
+        return grid == null ? null : grid.getIslandAt(location.getBlockX(), location.getBlockZ());
     }
 
     /**

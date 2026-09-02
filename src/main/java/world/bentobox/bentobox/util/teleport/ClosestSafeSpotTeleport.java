@@ -345,10 +345,12 @@ public class ClosestSafeSpotTeleport
 
                 for (int y = Math.max(minY, startY - this.range); y < Math.min(maxY, startY + this.range); y++)
                 {
-                    Vector positionVector = new Vector(chunkX + x, y, chunkZ + z);
-                    if (this.boundingBox.contains(positionVector))
+                    // Raw-coordinate bounds check first and only allocate a vector for
+                    // positions actually inside the search area
+                    if (this.boundingBox.contains(chunkX + x, y, chunkZ + z))
                     {
                         // Process positions that are inside bounding box of search area.
+                        Vector positionVector = new Vector(chunkX + x, y, chunkZ + z);
 
                         PositionData positionData = new PositionData(
                                 positionVector,

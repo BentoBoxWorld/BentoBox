@@ -186,6 +186,7 @@ public class Island implements DataObject, MetaDataAble {
     private Map<String, Integer> flags = new HashMap<>();
 
     //// Island History ////
+
     @Adapter(LogEntryListAdapter.class)
     @Expose
     private List<LogEntry> history = new LinkedList<>();
@@ -404,7 +405,14 @@ public class Island implements DataObject, MetaDataAble {
      * @return flag value
      */
     public int getFlag(@NonNull Flag flag) {
-        return flags.computeIfAbsent(flag.getID(), k -> flag.getDefaultRank());
+        // Plain get first - computeIfAbsent allocates a capturing lambda on every
+        // call and this runs on every protection check
+        Integer rank = flags.get(flag.getID());
+        if (rank == null) {
+            rank = flag.getDefaultRank();
+            flags.put(flag.getID(), rank);
+        }
+        return rank;
     }
 
     /**
@@ -487,7 +495,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return Math.max(getMinX(), getProtectionCenter().getBlockX() - this.getProtectionRange());
+        return Math.max(getMinX(), rawProtectionCenter().getBlockX() - this.getProtectionRange());
     }
 
     /**
@@ -498,7 +506,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedX() {
-        return Math.min(getMaxX(), getProtectionCenter().getBlockX() + this.getProtectionRange());
+        return Math.min(getMaxX(), rawProtectionCenter().getBlockX() + this.getProtectionRange());
     }
 
     /**
@@ -508,7 +516,18 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return Math.max(getMinZ(), getProtectionCenter().getBlockZ() - this.getProtectionRange());
+        return Math.max(getMinZ(), rawProtectionCenter().getBlockZ() - this.getProtectionRange());
+    }
+
+    /**
+     * Read-only access to the protection center without the defensive clone that
+     * {@link #getProtectionCenter()} makes. For internal coordinate reads only -
+     * callers must not mutate the returned location.
+     */
+    @NonNull
+    private Location rawProtectionCenter() {
+        return location == null ? Objects.requireNonNull(center, "Island getCenter requires a non-null center")
+                : location;
     }
 
     /**
@@ -519,7 +538,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedZ() {
-        return Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + this.getProtectionRange());
+        return Math.min(getMaxZ(), rawProtectionCenter().getBlockZ() + this.getProtectionRange());
     }
 
     /**
@@ -606,8 +625,13 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getRange()
      */
     public int getProtectionRange() {
-        return Math.min(this.getRange(),
-                getRawProtectionRange() + this.getBonusRanges().stream().mapToInt(BonusRangeRecord::getRange).sum());
+        // Plain loop - this is called several times per protection event and the
+        // stream pipeline allocates even when there are no bonus ranges
+        int bonus = 0;
+        for (BonusRangeRecord r : getBonusRanges()) {
+            bonus += r.getRange();
+        }
+        return Math.min(this.getRange(), getRawProtectionRange() + bonus);
     }
 
     /**
@@ -941,14 +965,23 @@ public class Island implements DataObject, MetaDataAble {
      *         {@code false} otherwise.
      */
     public boolean onIsland(@NonNull Location target) {
-        return Util.sameWorld(this.world, target.getWorld())
-                && (target.getWorld().getEnvironment().equals(Environment.NORMAL)
-                        || this.getPlugin().getIWM().isIslandNether(target.getWorld())
-                        || this.getPlugin().getIWM().isIslandEnd(target.getWorld()))
-                && target.getBlockX() >= this.getMinProtectedX()
-                && target.getBlockX() < (this.getMinProtectedX() + this.getProtectionRange() * 2)
-                && target.getBlockZ() >= this.getMinProtectedZ()
-                && target.getBlockZ() < (this.getMinProtectedZ() + this.getProtectionRange() * 2);
+        // Cheapest checks first: int coordinate compares before any world resolution
+        int x = target.getBlockX();
+        int minProtectedX = this.getMinProtectedX();
+        int protectedSide = this.getProtectionRange() * 2;
+        if (x < minProtectedX || x >= minProtectedX + protectedSide) {
+            return false;
+        }
+        int z = target.getBlockZ();
+        int minProtectedZ = this.getMinProtectedZ();
+        if (z < minProtectedZ || z >= minProtectedZ + protectedSide) {
+            return false;
+        }
+        World targetWorld = target.getWorld();
+        return Util.sameWorld(this.world, targetWorld)
+                && (targetWorld.getEnvironment() == Environment.NORMAL
+                        || this.getPlugin().getIWM().isIslandNether(targetWorld)
+                        || this.getPlugin().getIWM().isIslandEnd(targetWorld));
     }
 
     /**
@@ -1437,11 +1470,20 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Adds a {@link LogEntry} to the history of this island.
-     * 
+     * History is capped at the {@code island.history.max-entries} config setting; the
+     * oldest entry is dropped when the cap is reached so long-lived islands do not grow
+     * without bound in memory and in the database. A cap of 0 or less means unlimited.
+     *
      * @param logEntry the LogEntry to add.
      */
     public void log(LogEntry logEntry) {
         history.add(logEntry);
+        int max = BentoBox.getInstance().getSettings().getIslandHistoryMaxEntries();
+        if (max > 0) {
+            while (history.size() > max) {
+                history.remove(0);
+            }
+        }
         setChanged();
     }
 

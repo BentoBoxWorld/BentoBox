@@ -544,6 +544,16 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.obsidian-scooping-lava-tip-duration", since = "3.14.0")
     private int obsidianScoopingLavaTipDuration = 5;
 
+    @ConfigComment("Maximum number of history (log) entries kept per island. The oldest entries")
+    @ConfigComment("are dropped first once the cap is reached, so long-lived islands do not grow")
+    @ConfigComment("without bound in memory and in the database.")
+    @ConfigComment("Set to 0 (or a negative value) for unlimited history. This is the default so")
+    @ConfigComment("existing servers keep their current behaviour.")
+    @ConfigComment("Note: capping can undercount the historical-members placeholder once old")
+    @ConfigComment("JOINED entries are dropped off the front.")
+    @ConfigEntry(path = "island.history.max-entries", since = "3.22.3")
+    private int islandHistoryMaxEntries = 0;
+
     /* WORLD */
     @ConfigComment("Vanilla structures disabled by default in EVERY BentoBox game mode world")
     @ConfigComment("(overworld, nether and end). List the structure keys to stop generating and to")
@@ -1833,6 +1843,26 @@ public class Settings implements ConfigObject {
      */
     public void setObsidianScoopingLavaTipDuration(int obsidianScoopingLavaTipDuration) {
         this.obsidianScoopingLavaTipDuration = obsidianScoopingLavaTipDuration;
+    }
+
+    /**
+     * Gets the maximum number of history entries kept per island.
+     *
+     * @return the cap; 0 or less means unlimited
+     * @since 3.22.3
+     */
+    public int getIslandHistoryMaxEntries() {
+        return islandHistoryMaxEntries;
+    }
+
+    /**
+     * Sets the maximum number of history entries kept per island.
+     *
+     * @param islandHistoryMaxEntries the cap; 0 or less means unlimited
+     * @since 3.22.3
+     */
+    public void setIslandHistoryMaxEntries(int islandHistoryMaxEntries) {
+        this.islandHistoryMaxEntries = islandHistoryMaxEntries;
     }
 
     /**
