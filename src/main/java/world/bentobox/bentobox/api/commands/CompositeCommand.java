@@ -407,10 +407,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 if (sub.isEmpty()) {
                     return subCommand;
                 }
-                // Step down one
+                // Step down one. The label the player actually typed is derived from
+                // args by the caller; it must never be written onto the shared command
+                // object, or every player's tab completion and help would start showing
+                // whichever alias was typed last (#3075).
                 subCommand = sub.orElse(subCommand);
-                // Set the label
-                subCommand.setLabel(arg);
             } else {
                 // We are at the end of the walk
                 return subCommand;
