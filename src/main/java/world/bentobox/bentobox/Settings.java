@@ -551,7 +551,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("existing servers keep their current behaviour.")
     @ConfigComment("Note: capping can undercount the historical-members placeholder once old")
     @ConfigComment("JOINED entries are dropped off the front.")
-    @ConfigEntry(path = "island.history.max-entries", since = "3.22.3")
+    @ConfigEntry(path = "island.history.max-entries", since = "3.22.4")
     private int islandHistoryMaxEntries = 0;
 
     /* WORLD */
@@ -1849,7 +1849,7 @@ public class Settings implements ConfigObject {
      * Gets the maximum number of history entries kept per island.
      *
      * @return the cap; 0 or less means unlimited
-     * @since 3.22.3
+     * @since 3.22.4
      */
     public int getIslandHistoryMaxEntries() {
         return islandHistoryMaxEntries;
@@ -1859,7 +1859,7 @@ public class Settings implements ConfigObject {
      * Sets the maximum number of history entries kept per island.
      *
      * @param islandHistoryMaxEntries the cap; 0 or less means unlimited
-     * @since 3.22.3
+     * @since 3.22.4
      */
     public void setIslandHistoryMaxEntries(int islandHistoryMaxEntries) {
         this.islandHistoryMaxEntries = islandHistoryMaxEntries;
