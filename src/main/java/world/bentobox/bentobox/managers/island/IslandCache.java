@@ -48,7 +48,9 @@ public class IslandCache {
     private final Map<@NonNull UUID, Set<String>> islandsByUUID;
 
     @NonNull
-    private final Map<@NonNull World, @NonNull IslandGrid> grids;
+    // No @NonNull on the value type: Map#get returns null for worlds that have no grid
+    // yet, and a non-null value annotation makes those null checks look impossible (java:S2583)
+    private final Map<World, IslandGrid> grids;
     private final @NonNull Database<Island> handler;
 
     public IslandCache(@NonNull Database<Island> handler) {

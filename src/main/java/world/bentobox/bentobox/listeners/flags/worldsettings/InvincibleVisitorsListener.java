@@ -159,7 +159,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         // Handle the void - teleport player back to island in a safe spot
         if(e.getCause().equals(DamageCause.VOID)) {
             // Single lookup - getIslandAt walks the grid and getLocation copies, no need to do either twice
-            Optional<Island> island = getIslands().getIslandAt(p.getLocation());
+            // requireNonNull: Bukkit guarantees a live player's location is non-null (java:S2637)
+            Optional<Island> island = getIslands().getIslandAt(Objects.requireNonNull(p.getLocation()));
             if (island.isPresent()) {
                 // Teleport
                 new SafeSpotTeleport.Builder(getPlugin())
