@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.conversations.ConversationFactory;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
@@ -74,7 +75,7 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
      * </ul>
      */
     @Override
-    public boolean canExecute(User user, String label, List<String> args) {
+    public boolean canExecute(@NonNull User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.showHelp(this, user);
             return false;

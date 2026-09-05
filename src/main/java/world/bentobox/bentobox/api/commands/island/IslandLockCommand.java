@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -55,7 +56,7 @@ public class IslandLockCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean canExecute(User user, String label, List<String> args) {
+    public boolean canExecute(@NonNull User user, String label, List<String> args) {
         island = getIslands().getIsland(getWorld(), user);
         if (island == null) {
             user.sendMessage("general.errors.no-island");

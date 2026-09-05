@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -69,7 +71,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     }
 
-    protected boolean leave(User user) {
+    protected boolean leave(@NonNull User user) {
         Island island = getIslands().getIsland(getWorld(), user);
         if (island == null) {
             user.sendMessage("general.errors.no-island");

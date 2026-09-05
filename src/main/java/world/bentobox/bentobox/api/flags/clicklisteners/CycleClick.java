@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.bukkit.Bukkit;
@@ -8,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.flags.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -159,16 +159,20 @@ public class CycleClick implements PanelItem.ClickHandler {
     }
 
     private void leftShiftClick(Flag flag, World world) {
-        if (!plugin.getIWM().getHiddenFlags(world).contains(flag.getID())) {
-            plugin.getIWM().getHiddenFlags(world).add(flag.getID());
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-        } else {
-            plugin.getIWM().getHiddenFlags(world).remove(flag.getID());
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
-        }
-        // Save changes
-        plugin.getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
-
+        // Mutate the game mode's live list - IWM#getHiddenFlags returns an immutable
+        // empty list when the world is not a game world (java:S6322)
+        plugin.getIWM().getAddon(world).ifPresent(gameModeAddon -> {
+            List<String> hiddenFlags = gameModeAddon.getWorldSettings().getHiddenFlags();
+            if (!hiddenFlags.contains(flag.getID())) {
+                hiddenFlags.add(flag.getID());
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+            } else {
+                hiddenFlags.remove(flag.getID());
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+            }
+            // Save changes
+            gameModeAddon.saveWorldSettings();
+        });
     }
 
     /**

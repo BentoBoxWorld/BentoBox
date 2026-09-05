@@ -1035,10 +1035,12 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Closes the user's inventory
+     * Closes the user's inventory. Does nothing if the user is not a player.
      */
     public void closeInventory() {
-        player.closeInventory();
+        if (player != null) {
+            player.closeInventory();
+        }
     }
 
     /**
