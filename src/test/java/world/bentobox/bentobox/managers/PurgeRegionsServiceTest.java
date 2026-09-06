@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -27,13 +28,18 @@ import java.util.UUID;
 
 import com.google.common.collect.ImmutableSet;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.PurgeRegionsService.FilterStats;
 import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
@@ -82,6 +88,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
 
         when(im.getIslandCache()).thenReturn(islandCache);
         when(world.getWorldFolder()).thenReturn(tempDir.toFile());
+
+        // Most tests exercise delete() as if called on the main thread so the
+        // finalization phase runs inline. The async-path tests override this.
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(true);
 
         service = new PurgeRegionsService(plugin);
     }
@@ -708,5 +718,92 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         // Age sweep: immediate deletion, not deferred.
         verify(im, times(1)).deleteIslandId("tiny");
         assertTrue(service.getPendingDeletions().isEmpty());
+    }
+
+    /**
+     * Regression for the async purge crash: {@code delete()} is dispatched
+     * from an async task by both the purge command and housekeeping, but
+     * {@link IslandEvent} may only be fired on the main thread (Paper throws
+     * {@code IllegalStateException: IslandEvent may only be triggered
+     * synchronously}). When not on the primary thread, the event/cache/DB
+     * finalization must be hopped onto the main thread via the scheduler and
+     * awaited, and the events must still fire.
+     */
+    @Test
+    void testDeleteOffMainThreadFinalizesViaScheduler() throws IOException {
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(false);
+        // Simulate the scheduler running the main-thread task.
+        doAnswer(inv -> {
+            inv.getArgument(1, Runnable.class).run();
+            return null;
+        }).when(sch).runTask(eq(plugin), any(Runnable.class));
+
+        Island tiny = mock(Island.class);
+        when(tiny.getUniqueId()).thenReturn("tiny");
+        // Never soft-deleted: DELETED must fire before PURGED.
+        when(tiny.isDeletable()).thenReturn(false);
+        when(tiny.getMemberSet()).thenReturn(ImmutableSet.<UUID>of());
+        when(tiny.getMinProtectedX()).thenReturn(0);
+        when(tiny.getMaxProtectedX()).thenReturn(100);
+        when(tiny.getMinProtectedZ()).thenReturn(0);
+        when(tiny.getMaxProtectedZ()).thenReturn(100);
+        when(im.getIslandById("tiny")).thenReturn(Optional.of(tiny));
+        when(im.deleteIslandId("tiny")).thenReturn(true);
+
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.write(regionDir.resolve("r.0.0.mca"), new byte[0]);
+
+        Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
+        regions.put(new Pair<>(0, 0), Set.of("tiny"));
+        PurgeScanResult scan = new PurgeScanResult(world, 30, regions, false, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+
+        boolean ok = service.delete(scan);
+        assertTrue(ok);
+
+        // Finalization was routed through the scheduler, not run inline.
+        verify(sch, times(1)).runTask(eq(plugin), any(Runnable.class));
+        verify(islandCache, times(1)).deleteIslandFromCache("tiny");
+        verify(im, times(1)).deleteIslandId("tiny");
+
+        // Each build() fires the generic IslandEvent plus a reason-specific
+        // subclass; check the generic ones for order.
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, times(4)).callEvent(events.capture());
+        List<Reason> reasons = events.getAllValues().stream()
+                .filter(e -> e.getClass() == IslandEvent.class)
+                .map(IslandEvent.class::cast)
+                .map(IslandEvent::getReason)
+                .toList();
+        assertEquals(List.of(Reason.DELETED, Reason.PURGED), reasons);
+    }
+
+    /**
+     * When there is nothing to finalize (deleted sweep defers DB rows to
+     * shutdown) the service must not touch the scheduler at all, even when
+     * called off the main thread.
+     */
+    @Test
+    void testDeleteOffMainThreadDeletedSweepDoesNotSchedule() throws IOException {
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(false);
+
+        Island del = mock(Island.class);
+        when(del.getUniqueId()).thenReturn("del");
+        when(del.isDeletable()).thenReturn(true);
+        when(del.getMemberSet()).thenReturn(ImmutableSet.<UUID>of());
+        when(im.getIslandById("del")).thenReturn(Optional.of(del));
+
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Files.write(regionDir.resolve("r.0.0.mca"), new byte[0]);
+
+        Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
+        regions.put(new Pair<>(0, 0), Set.of("del"));
+        PurgeScanResult scan = new PurgeScanResult(world, 0, regions, false, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+
+        assertTrue(service.delete(scan));
+        verify(sch, never()).runTask(eq(plugin), any(Runnable.class));
+        verify(pim, never()).callEvent(any());
+        assertTrue(service.getPendingDeletions().contains("del"));
     }
 }

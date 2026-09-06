@@ -16,8 +16,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -224,8 +227,11 @@ public class PurgeRegionsService {
      * along with any island database entries, island cache entries, and
      * orphaned player data files that correspond to them.
      *
-     * <p>Runs synchronously on the calling thread and performs disk I/O.
-     * Callers must invoke this from an async task. Callers are also
+     * <p>Performs disk I/O on the calling thread and should be invoked from
+     * an async task. The final bookkeeping — firing {@link IslandEvent}s and
+     * removing islands from the cache and database — is hopped onto the main
+     * thread and awaited before this method returns, because Paper only
+     * allows {@link IslandEvent} to be fired synchronously. Callers are also
      * responsible for flushing in-memory chunk state by calling
      * {@code World.save()} on the main thread <b>before</b> dispatching
      * this method — {@code World.save()} is not safe to invoke from an
@@ -252,8 +258,13 @@ public class PurgeRegionsService {
             affectedIds.addAll(islandIDs);
         }
 
-        int islandsRemoved = 0;
+        // Phase 1 (calling thread, disk I/O): decide which islands are fully
+        // reaped and delete their orphaned player data. No Bukkit events or
+        // cache/DB mutations happen here — this method is normally invoked
+        // from an async task and IslandEvent may only be fired on the main
+        // thread (Paper enforces this and throws IllegalStateException).
         int islandsDeferred = 0;
+        List<Island> toFinalize = new ArrayList<>();
         for (String islandID : affectedIds) {
             Optional<Island> opt = plugin.getIslands().getIslandById(islandID);
             if (opt.isEmpty()) {
@@ -294,28 +305,14 @@ public class PurgeRegionsService {
                     continue;
                 }
                 deletePlayerFromWorldFolder(scan.world(), islandID, scan.deletableRegions(), scan.days());
-                // For the age sweep, DELETED may never have fired (the island was
-                // pruned by age, not by an explicit /is reset). Fire it now so addons
-                // (Level, OneBlock, etc.) can clean up their per-island data.
-                if (!island.isDeletable()) {
-                    IslandEvent.builder()
-                            .island(island)
-                            .reason(Reason.DELETED)
-                            .build();
-                }
-                plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
-                if (plugin.getIslands().deleteIslandId(islandID)) {
-                    plugin.log("Island ID " + islandID + " deleted from cache and database");
-                    islandsRemoved++;
-                    // Fire PURGED so addons that track physical storage state know
-                    // the region files and DB row are both gone.
-                    IslandEvent.builder()
-                            .island(island)
-                            .reason(Reason.PURGED)
-                            .build();
-                }
+                toFinalize.add(island);
             }
         }
+
+        // Phase 2 (main thread): fire events and remove the islands from the
+        // cache and database. Blocks the calling thread until done so the
+        // return value and the summary log below reflect the final state.
+        int islandsRemoved = toFinalize.isEmpty() ? 0 : runOnMainThread(() -> finalizeIslands(toFinalize));
         plugin.log("Purge complete for world " + scan.world().getName()
                 + ": " + scan.deletableRegions().size() + " region(s), "
                 + islandsRemoved + " island(s) removed, "
@@ -364,6 +361,76 @@ public class PurgeRegionsService {
      */
     public Set<String> getPendingDeletions() {
         return Collections.unmodifiableSet(pendingDeletions);
+    }
+
+    /**
+     * Removes each fully-reaped island from the cache and database, firing
+     * {@link Reason#DELETED} first if the island was never soft-deleted and
+     * {@link Reason#PURGED} once the row is gone. <b>Main thread only</b>:
+     * {@link IslandEvent} is a synchronous event.
+     *
+     * @param islands islands whose region files and player data are already gone
+     * @return the number of islands actually removed from the database
+     */
+    private int finalizeIslands(List<Island> islands) {
+        int removed = 0;
+        for (Island island : islands) {
+            String islandID = island.getUniqueId();
+            // For the age sweep, DELETED may never have fired (the island was
+            // pruned by age, not by an explicit /is reset). Fire it now so addons
+            // (Level, OneBlock, etc.) can clean up their per-island data.
+            if (!island.isDeletable()) {
+                IslandEvent.builder()
+                        .island(island)
+                        .reason(Reason.DELETED)
+                        .build();
+            }
+            plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
+            if (plugin.getIslands().deleteIslandId(islandID)) {
+                plugin.log("Island ID " + islandID + " deleted from cache and database");
+                removed++;
+                // Fire PURGED so addons that track physical storage state know
+                // the region files and DB row are both gone.
+                IslandEvent.builder()
+                        .island(island)
+                        .reason(Reason.PURGED)
+                        .build();
+            }
+        }
+        return removed;
+    }
+
+    /**
+     * Runs {@code task} on the main server thread and waits for its result.
+     * If already on the main thread the task runs inline.
+     *
+     * @param task work that must run on the main thread
+     * @return the task's result
+     * @throws IllegalStateException if the task could not be scheduled or failed
+     */
+    private <T> T runOnMainThread(Supplier<T> task) {
+        if (Bukkit.isPrimaryThread()) {
+            return task.get();
+        }
+        CompletableFuture<T> done = new CompletableFuture<>();
+        try {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                try {
+                    done.complete(task.get());
+                } catch (Exception e) {
+                    done.completeExceptionally(e);
+                }
+            });
+        } catch (RuntimeException e) {
+            // Typically IllegalPluginAccessException: the plugin is disabling and
+            // the scheduler will not accept new tasks.
+            throw new IllegalStateException("Could not schedule purge finalization on the main thread", e);
+        }
+        try {
+            return done.join();
+        } catch (CompletionException e) {
+            throw new IllegalStateException("Purge finalization failed on the main thread", e.getCause());
+        }
     }
 
     /**
