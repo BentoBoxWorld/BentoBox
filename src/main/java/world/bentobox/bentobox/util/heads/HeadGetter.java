@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.profile.PlayerProfile;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,7 +31,7 @@ import world.bentobox.bentobox.util.Pair;
 
 /**
  * This class manages getting player heads for requester.
- * 
+ *
  * @author tastybento, BONNe1704
  */
 public class HeadGetter {
@@ -51,6 +52,9 @@ public class HeadGetter {
             TimeUnit.SECONDS);
 
     private static final String TEXTURES = "textures";
+
+    // Gson construction is expensive, don't rebuild it per head lookup
+    private static final Gson GSON = new Gson();
 
     private static final String NAME = "name";
 
@@ -100,17 +104,57 @@ public class HeadGetter {
                 || System.currentTimeMillis() - cache.getTimestamp() <= cacheTimeout)) {
             panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).getPlayerHead());
             requester.setHead(panelItem);
-        } else {
-            // Get the name
-            headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
-            names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
+            return;
+        }
+
+        // If the player is online, the server already holds their completed profile,
+        // textures included, so the head can be delivered synchronously with no web
+        // lookup. This also avoids the async callback racing a GUI that has since been
+        // redrawn. The player list may only be read from the primary thread.
+        if (Bukkit.isPrimaryThread()) {
+            HeadCache live = getFromOnlinePlayer(panelItem.getPlayerHeadName());
+
+            if (live != null) {
+                cachedHeads.put(live.getUserName(), live);
+                panelItem.setHead(live.getPlayerHead());
+                requester.setHead(panelItem);
+                return;
+            }
+        }
+
+        // Queue for the async resolver
+        headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
+        names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
+    }
+
+    /**
+     * Builds a head cache entry from an online player's live profile, if the player is
+     * online and their profile carries a skin texture.
+     *
+     * @param userName exact name of the player.
+     * @return a cache entry with a usable texture, or null if unavailable.
+     * @since 3.22.3
+     */
+    private static @Nullable HeadCache getFromOnlinePlayer(String userName) {
+        Player player = Bukkit.getPlayerExact(userName);
+
+        if (player == null) {
+            return null;
+        }
+
+        try {
+            HeadCache cache = new HeadCache(userName, player.getUniqueId(), player.getPlayerProfile());
+            return cache.hasTexture() ? cache : null;
+        } catch (Exception e) {
+            // An unreadable profile just means we fall back to the async resolver.
+            return null;
         }
     }
 
     /**
      * This method allows to add HeadCache object into local cache. It will provide
      * addons to use HeadGetter cache directly.
-     * 
+     *
      * @param cache Cache object that need to be added into local cache.
      * @since 1.14.1
      */
@@ -156,24 +200,30 @@ public class HeadGetter {
                             userId = null;
                         }
 
-                        HeadCache cache;
+                        // Ask the server first: Paper completes profiles through its own
+                        // session-service cache, so this is free for anyone who has
+                        // logged in recently and avoids hand-rolled HTTP entirely.
+                        HeadCache cache = HeadGetter.getFromServer(userName, userId);
 
-                        if (plugin.getSettings().isUseCacheServer()) {
-                            // Cache server has an implementation to get a skin just from player name.
-                            Pair<UUID, String> playerSkin = HeadGetter.getTextureFromName(userName, userId);
+                        if (cache == null) {
+                            if (plugin.getSettings().isUseCacheServer()) {
+                                // Cache server has an implementation to get a skin just from player name.
+                                Pair<UUID, String> playerSkin = HeadGetter.getTextureFromName(userName, userId);
 
-                            // Create new cache object.
-                            cache = new HeadCache(userName, playerSkin.getKey(),
-                                    HeadGetter.createProfile(userName, playerSkin.getKey(), playerSkin.getValue()));
-                        } else {
-                            if (userId == null) {
-                                // Use MojangAPI to get userId from userName.
-                                userId = HeadGetter.getUserIdFromName(userName);
+                                // Create new cache object.
+                                cache = new HeadCache(userName, playerSkin.getKey(),
+                                        HeadGetter.createProfile(userName, playerSkin.getKey(), playerSkin.getValue()));
+                            } else {
+                                if (userId == null) {
+                                    // Use MojangAPI to get userId from userName.
+                                    userId = HeadGetter.getUserIdFromName(userName);
+                                }
+
+                                // Create new cache object.
+                                cache = new HeadCache(userName, userId,
+                                        HeadGetter.createProfile(userName, userId,
+                                                HeadGetter.getTextureFromUUID(userId)));
                             }
-
-                            // Create new cache object.
-                            cache = new HeadCache(userName, userId,
-                                    HeadGetter.createProfile(userName, userId, HeadGetter.getTextureFromUUID(userId)));
                         }
 
                         // Save in cache. A failed lookup must not evict a texture we already
@@ -210,8 +260,40 @@ public class HeadGetter {
     }
 
     /**
+     * Asks the server to complete a player profile for the given name/UUID. Paper resolves
+     * this through its own session-service client, which caches the profile of every player
+     * who has logged in, so for known players this returns instantly with no web request of
+     * our own. For unknown premium names it performs the Mojang lookup on our behalf,
+     * respecting the server's rate limiting.
+     * <p>
+     * Must be called from an async thread — profile completion may block on I/O.
+     *
+     * @param userName name of the player.
+     * @param userId UUID of the player, if known.
+     * @return a cache entry with a usable texture, or null if the server could not provide one.
+     * @since 3.22.3
+     */
+    private static @Nullable HeadCache getFromServer(@NonNull String userName, @Nullable UUID userId) {
+        try {
+            PlayerProfile profile = Bukkit.createPlayerProfile(userId, userName).update()
+                    .get(10, TimeUnit.SECONDS);
+
+            if (profile.getTextures().getSkin() != null) {
+                UUID resolvedId = profile.getUniqueId() != null ? profile.getUniqueId() : userId;
+                return new HeadCache(userName, resolvedId, profile);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            // Server could not complete the profile - fall back to the web-based lookups.
+        }
+
+        return null;
+    }
+
+    /**
      * This method gets and returns userId from mojang web API based on user name.
-     * 
+     *
      * @param name user which Id must be returned.
      * @return String value for user Id.
      * @since 1.14.1
@@ -220,10 +302,8 @@ public class HeadGetter {
         UUID userId;
 
         try {
-            Gson gsonReader = new Gson();
-
             // Get mojang user-id from given nickname
-            JsonObject jsonObject = gsonReader.fromJson(
+            JsonObject jsonObject = GSON.fromJson(
                     HeadGetter.getURLContent("https://api.mojang.com/users/profiles/minecraft/" + name),
                     JsonObject.class);
             /*
@@ -256,10 +336,8 @@ public class HeadGetter {
      */
     private static @Nullable String getTextureFromUUID(UUID userId) {
         try {
-            Gson gsonReader = new Gson();
-
             // Get user encoded texture value.
-            JsonObject jsonObject = gsonReader.fromJson(
+            JsonObject jsonObject = GSON.fromJson(
                     HeadGetter.getURLContent(
                             "https://sessionserver.mojang.com/session/minecraft/profile/" + userId.toString()),
                     JsonObject.class);
@@ -300,13 +378,11 @@ public class HeadGetter {
      */
     private static @NonNull Pair<UUID, String> getTextureFromName(String userName, @Nullable UUID userId) {
         try {
-            Gson gsonReader = new Gson();
-
             // Get user encoded texture value.
             // mc-heads returns correct skin with providing just a name, unlike mojang api,
             // which
             // requires UUID.
-            JsonObject jsonObject = gsonReader.fromJson(HeadGetter.getURLContent(
+            JsonObject jsonObject = GSON.fromJson(HeadGetter.getURLContent(
                     "https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
                     JsonObject.class);
 
@@ -370,7 +446,7 @@ public class HeadGetter {
          */
         try {
             String decoded = new String(Base64.getDecoder().decode(base64));
-            JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
+            JsonObject json = GSON.fromJson(decoded, JsonObject.class);
             String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
             return new URI(url).toURL();
         } catch (Exception e) {

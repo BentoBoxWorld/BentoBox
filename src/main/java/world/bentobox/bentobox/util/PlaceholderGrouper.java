@@ -143,6 +143,8 @@ public final class PlaceholderGrouper {
      * </p>
      */
     static String stripTrailingHashNumber(String description) {
-        return description.replaceAll("\\s*+#\\d++", "").trim();
+        // Bounded whitespace prefix (\s?+) keeps the scan linear; an unbounded \s*+
+        // prefix is re-tried at every position of a whitespace run (Sonar S8786)
+        return description.replaceAll("\\s?+#\\d++", "").trim();
     }
 }

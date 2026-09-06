@@ -272,11 +272,12 @@ commands:
         specify-island-location: '<red>Вкажіть локацію [prefix_island] у форматі x,y,z</red>'
         player-has-more-than-one-island: '<red>У гравця більше ніж один [prefix_island]. Уточніть який.</red>'
     info:
-      parameters: <гравець>
+      parameters: <гравець> [назва острова]
       description: отримати інформацію про місце розташування або [prefix_island] гравця
       no-island: '<red>Зараз ви не на [prefix_an-island]...</red>'
       title: ========== Інфо про [prefix_Island] ============
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Назва: [name]'
       owner: 'Власник: [owner] ([uuid])'
       last-login: 'Останній вхід: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

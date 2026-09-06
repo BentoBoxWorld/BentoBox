@@ -182,18 +182,22 @@ public class IslandResetCommand extends ConfirmableCommand {
      * @param name The blueprint bundle name to use
      * @return true if reset was successful
      */
-    private boolean resetIsland(User user, String name) {
+    private boolean resetIsland(@NonNull User user, String name) {
         if (!checkCost(user, name, false)) {
             return false;
         }
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
+        if (oldIsland == null) {
+            // Should not happen, but the player has no island to reset
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
         deleteOldIsland(user, oldIsland);
 
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
-            assert oldIsland != null;
             Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
                     .oldIsland(oldIsland).name(name);
             if (noPaste)
@@ -233,7 +237,7 @@ public class IslandResetCommand extends ConfirmableCommand {
      * @param user The user resetting their island
      * @param oldIsland The island being reset
      */
-    private void deleteOldIsland(User user, Island oldIsland) {
+    private void deleteOldIsland(@NonNull User user, @NonNull Island oldIsland) {
         // Fire island preclear event
         IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();

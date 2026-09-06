@@ -81,6 +81,8 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);
         // Location
         when(location.toVector()).thenReturn(new Vector(5,5,5));
+        when(location.getX()).thenReturn(5D);
+        when(location.getZ()).thenReturn(5D);
         when(location.getWorld()).thenReturn(nether);
         when(spawnLocation.toVector()).thenReturn(new Vector(0,0,0));
         when(spawnLocation.getWorld()).thenReturn(nether);
@@ -286,11 +288,7 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         blockList.add(block);
         blockList.add(block);
         // Make some inside and outside spawn
-        when(location.toVector()).thenReturn(new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(10000,0,0));
+        when(location.getX()).thenReturn(0D, 0D, 0D, 0D, 10000D);
         EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
         ssp.onExplosion(e);
         // 4 blocks inside the spawn should be removed, leaving one
@@ -311,11 +309,7 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         blockList.add(block);
         blockList.add(block);
         // Make some inside and outside spawn
-        when(location.toVector()).thenReturn(new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(10000,0,0));
+        when(location.getX()).thenReturn(0D, 0D, 0D, 0D, 10000D);
         EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
         ssp.onExplosion(e);
         // No blocks should be removed
@@ -344,11 +338,7 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         blockList.add(block);
         blockList.add(block);
         // Make some inside and outside spawn
-        when(location.toVector()).thenReturn(new Vector(0, 0, 0),
-                new Vector(0, 0, 0),
-                new Vector(0, 0, 0),
-                new Vector(0, 0, 0),
-                new Vector(10000, 0, 0));
+        when(location.getX()).thenReturn(0D, 0D, 0D, 0D, 10000D);
         EntityExplodeEvent e = getExplodeEvent(mockPlayer, location, blockList);
         // Should not throw NullPointerException
         ssp.onExplosion(e);

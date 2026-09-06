@@ -1,11 +1,12 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
+import java.util.List;
+
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.user.User;
@@ -72,16 +73,20 @@ public class CommandCycleClick implements ClickHandler {
      */
     private void leftShiftClick(User user) {
         String configSetting = COMMAND_RANK_PREFIX + command;
-        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(configSetting)) {
-            plugin.getIWM().getHiddenFlags(user.getWorld()).add(configSetting);
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-        } else {
-            plugin.getIWM().getHiddenFlags(user.getWorld()).remove(configSetting);
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
-        }
-        // Save changes
-        plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
-
+        // Mutate the game mode's live list - IWM#getHiddenFlags returns an immutable
+        // empty list when the world is not a game world (java:S6322)
+        plugin.getIWM().getAddon(user.getWorld()).ifPresent(gameModeAddon -> {
+            List<String> hiddenFlags = gameModeAddon.getWorldSettings().getHiddenFlags();
+            if (!hiddenFlags.contains(configSetting)) {
+                hiddenFlags.add(configSetting);
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+            } else {
+                hiddenFlags.remove(configSetting);
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+            }
+            // Save changes
+            gameModeAddon.saveWorldSettings();
+        });
     }
 
 }

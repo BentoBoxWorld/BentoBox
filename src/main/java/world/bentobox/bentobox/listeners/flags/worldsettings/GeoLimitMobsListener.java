@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -32,13 +34,20 @@ public class GeoLimitMobsListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPluginReady(BentoBoxReadyEvent event) {
-        // Kick off the task to remove entities that go outside island boundaries
+        // Kick off the task to remove entities that go outside island boundaries.
+        // This runs every second, so avoid stream allocations
         Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
-            mobSpawnTracker.entrySet().stream()
-            .filter(e -> !e.getValue().onIsland(e.getKey().getLocation()))
-            .map(Map.Entry::getKey)
-            .forEach(Entity::remove);
-            mobSpawnTracker.keySet().removeIf(e -> e == null || e.isDead());
+            Iterator<Map.Entry<Entity, Island>> it = mobSpawnTracker.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Entity, Island> entry = it.next();
+                Entity mob = entry.getKey();
+                if (mob == null || mob.isDead()) {
+                    it.remove();
+                } else if (!entry.getValue().onIsland(mob.getLocation())) {
+                    mob.remove();
+                    it.remove();
+                }
+            }
         }, 20L, 20L);
     }
 
@@ -48,9 +57,11 @@ public class GeoLimitMobsListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(CreatureSpawnEvent e) {
-        if (getIWM().inWorld(e.getLocation())
-                && getIWM().getGeoLimitSettings(e.getLocation().getWorld()).contains(e.getEntityType().name())) {
-            getIslands().getIslandAt(e.getLocation()).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
+        // Entity#getLocation allocates a new Location on every call, so fetch it once
+        Location location = e.getLocation();
+        if (getIWM().inWorld(location)
+                && getIWM().getGeoLimitSettings(location.getWorld()).contains(e.getEntityType().name())) {
+            getIslands().getIslandAt(location).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
         }
     }
 
@@ -68,9 +79,11 @@ public class GeoLimitMobsListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onProjectileLaunch(final ProjectileLaunchEvent e) {
-        if (getIWM().inWorld(e.getEntity().getLocation())
-                && getIWM().getGeoLimitSettings(e.getEntity().getLocation().getWorld()).contains(e.getEntityType().name())) {
-            getIslands().getIslandAt(e.getEntity().getLocation()).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
+        // Entity#getLocation allocates a new Location on every call, so fetch it once
+        Location location = e.getEntity().getLocation();
+        if (getIWM().inWorld(location)
+                && getIWM().getGeoLimitSettings(location.getWorld()).contains(e.getEntityType().name())) {
+            getIslands().getIslandAt(location).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
         }
     }
 

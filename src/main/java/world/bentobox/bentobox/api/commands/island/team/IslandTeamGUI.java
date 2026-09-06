@@ -518,8 +518,9 @@ public class IslandTeamGUI {
     }
 
     private void leave(User clickingUser, User target) {
+        // Objects.equals: getUniqueId() is null for non-player users and must not NPE
         if (clickingUser.hasPermission(parent.getLeaveCommand().getPermission()) && target.equals(clickingUser)
-                && !clickingUser.getUniqueId().equals(island.getOwner())) {
+                && !Objects.equals(clickingUser.getUniqueId(), island.getOwner())) {
             plugin.log("Leave: " + clickingUser.getName() + " trying to leave island at " + island.getCenter());
             clickingUser.closeInventory();
             if (parent.getLeaveCommand().leave(clickingUser)) {

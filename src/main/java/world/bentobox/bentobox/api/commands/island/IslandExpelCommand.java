@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -156,7 +157,7 @@ public class IslandExpelCommand extends CompositeCommand {
      * </ul>
      */
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean execute(@NonNull User user, String label, List<String> args) {
         // Finished error checking - expel player
         Island island = getIslands().getIsland(getWorld(), user);
         // Fire event

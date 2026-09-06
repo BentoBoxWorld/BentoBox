@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -53,7 +55,7 @@ public class IslandResetnameCommand extends CompositeCommand {
      * </ul>
      */
     @Override
-    public boolean canExecute(User user, String label, List<String> args)
+    public boolean canExecute(@NonNull User user, String label, List<String> args)
     {
         Island island = getIslands().getIsland(getWorld(), user);
 

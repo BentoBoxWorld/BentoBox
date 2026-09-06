@@ -256,7 +256,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
      * @param names the valid destination names
      * @return the canonical destination name to use, or {@code null} if none matched confidently
      */
-    static String resolveName(String typed, Set<String> names) {
+    public static String resolveName(String typed, Set<String> names) {
         // 1. Exact match wins and preserves the original behaviour
         if (names.contains(typed)) {
             return typed;

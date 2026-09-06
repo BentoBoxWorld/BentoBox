@@ -278,11 +278,12 @@ commands:
         player-has-more-than-one-island: '<red>Player has more than one [prefix_island].
           Specify which one.</red>'
     info:
-      parameters: <player>
+      parameters: <player> [island name]
       description: get info on where you are or player's [prefix_island]
       no-island: '<red>You are not on [prefix_an-island] right now...</red>'
       title: ========== [prefix_Island] Info ============
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Name: [name]'
       owner: 'Owner: [owner] ([uuid])'
       last-login: 'Last login: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

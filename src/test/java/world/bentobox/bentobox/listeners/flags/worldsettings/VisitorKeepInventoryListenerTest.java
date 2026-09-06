@@ -62,6 +62,7 @@ class VisitorKeepInventoryListenerTest extends CommonTestSetup {
         when(location.getWorld()).thenReturn(world);
         when(location.toVector()).thenReturn(new Vector(1,2,3));
         // Turn on why for player
+        when(mockPlayer.hasMetadata("bskyblock_world_why_debug")).thenReturn(true);
         when(mockPlayer.getMetadata("bskyblock_world_why_debug")).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
         when(mockPlayer.getMetadata("bskyblock_world_why_debug_issuer")).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
         User.getInstance(mockPlayer);

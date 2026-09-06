@@ -36,8 +36,13 @@ public class PrimaryIslandListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
-        if (!event.getFrom().toVector().equals(event.getTo().toVector())) {
-            setIsland(event.getPlayer(), event.getTo());
+        // Island bounds are block-based, so only a block change can alter the result.
+        // Compare raw coordinates to avoid allocating vectors on every move event.
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY()
+                || from.getBlockZ() != to.getBlockZ()) {
+            setIsland(event.getPlayer(), to);
         }
     }
 

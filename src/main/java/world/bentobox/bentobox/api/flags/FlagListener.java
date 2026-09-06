@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.api.flags;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,6 +35,16 @@ import world.bentobox.bentobox.util.Util;
 public abstract class FlagListener implements Listener {
 
     private static final String WHY = "Why: ";
+
+    /**
+     * Cache of per-world why-debug metadata keys to avoid rebuilding the string
+     * on every protection check.
+     */
+    private static final Map<String, String> WHY_DEBUG_KEYS = new ConcurrentHashMap<>();
+
+    private static String whyDebugKey(String worldName) {
+        return worldName == null ? "null_why_debug" : WHY_DEBUG_KEYS.computeIfAbsent(worldName, n -> n + "_why_debug");
+    }
 
     /**
      * Reason for why flag was allowed or disallowed
@@ -150,7 +162,7 @@ public abstract class FlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag, boolean silent) {
-        
+
         // Set user
         user = player == null ? null : User.getInstance(player);
         if (loc == null) {
@@ -168,20 +180,19 @@ public abstract class FlagListener implements Listener {
 
         // Get the island and if present
         Optional<Island> island = getIslands().getProtectedIslandAt(loc);
-        
+
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
             return processSetting(flag, island, e, loc);
         }
 
         // Protection flag
-        // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (hasBypassEverywhere(loc, flag)) {
-            report(user, e, loc, flag, user.isOp() ? Why.OP : Why.BYPASS_EVERYWHERE);
-            return true;
-        }
         // Check if the island is deleted - if so, then nothing is allowed by default
         if (isDeletedIsland(island)) {
+            // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
+            if (checkBypassEverywhere(e, loc, flag)) {
+                return true;
+            }
             report(user, e, loc, flag, Why.ISLAND_DELETED);
             noGo(e, flag, silent, WORLD_PROTECTED);
             return false;
@@ -203,8 +214,25 @@ public abstract class FlagListener implements Listener {
             report(user, e, loc, flag, Why.ALLOWED_IN_WORLD);
             return true;
         }
+        // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
+        if (checkBypassEverywhere(e, loc, flag)) {
+            return true;
+        }
         report(user, e, loc, flag, Why.NOT_ALLOWED_IN_WORLD);
         noGo(e, flag, silent, WORLD_PROTECTED);
+        return false;
+    }
+
+    /**
+     * Checks the bypass-everywhere permissions and reports if they apply. Only called on
+     * the deny path so the common allow path skips the permission lookups entirely.
+     * @return true if the user may bypass protection everywhere
+     */
+    private boolean checkBypassEverywhere(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag) {
+        if (hasBypassEverywhere(loc, flag)) {
+            report(user, e, loc, flag, user.isOp() ? Why.OP : Why.BYPASS_EVERYWHERE);
+            return true;
+        }
         return false;
     }
 
@@ -213,9 +241,12 @@ public abstract class FlagListener implements Listener {
     }
 
     private boolean hasBypassEverywhere(Location loc, Flag flag) {
-        return !user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
-                && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
-                        || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".everywhere"));
+        if (user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)) {
+            return false;
+        }
+        String prefix = getIWM().getPermissionPrefix(loc.getWorld());
+        return user.hasPermission(prefix + "mod.bypassprotect")
+                || user.hasPermission(prefix + "mod.bypass." + flag.getID() + ".everywhere");
     }
 
     private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc, boolean silent) {
@@ -224,7 +255,12 @@ public abstract class FlagListener implements Listener {
         if (island.isAllowed(user, flag)) {
             report(user, e, loc, flag,  Why.RANK_ALLOWED);
             return true;
-        } else if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
+        }
+        // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
+        if (checkBypassEverywhere(e, loc, flag)) {
+            return true;
+        }
+        if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
                 && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island"))) {
             report(user, e, loc, flag,  Why.BYPASS_ISLAND);
             return true;
@@ -239,6 +275,10 @@ public abstract class FlagListener implements Listener {
             report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
             return true;
         }
+        // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
+        if (checkBypassEverywhere(e, loc, flag)) {
+            return true;
+        }
         report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
         noGo(e, flag, silent, WORLD_PROTECTED);
         return false;
@@ -247,11 +287,13 @@ public abstract class FlagListener implements Listener {
     private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @NonNull Location loc) {
         // If the island exists, return the setting, otherwise return the default setting for this flag
         if (island.isPresent()) {
-            report(user, e, loc, flag,  island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
-        } else {
-            report(user, e, loc, flag,  flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
+            boolean allowed = island.get().isAllowed(flag);
+            report(user, e, loc, flag,  allowed ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
+            return allowed;
         }
-        return island.map(x -> x.isAllowed(flag)).orElseGet(() -> flag.isSetForWorld(loc.getWorld()));
+        boolean allowed = flag.isSetForWorld(loc.getWorld());
+        report(user, e, loc, flag,  allowed ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
+        return allowed;
     }
 
     /**
@@ -264,7 +306,12 @@ public abstract class FlagListener implements Listener {
      */
     protected void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag, @NonNull Why why) {
         // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name()); NOSONAR
-        if (user != null && user.isPlayer() && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+        if (user == null || !user.isPlayer()) {
+            return;
+        }
+        // hasMetadata is a cheap map hit - avoids the metadata list + stream allocations on every check
+        String whyDebugKey = whyDebugKey(loc.getWorld().getName());
+        if (user.getPlayer().hasMetadata(whyDebugKey) && user.getPlayer().getMetadata(whyDebugKey).stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
             String whyEvent = WHY + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
             String whyBypass = WHY + user.getName() + " " + flag.getID() + " - " + why.name();
@@ -327,8 +374,9 @@ public abstract class FlagListener implements Listener {
         String prefix = addon != null ? "[" + addon.getDescription().getName() + "] " : "";
         String whyMessage = WHY + prefix + message + " - " + reason.name() + " in world "
                 + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
+        String whyDebugKey = whyDebugKey(loc.getWorld().getName());
         Bukkit.getOnlinePlayers().stream()
-                .filter(p -> p.getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+                .filter(p -> p.hasMetadata(whyDebugKey) && p.getMetadata(whyDebugKey).stream()
                         .filter(m -> m.getOwningPlugin().equals(getPlugin()))
                         .findFirst().map(MetadataValue::asBoolean).orElse(false))
                 .forEach(p -> {

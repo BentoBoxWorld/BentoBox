@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -94,6 +95,20 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         }
     }
 
+
+    /**
+     * Cancels and removes any pending delayed command when the player quits,
+     * otherwise the entry would remain in the monitor map forever.
+     *
+     * @param e Player quit event
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        DelayedCommand delayed = toBeMonitored.remove(e.getPlayer().getUniqueId());
+        if (delayed != null) {
+            delayed.task().cancel();
+        }
+    }
 
     /**
      * Top level command

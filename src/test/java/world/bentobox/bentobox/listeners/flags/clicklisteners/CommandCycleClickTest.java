@@ -30,6 +30,7 @@ import org.mockito.stubbing.Answer;
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
@@ -73,6 +74,11 @@ class CommandCycleClickTest extends RanksManagerTestSetup {
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
         when(iwm.getPermissionPrefix(world)).thenReturn("oneblock.");
         when(iwm.getHiddenFlags(any())).thenReturn(new ArrayList<>());
+        // Shift-click mutates the live world settings list via the game mode addon;
+        // delegate to the iwm stub so per-test re-stubbing keeps working
+        WorldSettings ws = mock(WorldSettings.class);
+        when(gma.getWorldSettings()).thenReturn(ws);
+        when(ws.getHiddenFlags()).thenAnswer(invocation -> iwm.getHiddenFlags(world));
         // Panel
         when(panel.getInventory()).thenReturn(inv);
         when(panel.getWorld()).thenReturn(Optional.of(world));

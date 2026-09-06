@@ -145,8 +145,9 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Run through affected entities and cancel the splash for protected players
+            Flag flag = getFlag(e.getEntity().getWorld());
             for (LivingEntity le : e.getAffectedEntities()) {
-                if (!le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))) {
+                if (!le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, flag)) {
                     e.setIntensity(le, 0);
                 }
             }
@@ -222,7 +223,8 @@ public class PVPListener extends FlagListener {
         if (thrownPotions.containsKey(e.getEntity().getEntityId())) {
             User user = User.getInstance(thrownPotions.get(e.getEntity().getEntityId()));
             // Run through affected entities and delete them if they are safe
-            e.getAffectedEntities().removeIf(le -> !le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld())));
+            Flag flag = getFlag(e.getEntity().getWorld());
+            e.getAffectedEntities().removeIf(le -> !le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, flag));
         }
     }
 

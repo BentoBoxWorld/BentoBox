@@ -304,11 +304,12 @@ commands:
           <red>Pemain memiliki lebih dari satu [prefix_island]. Tentukan yang</red>
           mana.
     info:
-      parameters: <player>
+      parameters: <player> [nama pulau]
       description: dapatkan info di mana Anda berada atau pulau pemain
       no-island: '<red>Anda tidak berada di pulau saat ini...</red>'
       title: '========== Info Pulau ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Nama: [name]'
       owner: 'Pemilik: [owner] ([uuid])'
       last-login: 'Login terakhir: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

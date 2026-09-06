@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -160,14 +161,16 @@ public class BlueprintClipboard {
             }
             copying = true;
             NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
+            // Index the world's entities by block position once per tick instead of scanning
+            // the full entity list for every copied block
+            Map<Vector, List<Entity>> entitiesByBlock = world.getEntities().stream()
+                    .filter(Objects::nonNull)
+                    .filter(e -> !(e instanceof Player))
+                    .filter(e -> !e.getPersistentDataContainer().has(key, PersistentDataType.STRING)) // Do not copy hidden display entities
+                    .collect(Collectors.groupingBy(e -> new Vector(e.getLocation().getBlockX(),
+                            e.getLocation().getBlockY(), e.getLocation().getBlockZ())));
             vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                List<Entity> ents = world.getEntities().stream()
-                        .filter(Objects::nonNull)
-                        .filter(e -> !(e instanceof Player))
-                        .filter(e -> !e.getPersistentDataContainer().has(key, PersistentDataType.STRING)) // Do not copy hidden display entities
-                        .filter(e -> new Vector(e.getLocation().getBlockX(), e.getLocation().getBlockY(),
-                                e.getLocation().getBlockZ()).equals(v))
-                        .toList();
+                List<Entity> ents = entitiesByBlock.getOrDefault(v, List.of());
                 if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents, noWater)) {
                     count++;
                 }

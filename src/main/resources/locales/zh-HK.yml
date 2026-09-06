@@ -271,11 +271,12 @@ commands:
         specify-island-location: 指定[prefix_island] x，y，z格式的位置
         player-has-more-than-one-island: 玩家有多個[prefix_island]。指定哪一個。
     info:
-      parameters: <player>
+      parameters: <player> [島嶼名稱]
       description: 獲得您當前所在或者指定玩家的島嶼信息
       no-island: '<red>您當前不在一座島上......</red>'
       title: '========== 島嶼信息 ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: '名稱: [name]'
       owner: 島主：[owner] ([uuid])
       last-login: 最後登錄：[date]
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

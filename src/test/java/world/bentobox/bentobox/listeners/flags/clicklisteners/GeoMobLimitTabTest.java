@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,7 @@ import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
@@ -62,6 +64,11 @@ class GeoMobLimitTabTest extends CommonTestSetup {
         list.add("COW");
         when(iwm.getMobLimitSettings(any())).thenReturn(list);
         when(iwm.getGeoLimitSettings(any())).thenReturn(list);
+        // The click handler mutates the live world settings lists via the game mode addon
+        WorldSettings ws = mock(WorldSettings.class);
+        when(gma.getWorldSettings()).thenReturn(ws);
+        when(ws.getMobLimitSettings()).thenReturn(list);
+        when(ws.getGeoLimitSettings()).thenReturn(list);
         // Panel
         when(panel.getInventory()).thenReturn(inv);
         // User

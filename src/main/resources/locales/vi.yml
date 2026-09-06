@@ -299,11 +299,12 @@ commands:
           <red>Người chơi có nhiều hơn một [prefix_island]. Vui lòng chỉ rõ cái</red>
           nào.
     info:
-      parameters: <người chơi>
+      parameters: <người chơi> [tên đảo]
       description: xem thông tin đảo bạn đang đứng
       no-island: '<red>Bạn không có ở đảo nào...</red>'
       title: '========== Thông Tin Đảo ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Tên: [name]'
       owner: 'Chủ: [owner] ([uuid])'
       last-login: 'Lần đăng nhập cuối: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

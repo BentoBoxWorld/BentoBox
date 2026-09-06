@@ -10,7 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.util.Vector;
+import org.bukkit.util.NumberConversions;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -123,13 +123,15 @@ public class StandardSpawnProtectionListener implements Listener {
             // If end portals are active, there is no common spawn
             return false;
         }
-        Vector p = location.toVector().multiply(new Vector(1, 0, 1));
-        Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
         int radius = env == World.Environment.THE_END
                 ? plugin.getIWM().getEndSpawnRadius(gameWorld)
                 : plugin.getIWM().getNetherSpawnRadius(gameWorld);
-        Vector diff = p.subtract(spawn);
-        return Math.abs(diff.getBlockX()) <= radius && Math.abs(diff.getBlockZ()) <= radius;
+        // Plain coordinate math runs per block event, so it avoid vector allocations.
+        // floor() keeps the exact semantics of the previous Vector#getBlockX comparison.
+        Location spawn = location.getWorld().getSpawnLocation();
+        int diffX = NumberConversions.floor(location.getX() - spawn.getX());
+        int diffZ = NumberConversions.floor(location.getZ() - spawn.getZ());
+        return Math.abs(diffX) <= radius && Math.abs(diffZ) <= radius;
     }
 
     /**

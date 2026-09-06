@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -65,7 +67,7 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
      * </ul>
      */
     @Override
-    public boolean canExecute(User user, String label, List<String> args) {
+    public boolean canExecute(@NonNull User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.showHelp(this, user);
             return false;

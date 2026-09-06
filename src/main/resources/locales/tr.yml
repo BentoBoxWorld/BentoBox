@@ -300,11 +300,12 @@ commands:
           <red>Oyuncunun birden fazla [prefix_island] var. Hangisini seçeceğinizi</red>
           belirtin.
     info:
-      parameters: <player>
+      parameters: <player> [ada adı]
       description: Ada hakkında bilgi verir
       no-island: '<dark_red>Herhangi bir adada degilsin...</dark_red>'
       title: '<yellow>Ada Bilgileri</yellow>'
       island-uuid: '<dark_purple>UUID: [uuid]</dark_purple>'
+      island-name: '<dark_purple>Ad: [name]</dark_purple>'
       owner: '<aqua>Sahibi: </aqua><dark_purple>[owner] ([uuid])</dark_purple>'
       last-login: '<aqua>Son giris: </aqua><dark_purple>[date]</dark_purple>'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy

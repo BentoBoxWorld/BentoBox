@@ -319,11 +319,12 @@ commands:
           <red>A játékosnak több [prefix_island] van. Kérlek, jelöld meg,</red>
           melyiket.
     info:
-      parameters: <játékos>
+      parameters: <játékos> [sziget neve]
       description: információkat kaphat a tartózkodási helyéről vagy a játékos szigetéről
       no-island: '<red>Jelenleg nem vagy szigeten...</red>'
       title: '========== [prefix_Island] információ ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Név: [name]'
       owner: 'Tulajdonos: [owner] ([uuid])'
       last-login: 'Utolsó bejelentkezés: [date]'
       last-login-date-time-format: EEE HMM nn ÓÓ:pp:ss zzz éééé

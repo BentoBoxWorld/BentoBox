@@ -34,6 +34,8 @@ import org.mockito.Mock;
 
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.flags.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
@@ -189,6 +191,12 @@ class CycleClickTest extends RanksManagerTestSetup {
         // Hidden flags
         hiddenFlags = new ArrayList<>();
         when(iwm.getHiddenFlags(world)).thenReturn(hiddenFlags);
+        // Shift-click mutates the live world settings list via the game mode addon
+        GameModeAddon gma = mock(GameModeAddon.class);
+        WorldSettings ws = mock(WorldSettings.class);
+        when(gma.getWorldSettings()).thenReturn(ws);
+        when(ws.getHiddenFlags()).thenReturn(hiddenFlags);
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
     }
 
     @Override

@@ -309,11 +309,12 @@ commands:
         specify-island-location: '<red>Specificați locația insulei în format x,y,z</red>'
         player-has-more-than-one-island: '<red>Player are mai multe insule. Specificați care dintre ele.</red>'
     info:
-      parameters: <player>
+      parameters: <player> [numele insulei]
       description: obțineți informații despre locul dvs. sau insula jucătorului
       no-island: '<red>Nu vă aflați într-o insulă acum ...</red>'
       title: '========== Informații despre insulă ============'
       island-uuid: 'UUID: [uuid]'
+      island-name: 'Nume: [name]'
       owner: 'Proprietar: [owner] ([uuid])'
       last-login: 'Ultima autentificare: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz aaaa

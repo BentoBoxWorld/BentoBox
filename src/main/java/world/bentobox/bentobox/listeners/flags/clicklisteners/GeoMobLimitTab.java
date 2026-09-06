@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -92,23 +91,22 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         // Convert the slot and active page to an index
         int index = tp.getActivePage() * 36 + slot - 9;
         EntityType c = getEntityTypes().get(index);
-        if (type == EntityLimitTabType.MOB_LIMIT) {
-            if (plugin.getIWM().getMobLimitSettings(world).contains(c.name())) {
-                plugin.getIWM().getMobLimitSettings(world).remove(c.name());
+        // Mutate the game mode's live list - the IWM getters return an immutable
+        // empty list when the world is not a game world (java:S6322)
+        plugin.getIWM().getAddon(Util.getWorld(world)).ifPresent(gameModeAddon -> {
+            List<String> settings = type == EntityLimitTabType.MOB_LIMIT
+                    ? gameModeAddon.getWorldSettings().getMobLimitSettings()
+                    : gameModeAddon.getWorldSettings().getGeoLimitSettings();
+            if (settings.contains(c.name())) {
+                settings.remove(c.name());
             } else {
-                plugin.getIWM().getMobLimitSettings(world).add(c.name());
+                settings.add(c.name());
             }
-        } else {
-            if (plugin.getIWM().getGeoLimitSettings(world).contains(c.name())) {
-                plugin.getIWM().getGeoLimitSettings(world).remove(c.name());
-            } else {
-                plugin.getIWM().getGeoLimitSettings(world).add(c.name());
-            }
-        }
+            // Save settings
+            gameModeAddon.saveWorldSettings();
+        });
         // Apply change to panel
         panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
-        // Save settings
-        plugin.getIWM().getAddon(Util.getWorld(world)).ifPresent(GameModeAddon::saveWorldSettings);
         return true;
     }
 
