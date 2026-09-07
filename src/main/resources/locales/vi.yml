@@ -395,11 +395,14 @@ commands:
       description: xem hạng của người chơi trên đảo của họ hoặc đảo của chủ
       rank-is: '<green>Hạng là </green><aqua>[rank] </aqua><green>trên đảo của </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <người chơi> <hạng> [chủ đảo]
-      description: đặt hạng của người chơi trên đảo c��a họ hoặc đảo của chủ
-      unknown-rank: '<red>Hạng không xác định!</red>'
+      parameters: <người chơi> <cấp bậc> [chủ [prefix_island] | x,y,z]
+      description: 'thăng hoặc giáng cấp một người chơi lên một cấp bậc trên [prefix_island] của đội họ, hoặc trên [prefix_island] được chỉ định theo chủ sở hữu hoặc tâm x,y,z'
+      unknown-rank: '<red>Cấp bậc không xác định [rank]. Chọn một trong: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Hạng phải cao hơn khách tham quan.</red>'
+      cannot-set-owner: '<red>Bạn không thể đặt hoặc thay đổi cấp bậc của chủ đảo. Dùng </red><yellow>setowner</yellow><red> để chuyển quyền sở hữu.</red>'
+      already-rank: '<red>[name] đã là [rank] trên [prefix_island] này.</red>'
       rank-set: '<green>Đã đặt hạng t�� </green><aqua>[from] </aqua><green>thành </green><aqua>[to] </aqua><green>trên đảo của </green><aqua>[name]</aqua><green>.</green>'
+      admin-changed-rank: '<gold>Quản trị viên đã đặt cấp bậc của bạn trên [prefix_island] của </gold><aqua>[name]</aqua><gold> thành </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[toạ độ x y z]'
       description: đặt vị trí hiện tại hoặc [x y z] là điểm giữa khu vực bảo vệ

@@ -405,11 +405,14 @@ commands:
       description: obține rangul unui jucător pe insula lor sau pe insula proprietarului
       rank-is: '<green>Rank este </green><aqua>[rank] </aqua><green>pe insula </green><aqua>[name] </aqua><green>.</green>'
     setrank:
-      parameters: <player> <rank> [proprietarul insulei]
-      description: stabiliți rangul unui jucător pe insula lor sau pe insula proprietarului
-      unknown-rank: '<red>Rang necunoscut!</red>'
+      parameters: <jucător> <rang> [proprietarul [prefix_island] | x,y,z]
+      description: 'promovează sau retrogradează un jucător la un rang pe [prefix_island] echipei sale, sau pe [prefix_island] indicată prin proprietar sau centrul x,y,z'
+      unknown-rank: '<red>Rang necunoscut [rank]. Alege unul dintre: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Rank trebuie să fie mai mare decât vizitatorul.</red>'
+      cannot-set-owner: '<red>Nu poți seta sau schimba rangul proprietarului. Folosește </red><yellow>setowner</yellow><red> pentru a transfera proprietatea.</red>'
+      already-rank: '<red>[name] este deja [rank] pe această [prefix_island].</red>'
       rank-set: '<green>Rang setat de la </green><aqua>[from] </aqua><green>la </green><aqua>[to] </aqua><green>pe insula </green><aqua>[name] </aqua><green>.</green>'
+      admin-changed-rank: '<gold>Un admin ți-a setat rangul pe [prefix_island] lui </gold><aqua>[name]</aqua><gold> la </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[ coordonatele x y z ]'
       description: >-

@@ -383,13 +383,14 @@ commands:
       description: získat hodnost hráče na jejich ostrově nebo na ostrově vlastníka
       rank-is: '<green>Hodnost je </green><aqua>[rank] </aqua><green>na ostrově </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <player> <rank> [island owner]
-      description: nastavit hodnot hráče na jejich ostrově nebo na ostrově vlastníka
-      unknown-rank: '<red>Neznámá hodnost!</red>'
+      parameters: <hráč> <hodnost> [vlastník [prefix_island]u | x,y,z]
+      description: 'povýší nebo degraduje hráče na hodnost na jeho týmovém [prefix_island]u, nebo na [prefix_island]u určeném jménem vlastníka či středem x,y,z'
+      unknown-rank: '<red>Neznámá hodnost [rank]. Vyberte jednu z: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Hodnost musí být vyšší, než visitor.</red>'
-      rank-set: >-
-        <green>Hodnost nastavena z </green><aqua>[from] </aqua><green>na </green><aqua>[to] </aqua><green>na ostrově </green><aqua>[name]</aqua><green></green>
-        .
+      cannot-set-owner: '<red>Hodnost vlastníka nelze nastavit ani změnit. Použijte </red><yellow>setowner</yellow><red> k převodu vlastnictví.</red>'
+      already-rank: '<red>[name] už má hodnost [rank] na tomto [prefix_island]u.</red>'
+      rank-set: '<green>Hodnost nastavena z </green><aqua>[from] </aqua><green>na </green><aqua>[to] </aqua><green>na ostrově </green><aqua>[name]</aqua><green></green> .'
+      admin-changed-rank: '<gold>Admin nastavil tvou hodnost na [prefix_island]u hráče </gold><aqua>[name]</aqua><gold> na </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z souřadnice]'
       description: >-

@@ -417,13 +417,14 @@ commands:
       description: kap egy játékos rangot a szigetén vagy a tulajdonos szigetén
       rank-is: 'Az <green>Rank </green><aqua>[rank] </aqua><green></green><aqua>[name]</aqua><green>szigetén.</green>'
     setrank:
-      parameters: <játékos> <rang> [szigettulajdonos]
-      description: állítsanak be egy játékos rangot a szigetükön vagy a tulajdonos szigetén
-      unknown-rank: '<red>Ismeretlen rang!</red>'
+      parameters: <játékos> <rang> [[prefix_island] tulajdonosa | x,y,z]
+      description: 'játékos előléptetése vagy lefokozása egy rangra a csapata [prefix_island]án, vagy a tulajdonos nevével vagy x,y,z középponttal megadott [prefix_island]on'
+      unknown-rank: '<red>Ismeretlen rang: [rank]. Válassz egyet: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>A rangnak magasabbnak kell lennie, mint a látogatóé.</red>'
-      rank-set: >-
-        Az <green>rangsor beállítva </green><aqua>-től [from] </aqua><green>-ig </green><aqua>-ig [to] </aqua><green>-ig </green><aqua>[name]</aqua><green></green>
-        szigetén.
+      cannot-set-owner: '<red>A tulajdonos rangját nem lehet beállítani vagy megváltoztatni. Használd a </red><yellow>setowner</yellow><red> parancsot a tulajdonjog átadásához.</red>'
+      already-rank: '<red>[name] már [rank] ezen a [prefix_island]on.</red>'
+      rank-set: 'Az <green>rangsor beállítva </green><aqua>-től [from] </aqua><green>-ig </green><aqua>-ig [to] </aqua><green>-ig </green><aqua>[name]</aqua><green></green> szigetén.'
+      admin-changed-rank: '<gold>Egy admin a rangodat </gold><aqua>[name]</aqua><gold> [prefix_island]án </gold><aqua>[rank]</aqua><gold> rangra állította.</gold>'
     setprotectionlocation:
       parameters: '[x y z koordináta]'
       description: >-

@@ -348,11 +348,14 @@ commands:
       description: プレイヤーの島でのランクを見る。
       rank-is: プレーヤーのランクは [rank]である。
     setrank:
-      parameters: ＜プレーヤー＞　＜ランク＞
-      description: プレイヤーのランクを設定する
-      unknown-rank: '<red>不明ランク!</red>'
+      parameters: <プレイヤー> <ランク> [[prefix_island]の所有者 | x,y,z]
+      description: 'プレイヤーをチームの[prefix_island]、または所有者名か中心座標 x,y,z で指定した[prefix_island]で、指定のランクに昇格または降格します'
+      unknown-rank: '<red>不明なランク [rank] です。次から選んでください: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>ランクは訪問者より高くなければなりません</red>'
+      cannot-set-owner: '<red>所有者のランクは設定・変更できません。所有権を移すには </red><yellow>setowner</yellow><red> を使用してください。</red>'
+      already-rank: '<red>[name] はこの[prefix_island]ですでに [rank] です。</red>'
       rank-set: '<dark_green>[from] から [to] に設定されたランク。</dark_green>'
+      admin-changed-rank: '<gold>管理者が </gold><aqua>[name]</aqua><gold> の[prefix_island]でのあなたのランクを </gold><aqua>[rank]</aqua><gold> に設定しました。</gold>'
     setprotectionlocation:
       parameters: '[x y z coords]'
       description: 現在地または[x y z]を島の保護地域の中心として設定します

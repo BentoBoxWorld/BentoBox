@@ -394,11 +394,14 @@ commands:
       description: Olduğun ada üstündeki oyuncunun rankını gösterir.
       rank-is: '<green>Ada üstündeki yetkisi: </green><yellow>[rank].</yellow>'
     setrank:
-      parameters: <player> <rank>
-      description: Olduğun ada üstündeki oyuncuya yetkisini ayarlar
-      unknown-rank: '<dark_red>Bilinmeyen rütbe!</dark_red>'
+      parameters: <oyuncu> <rütbe> [[prefix_island] sahibi | x,y,z]
+      description: 'bir oyuncuyu takımının [prefix_island] üzerinde veya sahibiyle ya da x,y,z merkeziyle belirtilen [prefix_island] üzerinde bir rütbeye yükseltir veya düşürür'
+      unknown-rank: '<red>Bilinmeyen rütbe [rank]. Şunlardan birini seçin: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Rütbe türü ziyaretçiden yüksek olmalıdır.</red>'
+      cannot-set-owner: '<red>Sahibin rütbesini ayarlayamaz veya değiştiremezsiniz. Sahipliği aktarmak için </red><yellow>setowner</yellow><red> kullanın.</red>'
+      already-rank: '<red>[name] bu [prefix_island] üzerinde zaten [rank].</red>'
       rank-set: '<green>Rütbe </green><red>[from]</red><green>''dan </green><yellow>[to] </yellow><green>yükseltildi.</green>'
+      admin-changed-rank: '<gold>Bir yönetici </gold><aqua>[name]</aqua><gold> adlı oyuncunun [prefix_island] üzerindeki rütbeni </gold><aqua>[rank]</aqua><gold> olarak ayarladı.</gold>'
     setprotectionlocation:
       parameters: '[x y z koordinatları]'
       description: >-

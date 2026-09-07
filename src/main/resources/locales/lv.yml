@@ -396,11 +396,14 @@ commands:
       description: atgriež spēlētāja rangu komandā
       rank-is: '<green>Spēlētājam ir [rank] rangs uz viņa salas.</green>'
     setrank:
-      parameters: <spēlētājs> <rangs>
-      description: uzstāda spēlētājam rangu uz viņa salas
-      unknown-rank: '<red>Nezināms rangs!</red>'
+      parameters: <spēlētājs> <rangs> [[prefix_island] īpašnieks | x,y,z]
+      description: 'paaugstina vai pazemina spēlētāju uz rangu viņa komandas [prefix_island] vai [prefix_island], kas norādīta pēc īpašnieka vai centra x,y,z'
+      unknown-rank: '<red>Nezināms rangs [rank]. Izvēlies vienu no: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Rangam ir jābūt lielākam par apmeklētāju</red>'
+      cannot-set-owner: '<red>Īpašnieka rangu nevar iestatīt vai mainīt. Izmanto </red><yellow>setowner</yellow><red>, lai nodotu īpašumtiesības.</red>'
+      already-rank: '<red>[name] jau ir [rank] šajā [prefix_island].</red>'
       rank-set: '<green>Spēlētājam nomainīts rangs no [from] uz [to].</green>'
+      admin-changed-rank: '<gold>Administrators iestatīja tavu rangu </gold><aqua>[name]</aqua><gold> [prefix_island] uz </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z koordinātas]'
       description: >-
