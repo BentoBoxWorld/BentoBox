@@ -406,11 +406,14 @@ commands:
       description: ottieni il rango di un giocatore nella sua isola
       rank-is: '<green>Il rango è [rank] nella sua isola.</green>'
     setrank:
-      parameters: <player> <rank>
-      description: imposta il rango di un player nella sua isola
-      unknown-rank: '<red>Rango sconosciuto!</red>'
+      parameters: <giocatore> <grado> [proprietario dell’[prefix_island] | x,y,z]
+      description: 'promuove o degrada un giocatore a un grado sull’[prefix_island] del suo team, o sull’[prefix_island] indicata dal proprietario o dal centro x,y,z'
+      unknown-rank: '<red>Grado sconosciuto [rank]. Scegli uno tra: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Il rank deve essere maggiore di quello del visitatore</red>'
+      cannot-set-owner: '<red>Non puoi impostare o cambiare il grado del proprietario. Usa </red><yellow>setowner</yellow><red> per trasferire la proprietà.</red>'
+      already-rank: '<red>[name] è già [rank] su questa [prefix_island].</red>'
       rank-set: '<green>Rango impostato da [from] a [to].</green>'
+      admin-changed-rank: '<gold>Un admin ha impostato il tuo grado sull’[prefix_island] di </gold><aqua>[name]</aqua><gold> a </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[coordinate x y z]'
       description: >-

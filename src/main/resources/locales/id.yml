@@ -400,13 +400,14 @@ commands:
       description: mendapatkan peringkat pemain di pulau mereka atau pulau pemiliknya
       rank-is: '<green>Peringkat adalah </green><aqua>[rank] </aqua><green>di pulau </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <pemain> <peringkat> [pemilik pulau]
-      description: mengatur peringkat pemain di pulau mereka atau pulau pemiliknya
-      unknown-rank: '<red>Peringkat tidak diketahui!</red>'
+      parameters: <pemain> <peringkat> [pemilik [prefix_island] | x,y,z]
+      description: 'naikkan atau turunkan peringkat pemain di [prefix_island] timnya, atau di [prefix_island] yang disebutkan berdasarkan pemilik atau pusat x,y,z'
+      unknown-rank: '<red>Peringkat [rank] tidak dikenal. Pilih salah satu: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Peringkat harus lebih tinggi dari pengunjung.</red>'
-      rank-set: >-
-        <green>Peringkat ditetapkan dari </green><aqua>[from] </aqua><green>ke </green><aqua>[to] </aqua><green>di pulau </green><aqua></aqua>
-        [name]<green>.</green>
+      cannot-set-owner: '<red>Kamu tidak dapat mengatur atau mengubah peringkat pemilik. Gunakan </red><yellow>setowner</yellow><red> untuk memindahkan kepemilikan.</red>'
+      already-rank: '<red>[name] sudah [rank] di [prefix_island] ini.</red>'
+      rank-set: '<green>Peringkat ditetapkan dari </green><aqua>[from] </aqua><green>ke </green><aqua>[to] </aqua><green>di pulau </green><aqua></aqua> [name]<green>.</green>'
+      admin-changed-rank: '<gold>Admin mengatur peringkatmu di [prefix_island] milik </gold><aqua>[name]</aqua><gold> menjadi </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[koord x y z]'
       description: >-

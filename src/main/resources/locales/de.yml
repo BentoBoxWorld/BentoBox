@@ -407,13 +407,14 @@ commands:
       description: Den Rang eines Spielers auf seiner Insel erhalten
       rank-is: '<green>Der Rang ist [rank] auf ihrer Insel.</green>'
     setrank:
-      parameters: <player> <rank> [Insels Besitzer]
-      description: >-
-        Den Rang eines Spielers auf seiner Insel oder der Insel des Besitzers
-        festlegen
-      unknown-rank: '<red>Unbekannter Rang!</red>'
+      parameters: <Spieler> <Rang> [[prefix_island]-Besitzer | x,y,z]
+      description: 'befördert oder degradiert einen Spieler auf einen Rang auf seiner Team-[prefix_island] oder auf der [prefix_island], die über den Besitzer oder das x,y,z-Zentrum angegeben wird'
+      unknown-rank: '<red>Unbekannter Rang [rank]. Wähle einen von: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Der Rang muss höher sein als Besucher.</red>'
+      cannot-set-owner: '<red>Der Rang des Besitzers kann nicht gesetzt oder geändert werden. Nutze </red><yellow>setowner</yellow><red>, um das Eigentum zu übertragen.</red>'
+      already-rank: '<red>[name] hat auf dieser [prefix_island] bereits den Rang [rank].</red>'
       rank-set: '<green>Rang von</green><aqua>[from]</aqua><green>auf</green><aqua>[to]</aqua><green>gesetzt für</green><aqua>[name]</aqua><green>''s Insel.</green>'
+      admin-changed-rank: '<gold>Ein Admin hat deinen Rang auf der [prefix_island] von </gold><aqua>[name]</aqua><gold> auf </gold><aqua>[rank]</aqua><gold> gesetzt.</gold>'
     setprotectionlocation:
       parameters: '[x y z Koordinaten]'
       description: >-

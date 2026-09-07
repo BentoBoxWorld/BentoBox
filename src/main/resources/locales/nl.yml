@@ -414,15 +414,14 @@ commands:
         eigenaar
       rank-is: '<green>rang is </green><aqua>[rank] </aqua><green>op </green><aqua>[name] </aqua><green>''s eiland.</green>'
     setrank:
-      parameters: <speler> <rank> [eilandeigenaar]
-      description: >-
-        bepaal de rang van een speler op zijn of haar eiland of op het eiland
-        van de eigenaar
-      unknown-rank: '<red>Onbekende rang!</red>'
+      parameters: <speler> <rang> [[prefix_island] eigenaar | x,y,z]
+      description: 'promoveer of degradeer een speler naar een rang op het [prefix_island] van zijn team, of op het [prefix_island] aangeduid met de eigenaar of het x,y,z-middelpunt'
+      unknown-rank: '<red>Onbekende rang [rank]. Kies uit: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Rang moet hoger zijn dan bezoeker.</red>'
-      rank-set: >-
-        <green>Rang ingesteld van </green><aqua>[from] </aqua><green>naar </green><aqua>[to] </aqua><green>op </green><aqua>[name] </aqua><green>'s</green>
-        eiland.
+      cannot-set-owner: '<red>Je kunt de rang van de eigenaar niet instellen of wijzigen. Gebruik </red><yellow>setowner</yellow><red> om het eigendom over te dragen.</red>'
+      already-rank: '<red>[name] is al [rank] op dit [prefix_island].</red>'
+      rank-set: '<green>Rang ingesteld van </green><aqua>[from] </aqua><green>naar </green><aqua>[to] </aqua><green>op </green><aqua>[name] </aqua><green>''s</green> eiland.'
+      admin-changed-rank: '<gold>Een admin heeft je rang op het [prefix_island] van </gold><aqua>[name]</aqua><gold> ingesteld op </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z coördinaten]'
       description: >-
