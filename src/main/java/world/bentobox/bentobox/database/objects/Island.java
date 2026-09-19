@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -291,7 +293,7 @@ public class Island implements DataObject, MetaDataAble {
         this.maxHomes = island.getMaxHomes();
         this.maxMembers = new HashMap<>(island.getMaxMembers());
         this.members.putAll(island.getMembers());
-        this.metaData = island.getMetaData().<Map<String, MetaDataValue>>map(HashMap::new).orElse(null);
+        this.metaData = island.getMetaData().map(Island::toConcurrentMap).orElse(null);
         this.name = island.getName();
         this.owner = island.getOwner();
         this.protectionRange = island.getProtectionRange();
@@ -1745,15 +1747,36 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * Returns the island's metadata map, wrapping it in a thread-safe map on first access.
+     * <p>
+     * See {@link Players#getMetaData()} for why the backing map must tolerate concurrent access.
      * @return the metaData
      * @since 1.15.5
      */
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
-        if (metaData == null) {
-            metaData = new HashMap<>();
+        if (!(metaData instanceof ConcurrentMap)) {
+            metaData = toConcurrentMap(metaData);
         }
         return Optional.of(metaData);
+    }
+
+    /**
+     * Copies the given map into a new {@link ConcurrentHashMap}, dropping null keys and values,
+     * which a concurrent map cannot hold.
+     * @param source map to copy, may be null
+     * @return a mutable, thread-safe copy
+     */
+    private static Map<String, MetaDataValue> toConcurrentMap(Map<String, MetaDataValue> source) {
+        Map<String, MetaDataValue> result = new ConcurrentHashMap<>();
+        if (source != null) {
+            source.forEach((key, value) -> {
+                if (key != null && value != null) {
+                    result.put(key, value);
+                }
+            });
+        }
+        return result;
     }
 
     /**
@@ -1762,7 +1785,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
-        this.metaData = metaData;
+        this.metaData = metaData == null ? null : toConcurrentMap(metaData);
         setChanged();
     }
 

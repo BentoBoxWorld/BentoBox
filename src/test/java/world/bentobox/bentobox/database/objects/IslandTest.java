@@ -1058,6 +1058,32 @@ class IslandTest extends CommonTestSetup {
         assertEquals("value", island.getMetaData().get().get("key").asString());
     }
 
+    @Test
+    void testSetMetaDataImmutableMapIsCopiedAndMutable() {
+        island.setMetaData(Map.of("key", new MetaDataValue("value")));
+        Map<String, MetaDataValue> meta = island.getMetaData().get();
+        assertEquals("value", meta.get("key").asString());
+        assertDoesNotThrow(() -> meta.put("other", new MetaDataValue(true)));
+        assertTrue(island.getMetaData("other").get().asBoolean());
+    }
+
+    @Test
+    void testSetMetaDataDoesNotMutateCallerMap() {
+        Map<String, MetaDataValue> meta = new HashMap<>();
+        island.setMetaData(meta);
+        island.putMetaData("key", new MetaDataValue("value"));
+        assertTrue(meta.isEmpty());
+    }
+
+    @Test
+    void testCopyConstructorCopiesMetaData() {
+        island.putMetaData("key", new MetaDataValue("value"));
+        Island copy = new Island(island);
+        assertEquals("value", copy.getMetaData("key").get().asString());
+        copy.putMetaData("key", new MetaDataValue("changed"));
+        assertEquals("value", island.getMetaData("key").get().asString());
+    }
+
     // ======================== Primaries ========================
 
     @Test
