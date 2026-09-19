@@ -398,11 +398,14 @@ commands:
       description: zdobądź role gracza na jego wyspie
       rank-is: '<green>Rola [rank] na jego wyspie.</green>'
     setrank:
-      parameters: <gracz> <rola>
-      description: ustawia role gracza na swojej wyspie
-      unknown-rank: '<red>Nieznana rola!</red>'
+      parameters: <gracz> <ranga> [właściciel [prefix_island] | x,y,z]
+      description: 'awansuje lub degraduje gracza do rangi na [prefix_island] jego drużyny, lub na [prefix_island] wskazanej przez właściciela lub środek x,y,z'
+      unknown-rank: '<red>Nieznana ranga [rank]. Wybierz jedną z: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Ranga musi być wyższa niż ranga gościa.</red>'
+      cannot-set-owner: '<red>Nie możesz ustawić ani zmienić rangi właściciela. Użyj </red><yellow>setowner</yellow><red>, aby przenieść własność.</red>'
+      already-rank: '<red>[name] ma już rangę [rank] na tej [prefix_island].</red>'
       rank-set: '<green>Rola ustawiona z [from] na [to].</green>'
+      admin-changed-rank: '<gold>Administrator ustawił twoją rangę na [prefix_island] gracza </gold><aqua>[name]</aqua><gold> na </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z współrzędne]'
       description: >-

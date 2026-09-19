@@ -48,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.22.4"
+val buildVersion = "3.23.0"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -112,7 +112,7 @@ val multiverseCore5Version = "5.0.0-SNAPSHOT"
 val multiverseCore4Version = "4.3.16"
 val langUtilsVersion = "3.2.2"
 val slimefun4Version = "RC-37"
-val itemsAdderVersion = "4.0.2-beta-release-11"
+val itemsAdderVersion = "4.0.17"
 val fancyNpcsVersion = "2.4.4"
 val znpcsplusApiVersion = "2.0.0-SNAPSHOT"
 val fancyHologramsVersion = "2.4.1"
@@ -200,9 +200,6 @@ repositories {
     maven("https://repo.onarandombox.com/multiverse-releases") { name = "Multiverse-Releases" }
     maven("https://repo.onarandombox.com/multiverse-snapshots") { name = "Multiverse-Snapshots" }
     maven("https://mvn.lumine.io/repository/maven-public/") { name = "Lumine-Releases" } // Mythic mobs
-    maven("https://maven.devs.beer/") { name = "MatteoDev" }
-    maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
-    maven("https://repo.nexomc.com/releases") { name = "Nexo" } // Custom items/blocks plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
 
@@ -215,6 +212,18 @@ repositories {
     exclusiveContent {
         forRepository { maven("https://repo.mikeprimm.com/") { name = "Dynmap" } }
         filter { includeGroup("us.dynmap") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://repo.oraxen.com/releases") { name = "Oraxen" } } // Custom items plugin
+        filter { includeGroup("io.th0rgal") }
+    }
+    exclusiveContent {
+        // Nexo's repo also hosts its team.unnamed (creative-*) transitives.
+        forRepository { maven("https://repo.nexomc.com/releases") { name = "Nexo" } } // Custom items/blocks plugin
+        filter {
+            includeGroup("com.nexomc")
+            includeGroup("team.unnamed")
+        }
     }
     exclusiveContent {
         forRepository { maven("https://repo.momirealms.net/releases/") { name = "MomiRealms" } } // CraftEngine custom block plugin
@@ -279,7 +288,7 @@ dependencies {
     }
     compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
     compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")
-    compileOnly("dev.lone:api-itemsadder:$itemsAdderVersion")
+    compileOnly("beer.devs:itemsadder-api:$itemsAdderVersion") // Published to Maven Central
     compileOnly("de.oliver:FancyNpcs:$fancyNpcsVersion")
     compileOnly("lol.pyr:znpcsplus-api:$znpcsplusApiVersion")
     compileOnly("de.oliver:FancyHolograms:$fancyHologramsVersion")

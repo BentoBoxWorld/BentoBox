@@ -362,12 +362,15 @@ commands:
         of the owner
       rank-is: '<green>Rank is </green><aqua>[rank] </aqua><green>on </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
     setrank:
-      parameters: <player> <rank> [[prefix_island] owner]
-      description: set a player's rank on their [prefix_island] or the [prefix_island]
-        of the owner
-      unknown-rank: '<red>Unknown rank!</red>'
+      parameters: <player> <rank> [[prefix_island] owner | x,y,z]
+      description: >-
+        promote or demote a player to a rank on their team [prefix_island], or on the [prefix_island] named by its owner or x,y,z centre
+      unknown-rank: '<red>Unknown rank [rank]. Choose one of: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Rank must be higher than visitor.</red>'
+      cannot-set-owner: '<red>You cannot set or change the owner''s rank. Use </red><yellow>setowner</yellow><red> to transfer ownership instead.</red>'
+      already-rank: '<red>[name] is already [rank] on this [prefix_island].</red>'
       rank-set: '<green>Rank set from </green><aqua>[from] </aqua><green>to </green><aqua>[to] </aqua><green>on </green><aqua>[name]</aqua><green>''s [prefix_island].</green>'
+      admin-changed-rank: '<gold>An admin set your rank on </gold><aqua>[name]</aqua><gold>''s [prefix_island] to </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z coords]'
       description: set current location or [x y z] as center of [prefix_island]'s

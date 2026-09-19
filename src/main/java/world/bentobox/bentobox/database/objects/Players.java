@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -248,51 +249,35 @@ public class Players implements DataObject, MetaDataAble {
     }
 
     /**
+     * Returns the player's metadata map, wrapping it in a thread-safe map on first access.
+     * <p>
+     * The map may arrive as {@code null} (new player), as an immutable or Gson-created map
+     * (deserialization), or as a plain {@link HashMap}. All of these are copied once into a
+     * {@link java.util.concurrent.ConcurrentHashMap}. Metadata is read by many addons on hot paths such as
+     * {@code PlayerMoveEvent} and can be touched from other threads, so the backing map must
+     * tolerate concurrent access without corrupting itself.
      * @return the metaData
      * @since 1.15.5
      * @see User#getMetaData()
      */
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
-        if (metaData == null) {
-            metaData = new HashMap<>();
-        } else if (isImmutable(metaData)) {
-            metaData = new HashMap<>(metaData); // Convert immutable map to mutable
+        if (!(metaData instanceof ConcurrentMap)) {
+            metaData = MetaDataAble.toConcurrentMap(metaData);
         }
         return Optional.of(metaData);
     }
 
-    private boolean isImmutable(Map<String, MetaDataValue> map) {
-        try {
-            String testKey = "testKey";
-            MetaDataValue testValue = new MetaDataValue("test");
-
-            // If the map already contains keys, use one of them
-            if (!map.isEmpty()) {
-                String existingKey = map.keySet().iterator().next();
-                map.put(existingKey, map.get(existingKey)); // Attempt to replace value
-            } else {
-                // Use a unique key-value pair
-                map.put(testKey, testValue);
-                map.remove(testKey);
-            }
-            return false; // No exception means the map is mutable
-        } catch (UnsupportedOperationException e) {
-            return true; // Exception means the map is immutable
-        }
-    }
-
     /**
-     * @param metaData the metaData to set
+     * Sets the player's metadata. The map is copied into a thread-safe map, so the caller's map
+     * is never mutated and immutable maps are accepted.
+     * @param metaData the metaData to set, or null to clear
      * @since 1.15.4
      * @see User#setMetaData(Map)
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
-        if (isImmutable(metaData)) {
-            throw new IllegalArgumentException("Provided map is immutable and cannot be set.");
-        }
-        this.metaData = metaData;
+        this.metaData = metaData == null ? null : MetaDataAble.toConcurrentMap(metaData);
     }
 
     /**

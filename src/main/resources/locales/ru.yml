@@ -395,12 +395,14 @@ commands:
       description: отображает ранг игрока на его острове или острове владельца
       rank-is: <green>Ранг <aqua>[rank] </aqua>на острове игрока <aqua>[name]</aqua>.</green>
     setrank:
-      parameters: <игрок> <ранг> [владелец [prefix_island]а]
-      description: устанавливает ранг игрока на их острове или острове владельца
-      unknown-rank: <red>Неизвестный ранг!</red>
-      not-possible: <red>Ранг должен быть больше чем у посетителя.</red>
-      rank-set: <green>Ранг установлен между <aqua>[from] </aqua>и <aqua>[to] </aqua>на
-        острове игрока <aqua>[name]</aqua>.</green>
+      parameters: <игрок> <ранг> [владелец [prefix_island]а | x,y,z]
+      description: 'повысить или понизить игрока до ранга на [prefix_island]е его команды, либо на [prefix_island]е, указанном по владельцу или центру x,y,z'
+      unknown-rank: '<red>Неизвестный ранг [rank]. Выберите один из: </red><yellow>[ranks]</yellow>'
+      not-possible: '<red>Ранг должен быть больше чем у посетителя.</red>'
+      cannot-set-owner: '<red>Нельзя установить или изменить ранг владельца. Используйте </red><yellow>setowner</yellow><red>, чтобы передать владение.</red>'
+      already-rank: '<red>[name] уже имеет ранг [rank] на этом [prefix_island]е.</red>'
+      rank-set: '<green>Ранг установлен между <aqua>[from] </aqua>и <aqua>[to] </aqua>на острове игрока <aqua>[name]</aqua>.</green>'
+      admin-changed-rank: '<gold>Администратор установил ваш ранг на [prefix_island]е игрока </gold><aqua>[name]</aqua><gold>: </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z координаты]'
       description: устанавливает текущую локацию или координаты [x y z] как центральную

@@ -423,11 +423,14 @@ commands:
       description: obtenir le rang d'un joueur sur son île ou sur l'île du propriétaire
       rank-is: '<green>Le rang du joueur est </green><aqua>[rank] </aqua><green>sur l''île de </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <player> <rank> [propriétaire de l'île]
-      description: définir le rang d'un joueur sur son île ou sur celle du propriétaire
-      unknown-rank: '<red>Rang inconnu!</red>'
+      parameters: <joueur> <rang> [propriétaire de l’[prefix_island] | x,y,z]
+      description: 'promouvoir ou rétrograder un joueur à un rang sur l’[prefix_island] de son équipe, ou sur l’[prefix_island] désignée par son propriétaire ou son centre x,y,z'
+      unknown-rank: '<red>Rang inconnu [rank]. Choisissez parmi : </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Le classement doit être supérieur à celui du visiteur.</red>'
+      cannot-set-owner: '<red>Vous ne pouvez pas définir ni changer le rang du propriétaire. Utilisez </red><yellow>setowner</yellow><red> pour transférer la propriété.</red>'
+      already-rank: '<red>[name] est déjà [rank] sur cette [prefix_island].</red>'
       rank-set: '<green>Rang défini de </green><aqua>[from] </aqua><green>à </green><aqua>[to] </aqua><green>sur l''île de </green><aqua>[name]</aqua><green>.</green>'
+      admin-changed-rank: '<gold>Un administrateur a défini votre rang sur l’[prefix_island] de </gold><aqua>[name]</aqua><gold> à </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[coordonnées x y z]'
       description: >-

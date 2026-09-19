@@ -356,11 +356,14 @@ commands:
       description: отримати ранг гравця на його [prefix_island] або на [prefix_island] власника
       rank-is: '<green>Ранг </green><aqua>[rank] </aqua><green>на [prefix_island] гравця </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <гравець> <rank> [[prefix_island] owner]
-      description: встановити ранг гравцю на його [prefix_island] або на [prefix_island] власника
-      unknown-rank: '<red>Невідомий ранг!</red>'
+      parameters: <гравець> <ранг> [власник [prefix_island]а | x,y,z]
+      description: 'підвищити або понизити гравця до рангу на [prefix_island]і його команди, або на [prefix_island]і, вказаному за власником чи центром x,y,z'
+      unknown-rank: '<red>Невідомий ранг [rank]. Виберіть один із: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Ранг має бути вищий за «відвідувач».</red>'
+      cannot-set-owner: '<red>Не можна встановити чи змінити ранг власника. Використайте </red><yellow>setowner</yellow><red>, щоб передати власність.</red>'
+      already-rank: '<red>[name] уже має ранг [rank] на цьому [prefix_island]і.</red>'
       rank-set: '<green>Ранг змінено з </green><aqua>[from] </aqua><green>на </green><aqua>[to] </aqua><green>на [prefix_island] </green><aqua>[name]</aqua><green>.</green>'
+      admin-changed-rank: '<gold>Адміністратор встановив ваш ранг на [prefix_island]і гравця </gold><aqua>[name]</aqua><gold>: </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z coords]'
       description: встановити поточну локацію або [x y z] центром зони захисту [prefix_island]

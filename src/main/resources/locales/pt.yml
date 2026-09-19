@@ -397,13 +397,14 @@ commands:
       description: obter o cargo de um jogador em sua ilha ou na ilha do dono
       rank-is: '<green>Cargo é </green><aqua>[rank] </aqua><green>na ilha de </green><aqua>[name]</aqua><green>.</green>'
     setrank:
-      parameters: <jogador> <classificação> [dono da ilha]
-      description: definir o cargo de um jogador em sua ilha ou na ilha do dono
-      unknown-rank: '<red>Cargo desconhecido!</red>'
+      parameters: <jogador> <cargo> [dono da [prefix_island] | x,y,z]
+      description: 'promove ou despromove um jogador para um cargo na [prefix_island] da sua equipa, ou na [prefix_island] indicada pelo dono ou centro x,y,z'
+      unknown-rank: '<red>Cargo desconhecido [rank]. Escolhe um de: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>O cargo deve ser maior que visitante.</red>'
-      rank-set: >-
-        <green>Cargo definido de </green><aqua>[from] </aqua><green>para </green><aqua>[to] </aqua><green>na ilha de </green><aqua></aqua>
-        [name]<green>.</green>
+      cannot-set-owner: '<red>Não podes definir nem mudar o cargo do dono. Usa </red><yellow>setowner</yellow><red> para transferir a propriedade.</red>'
+      already-rank: '<red>[name] já é [rank] nesta [prefix_island].</red>'
+      rank-set: '<green>Cargo definido de </green><aqua>[from] </aqua><green>para </green><aqua>[to] </aqua><green>na ilha de </green><aqua></aqua> [name]<green>.</green>'
+      admin-changed-rank: '<gold>Um admin definiu o teu cargo na [prefix_island] de </gold><aqua>[name]</aqua><gold> como </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[coordenadas x y z]'
       description: >-

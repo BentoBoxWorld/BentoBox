@@ -357,11 +357,14 @@ commands:
       description: 得到玩家在他們的島嶼上的階銜
       rank-is: '<green>在他們的島嶼上的階銜是 [rank]。</green>'
     setrank:
-      parameters: <player> <rank>
-      description: 設置玩家在他們島嶼上的階銜
-      unknown-rank: '<red>未知階銜!</red>'
+      parameters: <玩家> <等級> [[prefix_island]島主 | x,y,z]
+      description: '將玩家在其團隊[prefix_island]上、或在透過島主名稱或中心 x,y,z 指定的[prefix_island]上提升或降低到指定等級'
+      unknown-rank: '<red>未知的身份等級 [rank]。請選擇以下之一: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>要設置的階銜必須比 “訪客” 高。</red>'
+      cannot-set-owner: '<red>無法設定或更改島主的身份等級。請使用 </red><yellow>setowner</yellow><red> 轉移擁有權。</red>'
+      already-rank: '<red>[name] 在此[prefix_island]上已經是 [rank]。</red>'
       rank-set: '<green>階銜由 [from] 設置為 [to]。</green>'
+      admin-changed-rank: '<gold>管理員已將你在 </gold><aqua>[name]</aqua><gold> 的[prefix_island]上的身份等級設定為 </gold><aqua>[rank]</aqua><gold>。</gold>'
     setprotectionlocation:
       parameters: '[x y z (坐標)]'
       description: 將所處位置或給定坐標設置為島嶼保護區的中心點

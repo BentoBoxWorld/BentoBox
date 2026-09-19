@@ -391,11 +391,14 @@ commands:
       description: dobiti rang igrača na svom otoku ili otoku vlasnika
       rank-is: '<green>Rang je </green><aqua>[rank] </aqua><green>na </green><aqua>[name]</aqua><green>otoku.</green>'
     setrank:
-      parameters: <igrač> <rang> [vlasnik otoka]
-      description: postaviti rang igrača na njegovom otoku ili otoku vlasnika
-      unknown-rank: '<red>Nepoznat rang!</red>'
+      parameters: <igrač> <rang> [vlasnik [prefix_island]a | x,y,z]
+      description: 'promakni ili degradiraj igrača na rang na njegovom timskom [prefix_island]u, ili na [prefix_island]u navedenom po vlasniku ili središtu x,y,z'
+      unknown-rank: '<red>Nepoznat rang [rank]. Odaberi jedan od: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>Rang mora biti viši od posjetitelja.</red>'
+      cannot-set-owner: '<red>Ne možeš postaviti ni promijeniti rang vlasnika. Koristi </red><yellow>setowner</yellow><red> za prijenos vlasništva.</red>'
+      already-rank: '<red>[name] je već [rank] na ovom [prefix_island]u.</red>'
       rank-set: '<green>Rang postavljen od </green><aqua>[from] </aqua><green>do </green><aqua>[to] </aqua><green>na </green><aqua>[name]</aqua><green>otoku.</green>'
+      admin-changed-rank: '<gold>Admin je postavio tvoj rang na [prefix_island]u igrača </gold><aqua>[name]</aqua><gold> na </gold><aqua>[rank]</aqua><gold>.</gold>'
     setprotectionlocation:
       parameters: '[x y z koordinate]'
       description: >-

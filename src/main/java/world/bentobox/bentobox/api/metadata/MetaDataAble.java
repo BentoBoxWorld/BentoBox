@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.metadata;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Optional;
 
 /**
@@ -32,13 +33,17 @@ public interface MetaDataAble {
     }
 
     /**
-     * Put a key, value string pair into the metadata
+     * Put a key, value string pair into the metadata. A null value removes the key, because the
+     * backing map does not store nulls.
      * @param key - key
-     * @param value - value
+     * @param value - value, or null to remove the key
      * @return the previous value associated with key, or empty if there was no mapping for key.
      * @since 1.15.6
      */
     default Optional<MetaDataValue> putMetaData(String key, MetaDataValue value) {
+        if (value == null) {
+            return removeMetaData(key);
+        }
         return getMetaData().map(m -> m.put(key, value));
     }
 
@@ -50,6 +55,26 @@ public interface MetaDataAble {
      */
     default Optional<MetaDataValue> removeMetaData(String key) {
         return getMetaData().map(m -> m.remove(key));
+    }
+
+    /**
+     * Copies the given map into a new {@link ConcurrentHashMap}, dropping null keys and values,
+     * which a concurrent map cannot hold. Implementations use this to make their backing map
+     * safe for concurrent access without mutating the caller's map.
+     * @param source map to copy, may be null
+     * @return a mutable, thread-safe copy
+     * @since 3.23.0
+     */
+    static Map<String, MetaDataValue> toConcurrentMap(Map<String, MetaDataValue> source) {
+        Map<String, MetaDataValue> result = new ConcurrentHashMap<>();
+        if (source != null) {
+            source.forEach((key, value) -> {
+                if (key != null && value != null) {
+                    result.put(key, value);
+                }
+            });
+        }
+        return result;
     }
 
 }

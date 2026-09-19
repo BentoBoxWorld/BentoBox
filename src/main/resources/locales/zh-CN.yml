@@ -356,11 +356,14 @@ commands:
       description: 获取指定玩家的身份等级
       rank-is: '<green>玩家</green><aqua>[name]</aqua><green>在岛屿上的身份等级为: </green><aqua>[rank]</aqua><green>.</green>'
     setrank:
-      parameters: <player> <rank> [island owner]
-      description: 设置指定玩家的身份等级
-      unknown-rank: '<red>未知的身份等级!</red>'
+      parameters: <玩家> <等级> [[prefix_island]岛主 | x,y,z]
+      description: '将玩家在其团队[prefix_island]上、或在通过岛主名称或中心 x,y,z 指定的[prefix_island]上提升或降低到指定等级'
+      unknown-rank: '<red>未知的身份等级 [rank]。请选择以下之一: </red><yellow>[ranks]</yellow>'
       not-possible: '<red>身份等级必须比</red><aqua>访客</aqua><red>高.</red>'
+      cannot-set-owner: '<red>无法设置或更改岛主的身份等级。请使用 </red><yellow>setowner</yellow><red> 转移所有权。</red>'
+      already-rank: '<red>[name] 在此[prefix_island]上已经是 [rank]。</red>'
       rank-set: '<green>已将玩家</green><aqua>[name]</aqua><green>的身份等级从</green><aqua>[from]</aqua><green>设置为</green><aqua>[to]</aqua><green>.</green>'
+      admin-changed-rank: '<gold>管理员已将你在 </gold><aqua>[name]</aqua><gold> 的[prefix_island]上的身份等级设置为 </gold><aqua>[rank]</aqua><gold>。</gold>'
     setprotectionlocation:
       parameters: '<gray>[x y z coords]</gray>'
       description: 将当前位置或指定坐标作为岛屿保护的中心点

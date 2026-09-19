@@ -331,11 +331,14 @@ commands:
       description: 查詢玩家在自己的[prefix_island]或指定島主[prefix_island]中的權限等級
       rank-is: <green>權限等級為 </green><aqua>[rank] </aqua><green>（</green><aqua>[name]</aqua><green> 的[prefix_island]）。</green>
     setrank:
-      parameters: <玩家> <權限等級> [[prefix_island]島主]
-      description: 設定玩家在自己的[prefix_island]或指定島主[prefix_island]中的權限等級
-      unknown-rank: <red>未知的權限等級！</red>
-      not-possible: <red>權限等級必須高於訪客。</red>
-      rank-set: <green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]權限等級從 </green><aqua>[from] </aqua><green>變更為 </green><aqua>[to]</aqua><green>。</green>
+      parameters: <玩家> <等級> [[prefix_island]島主 | x,y,z]
+      description: '將玩家在其團隊[prefix_island]上、或在透過島主名稱或中心 x,y,z 指定的[prefix_island]上提升或降低到指定等級'
+      unknown-rank: '<red>未知的身份等級 [rank]。請選擇以下之一: </red><yellow>[ranks]</yellow>'
+      not-possible: '<red>權限等級必須高於訪客。</red>'
+      cannot-set-owner: '<red>無法設定或更改島主的身份等級。請使用 </red><yellow>setowner</yellow><red> 轉移擁有權。</red>'
+      already-rank: '<red>[name] 在此[prefix_island]上已經是 [rank]。</red>'
+      rank-set: '<green>已將 </green><aqua>[name]</aqua><green> 的[prefix_island]權限等級從 </green><aqua>[from] </aqua><green>變更為 </green><aqua>[to]</aqua><green>。</green>'
+      admin-changed-rank: '<gold>管理員已將你在 </gold><aqua>[name]</aqua><gold> 的[prefix_island]上的身份等級設定為 </gold><aqua>[rank]</aqua><gold>。</gold>'
     setprotectionlocation:
       parameters: '[x y z 座標]'
       description: 將目前位置或指定的 [x y z] 座標設為[prefix_island]的保護區域中心
