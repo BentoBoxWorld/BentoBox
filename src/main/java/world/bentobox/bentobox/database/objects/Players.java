@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.Bukkit;
@@ -254,7 +253,7 @@ public class Players implements DataObject, MetaDataAble {
      * <p>
      * The map may arrive as {@code null} (new player), as an immutable or Gson-created map
      * (deserialization), or as a plain {@link HashMap}. All of these are copied once into a
-     * {@link ConcurrentHashMap}. Metadata is read by many addons on hot paths such as
+     * {@link java.util.concurrent.ConcurrentHashMap}. Metadata is read by many addons on hot paths such as
      * {@code PlayerMoveEvent} and can be touched from other threads, so the backing map must
      * tolerate concurrent access without corrupting itself.
      * @return the metaData
@@ -264,27 +263,9 @@ public class Players implements DataObject, MetaDataAble {
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
         if (!(metaData instanceof ConcurrentMap)) {
-            metaData = toConcurrentMap(metaData);
+            metaData = MetaDataAble.toConcurrentMap(metaData);
         }
         return Optional.of(metaData);
-    }
-
-    /**
-     * Copies the given map into a new {@link ConcurrentHashMap}, dropping null keys and values,
-     * which a concurrent map cannot hold.
-     * @param source map to copy, may be null
-     * @return a mutable, thread-safe copy
-     */
-    private static Map<String, MetaDataValue> toConcurrentMap(Map<String, MetaDataValue> source) {
-        Map<String, MetaDataValue> result = new ConcurrentHashMap<>();
-        if (source != null) {
-            source.forEach((key, value) -> {
-                if (key != null && value != null) {
-                    result.put(key, value);
-                }
-            });
-        }
-        return result;
     }
 
     /**
@@ -296,7 +277,7 @@ public class Players implements DataObject, MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
-        this.metaData = metaData == null ? null : toConcurrentMap(metaData);
+        this.metaData = metaData == null ? null : MetaDataAble.toConcurrentMap(metaData);
     }
 
     /**
