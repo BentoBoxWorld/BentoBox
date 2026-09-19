@@ -112,7 +112,7 @@ val multiverseCore5Version = "5.0.0-SNAPSHOT"
 val multiverseCore4Version = "4.3.16"
 val langUtilsVersion = "3.2.2"
 val slimefun4Version = "RC-37"
-val itemsAdderVersion = "4.0.2-beta-release-11"
+val itemsAdderVersion = "4.0.17"
 val fancyNpcsVersion = "2.4.4"
 val znpcsplusApiVersion = "2.0.0-SNAPSHOT"
 val fancyHologramsVersion = "2.4.1"
@@ -214,13 +214,6 @@ repositories {
         filter { includeGroup("us.dynmap") }
     }
     exclusiveContent {
-        // ItemsAdder API. This host sits behind Cloudflare and has returned 522
-        // for extended periods; scoping keeps an outage from blocking every
-        // other artifact that used to be looked up here first.
-        forRepository { maven("https://maven.devs.beer/") { name = "MatteoDev" } }
-        filter { includeGroup("dev.lone") }
-    }
-    exclusiveContent {
         forRepository { maven("https://repo.oraxen.com/releases") { name = "Oraxen" } } // Custom items plugin
         filter { includeGroup("io.th0rgal") }
     }
@@ -295,7 +288,7 @@ dependencies {
     }
     compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
     compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")
-    compileOnly("dev.lone:api-itemsadder:$itemsAdderVersion")
+    compileOnly("beer.devs:itemsadder-api:$itemsAdderVersion") // Published to Maven Central
     compileOnly("de.oliver:FancyNpcs:$fancyNpcsVersion")
     compileOnly("lol.pyr:znpcsplus-api:$znpcsplusApiVersion")
     compileOnly("de.oliver:FancyHolograms:$fancyHologramsVersion")
