@@ -200,9 +200,6 @@ repositories {
     maven("https://repo.onarandombox.com/multiverse-releases") { name = "Multiverse-Releases" }
     maven("https://repo.onarandombox.com/multiverse-snapshots") { name = "Multiverse-Snapshots" }
     maven("https://mvn.lumine.io/repository/maven-public/") { name = "Lumine-Releases" } // Mythic mobs
-    maven("https://maven.devs.beer/") { name = "MatteoDev" }
-    maven("https://repo.oraxen.com/releases") { name = "Oraxen" } // Custom items plugin
-    maven("https://repo.nexomc.com/releases") { name = "Nexo" } // Custom items/blocks plugin
     maven("https://repo.codemc.org/repository/bentoboxworld/") { name = "BentoBoxWorld-Repo" }
     maven("https://repo.extendedclip.com/releases/") { name = "Placeholder-API-Releases" }
 
@@ -215,6 +212,25 @@ repositories {
     exclusiveContent {
         forRepository { maven("https://repo.mikeprimm.com/") { name = "Dynmap" } }
         filter { includeGroup("us.dynmap") }
+    }
+    exclusiveContent {
+        // ItemsAdder API. This host sits behind Cloudflare and has returned 522
+        // for extended periods; scoping keeps an outage from blocking every
+        // other artifact that used to be looked up here first.
+        forRepository { maven("https://maven.devs.beer/") { name = "MatteoDev" } }
+        filter { includeGroup("dev.lone") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://repo.oraxen.com/releases") { name = "Oraxen" } } // Custom items plugin
+        filter { includeGroup("io.th0rgal") }
+    }
+    exclusiveContent {
+        // Nexo's repo also hosts its team.unnamed (creative-*) transitives.
+        forRepository { maven("https://repo.nexomc.com/releases") { name = "Nexo" } } // Custom items/blocks plugin
+        filter {
+            includeGroup("com.nexomc")
+            includeGroup("team.unnamed")
+        }
     }
     exclusiveContent {
         forRepository { maven("https://repo.momirealms.net/releases/") { name = "MomiRealms" } } // CraftEngine custom block plugin
