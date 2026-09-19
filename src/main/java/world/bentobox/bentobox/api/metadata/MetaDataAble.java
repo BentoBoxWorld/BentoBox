@@ -32,13 +32,17 @@ public interface MetaDataAble {
     }
 
     /**
-     * Put a key, value string pair into the metadata
+     * Put a key, value string pair into the metadata. A null value removes the key, because the
+     * backing map does not store nulls.
      * @param key - key
-     * @param value - value
+     * @param value - value, or null to remove the key
      * @return the previous value associated with key, or empty if there was no mapping for key.
      * @since 1.15.6
      */
     default Optional<MetaDataValue> putMetaData(String key, MetaDataValue value) {
+        if (value == null) {
+            return removeMetaData(key);
+        }
         return getMetaData().map(m -> m.put(key, value));
     }
 
