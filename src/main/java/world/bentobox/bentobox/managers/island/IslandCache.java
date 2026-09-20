@@ -195,6 +195,25 @@ public class IslandCache {
     }
 
     /**
+     * Removes every player's link to this island from the per-UUID lookup index
+     * without evicting the island from {@code islandsById} or the island grid.
+     * <p>
+     * Used when an island is soft-deleted (see
+     * {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland}). The
+     * island becomes unowned, so it must no longer count towards any player's
+     * concurrent islands or show up in {@link #getIslands(World, UUID)}, yet it
+     * must stay known so its location remains reserved and the region-file purge
+     * can still find and reap it. This mirrors how the index is rebuilt on
+     * startup, where {@link #addIsland(Island)} only indexes owned islands.
+     *
+     * @param island the island to de-index
+     * @since 3.23.0
+     */
+    public void removeIslandFromUUIDIndex(@NonNull Island island) {
+        removeFromIslandsByUUID(island);
+    }
+
+    /**
      * Returns island referenced by player's UUID. Returns the island the player is
      * on now, or their last known island
      * 

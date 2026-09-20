@@ -472,6 +472,26 @@ class IslandsManagerTest extends CommonTestSetup {
     }
 
     /**
+     * A soft-deleted island becomes unowned, so it must be dropped from the
+     * per-player UUID index. Otherwise a pending-deletion island keeps counting
+     * towards the ex-owner's concurrent islands (and shows up in
+     * {@code getIslands(world, uuid)}) until the server restarts.
+     */
+    @Test
+    void testDeleteIslandRemovesIslandFromUUIDIndex() {
+        UUID localOwner = UUID.randomUUID();
+        Island island = islandsManager.createIsland(location, localOwner);
+        assertNotNull(island);
+        assertEquals(1, islandsManager.getNumberOfConcurrentIslands(localOwner, world));
+
+        islandsManager.deleteIsland(island, true, localOwner);
+
+        assertNull(island.getOwner());
+        assertEquals(0, islandsManager.getNumberOfConcurrentIslands(localOwner, world));
+        assertTrue(islandsManager.getIslands(world, localOwner).isEmpty());
+    }
+
+    /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#undeleteIsland(world.bentobox.bentobox.database.objects.Island)}.
      */
