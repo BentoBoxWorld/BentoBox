@@ -2,6 +2,8 @@ package world.bentobox.bentobox.api.commands.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +29,7 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -34,11 +38,17 @@ import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.Panel;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
+import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.panels.customizable.SettingsPanel;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -266,4 +276,67 @@ class AdminSettingsCommandTest extends RanksManagerTestSetup {
         // TODO - finish this.
     }
 
+
+    /**
+     * Stubs needed to render the templated admin panel.
+     */
+    private void stubForPanel() {
+        when(plugin.getDataFolder()).thenReturn(Path.of("src", "main", "resources").toFile());
+        when(user.getTranslation(anyString(), any(String[].class)))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslationOrNothing(anyString())).thenReturn("");
+        when(user.getLocation()).thenReturn(location);
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+    }
+
+    /**
+     * Without arguments the world form of the templated admin panel opens.
+     */
+    @Test
+    void testExecuteNoArgsOpensWorldPanel() {
+        stubForPanel();
+        assertTrue(asc.canExecute(user, "", Collections.emptyList()));
+        assertTrue(asc.execute(user, "", Collections.emptyList()));
+
+        Panel panel = PanelListenerManager.getOpenPanels().get(user.getUniqueId());
+        assertInstanceOf(TemplatedPanel.class, panel);
+        SettingsPanel sp = (SettingsPanel) panel.getListener().orElseThrow();
+        assertEquals(SettingsPanel.TabType.WORLD_SETTING, sp.getActiveTab());
+        assertNull(panel.getIsland());
+        verify(plugin, never()).logError(anyString());
+        TemplateReader.clearPanels();
+    }
+
+    /**
+     * With a player argument the island form opens for that player's island.
+     */
+    @Test
+    void testExecutePlayerArgOpensIslandPanel() {
+        stubForPanel();
+        when(island.getWorld()).thenReturn(world);
+        assertTrue(asc.canExecute(user, "", Collections.singletonList("tastybento")));
+        assertTrue(asc.execute(user, "", Collections.singletonList("tastybento")));
+
+        Panel panel = PanelListenerManager.getOpenPanels().get(user.getUniqueId());
+        assertInstanceOf(TemplatedPanel.class, panel);
+        SettingsPanel sp = (SettingsPanel) panel.getListener().orElseThrow();
+        assertEquals(SettingsPanel.TabType.PROTECTION, sp.getActiveTab());
+        assertEquals(island, panel.getIsland());
+        TemplateReader.clearPanels();
+    }
+
+    /**
+     * If the template cannot be loaded, the legacy tabbed panel is shown.
+     */
+    @Test
+    void testExecuteFallsBackToTabbedPanel(@TempDir Path empty) {
+        stubForPanel();
+        when(plugin.getDataFolder()).thenReturn(empty.toFile());
+        assertTrue(asc.canExecute(user, "", Collections.emptyList()));
+        assertTrue(asc.execute(user, "", Collections.emptyList()));
+
+        verify(plugin).logError("Could not load the admin settings panel template; showing the built-in panel");
+        assertInstanceOf(TabbedPanel.class, PanelListenerManager.getOpenPanels().get(user.getUniqueId()));
+    }
 }

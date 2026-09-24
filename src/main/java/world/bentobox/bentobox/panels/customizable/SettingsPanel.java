@@ -28,6 +28,8 @@ import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
+import world.bentobox.bentobox.api.flags.clicklisteners.IslandDefaultCycleClick;
+import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelListener;
@@ -59,6 +61,9 @@ import world.bentobox.bentobox.util.Util;
  * </ul>
  * The panel title is the template's {@code title}, translated with {@code [tab]} (the active
  * tab's name) and {@code [world_name]}.
+ * <p>
+ * The admin panel, {@code /admin settings}, is the same class laid out by
+ * {@code panels/admin_settings_panel.yml} with the admin tabs.
  *
  * @author tastybento
  * @since 3.23.0
@@ -76,6 +81,9 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     /** Button type: reset all flags to their defaults. */
     public static final String RESET = "RESET";
 
+    /** Name of the admin template file, without extension. */
+    public static final String ADMIN_SETTINGS_PANEL = "admin_settings_panel";
+    private static final String ADMIN_DEFAULTS_PERM = "admin.set-world-defaults";
     private static final String PROTECTION_PANEL = "protection.panel.";
     private static final String CLICK_TO_SWITCH = PROTECTION_PANEL + "mode.click-to-switch";
     private static final String WORLD_NAME = "[world_name]";
@@ -91,23 +99,50 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      */
     public enum TabType {
         /** Protection flags of the island. */
-        PROTECTION(Flag.Type.PROTECTION, Material.SHIELD, "PROTECTION"),
+        PROTECTION(Flag.Type.PROTECTION, Material.SHIELD, "PROTECTION", "", false),
         /** Settings of the island. */
-        SETTING(Flag.Type.SETTING, Material.COMPARATOR, "SETTING"),
+        SETTING(Flag.Type.SETTING, Material.COMPARATOR, "SETTING", "", false),
         /**
          * Read-only view of the protection flags that apply off-island, shown to a player who is
          * not on an island.
          */
-        WORLD_PROTECTION(Flag.Type.PROTECTION, Material.STONE_BRICKS, "WORLD_DEFAULTS");
+        WORLD_PROTECTION(Flag.Type.PROTECTION, Material.STONE_BRICKS, "WORLD_DEFAULTS", "", false),
+        /** World settings, for admins. */
+        WORLD_SETTING(Flag.Type.WORLD_SETTING, Material.GRASS_BLOCK, "WORLD_SETTING", "", false),
+        /** The protection flags that apply off-island, editable by admins. */
+        WORLD_DEFAULTS(Flag.Type.PROTECTION, Material.STONE_BRICKS, "WORLD_DEFAULTS", ADMIN_DEFAULTS_PERM, true),
+        /** The protection ranks new islands start with, editable by admins. */
+        ISLAND_DEFAULTS(Flag.Type.PROTECTION, Material.CRACKED_STONE_BRICKS, "ISLAND_DEFAULTS", ADMIN_DEFAULTS_PERM,
+                true);
 
         private final Flag.Type flagType;
         private final Material icon;
         private final String localeKey;
+        private final String permission;
+        private final boolean showsAllFlags;
 
-        TabType(Flag.Type flagType, Material icon, String localeKey) {
+        TabType(Flag.Type flagType, Material icon, String localeKey, String permission, boolean showsAllFlags) {
             this.flagType = flagType;
             this.icon = icon;
             this.localeKey = localeKey;
+            this.permission = permission;
+            this.showsAllFlags = showsAllFlags;
+        }
+
+        /**
+         * @param prefix the game mode's permission prefix
+         * @return the permission needed to see this tab, or empty if none
+         */
+        public String getPermission(String prefix) {
+            return permission.isEmpty() ? "" : prefix + permission;
+        }
+
+        /**
+         * @return whether the tab shows every flag of its type: admin tabs ignore the hidden-flag
+         * list and sub-flag hiding
+         */
+        public boolean showsAllFlags() {
+            return showsAllFlags;
         }
 
         /**
@@ -132,6 +167,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         }
     }
 
+    private final String templateName;
     private final World world;
     @Nullable
     private final Island island;
@@ -158,19 +194,24 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     /**
      * @param command the command that opens the panel, which provides the plugin and game mode
      * @param user the viewer
+     * @param templateName the template file to lay the panel out with, without extension
      * @param world the world the settings are for
      * @param island the island, or null if the viewer is not on one
-     * @param tabs the tabs to show, in order; the first is shown initially
+     * @param tabs the tabs to show, in order; the first the viewer may see is shown initially
      * @param defaultMode the display mode each tab starts in
      */
-    protected SettingsPanel(@NonNull CompositeCommand command, @NonNull User user, @NonNull World world,
-            @Nullable Island island, @NonNull List<TabType> tabs, Flag.Mode defaultMode) {
+    protected SettingsPanel(@NonNull CompositeCommand command, @NonNull User user, @NonNull String templateName,
+            @NonNull World world, @Nullable Island island, @NonNull List<TabType> tabs, Flag.Mode defaultMode) {
         super(command, user);
+        this.templateName = templateName;
         this.world = world;
         this.island = island;
-        this.tabs = List.copyOf(tabs);
+        String prefix = plugin.getIWM().getPermissionPrefix(world);
+        this.tabs = tabs.stream()
+                .filter(t -> t.getPermission(prefix).isEmpty() || user.hasPermission(t.getPermission(prefix)))
+                .toList();
         this.defaultMode = defaultMode;
-        this.activeTab = this.tabs.get(0);
+        this.activeTab = this.tabs.isEmpty() ? tabs.get(0) : this.tabs.get(0);
     }
 
     /**
@@ -185,7 +226,27 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         List<TabType> tabs = island == null ? List.of(TabType.WORLD_PROTECTION)
                 : List.of(TabType.PROTECTION, TabType.SETTING);
         World world = island == null ? command.getWorld() : island.getWorld();
-        return new SettingsPanel(command, user, world, island, tabs, Mode.BASIC).open();
+        return new SettingsPanel(command, user, SETTINGS_PANEL, world, island, tabs, Mode.BASIC).open();
+    }
+
+    /**
+     * Opens the admin settings panel, laid out by {@code panels/admin_settings_panel.yml}. With an
+     * island it shows that island's protection and settings tabs in expert mode. Without one it
+     * shows the world settings, the world's off-island protections and the defaults new islands
+     * start with; the last two need the {@code admin.set-world-defaults} permission.
+     * @param command the admin settings command
+     * @param user the admin
+     * @param island the island to edit, or null for the world
+     * @return {@code false} if the template could not be loaded and nothing was opened
+     * @since 3.23.0
+     */
+    public static boolean openAdminPanel(@NonNull CompositeCommand command, @NonNull User user,
+            @Nullable Island island) {
+        List<TabType> tabs = island == null
+                ? List.of(TabType.WORLD_SETTING, TabType.WORLD_DEFAULTS, TabType.ISLAND_DEFAULTS)
+                : List.of(TabType.PROTECTION, TabType.SETTING);
+        World world = island == null ? command.getWorld() : island.getWorld();
+        return new SettingsPanel(command, user, ADMIN_SETTINGS_PANEL, world, island, tabs, Mode.EXPERT).open();
     }
 
     /**
@@ -193,12 +254,17 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      * @return {@code false} if the template could not be loaded and nothing was opened
      */
     protected boolean open() {
+        if (tabs.isEmpty()) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION,
+                    activeTab.getPermission(plugin.getIWM().getPermissionPrefix(world)));
+            return true;
+        }
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
-        if (command.getAddon() instanceof GameModeAddon gma && doesCustomPanelExists(gma, SETTINGS_PANEL)) {
+        if (command.getAddon() instanceof GameModeAddon gma && doesCustomPanelExists(gma, templateName)) {
             // The game mode has its own settings panel
-            panelBuilder.template(SETTINGS_PANEL, new File(gma.getDataFolder(), "panels"));
+            panelBuilder.template(templateName, new File(gma.getDataFolder(), "panels"));
         } else {
-            panelBuilder.template(SETTINGS_PANEL, new File(plugin.getDataFolder(), "panels"));
+            panelBuilder.template(templateName, new File(plugin.getDataFolder(), "panels"));
         }
         PanelTemplateRecord template = panelBuilder.getPanelTemplate();
         if (template == null) {
@@ -344,12 +410,15 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
             modes.put(activeTab, mode);
             flags = getFlags(mode);
         }
-        // Remove any sub-flags that shouldn't be shown
-        flags.removeIf(flag -> flag.isSubFlag() && flag.getHideWhen() != HideWhen.NEVER
-                && ((!flag.getParentFlag().isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_FALSE)
-                        || (flag.getParentFlag().isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_TRUE)));
-        // Ops see hidden flags; nobody else does
-        flags.removeIf(flag -> !isVisibleToUser(flag));
+        if (!activeTab.showsAllFlags()) {
+            // Remove any sub-flags that shouldn't be shown
+            flags.removeIf(flag -> flag.isSubFlag() && flag.getHideWhen() != HideWhen.NEVER
+                    && ((!flag.getParentFlag().isSetForWorld(world) && flag.getHideWhen() == HideWhen.SETTING_FALSE)
+                            || (flag.getParentFlag().isSetForWorld(world)
+                                    && flag.getHideWhen() == HideWhen.SETTING_TRUE)));
+            // Ops see hidden flags; nobody else does
+            flags.removeIf(flag -> !isVisibleToUser(flag));
+        }
         pagedFlags = flags;
     }
 
@@ -376,14 +445,14 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     }
 
     private boolean isVisibleToUser(Flag flag) {
-        return user.isOp() || !hiddenFlags.contains(flag.getID());
+        return user.isOp() || activeTab.showsAllFlags() || !hiddenFlags.contains(flag.getID());
     }
 
     /**
      * @return whether the active tab has any flag the viewer may see in any mode
      */
     private boolean hasVisibleFlags() {
-        if (user.isOp()) {
+        if (user.isOp() || activeTab.showsAllFlags()) {
             return true;
         }
         var addon = plugin.getIWM().getAddon(world);
@@ -451,13 +520,33 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
 
     @Nullable
     private PanelItem createFlagItem(Flag flag, ItemTemplateRecord template, boolean invisible) {
-        PanelItem item = flag.toPanelItem(plugin, user, world, island, invisible, template);
-        if (item != null && activeTab.isReadOnly()) {
-            // Only an admin may change these values, and the flag's own click handler would just
-            // tell the player they are not on an island
-            item.setClickHandler(null);
+        return switch (activeTab) {
+        case ISLAND_DEFAULTS -> {
+            // Show, and let clicks change, the rank new islands will start with
+            int defaultRank = plugin.getIWM().getWorldSettings(world).getDefaultIslandFlagNames()
+                    .getOrDefault(flag.getID(), flag.getDefaultRank());
+            PanelItem item = flag.toPanelItemForRank(user, defaultRank, template);
+            item.setClickHandler(new IslandDefaultCycleClick(flag.getID()));
+            yield item;
         }
-        return item;
+        case WORLD_DEFAULTS -> {
+            // With no island the flag shows its world state; clicks toggle it
+            PanelItem item = flag.toPanelItem(plugin, user, world, null, false, template);
+            if (item != null) {
+                item.setClickHandler(new WorldToggleClick(flag.getID()));
+            }
+            yield item;
+        }
+        default -> {
+            PanelItem item = flag.toPanelItem(plugin, user, world, island, invisible, template);
+            if (item != null && activeTab.isReadOnly()) {
+                // Only an admin may change these values, and the flag's own click handler would
+                // just tell the player they are not on an island
+                item.setClickHandler(null);
+            }
+            yield item;
+        }
+        };
     }
 
     /**
@@ -467,6 +556,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     private PanelItem createTabButton(@NonNull ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         TabType tab = parseTab(template);
         if (tab == null || !tabs.contains(tab)) {
+            // Not a tab of this panel, or the viewer may not see it
             return null;
         }
         PanelItemBuilder builder = new PanelItemBuilder()
