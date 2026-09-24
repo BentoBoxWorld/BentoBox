@@ -1995,6 +1995,8 @@ panel:
         <green>BentoBoxでGitHubに接続できるようにする</green>
         設定を変更するか、後で再試行してください。
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<green>あなたの[prefix_island]のホーム</green>'
     buttons:

@@ -20,7 +20,7 @@ import org.bukkit.inventory.InventoryView;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
-import world.bentobox.bentobox.api.panels.TabbedPanel;
+import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
@@ -43,18 +43,17 @@ public class PanelListenerManager implements Listener {
             // Get the panel itself
             Panel panel = openPanels.get(user.getUniqueId());
 
-            // Apply the click cooldown for TabbedPanels first, before any other (potentially
-            // expensive) work. A rejected spam click must do the absolute minimum: without this
-            // early return, every click - even the throttled ones - would still pay for a
-            // view.getTitle() render and a MiniMessage title parse below, which is what keeps MSPT
-            // high while a settings GUI is being spam-clicked.
+            // Apply the click cooldown for throttled panels (tabbed and settings panels) first,
+            // before any other (potentially expensive) work. A rejected spam click must do the
+            // absolute minimum: without this early return, every click - even the throttled ones -
+            // would still pay for a view.getTitle() render and a MiniMessage title parse below,
+            // which is what keeps MSPT high while a settings GUI is being spam-clicked.
             // Whether the clicked slot can actually do anything is passed along so that when a
             // client sends several click packets for one physical click, the cooldown keeps the
             // one that lands on a button rather than whichever arrived first (#3049).
-            Optional<TabbedPanel> tabbedPanel = panel.getListener().filter(TabbedPanel.class::isInstance)
-                    .map(TabbedPanel.class::cast);
-            if (tabbedPanel.isPresent() && BentoBox.getInstance().onTimeout(user, panel,
-                    tabbedPanel.get().isActionableSlot(event.getRawSlot()))) {
+            Optional<PanelListener> throttled = panel.getListener().filter(PanelListener::hasClickCooldown);
+            if (throttled.isPresent() && BentoBox.getInstance().onTimeout(user, panel,
+                    throttled.get().isActionableSlot(event.getRawSlot()))) {
                 return;
             }
 

@@ -1928,6 +1928,8 @@ panel:
         <green>請修改配置允許</green><aqua><bold>BentoBox</bold></aqua><green>連接</green>
         <green>到互聯網， 或稍後再試。</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>您的[prefix_island]房屋</bold></dark_green>'
     buttons:

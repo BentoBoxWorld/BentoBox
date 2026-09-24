@@ -56,6 +56,25 @@ public class SettingsTab implements Tab, ClickHandler {
     private final Map<UUID, Flag.Mode> currentMode = new HashMap<>();
 
     /**
+     * Resolves the island that a settings panel is about, for use by flag click handlers. A panel
+     * built from a template carries the island itself; a {@link TabbedPanel} that has not been
+     * given one carries it on its active settings tab.
+     * @param panel - the panel that was clicked
+     * @return the island, or null if the panel is not about an island
+     * @since 3.23.0
+     */
+    @Nullable
+    public static Island getIsland(Panel panel) {
+        if (panel.getIsland() != null) {
+            return panel.getIsland();
+        }
+        if (panel instanceof TabbedPanel tp && tp.getActiveTab() instanceof SettingsTab st) {
+            return st.getIsland();
+        }
+        return null;
+    }
+
+    /**
      * Show a tab of settings
      * @param world - world
      * @param user - user who is viewing the tab

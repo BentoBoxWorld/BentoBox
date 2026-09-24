@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +29,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +45,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -379,7 +384,7 @@ class FlagTest extends RanksManagerTestSetup {
         verify(user).getTranslation("protection.panel.flag-item.setting-active");
         verify(user, never()).getTranslation("protection.panel.flag-item.setting-disabled");
         verify(user).getTranslation(eq("protection.panel.flag-item.setting-layout"), eq("[description]"), any(),
-                eq("[setting]"), any());
+                eq("[setting]"), any(), eq("[ranks]"), any(), eq("[tooltips]"), any());
         // No island means no ranks to show
         verify(user, never()).getTranslation(eq("protection.panel.flag-item.description-layout"), any(), any());
     }
@@ -396,6 +401,112 @@ class FlagTest extends RanksManagerTestSetup {
 
         verify(user).getTranslation("protection.panel.flag-item.setting-disabled");
         verify(user, never()).getTranslation("protection.panel.flag-item.setting-active");
+    }
+
+    /**
+     * A layout with a {@code [ranks]} placeholder gets the rank list substituted there rather
+     * than appended after the layout.
+     */
+    @Test
+    void testToPanelItemRanksPlaceholder() {
+        User user = layoutUser(Map.of(
+                "protection.panel.flag-item.description-layout", "[description]\n[ranks]\nfooter"));
+        PanelItem pi = f.toPanelItem(plugin, user, world, island, false);
+
+        assertEquals(List.of("desc", "+ ranks.owner", "+ ranks.sub-owner", "= ranks.member", "- ranks.trusted",
+                "- ranks.coop", "- ranks.visitor", "footer"), pi.getDescription());
+    }
+
+    /**
+     * A layout written before {@code [ranks]} existed still gets the rank list appended after it,
+     * so customised locale files render as they did.
+     */
+    @Test
+    void testToPanelItemRanksAppendedWithoutPlaceholder() {
+        User user = layoutUser(Map.of("protection.panel.flag-item.description-layout", "[description]\nfooter"));
+        PanelItem pi = f.toPanelItem(plugin, user, world, island, false);
+
+        assertEquals(List.of("desc", "footer", "+ ranks.owner", "+ ranks.sub-owner", "= ranks.member",
+                "- ranks.trusted", "- ranks.coop", "- ranks.visitor"), pi.getDescription());
+    }
+
+    /**
+     * A template button overrides the icon, the name layout and the lore layout, and its action
+     * tooltips are placed at {@code [tooltips]}.
+     */
+    @Test
+    void testToPanelItemTemplateOverrides() {
+        User user = layoutUser(Map.of("custom.name", "N:[name]", "custom.layout", "[description] | [tooltips]",
+                "tip.key", "TIP"));
+        ItemTemplateRecord template = new ItemTemplateRecord(new ItemStack(Material.DIAMOND), "custom.name",
+                "custom.layout", null);
+        template.addAction(new ItemTemplateRecord.ActionRecords(ClickType.LEFT, "cycle", null, "tip.key"));
+
+        PanelItem pi = f.toPanelItem(plugin, user, world, island, false, template);
+
+        assertEquals(Material.DIAMOND, pi.getItem().getType());
+        assertEquals("N:protection.flags.flagID.name", pi.getName());
+        // Ranks are appended because the custom layout has no [ranks]
+        assertEquals(List.of("desc | TIP", "+ ranks.owner", "+ ranks.sub-owner", "= ranks.member", "- ranks.trusted",
+                "- ranks.coop", "- ranks.visitor"), pi.getDescription());
+    }
+
+    /**
+     * Template tooltips are appended after an empty line when the layout has no
+     * {@code [tooltips]} placeholder, as other templated panels do.
+     */
+    @Test
+    void testToPanelItemTooltipsAppendedWithoutPlaceholder() {
+        User user = layoutUser(Map.of("protection.panel.flag-item.description-layout", "[description]",
+                "tip.key", "TIP"));
+        ItemTemplateRecord template = new ItemTemplateRecord(null, null, null, null);
+        template.addAction(new ItemTemplateRecord.ActionRecords(ClickType.LEFT, "cycle", null, "tip.key"));
+
+        PanelItem pi = f.toPanelItem(plugin, user, world, island, false, template);
+
+        // Flag's own icon as the template has none
+        assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
+        assertEquals(List.of("desc", "+ ranks.owner", "+ ranks.sub-owner", "= ranks.member", "- ranks.trusted",
+                "- ranks.coop", "- ranks.visitor", "", "TIP"), pi.getDescription());
+    }
+
+    /**
+     * A user whose translations come from the given map, with placeholder pairs applied. Keys not
+     * in the map translate to themselves. Ranks are ordered as the real ranks manager orders them.
+     */
+    private User layoutUser(Map<String, String> texts) {
+        Map<String, Integer> ranks = new LinkedHashMap<>();
+        ranks.put(ADMIN_RANK_REF, ADMIN_RANK);
+        ranks.put(MOD_RANK_REF, MOD_RANK);
+        ranks.put(OWNER_RANK_REF, OWNER_RANK);
+        ranks.put(SUB_OWNER_RANK_REF, SUB_OWNER_RANK);
+        ranks.put(MEMBER_RANK_REF, MEMBER_RANK);
+        ranks.put(TRUSTED_RANK_REF, TRUSTED_RANK);
+        ranks.put(COOP_RANK_REF, COOP_RANK);
+        ranks.put(VISITOR_RANK_REF, VISITOR_RANK);
+        ranks.put(BANNED_RANK_REF, BANNED_RANK);
+        when(rm.getRanks()).thenReturn(ranks);
+        when(island.getFlag(any())).thenReturn(MEMBER_RANK);
+        Map<String, String> all = new HashMap<>(Map.of(
+                "protection.flags.flagID.description", "desc",
+                "protection.panel.flag-item.allowed-rank", "+ [rank]",
+                "protection.panel.flag-item.blocked-rank", "- [rank]",
+                "protection.panel.flag-item.minimal-rank", "= [rank]"));
+        all.putAll(texts);
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        Answer<String> answer = invocation -> {
+            Object[] args = invocation.getArguments();
+            String text = all.getOrDefault((String) args[0], (String) args[0]);
+            for (int i = 1; i + 1 < args.length; i += 2) {
+                text = text.replace(String.valueOf(args[i]), String.valueOf(args[i + 1]));
+            }
+            return text;
+        };
+        when(user.getTranslation(anyString())).thenAnswer(answer);
+        when(user.getTranslation(anyString(), any(String[].class))).thenAnswer(answer);
+        when(user.getTranslationOrNothing(anyString())).thenReturn("");
+        return user;
     }
 
     private User mockTranslatingUser() {

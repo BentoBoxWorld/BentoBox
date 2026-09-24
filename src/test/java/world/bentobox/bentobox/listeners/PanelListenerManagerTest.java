@@ -405,6 +405,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
     void testOnInventoryClickTabbedPanelTimeout() {
         // Set up panel with a TabbedPanel listener
         TabbedPanel tabbedPanel = mock(TabbedPanel.class);
+        when(tabbedPanel.hasClickCooldown()).thenReturn(true);
         when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
         when(tabbedPanel.isActionableSlot(0)).thenReturn(true);
         PanelListenerManager.getOpenPanels().put(uuid, panel);
@@ -427,6 +428,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
     void testOnInventoryClickTabbedPanelNoTimeout() {
         // Set up panel with a TabbedPanel listener
         TabbedPanel tabbedPanel = mock(TabbedPanel.class);
+        when(tabbedPanel.hasClickCooldown()).thenReturn(true);
         when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
         when(tabbedPanel.isActionableSlot(0)).thenReturn(true);
         PanelListenerManager.getOpenPanels().put(uuid, panel);
@@ -450,6 +452,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
     @Test
     void testOnInventoryClickTabbedPanelPassesSlotActionability() {
         TabbedPanel tabbedPanel = mock(TabbedPanel.class);
+        when(tabbedPanel.hasClickCooldown()).thenReturn(true);
         when(panel.getListener()).thenReturn(Optional.of(tabbedPanel));
         PanelListenerManager.getOpenPanels().put(uuid, panel);
 

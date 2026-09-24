@@ -2109,6 +2109,8 @@ panel:
         <green>Cho phép BentoBox kết nối GitHub trong</green>
         <green>tệp tùy chỉnh và thử lại sau.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Nhà [prefix_island] của bạn</bold></dark_green>'
     buttons:
