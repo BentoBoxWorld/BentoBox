@@ -1925,6 +1925,8 @@ panel:
         <red>BentoBox无法获取此附加组件(Addon)的贡献者</red>
         <green>请修改配置文件允许BentoBox连接到GitHub或稍后重试</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>您的 [prefix_island] 家园</bold></dark_green>'
     buttons:

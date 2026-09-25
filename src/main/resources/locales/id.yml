@@ -2159,6 +2159,8 @@ panel:
         <green>Izinkan BentoBox terhubung ke GitHub di</green>
         <green>konfigurasi atau coba lagi nanti.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Rumah [prefix_island] Anda</bold></dark_green>'
     buttons:

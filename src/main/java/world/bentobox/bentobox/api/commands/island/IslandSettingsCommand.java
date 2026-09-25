@@ -7,6 +7,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.panels.customizable.SettingsPanel;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.panels.settings.WorldProtectionInfoTab;
 import world.bentobox.bentobox.util.Util;
@@ -76,25 +77,27 @@ public class IslandSettingsCommand extends CompositeCommand {
     }
 
     /**
-     * Opens the settings GUI panel.
+     * Opens the settings GUI panel, laid out by the {@code panels/settings_panel.yml} template.
      * <p>
-     * With an island, creates a tabbed panel with:
-     * <ul>
-     *   <li>Tab 1: Protection flags</li>
-     *   <li>Tab 2: Settings flags</li>
-     * </ul>
-     * Without an island there is nothing to configure, so a single read-only tab
-     * of the world's protection flags is shown instead. That answers the only
-     * question a player can ask out in the world: what am I allowed to do here?
+     * With an island the panel has a protection tab and a settings tab. Without an
+     * island there is nothing to configure, so a single read-only tab of the world's
+     * protection flags is shown instead. That answers the only question a player can
+     * ask out in the world: what am I allowed to do here?
+     * <p>
+     * If the template cannot be loaded, the legacy tabbed panel is shown instead so
+     * that a broken template never leaves players without their settings.
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        buildPanel(user).build().openPanel();
+        if (!SettingsPanel.openPanel(this, user, island)) {
+            getPlugin().logError("Could not load the settings panel template; showing the built-in panel");
+            buildPanel(user).build().openPanel();
+        }
         return true;
     }
 
     /**
-     * Builds the panel shown by this command.
+     * Builds the legacy tabbed panel, used when the settings panel template cannot be loaded.
      * @param user user to show it to
      * @return the panel builder for the island the player is on, or for the world
      *         if they are not on one
