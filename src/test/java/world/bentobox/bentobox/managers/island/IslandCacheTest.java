@@ -385,6 +385,27 @@ class IslandCacheTest extends CommonTestSetup {
     }
 
     /**
+     * Test for {@link IslandCache#removeIslandFromUUIDIndex(Island)}. The island
+     * must no longer be associated with any player, but must stay cached and
+     * known at its location so the region purge can still reap it.
+     */
+    @Test
+    void testRemoveIslandFromUUIDIndex() {
+        ic.addIsland(island);
+        assertEquals(island, ic.getIsland(world, owner));
+
+        ic.removeIslandFromUUIDIndex(island);
+
+        // Not associated with the player any more
+        assertTrue(ic.getIslands(world, owner).isEmpty());
+        assertNull(ic.getIsland(world, owner));
+        assertFalse(ic.hasIsland(world, owner));
+        // Still cached and still occupying its grid slot
+        assertEquals(island, ic.getIslandById("uniqueId"));
+        assertEquals(island, ic.getIslandAt(island.getCenter()));
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandCache#size(org.bukkit.World)}.
      */
     @Test

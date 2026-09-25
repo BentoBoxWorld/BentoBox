@@ -297,6 +297,12 @@ public class IslandsManager {
         // Set the owner of the island to no one.
         island.setOwner(null);
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
+        // Drop the island from the per-player UUID index. It is unowned now, so it
+        // must not count towards anyone's concurrent islands or be returned by
+        // getIslands(world, uuid) until it is registered to a new owner again. This
+        // keeps the runtime index consistent with the one rebuilt on startup, which
+        // only indexes owned islands (IslandCache#addIsland).
+        islandCache.removeIslandFromUUIDIndex(island);
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);
