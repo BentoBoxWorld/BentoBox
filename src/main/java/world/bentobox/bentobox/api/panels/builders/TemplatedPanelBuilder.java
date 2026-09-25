@@ -104,7 +104,7 @@ public class TemplatedPanelBuilder
      *
      * @param island the island, or {@code null} if the panel is not about a specific island
      * @return the template panel builder
-     * @since 3.23.0
+     * @since 3.23.1
      */
     public TemplatedPanelBuilder island(@Nullable Island island)
     {
@@ -211,7 +211,7 @@ public class TemplatedPanelBuilder
      * Gets the island context.
      *
      * @return the island, or {@code null} if none was set
-     * @since 3.23.0
+     * @since 3.23.1
      */
     @Nullable
     public Island getIsland()

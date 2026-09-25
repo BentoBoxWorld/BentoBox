@@ -233,7 +233,7 @@ public class AdminSettingsCommand extends CompositeCommand {
      * Opens the legacy tabbed panel, used when the admin settings panel template cannot be loaded.
      * @param user the admin
      * @param target the island to edit, or null for the world
-     * @since 3.23.0
+     * @since 3.23.1
      */
     protected void openLegacyPanel(User user, @Nullable Island target) {
         if (target == null) {

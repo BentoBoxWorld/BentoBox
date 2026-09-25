@@ -246,7 +246,7 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     /**
      * Tabbed panels rebuild their items on every click, so they are click-throttled.
-     * @since 3.23.0
+     * @since 3.23.1
      */
     @Override
     public boolean hasClickCooldown() {

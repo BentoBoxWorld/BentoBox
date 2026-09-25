@@ -73,7 +73,7 @@ public class TemplatedPanel extends Panel {
      * one.
      *
      * @param parameters new parameters for the panel title, or none to keep the current ones
-     * @since 3.23.0
+     * @since 3.23.1
      */
     public void regenerate(@NonNull String... parameters) {
         if (this.panelTemplate == null) {

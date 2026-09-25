@@ -207,7 +207,7 @@ public class IslandCache {
      * startup, where {@link #addIsland(Island)} only indexes owned islands.
      *
      * @param island the island to de-index
-     * @since 3.23.0
+     * @since 3.23.1
      */
     public void removeIslandFromUUIDIndex(@NonNull Island island) {
         removeFromIslandsByUUID(island);

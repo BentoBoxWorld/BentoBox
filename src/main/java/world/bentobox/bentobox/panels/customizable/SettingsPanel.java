@@ -66,7 +66,7 @@ import world.bentobox.bentobox.util.Util;
  * {@code panels/admin_settings_panel.yml} with the admin tabs.
  *
  * @author tastybento
- * @since 3.23.0
+ * @since 3.23.1
  */
 public class SettingsPanel extends AbstractPanel implements PanelListener {
 
@@ -238,7 +238,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      * @param user the admin
      * @param island the island to edit, or null for the world
      * @return {@code false} if the template could not be loaded and nothing was opened
-     * @since 3.23.0
+     * @since 3.23.1
      */
     public static boolean openAdminPanel(@NonNull CompositeCommand command, @NonNull User user,
             @Nullable Island island) {

@@ -34,7 +34,7 @@ public interface PanelListener {
      * Panels whose items are rebuilt on every click, such as the settings panels, should return
      * {@code true} so that spam-clicking cannot raise MSPT; simple panels need not.
      * @return {@code true} if the click cooldown applies to this panel
-     * @since 3.23.0
+     * @since 3.23.1
      */
     default boolean hasClickCooldown() {
         return false;
@@ -48,7 +48,7 @@ public interface PanelListener {
      * arrived first.
      * @param rawSlot raw slot that was clicked
      * @return {@code true} if a click on this slot does work; the default assumes it does
-     * @since 3.23.0
+     * @since 3.23.1
      */
     default boolean isActionableSlot(int rawSlot) {
         return true;

@@ -61,7 +61,7 @@ public class SettingsTab implements Tab, ClickHandler {
      * given one carries it on its active settings tab.
      * @param panel - the panel that was clicked
      * @return the island, or null if the panel is not about an island
-     * @since 3.23.0
+     * @since 3.23.1
      */
     @Nullable
     public static Island getIsland(Panel panel) {

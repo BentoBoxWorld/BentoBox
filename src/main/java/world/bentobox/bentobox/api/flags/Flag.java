@@ -476,7 +476,7 @@ public class Flag implements Comparable<Flag> {
      * @param invisible - true if this flag is not visible to players
      * @param template - the template button describing this flag, or null for the defaults
      * @return - PanelItem for this flag or null if item is invisible to user
-     * @since 3.23.0
+     * @since 3.23.1
      */
     @Nullable
     public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible,
@@ -511,7 +511,7 @@ public class Flag implements Comparable<Flag> {
      * @param rank - the rank to show the flag at
      * @param template - the template button describing this flag, or null for the defaults
      * @return - PanelItem for this flag
-     * @since 3.23.0
+     * @since 3.23.1
      */
     @NonNull
     public PanelItem toPanelItemForRank(User user, int rank, @Nullable ItemTemplateRecord template) {
@@ -638,7 +638,7 @@ public class Flag implements Comparable<Flag> {
      * @param user - viewer
      * @param rank - the rank the flag is set to
      * @return the rank lines joined by newlines
-     * @since 3.23.0
+     * @since 3.23.1
      */
     public String getRankLines(User user, int rank) {
         List<String> lines = new ArrayList<>();

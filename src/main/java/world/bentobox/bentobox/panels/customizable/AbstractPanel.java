@@ -125,7 +125,7 @@ public abstract class AbstractPanel {
      * templates reserve some of those slots for other purposes should override this.
      * @param slot the slot record, which carries the per-type slot counts
      * @return items per page, at least 1
-     * @since 3.23.0
+     * @since 3.23.1
      */
     protected int getItemsPerPage(TemplatedPanel.ItemSlot slot) {
         return Math.max(1, slot.amountMap().getOrDefault(getPagedItemType(), 1));
@@ -233,7 +233,7 @@ public abstract class AbstractPanel {
      * the panel is rebuilt. Panels whose {@link world.bentobox.bentobox.api.panels.PanelListener}
      * already refreshes them after every click should override this to do nothing, so that the
      * panel is not rebuilt twice.
-     * @since 3.23.0
+     * @since 3.23.1
      */
     protected void onPageChanged() {
         build();
