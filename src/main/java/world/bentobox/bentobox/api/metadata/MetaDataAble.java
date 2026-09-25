@@ -63,7 +63,7 @@ public interface MetaDataAble {
      * safe for concurrent access without mutating the caller's map.
      * @param source map to copy, may be null
      * @return a mutable, thread-safe copy
-     * @since 3.23.1
+     * @since 3.23.0
      */
     static Map<String, MetaDataValue> toConcurrentMap(Map<String, MetaDataValue> source) {
         Map<String, MetaDataValue> result = new ConcurrentHashMap<>();
