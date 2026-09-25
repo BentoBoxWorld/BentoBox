@@ -2204,6 +2204,8 @@ panel:
         <green>Engedélyezze a BentoBox számára, hogy csatlakozzon a GitHubhoz</green>
         <green>a konfigurációt, vagy próbálja újra később.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Az Ön [prefix_island] otthonai</bold></dark_green>'
     buttons:

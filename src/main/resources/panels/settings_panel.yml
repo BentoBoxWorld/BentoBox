@@ -1,0 +1,172 @@
+# The island settings panel, opened by /island settings. This default lays the panel out exactly
+# as it was before it became customizable. A game mode addon may ship its own copy in its own
+# panels folder, which then takes precedence for that game mode.
+#
+# The name of the panel must be the same as the file name.
+settings_panel:
+  # Title of the panel. This is a locale reference, or literal text. It is translated with two
+  # placeholders: [tab] is the name of the tab being shown, [world_name] is the friendly name of
+  # the world. The default locale entry is just '[tab]', so the title reads "Protection" or
+  # "Settings"; change it here or in the locale to style the title independently of the tab buttons.
+  title: panels.settings.title
+  type: INVENTORY
+  # Filler item shown in every slot that has no button.
+  background:
+    icon: LIGHT_BLUE_STAINED_GLASS_PANE
+    title: "&b&r"  # Empty text
+  # Always show all six rows so the panel does not change height as flags come and go.
+  force-shown: 6
+  content:
+    # Row 1: the tab row. Columns are numbered 1 to 9.
+    1:
+      2:
+        # A tab button. data.tab names the tab: PROTECTION or SETTING for an island, and
+        # WORLD_PROTECTION for the read-only view a player gets when they are not on an island.
+        # A tab that does not apply is not shown, and the button's fallback is used instead.
+        icon: SHIELD
+        # The name of the tab button. It is also what [tab] in the panel title expands to.
+        title: protection.panel.PROTECTION.title
+        description: protection.panel.PROTECTION.description
+        data:
+          type: TAB
+          tab: PROTECTION
+        actions:
+          select:
+            click-type: LEFT
+        fallback:
+          # Shown in the wilderness, where there is no island and only the world's own protection
+          # rules apply. Every flag on that tab is read-only.
+          icon: STONE_BRICKS
+          title: protection.panel.WORLD_DEFAULTS.title
+          description: protection.panel.WORLD_DEFAULTS.description
+          data:
+            type: TAB
+            tab: WORLD_PROTECTION
+          actions:
+            select:
+              click-type: LEFT
+      3:
+        icon: COMPARATOR
+        title: protection.panel.SETTING.title
+        description: protection.panel.SETTING.description
+        data:
+          type: TAB
+          tab: SETTING
+        actions:
+          select:
+            click-type: LEFT
+      5:
+        # A flag pinned to a slot. data.flag is the flag ID; the flag then never appears in the
+        # paged list. Any flag ID may be pinned this way. Pinned island flags need an island.
+        data:
+          type: FLAG
+          flag: CHANGE_SETTINGS
+      6:
+        data:
+          type: FLAG
+          flag: LOCK
+      8:
+        # Cycles the display mode: basic, advanced, expert. The text comes from the
+        # protection.panel.mode locale entries. The icon may be set per mode; an icon given at
+        # the button level is used for any mode without its own.
+        data:
+          type: MODE
+          basic-icon: IRON_INGOT
+          advanced-icon: GOLD_INGOT
+          expert-icon: NETHER_BRICK
+        actions:
+          switch:
+            click-type: UNKNOWN  # any click
+      9:
+        # Resets every flag to its default. Only the island owner sees it.
+        icon: TNT
+        title: protection.panel.reset-to-default.name
+        description: protection.panel.reset-to-default.description
+        data:
+          type: RESET
+        actions:
+          reset:
+            click-type: UNKNOWN
+    # Rows 2 to 5: the paged flag list, 36 flags per page. The number of flag_button slots sets
+    # the page size.
+    2:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    3:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    4:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    5:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    # Row 6: paging. The buttons only appear when there is a page to go to.
+    6:
+      2:
+        icon: ARROW
+        title: protection.panel.previous
+        data:
+          type: PREVIOUS
+        actions:
+          previous:
+            click-type: UNKNOWN
+      8:
+        icon: ARROW
+        title: protection.panel.next
+        data:
+          type: NEXT
+        actions:
+          next:
+            click-type: UNKNOWN
+  reusable:
+    # One slot of the paged flag list. Everything about how a flag is drawn may be overridden here:
+    #   icon: replaces the flag's own icon (only sensible on a pinned flag)
+    #   title: a locale reference used as the name layout in place of
+    #          protection.panel.flag-item.name-layout; [name] is the flag's name
+    #   description: a locale reference used as the lore layout in place of the flag type's own
+    #          layout (description-layout, setting-layout or menu-layout). It may use
+    #          [description], [setting], [ranks] and [tooltips].
+    #   actions: the flag's clicks are handled by the flag itself, so only the tooltips matter
+    #          here. They are inserted at [tooltips] in the lore layout, or appended after the
+    #          lore if the layout has no such placeholder. The default layouts already carry the
+    #          click hints, so none are declared here. To move the hints, remove them from the
+    #          layout in the locale, put [tooltips] where they should go, and declare them here:
+    #     actions:
+    #       cycle-down:
+    #         click-type: LEFT
+    #         tooltip: '<yellow>Left Click </yellow><gray>to cycle downwards.</gray>'
+    #       cycle-up:
+    #         click-type: RIGHT
+    #         tooltip: '<yellow>Right Click </yellow><gray>to cycle upwards.</gray>'
+    flag_button:
+      data:
+        type: FLAG

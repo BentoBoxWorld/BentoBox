@@ -73,6 +73,15 @@ tab (`IslandDefaultSettingsTab`) — and has no bearing on what is allowed outsi
 island. It is also sparse: it only contains flags listed under `default-island-flags`
 in the game mode config, so a lookup miss is normal and must not render as "no rules".
 
+#### The settings panel is template-driven
+
+`/island settings` is rendered by `panels/customizable/SettingsPanel` from
+`panels/settings_panel.yml` (button types `TAB`, `FLAG`, `MODE`, `RESET`, `NEXT`, `PREVIOUS`;
+`data.flag` pins a flag to a slot). `SettingsTab`/`TabbedPanel` remain as public API and as the
+fallback when the template fails to load, so a rendering change usually has to be made in
+`Flag.toPanelItem` (shared by both paths), not in the panel classes. Flag click handlers must
+find the island via `SettingsTab.getIsland(panel)`, never by casting the panel.
+
 The three concepts are distinct and easy to conflate:
 
 | Question | Source | Admin tab |

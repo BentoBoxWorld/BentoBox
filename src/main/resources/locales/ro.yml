@@ -2178,6 +2178,8 @@ panel:
         <italic>Permiteți BentoBox să se conecteze la GitHub în</italic>
         <green>configurația sau încercați din nou mai târziu.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Casele tale de pe insula</bold></dark_green>'
     buttons:

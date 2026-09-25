@@ -13,7 +13,6 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
-import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -40,10 +39,6 @@ public class IslandToggleClick implements ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
-        // This click listener is used with TabbedPanel and SettingsTabs only
-        TabbedPanel tp = (TabbedPanel)panel;
-        SettingsTab st = (SettingsTab)tp.getActiveTab();
-
         // Permission prefix
         String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
         if (!hasSettingsPermission(user, prefix)) {
@@ -51,8 +46,8 @@ public class IslandToggleClick implements ClickHandler {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
-        // Get the island for this tab
-        Island island = st.getIsland();
+        // Get the island the panel is about
+        Island island = SettingsTab.getIsland(panel);
         if (island != null && canChangeSettings(user, island, prefix)) {
             plugin.getFlagsManager().getFlag(id).ifPresent(flag ->
                     handleFlagClick(user, click, flag, island));

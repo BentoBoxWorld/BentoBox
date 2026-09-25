@@ -2098,6 +2098,11 @@ panel:
         <green>the configuration or try again later.</green>
 # This section contains values for BentoBox panels.
 panels:
+  # The section of translations used in the [prefix_Island] Settings Panel (/island settings)
+  settings:
+    # Title of the panel. [tab] is the name of the tab being shown, [world_name] the world's name.
+    # It is separate from the tab button names so the two can be styled differently.
+    title: '[tab]'
   # The section of translations used in [prefix_Island] Homes Panel
   island_homes:
     title: '<dark_green><bold>Your [prefix_island] homes</bold></dark_green>'

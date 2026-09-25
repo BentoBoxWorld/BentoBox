@@ -119,11 +119,23 @@ public abstract class AbstractPanel {
         return "";
     }
 
+    /**
+     * Returns how many paged items fit on one page: by default the number of slots in the
+     * template that carry the {@link #getPagedItemType() paged item type}. Subclasses whose
+     * templates reserve some of those slots for other purposes should override this.
+     * @param slot the slot record, which carries the per-type slot counts
+     * @return items per page, at least 1
+     * @since 3.23.0
+     */
+    protected int getItemsPerPage(TemplatedPanel.ItemSlot slot) {
+        return Math.max(1, slot.amountMap().getOrDefault(getPagedItemType(), 1));
+    }
+
     @Nullable
     protected PanelItem createNextButton(@NonNull ItemTemplateRecord template,
             TemplatedPanel.ItemSlot slot) {
         int size = getPagedItemCount();
-        int perPage = slot.amountMap().getOrDefault(getPagedItemType(), 1);
+        int perPage = getItemsPerPage(slot);
         if (size <= perPage || (double) size / perPage <= pageIndex + 1) {
             return null;
         }
@@ -151,7 +163,7 @@ public abstract class AbstractPanel {
                 if ((clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
                         && NEXT.equalsIgnoreCase(action.actionType())) {
                     pageIndex++;
-                    build();
+                    onPageChanged();
                 }
             });
             return true;
@@ -191,7 +203,7 @@ public abstract class AbstractPanel {
                 if ((clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
                         && PREVIOUS.equalsIgnoreCase(action.actionType())) {
                     pageIndex--;
-                    build();
+                    onPageChanged();
                 }
             });
             return true;
@@ -216,6 +228,17 @@ public abstract class AbstractPanel {
     // Abstract build method to allow each panel to define its own layout
     protected abstract void build();
 
+    /**
+     * Called by the default next/previous handlers once the page index has changed. By default
+     * the panel is rebuilt. Panels whose {@link world.bentobox.bentobox.api.panels.PanelListener}
+     * already refreshes them after every click should override this to do nothing, so that the
+     * panel is not rebuilt twice.
+     * @since 3.23.0
+     */
+    protected void onPageChanged() {
+        build();
+    }
+
     // Default method for pagination, can be overridden by subclasses if needed
     protected boolean hasNextPage(int elementListSize, int itemsPerPage) {
         return (pageIndex + 1) * itemsPerPage < elementListSize;
@@ -235,7 +258,7 @@ public abstract class AbstractPanel {
             } else if (actionType.equalsIgnoreCase(PREVIOUS)) {
                 this.pageIndex--;
             }
-            build();
+            onPageChanged();
             return true;
         }
         return false;

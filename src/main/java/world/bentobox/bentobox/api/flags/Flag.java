@@ -1,10 +1,14 @@
 package world.bentobox.bentobox.api.flags;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,6 +27,7 @@ import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -136,6 +141,7 @@ public class Flag implements Comparable<Flag> {
     }
 
     private static final String PROTECTION_FLAGS = "protection.flags.";
+    private static final String FLAG_ITEM = "protection.panel.flag-item.";
 
     private final String id;
     private final Material icon;
@@ -449,50 +455,125 @@ public class Flag implements Comparable<Flag> {
      */
     @Nullable
     public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible) {
+        return toPanelItem(plugin, user, world, island, invisible, null);
+    }
+
+    /**
+     * Converts a flag to a panel item, taking the icon, name layout, lore layout and tooltips from
+     * a panel template button wherever the template provides them.
+     * <p>
+     * The template's {@code icon} overrides the flag's icon. Its {@code title} is used as the name
+     * layout in place of {@code protection.panel.flag-item.name-layout}, and its
+     * {@code description} as the lore layout in place of the type-specific layout key. The
+     * tooltips of its {@code actions} are inserted where the lore layout has a {@code [tooltips]}
+     * placeholder, or appended after the lore when it has none. The rank list of a protection
+     * flag is likewise inserted at {@code [ranks]} when the layout has that placeholder and
+     * appended otherwise, so layouts written before these placeholders existed render as before.
+     * @param plugin - plugin
+     * @param user - user that will see this flag
+     * @param world - the world this flag is being shown for. If island is present, then world is the same as the island.
+     * @param island - target island, if any
+     * @param invisible - true if this flag is not visible to players
+     * @param template - the template button describing this flag, or null for the defaults
+     * @return - PanelItem for this flag or null if item is invisible to user
+     * @since 3.23.0
+     */
+    @Nullable
+    public PanelItem toPanelItem(BentoBox plugin, User user, World world, @Nullable Island island, boolean invisible,
+            @Nullable ItemTemplateRecord template) {
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
         }
+        ItemStack iconStack = template != null && template.icon() != null ? template.icon().clone()
+                : ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon));
+        String nameLayout = template != null && template.title() != null ? template.title()
+                : FLAG_ITEM + "name-layout";
         PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME,
-                        user.getTranslation(getNameReference())))
+                .icon(iconStack)
+                .name(user.getTranslation(nameLayout, TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
+        String layout = template == null ? null : template.description();
+        String tooltips = template == null ? "" : template.actions().stream()
+                .map(ItemTemplateRecord.ActionRecords::tooltip)
+                .filter(Objects::nonNull)
+                .map(user::getTranslation)
+                .filter(t -> !t.isBlank())
+                .collect(Collectors.joining("\n"));
         if (hasSubPanel()) {
-            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+            addLore(user, pib, layoutOrDefault(layout, "menu-layout"), "", "", tooltips, null);
             return pib.build();
         }
 
-        return switch (getType()) {
-        case PROTECTION -> createProtectionFlag(user, world, island, pib).build();
-        case SETTING -> createSettingFlag(user, island, pib).build();
-        case WORLD_SETTING -> createWorldSettingFlag(user, world, pib).build();
-
-        };
-
-    }
-
-    private PanelItemBuilder createWorldSettingFlag(User user, World world, PanelItemBuilder pib) {
-        String worldSetting = this.isSetForWorld(world)
-                ? user.getTranslation("protection.panel.flag-item.setting-active")
-                : user.getTranslation("protection.panel.flag-item.setting-disabled");
-        pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
-                , "[setting]", worldSetting));
-        return pib;
-    }
-
-    private PanelItemBuilder createSettingFlag(User user, Island island, PanelItemBuilder pib) {
-        if (island != null) {
-            String islandSetting = island.isAllowed(this) ? user.getTranslation("protection.panel.flag-item.setting-active")
-                    : user.getTranslation("protection.panel.flag-item.setting-disabled");
-            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
-                    , "[setting]", islandSetting));
-            if (this.cooldown > 0 && island.isCooldown(this)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.setting-cooldown"));
-            }
+        switch (getType()) {
+        case PROTECTION -> createProtectionFlag(user, world, island, pib, layout, tooltips);
+        case SETTING -> createSettingFlag(user, island, pib, layout, tooltips);
+        case WORLD_SETTING -> createWorldSettingFlag(user, world, pib, layout, tooltips);
         }
-        return pib;
+        return pib.build();
+    }
+
+    /**
+     * @param layout - lore layout from a template, or null
+     * @param defaultKey - key under {@code protection.panel.flag-item.} to use when there is none
+     * @return the layout reference to translate
+     */
+    private static String layoutOrDefault(@Nullable String layout, String defaultKey) {
+        return layout != null ? layout : FLAG_ITEM + defaultKey;
+    }
+
+    /**
+     * Adds the lore of a flag item: the layout with the description, setting, ranks and tooltips
+     * substituted. Ranks and tooltips that the layout has no placeholder for are appended after
+     * it, ranks first, then an empty line and the tooltips.
+     * @param user - viewer
+     * @param pib - item builder to add the lore to
+     * @param layoutKey - locale reference of the lore layout
+     * @param setting - value for {@code [setting]}
+     * @param ranks - rank lines for {@code [ranks]}, or empty
+     * @param tooltips - tooltip lines for {@code [tooltips]}, or empty
+     * @param afterLayout - an extra line that follows the layout, or null
+     */
+    private void addLore(User user, PanelItemBuilder pib, String layoutKey, String setting, String ranks,
+            String tooltips, @Nullable String afterLayout) {
+        // The untranslated layout tells us which placeholders it carries
+        String raw = user.getTranslation(layoutKey);
+        pib.description(user.getTranslation(layoutKey,
+                TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference()),
+                "[setting]", setting,
+                "[ranks]", ranks,
+                "[tooltips]", tooltips));
+        if (afterLayout != null) {
+            pib.description(afterLayout);
+        }
+        if (!ranks.isEmpty() && !raw.contains("[ranks]")) {
+            pib.description(ranks);
+        }
+        if (!tooltips.isEmpty() && !raw.contains("[tooltips]")) {
+            pib.description("");
+            pib.description(tooltips);
+        }
+    }
+
+    private void createWorldSettingFlag(User user, World world, PanelItemBuilder pib, @Nullable String layout,
+            String tooltips) {
+        String worldSetting = this.isSetForWorld(world)
+                ? user.getTranslation(FLAG_ITEM + "setting-active")
+                : user.getTranslation(FLAG_ITEM + "setting-disabled");
+        addLore(user, pib, layoutOrDefault(layout, "setting-layout"), worldSetting, "", tooltips, null);
+    }
+
+    private void createSettingFlag(User user, @Nullable Island island, PanelItemBuilder pib, @Nullable String layout,
+            String tooltips) {
+        if (island != null) {
+            String islandSetting = island.isAllowed(this) ? user.getTranslation(FLAG_ITEM + "setting-active")
+                    : user.getTranslation(FLAG_ITEM + "setting-disabled");
+            String cooldownLine = this.cooldown > 0 && island.isCooldown(this)
+                    ? user.getTranslation(FLAG_ITEM + "setting-cooldown")
+                    : null;
+            addLore(user, pib, layoutOrDefault(layout, "setting-layout"), islandSetting, "", tooltips, cooldownLine);
+        }
     }
 
     /**
@@ -504,29 +585,38 @@ public class Flag implements Comparable<Flag> {
      * which falls back to {@link #isSetForWorld(World)} when there is no island
      * at the location.
      */
-    private PanelItemBuilder createProtectionFlag(User user, World world, Island island, PanelItemBuilder pib) {
+    private void createProtectionFlag(User user, World world, @Nullable Island island, PanelItemBuilder pib,
+            @Nullable String layout, String tooltips) {
         if (island == null) {
             // Off-island the world setting decides, not any island's ranks
-            return createWorldSettingFlag(user, world, pib);
+            createWorldSettingFlag(user, world, pib, layout, tooltips);
+            return;
         }
-        int y = island.getFlag(this);
-        // Protection flag
+        addLore(user, pib, layoutOrDefault(layout, "description-layout"), "", getRankLines(user, island.getFlag(this)),
+                tooltips, null);
+    }
 
-        pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
-                TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
-
+    /**
+     * Builds the rank list shown in a protection flag's lore: one line per rank, marking it as
+     * allowed, blocked, or the minimum rank for the flag.
+     * @param user - viewer
+     * @param rank - the rank the flag is set to
+     * @return the rank lines joined by newlines
+     * @since 3.23.0
+     */
+    public String getRankLines(User user, int rank) {
+        List<String> lines = new ArrayList<>();
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             String rankName = user.getTranslation(reference);
-            if (score > RanksManager.BANNED_RANK && score < y) {
-                pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
-            } else if (score <= RanksManager.OWNER_RANK && score > y) {
-                pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
-            } else if (score == y) {
-                pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
+            if (score > RanksManager.BANNED_RANK && score < rank) {
+                lines.add(getRankTranslation(user, FLAG_ITEM + "blocked-rank", rankName));
+            } else if (score <= RanksManager.OWNER_RANK && score > rank) {
+                lines.add(getRankTranslation(user, FLAG_ITEM + "allowed-rank", rankName));
+            } else if (score == rank) {
+                lines.add(getRankTranslation(user, FLAG_ITEM + "minimal-rank", rankName));
             }
         });
-
-        return pib;
+        return String.join("\n", lines);
     }
 
     /**

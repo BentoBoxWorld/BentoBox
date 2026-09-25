@@ -17,6 +17,7 @@ import java.util.function.BiFunction;
 
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelListener;
@@ -25,6 +26,7 @@ import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord;
 import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 
 /**
@@ -91,6 +93,22 @@ public class TemplatedPanelBuilder
     public TemplatedPanelBuilder world(World world)
     {
         this.world = world;
+        return this;
+    }
+
+
+    /**
+     * Adds the island context for the templated panel. Click handlers that need to know which
+     * island the panel is about, such as the flag click handlers, read it back via
+     * {@link world.bentobox.bentobox.api.panels.Panel#getIsland()}.
+     *
+     * @param island the island, or {@code null} if the panel is not about a specific island
+     * @return the template panel builder
+     * @since 3.23.0
+     */
+    public TemplatedPanelBuilder island(@Nullable Island island)
+    {
+        this.island = island;
         return this;
     }
 
@@ -190,6 +208,19 @@ public class TemplatedPanelBuilder
 
 
     /**
+     * Gets the island context.
+     *
+     * @return the island, or {@code null} if none was set
+     * @since 3.23.0
+     */
+    @Nullable
+    public Island getIsland()
+    {
+        return this.island;
+    }
+
+
+    /**
      * Get title parameters for panel title.
      *
      * @return the list of parameters for title.
@@ -241,6 +272,12 @@ public class TemplatedPanelBuilder
      * The world where GUI operates.
      */
     private World world;
+
+    /**
+     * The island the GUI is about, if any.
+     */
+    @Nullable
+    private Island island;
 
     /**
      * Panel Listener
