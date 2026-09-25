@@ -48,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.23.0"
+val buildVersion = "3.23.1"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -97,10 +97,17 @@ val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
 val postgresqlVersion = "42.2.18"
 val hikaricpVersion = "5.0.1"
-// Compile against the 26.2 dev bundle MockBukkit 4.116.1 was built against, so the API under
-// test and the API compiled against are the same. Note 26.2 brings Adventure 5, which makes
-// ClickEvent generic (payload() rather than value()) and seals Component so it cannot be mocked.
-val paperVersion = "26.2.build.111-stable"
+// Compile against Paper 26.3 so 26.3-only API (Cushion, EntityBreakByEntityEvent, STRAW_BED...)
+// is visible at compile time. Code that touches it must stay guarded (Enums.getIfPresent, or a
+// listener class registered only when the class exists) because the plugin still runs on 26.2.
+// 26.3 is alpha-only so far; move to the first "-stable" build once Paper publishes one.
+val paperVersion = "26.3.build.41-alpha"
+// Tests RUN against the 26.2 API because MockBukkit has no v26.3 artifact yet (its registry
+// validation hard-fails on an API/MockBukkit version mismatch). They still COMPILE against
+// paperVersion so 26.3-only listeners can have tests; guard those with @EnabledIf on the class.
+// Note 26.2 brought Adventure 5, which makes ClickEvent generic (payload() rather than value())
+// and seals Component so it cannot be mocked.
+val testPaperVersion = "26.2.build.111-stable"
 val bstatsVersion = "3.0.0"
 val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
@@ -267,7 +274,8 @@ dependencies {
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
     testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:$mockBukkitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
-    testImplementation("io.papermc.paper:paper-api:$paperVersion")
+    testCompileOnly("io.papermc.paper:paper-api:$paperVersion")
+    testRuntimeOnly("io.papermc.paper:paper-api:$testPaperVersion")
     testImplementation("com.github.MilkBowl:VaultAPI:$vaultVersion")
     testImplementation("me.clip:placeholderapi:$placeholderapiVersion")
     testImplementation("commons-lang:commons-lang:$commonsLangVersion")
@@ -330,6 +338,11 @@ dependencies {
 
     // --- Paperweight Development Bundle (Provided by plugin development tools) ---
     paperweight.paperDevBundle(paperVersion)
+}
+
+// Pin the test *runtime* API to the MockBukkit line even though MockBukkit's own pom may drift.
+configurations.named("testRuntimeClasspath") {
+    resolutionStrategy.force("io.papermc.paper:paper-api:$testPaperVersion")
 }
 
 paperweight {
