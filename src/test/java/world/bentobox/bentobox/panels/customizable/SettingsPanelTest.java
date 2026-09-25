@@ -2,6 +2,7 @@ package world.bentobox.bentobox.panels.customizable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,6 +46,8 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
+import world.bentobox.bentobox.api.flags.clicklisteners.IslandDefaultCycleClick;
+import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.reader.TemplateReader;
@@ -127,6 +130,8 @@ class SettingsPanelTest extends RanksManagerTestSetup {
         when(user.getLocation()).thenReturn(location);
         when(user.getWorld()).thenReturn(world);
         when(user.isOp()).thenReturn(false);
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         Answer<String> answer = inv -> {
             Object[] args = inv.getArguments();
             String text = texts.getOrDefault((String) args[0], (String) args[0]);
@@ -150,6 +155,7 @@ class SettingsPanelTest extends RanksManagerTestSetup {
         flags.add(flag("P_ALPHA", Type.PROTECTION, Mode.BASIC));
         flags.add(flag("P_BETA", Type.PROTECTION, Mode.BASIC));
         flags.add(flag("S_GAMMA", Type.SETTING, Mode.BASIC));
+        flags.add(flag("W_DELTA", Type.WORLD_SETTING, Mode.BASIC));
     }
 
     @Override
@@ -481,5 +487,133 @@ class SettingsPanelTest extends RanksManagerTestSetup {
 
         assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items(sp), LOCK));
         verify(plugin).logWarning(eq("Settings panel template pins unknown flag NO_SUCH_FLAG"));
+    }
+
+    // ---------------------------------------------------------------------
+    // Section: Admin panel
+    // ---------------------------------------------------------------------
+
+    private SettingsPanel openAdmin(Island target) {
+        assertTrue(SettingsPanel.openAdminPanel(command, user, target));
+        return (SettingsPanel) PanelListenerManager.getOpenPanels().get(uuid).getListener().orElseThrow();
+    }
+
+    /**
+     * The world form of the admin panel: three world tabs in expert mode, no island buttons.
+     */
+    @Test
+    void testAdminWorldFormLayout() {
+        SettingsPanel sp = openAdmin(null);
+        Map<Integer, PanelItem> items = items(sp);
+
+        assertEquals(TabType.WORLD_SETTING, sp.getActiveTab());
+        assertEquals(Mode.EXPERT, sp.getMode());
+        assertEquals(Material.GRASS_BLOCK, material(items, PROTECTION_TAB));
+        assertTrue(items.get(PROTECTION_TAB).isGlow());
+        assertEquals("protection.panel.WORLD_SETTING.title", items.get(PROTECTION_TAB).getName());
+        assertEquals(Material.STONE_BRICKS, material(items, SETTING_TAB));
+        assertEquals(Material.CRACKED_STONE_BRICKS, material(items, 3));
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, CHANGE_SETTINGS));
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, LOCK));
+        assertEquals(Material.NETHER_BRICK, material(items, MODE));
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, RESET));
+        // The one world setting flag, clickable
+        assertEquals(Material.STONE, material(items, FIRST_FLAG));
+        assertTrue(items.get(FIRST_FLAG).getClickHandler().isPresent());
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, FIRST_FLAG + 1));
+        assertNull(sp.getIsland());
+        verify(user).getTranslation("panels.settings.title", "[tab]", "protection.panel.WORLD_SETTING.title",
+                "[world_name]", "BSkyBlock");
+    }
+
+    /**
+     * The world defaults tab shows every protection flag, hidden ones included, with a world
+     * toggle as the click handler.
+     */
+    @Test
+    void testAdminWorldDefaultsTab() {
+        hidden.add("P_ALPHA");
+        SettingsPanel sp = openAdmin(null);
+        click(items(sp), SETTING_TAB, user, ClickType.LEFT);
+        assertEquals(TabType.WORLD_DEFAULTS, sp.getActiveTab());
+        sp.refreshPanel();
+        Map<Integer, PanelItem> items = items(sp);
+
+        assertTrue(items.get(SETTING_TAB).isGlow());
+        assertEquals(Material.STONE, material(items, FIRST_FLAG));
+        assertEquals(Material.STONE, material(items, FIRST_FLAG + 1));
+        assertInstanceOf(WorldToggleClick.class, items.get(FIRST_FLAG).getClickHandler().orElseThrow());
+        // World state, not ranks
+        assertTrue(items.get(FIRST_FLAG).getDescription().contains("protection.panel.flag-item.setting-layout"));
+    }
+
+    /**
+     * The island defaults tab shows each flag at the rank new islands get, with a default-rank
+     * cycle as the click handler.
+     */
+    @Test
+    void testAdminIslandDefaultsTab() {
+        SettingsPanel sp = openAdmin(null);
+        click(items(sp), 3, user, ClickType.LEFT);
+        assertEquals(TabType.ISLAND_DEFAULTS, sp.getActiveTab());
+        sp.refreshPanel();
+        Map<Integer, PanelItem> items = items(sp);
+
+        assertTrue(items.get(3).isGlow());
+        PanelItem first = items.get(FIRST_FLAG);
+        assertEquals(Material.STONE, first.getItem().getType());
+        assertInstanceOf(IslandDefaultCycleClick.class, first.getClickHandler().orElseThrow());
+        // Flags default to the member rank
+        assertTrue(first.getDescription().contains("protection.panel.flag-item.minimal-rankranks.member"),
+                first.getDescription().toString());
+    }
+
+    /**
+     * The defaults tabs need a permission; without it they are not shown and cannot be reached.
+     */
+    @Test
+    void testAdminDefaultsTabsNeedPermission() {
+        when(user.hasPermission("bskyblock.admin.set-world-defaults")).thenReturn(false);
+        SettingsPanel sp = openAdmin(null);
+        Map<Integer, PanelItem> items = items(sp);
+
+        assertEquals(Material.GRASS_BLOCK, material(items, PROTECTION_TAB));
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, SETTING_TAB));
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, 3));
+    }
+
+    /**
+     * With no permitted tab at all the panel is not opened and the admin is told why.
+     */
+    @Test
+    void testNoPermittedTab() {
+        when(user.hasPermission("bskyblock.admin.set-world-defaults")).thenReturn(false);
+        SettingsPanel sp = new SettingsPanel(command, user, SettingsPanel.ADMIN_SETTINGS_PANEL, world, null,
+                List.of(TabType.ISLAND_DEFAULTS), Mode.EXPERT);
+        assertTrue(sp.open());
+        assertNull(sp.getPanel());
+        verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.set-world-defaults");
+    }
+
+    /**
+     * The island form of the admin panel: the island tabs appear as the world tabs' fallbacks,
+     * with the island buttons, in expert mode.
+     */
+    @Test
+    void testAdminIslandForm() {
+        SettingsPanel sp = openAdmin(island);
+        Map<Integer, PanelItem> items = items(sp);
+
+        assertEquals(TabType.PROTECTION, sp.getActiveTab());
+        assertEquals(Mode.EXPERT, sp.getMode());
+        assertEquals(Material.SHIELD, material(items, PROTECTION_TAB));
+        assertEquals(Material.COMPARATOR, material(items, SETTING_TAB));
+        assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items, 3));
+        assertEquals(Material.CRAFTING_TABLE, material(items, CHANGE_SETTINGS));
+        assertEquals(Material.TRIPWIRE_HOOK, material(items, LOCK));
+        assertEquals(Material.NETHER_BRICK, material(items, MODE));
+        assertEquals(Material.TNT, material(items, RESET));
+        assertEquals(island, sp.getPanel().getIsland());
+        verify(island).beginDeferSaves();
     }
 }

@@ -485,22 +485,9 @@ public class Flag implements Comparable<Flag> {
         if (!user.isOp() && invisible) {
             return null;
         }
-        ItemStack iconStack = template != null && template.icon() != null ? template.icon().clone()
-                : ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon));
-        String nameLayout = template != null && template.title() != null ? template.title()
-                : FLAG_ITEM + "name-layout";
-        PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(iconStack)
-                .name(user.getTranslation(nameLayout, TextVariables.NAME, user.getTranslation(getNameReference())))
-                .clickHandler(clickHandler)
-                .invisible(invisible);
+        PanelItemBuilder pib = baseItem(user, invisible, template);
         String layout = template == null ? null : template.description();
-        String tooltips = template == null ? "" : template.actions().stream()
-                .map(ItemTemplateRecord.ActionRecords::tooltip)
-                .filter(Objects::nonNull)
-                .map(user::getTranslation)
-                .filter(t -> !t.isBlank())
-                .collect(Collectors.joining("\n"));
+        String tooltips = tooltips(user, template);
         if (hasSubPanel()) {
             addLore(user, pib, layoutOrDefault(layout, "menu-layout"), "", "", tooltips, null);
             return pib.build();
@@ -512,6 +499,55 @@ public class Flag implements Comparable<Flag> {
         case WORLD_SETTING -> createWorldSettingFlag(user, world, pib, layout, tooltips);
         }
         return pib.build();
+    }
+
+    /**
+     * Converts a flag to a panel item that shows it as a protection flag set to the given rank,
+     * rather than to any island's rank: for example the default rank that new islands receive.
+     * The item keeps the flag's own click handler; callers that change what a click does must
+     * replace it. Icon, name layout, lore layout and tooltips come from the template as in
+     * {@link #toPanelItem(BentoBox, User, World, Island, boolean, ItemTemplateRecord)}.
+     * @param user - user that will see this flag
+     * @param rank - the rank to show the flag at
+     * @param template - the template button describing this flag, or null for the defaults
+     * @return - PanelItem for this flag
+     * @since 3.23.0
+     */
+    @NonNull
+    public PanelItem toPanelItemForRank(User user, int rank, @Nullable ItemTemplateRecord template) {
+        PanelItemBuilder pib = baseItem(user, false, template);
+        String layout = template == null ? null : template.description();
+        addLore(user, pib, layoutOrDefault(layout, "description-layout"), "", getRankLines(user, rank),
+                tooltips(user, template), null);
+        return pib.build();
+    }
+
+    /**
+     * @return a builder with the flag's icon, name and click handler, taking the icon and name
+     * layout from the template where it provides them
+     */
+    private PanelItemBuilder baseItem(User user, boolean invisible, @Nullable ItemTemplateRecord template) {
+        ItemStack iconStack = template != null && template.icon() != null ? template.icon().clone()
+                : ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon));
+        String nameLayout = template != null && template.title() != null ? template.title()
+                : FLAG_ITEM + "name-layout";
+        return new PanelItemBuilder()
+                .icon(iconStack)
+                .name(user.getTranslation(nameLayout, TextVariables.NAME, user.getTranslation(getNameReference())))
+                .clickHandler(clickHandler)
+                .invisible(invisible);
+    }
+
+    /**
+     * @return the translated tooltips of the template's actions, one per line, or empty
+     */
+    private static String tooltips(User user, @Nullable ItemTemplateRecord template) {
+        return template == null ? "" : template.actions().stream()
+                .map(ItemTemplateRecord.ActionRecords::tooltip)
+                .filter(Objects::nonNull)
+                .map(user::getTranslation)
+                .filter(t -> !t.isBlank())
+                .collect(Collectors.joining("\n"));
     }
 
     /**

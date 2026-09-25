@@ -21,6 +21,7 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.customizable.SettingsPanel;
 import world.bentobox.bentobox.panels.settings.IslandDefaultSettingsTab;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.panels.settings.WorldDefaultSettingsTab;
@@ -219,7 +220,23 @@ public class AdminSettingsCommand extends CompositeCommand {
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
-        if (args.isEmpty()) {
+        // World settings without a player argument, otherwise the player's island settings
+        Island target = args.isEmpty() ? null : island;
+        if (!SettingsPanel.openAdminPanel(this, user, target)) {
+            getPlugin().logError("Could not load the admin settings panel template; showing the built-in panel");
+            openLegacyPanel(user, target);
+        }
+        return true;
+    }
+
+    /**
+     * Opens the legacy tabbed panel, used when the admin settings panel template cannot be loaded.
+     * @param user the admin
+     * @param target the island to edit, or null for the world
+     * @since 3.23.0
+     */
+    protected void openLegacyPanel(User user, @Nullable Island target) {
+        if (target == null) {
             new TabbedPanelBuilder()
             .user(user)
             .world(getWorld())
@@ -229,18 +246,17 @@ public class AdminSettingsCommand extends CompositeCommand {
             .startingSlot(1)
             .size(54)
             .build().openPanel();
-            return true;
+            return;
         }
         // Player settings
         new TabbedPanelBuilder()
         .user(user)
-        .world(island.getWorld())
-                .island(island).tab(1, new SettingsTab(getWorld(), user, Flag.Type.PROTECTION, Flag.Mode.EXPERT))
+        .world(target.getWorld())
+                .island(target).tab(1, new SettingsTab(getWorld(), user, Flag.Type.PROTECTION, Flag.Mode.EXPERT))
                 .tab(2, new SettingsTab(getWorld(), user, Flag.Type.SETTING, Flag.Mode.EXPERT))
         .startingSlot(1)
         .size(54)
         .build().openPanel();
-        return true;
     }
 
     @Override
