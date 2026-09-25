@@ -1993,6 +1993,8 @@ panel:
 
         <green>구성에서 BentoBox가 GitHub에 연결하도록 허용하거나 나중에 다시 시도하십시오.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>당신의 [prefix_island] 집</bold></dark_green>'
     buttons:

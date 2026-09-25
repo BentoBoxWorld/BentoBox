@@ -2044,6 +2044,8 @@ panel:
         <green>у конфігурації або спробуйте пізніше.</green>
 # This section contains values for BentoBox panels.
 panels:
+  settings:
+    title: '[tab]'
   # The section of translations used in [prefix_Island] Homes Panel
   island_homes:
     title: '<dark_green><bold>Ваші домівки [prefix_island]</bold></dark_green>'

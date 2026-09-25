@@ -2182,6 +2182,8 @@ panel:
         <green>Sta BentoBox toe om verbinding te maken met GitHub in</green>
         <green>de configuratie of probeer het later opnieuw.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Jouw [prefix_island] huizen</bold></dark_green>'
     buttons:

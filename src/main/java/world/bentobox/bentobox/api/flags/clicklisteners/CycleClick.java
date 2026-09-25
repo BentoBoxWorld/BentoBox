@@ -14,7 +14,6 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
-import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -65,11 +64,8 @@ public class CycleClick implements PanelItem.ClickHandler {
             + " has no world associated with it. Please report this bug to the author.");
             return true;
         }
-        // This click listener is used with TabbedPanel and SettingsTabs only
-        TabbedPanel tp = (TabbedPanel)panel;
-        SettingsTab st = (SettingsTab)tp.getActiveTab();
-        // Get the island for this tab
-        island = st.getIsland();
+        // Get the island the panel is about
+        island = SettingsTab.getIsland(panel);
         this.user = user2;
         changeOccurred = false;
         // Permission prefix

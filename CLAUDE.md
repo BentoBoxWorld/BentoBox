@@ -73,6 +73,15 @@ tab (`IslandDefaultSettingsTab`) — and has no bearing on what is allowed outsi
 island. It is also sparse: it only contains flags listed under `default-island-flags`
 in the game mode config, so a lookup miss is normal and must not render as "no rules".
 
+#### The settings panel is template-driven
+
+`/island settings` is rendered by `panels/customizable/SettingsPanel` from
+`panels/settings_panel.yml` (button types `TAB`, `FLAG`, `MODE`, `RESET`, `NEXT`, `PREVIOUS`;
+`data.flag` pins a flag to a slot). `SettingsTab`/`TabbedPanel` remain as public API and as the
+fallback when the template fails to load, so a rendering change usually has to be made in
+`Flag.toPanelItem` (shared by both paths), not in the panel classes. Flag click handlers must
+find the island via `SettingsTab.getIsland(panel)`, never by casting the panel.
+
 The three concepts are distinct and easy to conflate:
 
 | Question | Source | Admin tab |
@@ -156,9 +165,9 @@ A template like `<green>[description]</green>` looks harmless but is a trap. Tra
 - `plugin.yml` and `config.yml` are filtered for the `${version}` placeholder at build time; locale files are copied without filtering.
 - Locale translations are produced with Claude, not GitLocalize. When a key is added to `en-US.yml`, translate it into every other `src/main/resources/locales/*.yml` file in the same PR, preserving each file's existing style (e.g. the MiniMessage-tagged names in `zh-CN.yml` / `zh-HK.yml`).
 - Java preview features are enabled for both compilation and test execution.
-- The authoritative version is `buildVersion` in `build.gradle.kts` (current: `3.22.3`). Two related but different strings come out of it:
-  - **Gradle artifact version** (`project.version`, and so the jar name): `{buildVersion}-SNAPSHOT-LOCAL` locally, `{buildVersion}-SNAPSHOT` on CI (when `BUILD_NUMBER` is set), and the bare `{buildVersion}` when `GIT_BRANCH=origin/master`. So a local build yields `build/libs/BentoBox-3.22.3-SNAPSHOT-LOCAL.jar`.
-  - **`plugin.yml` version**, the one `/bentobox version` reports: the template is `${project.version}${build.number}`, so CI appends the build number — `3.22.3-SNAPSHOT-b1234`. Locally it matches the artifact version, `3.22.3-SNAPSHOT-LOCAL`.
+- The authoritative version is `buildVersion` in `build.gradle.kts` (current: `3.23.1`). Two related but different strings come out of it:
+  - **Gradle artifact version** (`project.version`, and so the jar name): `{buildVersion}-SNAPSHOT-LOCAL` locally, `{buildVersion}-SNAPSHOT` on CI (when `BUILD_NUMBER` is set), and the bare `{buildVersion}` when `GIT_BRANCH=origin/master`. So a local build yields `build/libs/BentoBox-3.23.1-SNAPSHOT-LOCAL.jar`.
+  - **`plugin.yml` version**, the one `/bentobox version` reports: the template is `${project.version}${build.number}`, so CI appends the build number — `3.23.1-SNAPSHOT-b1234`. Locally it matches the artifact version, `3.23.1-SNAPSHOT-LOCAL`.
 
   The invariant to preserve when editing this block: **exactly one** of `project.version` and `build.number` carries the build marker. Locally the marker is baked into the revision so the jar filename stays distinguishable from a CI snapshot, which is why `finalBuildNumber` is empty there; setting both is what once stamped `3.22.3-SNAPSHOT-LOCAL-LOCAL` into `plugin.yml`.
 

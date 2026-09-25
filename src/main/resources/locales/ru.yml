@@ -2187,6 +2187,8 @@ panel:
         <green>в конфигурации или попробуйте позднее.</green>
 # В этом разделе приведены значения для панелей BentoBox.
 panels:
+  settings:
+    title: '[tab]'
   # Раздел переводов, используемых в панели дома.
   island_homes:
     title: <dark_green><bold>Ваши [prefix_island] дома</bold></dark_green>

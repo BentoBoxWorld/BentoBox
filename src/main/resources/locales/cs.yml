@@ -2085,6 +2085,8 @@ panel:
         <green>Povol pluginu BentoBox v připojení na GitHub</green>
         <green>v konfiguraci nebo to zkus později.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Vaše domy [prefix_island]</bold></dark_green>'
     buttons:

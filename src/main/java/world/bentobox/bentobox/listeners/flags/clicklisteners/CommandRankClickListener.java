@@ -16,7 +16,6 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
-import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
@@ -41,11 +40,8 @@ public class CommandRankClickListener implements ClickHandler {
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
-        // This click listener is used with TabbedPanel and SettingsTabs only
-        TabbedPanel tp = (TabbedPanel)panel;
-        SettingsTab st = (SettingsTab)tp.getActiveTab();
-        // Get the island for this tab
-        island = st.getIsland();
+        // Get the island the panel is about
+        island = SettingsTab.getIsland(panel);
 
         // Get the world
         if (!user.inWorld()) {

@@ -2012,6 +2012,8 @@ panel:
                 .\n<white>\n</white><yellow>● </yellow><green>BentoBox'ın yapılandırmada GitHub'a\n</green><green>bağlanmasına izin verin\</green>
                 \ veya daha \n<green>sonra tekrar deneyin.\n</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Senin [prefix_island] evlerin</bold></dark_green>'
     buttons:

@@ -234,6 +234,7 @@ public class TabbedPanel extends Panel implements PanelListener {
      * @return {@code true} if a click on this slot does work
      * @since 3.22.1
      */
+    @Override
     public boolean isActionableSlot(int rawSlot) {
         // Top row tab icons are trapped by onInventoryClick rather than by a click handler
         if (tpb.getTabs().containsKey(rawSlot)) {
@@ -241,6 +242,15 @@ public class TabbedPanel extends Panel implements PanelListener {
         }
         PanelItem item = getItems().get(rawSlot);
         return item != null && item.getClickHandler().isPresent();
+    }
+
+    /**
+     * Tabbed panels rebuild their items on every click, so they are click-throttled.
+     * @since 3.23.1
+     */
+    @Override
+    public boolean hasClickCooldown() {
+        return true;
     }
 
     /**

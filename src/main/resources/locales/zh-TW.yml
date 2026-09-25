@@ -2039,6 +2039,8 @@ panel:
 
 # This section contains values for BentoBox panels.
 panels:
+  settings:
+    title: '[tab]'
   # The section of translations used in [prefix_Island] Homes Panel
   island_homes:
     title: <dark_green><bold>你的[prefix_island]家</bold></dark_green>

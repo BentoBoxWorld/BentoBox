@@ -2160,6 +2160,8 @@ panel:
         <green>Ļauj BentoBox savienoties ar GitHub</green>
         <green>konfigurācijā vai mēģini vēlāk.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<dark_green><bold>Jūsu [prefix_island] mājas</bold></dark_green>'
     buttons:

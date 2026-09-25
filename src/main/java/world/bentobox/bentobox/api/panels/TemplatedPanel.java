@@ -36,6 +36,7 @@ public class TemplatedPanel extends Panel {
     public TemplatedPanel(@NonNull TemplatedPanelBuilder builder) {
         this.user = builder.getUser();
         this.setWorld(builder.getWorld());
+        this.setIsland(builder.getIsland());
         this.setListener(builder.getListener());
 
         this.panelTemplate = builder.getPanelTemplate();
@@ -57,16 +58,54 @@ public class TemplatedPanel extends Panel {
      * This method generates the panel from the template.
      */
     private void generatePanel() {
-        Map<Integer, PanelItem> items = switch (this.panelTemplate.type()) {
+        Map<Integer, PanelItem> items = this.generateItems();
+
+        super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters), items,
+                items.keySet().stream().max(Comparator.naturalOrder()).orElse(9), this.user,
+                this.getListener().orElse(null), this.panelTemplate.type());
+    }
+
+    /**
+     * Regenerates this panel from its template, running every registered button builder again.
+     * If the panel is open and its title and size are unchanged, the items of the open inventory
+     * are updated in place, which avoids the close/open event cascade of a full reopen. Otherwise
+     * the panel is reopened. Use this to refresh a panel after a click instead of building a new
+     * one.
+     *
+     * @param parameters new parameters for the panel title, or none to keep the current ones
+     * @since 3.23.1
+     */
+    public void regenerate(@NonNull String... parameters) {
+        if (this.panelTemplate == null) {
+            return;
+        }
+        if (parameters.length > 0) {
+            this.parameters = parameters;
+        }
+        // Reset the per-type slot counters so the builders see the same slots as on first build
+        this.typeIndex.clear();
+        this.typeSlotMap.clear();
+        Map<Integer, PanelItem> items = this.generateItems();
+        String title = this.user.getTranslation(this.panelTemplate.title(), this.parameters);
+        int size = items.keySet().stream().max(Comparator.naturalOrder()).orElse(9);
+        if (!super.tryRefreshInPlace(title, items, size)) {
+            super.makePanel(title, items, size, this.user, this.getListener().orElse(null),
+                    this.panelTemplate.type());
+        }
+    }
+
+    /**
+     * Builds the item map for the panel type of the template.
+     *
+     * @return items keyed by slot
+     */
+    private Map<Integer, PanelItem> generateItems() {
+        return switch (this.panelTemplate.type()) {
         case INVENTORY -> this.populateInventoryPanel(new PanelItem[6][9]);
         case HOPPER -> this.populateInventoryPanel(new PanelItem[1][5]);
         case DROPPER -> this.populateInventoryPanel(new PanelItem[3][3]);
         case ANVIL -> this.populateInventoryPanel(new PanelItem[4][9]);
         };
-
-        super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters), items,
-                items.keySet().stream().max(Comparator.naturalOrder()).orElse(9), this.user,
-                this.getListener().orElse(null), this.panelTemplate.type());
     }
 
     /**
@@ -296,14 +335,15 @@ public class TemplatedPanel extends Panel {
     }
 
     /**
-     * This method creates a fallback button for given record.
-     * 
-     * @param rec Record which fallback must be created.
-     * @return PanelItem if fallback was creates successfully, otherwise null.
+     * This method creates a fallback button from the given fallback record. The record is built
+     * like any other button, so a fallback may itself carry a {@code type} and a further fallback.
+     *
+     * @param fallback the fallback record of the button that could not be created, or null if none
+     * @return PanelItem if the fallback was created successfully, otherwise null.
      */
     @Nullable
-    private PanelItem makeFallBack(@Nullable ItemTemplateRecord rec) {
-        return rec == null ? null : this.makeButton(rec.fallback());
+    private PanelItem makeFallBack(@Nullable ItemTemplateRecord fallback) {
+        return fallback == null ? null : this.makeButton(fallback);
     }
 
     /**
@@ -421,8 +461,8 @@ public class TemplatedPanel extends Panel {
 
     /**
      * Stores the parameters for panel title object.
-     * 
+     *
      * @since 1.20.0
      */
-    private final String[] parameters;
+    private String[] parameters;
 }

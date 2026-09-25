@@ -1,0 +1,188 @@
+# The admin settings panel, opened by /admin settings. This default lays the panel out exactly as
+# it was before it became customizable. A game mode addon may ship its own copy in its own panels
+# folder, which then takes precedence for that game mode.
+#
+# The panel has two forms. Without a player argument it edits the world: the world settings, the
+# protections that apply off-island, and the defaults new islands start with. With a player
+# argument it edits that player's island, with the same protection and settings tabs a player
+# sees but in expert mode. The world tabs do not apply to an island, so each world tab button
+# names an island tab as its fallback and vice versa.
+#
+# The name of the panel must be the same as the file name.
+admin_settings_panel:
+  # Title of the panel: a locale reference or literal text, translated with [tab] (the name of the
+  # tab being shown) and [world_name]. The default locale entry is just '[tab]'.
+  title: panels.settings.title
+  type: INVENTORY
+  background:
+    icon: LIGHT_BLUE_STAINED_GLASS_PANE
+    title: "&b&r"  # Empty text
+  force-shown: 6
+  content:
+    # Row 1: the tab row
+    1:
+      2:
+        # World settings. The fallback is the island's protection tab, shown in the island form.
+        icon: GRASS_BLOCK
+        title: protection.panel.WORLD_SETTING.title
+        description: protection.panel.WORLD_SETTING.description
+        data:
+          type: TAB
+          tab: WORLD_SETTING
+        actions:
+          select:
+            click-type: LEFT
+        fallback:
+          icon: SHIELD
+          title: protection.panel.PROTECTION.title
+          description: protection.panel.PROTECTION.description
+          data:
+            type: TAB
+            tab: PROTECTION
+          actions:
+            select:
+              click-type: LEFT
+      3:
+        # Off-island protections. Needs the admin.set-world-defaults permission; an admin without
+        # it does not see the tab. The fallback is the island's settings tab.
+        icon: STONE_BRICKS
+        title: protection.panel.WORLD_DEFAULTS.title
+        description: protection.panel.WORLD_DEFAULTS.description
+        data:
+          type: TAB
+          tab: WORLD_DEFAULTS
+        actions:
+          select:
+            click-type: LEFT
+        fallback:
+          icon: COMPARATOR
+          title: protection.panel.SETTING.title
+          description: protection.panel.SETTING.description
+          data:
+            type: TAB
+            tab: SETTING
+          actions:
+            select:
+              click-type: LEFT
+      4:
+        # Defaults for new islands. Needs the admin.set-world-defaults permission.
+        icon: CRACKED_STONE_BRICKS
+        title: protection.panel.ISLAND_DEFAULTS.title
+        description: protection.panel.ISLAND_DEFAULTS.description
+        data:
+          type: TAB
+          tab: ISLAND_DEFAULTS
+        actions:
+          select:
+            click-type: LEFT
+      5:
+        # Pinned island flags, shown in the island form only
+        data:
+          type: FLAG
+          flag: CHANGE_SETTINGS
+      6:
+        data:
+          type: FLAG
+          flag: LOCK
+      8:
+        data:
+          type: MODE
+          basic-icon: IRON_INGOT
+          advanced-icon: GOLD_INGOT
+          expert-icon: NETHER_BRICK
+        actions:
+          switch:
+            click-type: UNKNOWN
+      9:
+        # Resets every flag of the island to its default; shown to the island owner only
+        icon: TNT
+        title: protection.panel.reset-to-default.name
+        description: protection.panel.reset-to-default.description
+        data:
+          type: RESET
+        actions:
+          reset:
+            click-type: UNKNOWN
+    # Rows 2 to 5: the paged flag list, 36 flags per page. The number of flag_button slots sets
+    # the page size.
+    2:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    3:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    4:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    5:
+      1: flag_button
+      2: flag_button
+      3: flag_button
+      4: flag_button
+      5: flag_button
+      6: flag_button
+      7: flag_button
+      8: flag_button
+      9: flag_button
+    # Row 6: paging. The buttons only appear when there is a page to go to.
+    6:
+      2:
+        icon: ARROW
+        title: protection.panel.previous
+        data:
+          type: PREVIOUS
+        actions:
+          previous:
+            click-type: UNKNOWN
+      8:
+        icon: ARROW
+        title: protection.panel.next
+        data:
+          type: NEXT
+        actions:
+          next:
+            click-type: UNKNOWN
+  reusable:
+    # One slot of the paged flag list. Everything about how a flag is drawn may be overridden here:
+    #   icon: replaces the flag's own icon (only sensible on a pinned flag)
+    #   title: a locale reference used as the name layout in place of
+    #          protection.panel.flag-item.name-layout; [name] is the flag's name
+    #   description: a locale reference used as the lore layout in place of the flag type's own
+    #          layout (description-layout, setting-layout or menu-layout). It may use
+    #          [description], [setting], [ranks] and [tooltips].
+    #   actions: the flag's clicks are handled by the flag itself, so only the tooltips matter
+    #          here. They are inserted at [tooltips] in the lore layout, or appended after the
+    #          lore if the layout has no such placeholder. The default layouts already carry the
+    #          click hints, so none are declared here. To move the hints, remove them from the
+    #          layout in the locale, put [tooltips] where they should go, and declare them here:
+    #     actions:
+    #       cycle-down:
+    #         click-type: LEFT
+    #         tooltip: '<yellow>Left Click </yellow><gray>to cycle downwards.</gray>'
+    #       cycle-up:
+    #         click-type: RIGHT
+    #         tooltip: '<yellow>Right Click </yellow><gray>to cycle upwards.</gray>'
+    flag_button:
+      data:
+        type: FLAG

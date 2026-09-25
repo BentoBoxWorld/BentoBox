@@ -11,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,16 +19,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.panels.Tab;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
+import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
@@ -132,5 +140,46 @@ class IslandSettingsCommandTest extends CommonTestSetup {
         assertEquals(world, tpb.getWorld());
         // No island is set on the panel
         assertNull(tpb.getIsland());
+    }
+
+    /**
+     * The command opens the templated settings panel.
+     */
+    @Test
+    void testExecuteOpensTemplatedPanel() {
+        when(plugin.getDataFolder()).thenReturn(Path.of("src", "main", "resources").toFile());
+        when(plugin.getFlagsManager()).thenReturn(fm);
+        when(user.getTranslation(anyString(), any(String[].class))).thenAnswer(i -> i.getArgument(0, String.class));
+        when(user.getTranslationOrNothing(anyString())).thenReturn("");
+        when(im.getIslandAt(any(Location.class))).thenReturn(Optional.of(island));
+        when(island.getWorld()).thenReturn(world);
+        isc.canExecute(user, "settings", Collections.emptyList());
+
+        assertTrue(isc.execute(user, "settings", Collections.emptyList()));
+
+        assertInstanceOf(TemplatedPanel.class, PanelListenerManager.getOpenPanels().get(user.getUniqueId()));
+        verify(plugin, never()).logError(anyString());
+        TemplateReader.clearPanels();
+    }
+
+    /**
+     * If the template cannot be loaded, the legacy tabbed panel is shown so that players still
+     * get their settings.
+     */
+    @Test
+    void testExecuteFallsBackToTabbedPanel(@TempDir Path empty) {
+        when(plugin.getDataFolder()).thenReturn(empty.toFile());
+        when(plugin.getFlagsManager()).thenReturn(fm);
+        Settings settings = mock(Settings.class);
+        when(settings.getPanelFillerMaterial()).thenReturn(Material.BLACK_STAINED_GLASS_PANE);
+        when(plugin.getSettings()).thenReturn(settings);
+        when(im.getIslandAt(any(Location.class))).thenReturn(Optional.empty());
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+        isc.canExecute(user, "settings", Collections.emptyList());
+
+        assertTrue(isc.execute(user, "settings", Collections.emptyList()));
+
+        verify(plugin).logError("Could not load the settings panel template; showing the built-in panel");
+        assertInstanceOf(TabbedPanel.class, PanelListenerManager.getOpenPanels().get(user.getUniqueId()));
     }
 }

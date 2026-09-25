@@ -2172,6 +2172,8 @@ panel:
         <green>BentoBox in der Konfiguration erlauben, sich mit GitHub</green>
         <green>zu verbinden oder es später erneut versuchen.</green>
 panels:
+  settings:
+    title: '[tab]'
   island_homes:
     title: '<green>Ihr [prefix_island] Homes</green>'
     buttons:
