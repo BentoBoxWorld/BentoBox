@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners;
 import org.bukkit.plugin.PluginManager;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.listeners.flags.protection.CushionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
 import world.bentobox.bentobox.managers.ChunkPregenManager;
@@ -43,6 +44,30 @@ public class BentoBoxListenerRegistrar {
         chunkPregenManager = new ChunkPregenManager(plugin);
         manager.registerEvents(chunkPregenManager, plugin);
         manager.registerEvents(new PrimaryIslandListener(plugin), plugin);
+        // Cushions (26.3) - the listener's method signatures name 26.3-only classes, so the JVM
+        // cannot even verify it on an older server. Only touch the class when the API is there.
+        if (hasCushionApi()) {
+            manager.registerEvents(new CushionListener(), plugin);
+        }
+    }
+
+    /**
+     * @return true if the running server API has the Minecraft 26.3 cushion entity and Paper's
+     *         entity-break event, i.e. {@link CushionListener} can be loaded.
+     * @since 3.23.1
+     */
+    static boolean hasCushionApi() {
+        return classExists("org.bukkit.entity.Cushion")
+                && classExists("io.papermc.paper.event.entity.EntityBreakByEntityEvent");
+    }
+
+    private static boolean classExists(String name) {
+        try {
+            Class.forName(name, false, BentoBoxListenerRegistrar.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     /**

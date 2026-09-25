@@ -19,6 +19,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -30,6 +32,13 @@ import world.bentobox.bentobox.util.Util;
  */
 public class BlockInteractionListener extends FlagListener
 {
+    /**
+     * The straw bed (Minecraft 26.3). Vanilla deliberately keeps it out of the {@code #beds} tag
+     * (villagers must not claim it), so {@link Tag#BEDS} misses it. It is still slept in by
+     * right-click - and is consumed by that - so it needs the {@link Flags#BED} check. Resolved
+     * at runtime so this compiles and runs on older API versions; {@code null} when absent.
+     */
+    private static final Material STRAW_BED = Enums.getIfPresent(Material.class, "STRAW_BED").orNull();
 
     /**
      * Handle interaction with blocks
@@ -191,7 +200,7 @@ public class BlockInteractionListener extends FlagListener
             return true;
         }
 
-        if (Tag.BEDS.isTagged(type))
+        if (Tag.BEDS.isTagged(type) || type == STRAW_BED)
         {
             this.checkIsland(e, player, loc, Flags.BED);
             return true;

@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.mockito.Mock;
 import org.mockbukkit.mockbukkit.tags.MaterialTagMock;
 
@@ -207,6 +208,28 @@ class BlockInteractionListenerTest extends CommonTestSetup {
         bil.onPlayerInteract(e);
         assertEquals(Event.Result.DENY, e.useInteractedBlock());
         verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * The straw bed (26.3) is not in the beds tag, so it must be matched by material. Only runs
+     * when the test runtime API is 26.3+ (see {@code testPaperVersion} in the build).
+     */
+    @Test
+    @EnabledIf("strawBedPresent")
+    void testOnPlayerInteractStrawBedNotAllowed() {
+        when(clickedBlock.getType()).thenReturn(Material.valueOf("STRAW_BED"));
+        PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+        bil.onPlayerInteract(e);
+        assertEquals(Event.Result.DENY, e.useInteractedBlock());
+        verify(island).isAllowed(any(), eq(Flags.BED));
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Condition for the straw bed test.
+     */
+    static boolean strawBedPresent() {
+        return com.google.common.base.Enums.getIfPresent(Material.class, "STRAW_BED").isPresent();
     }
 
     /**
