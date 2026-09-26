@@ -355,7 +355,7 @@ public class PlayersManager {
      * way they left it.
      * @param playerUUID - the player's UUID
      * @return the basic, advanced or expert display mode
-     * @since 3.23.2
+     * @since 3.23.3
      */
     public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
         return getPlayer(playerUUID).getFlagsDisplayMode();
@@ -366,7 +366,7 @@ public class PlayersManager {
      * changes.
      * @param playerUUID - the player's UUID
      * @param mode - the basic, advanced or expert display mode
-     * @since 3.23.2
+     * @since 3.23.3
      */
     public void setFlagsDisplayMode(UUID playerUUID, Flag.Mode mode) {
         Players p = getPlayer(playerUUID);

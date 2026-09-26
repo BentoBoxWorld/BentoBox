@@ -299,7 +299,7 @@ public class Players implements DataObject, MetaDataAble {
     /**
      * @return the display mode the player last chose in the settings panel, never
      * {@link Flag.Mode#TOP_ROW}
-     * @since 3.23.2
+     * @since 3.23.3
      */
     public Flag.Mode getFlagsDisplayMode() {
         return flagsDisplayMode == null || flagsDisplayMode == Flag.Mode.TOP_ROW ? Flag.Mode.BASIC
@@ -308,7 +308,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * @param flagsDisplayMode the display mode to show the settings panel in
-     * @since 3.23.2
+     * @since 3.23.3
      */
     public void setFlagsDisplayMode(Flag.Mode flagsDisplayMode) {
         this.flagsDisplayMode = flagsDisplayMode;
