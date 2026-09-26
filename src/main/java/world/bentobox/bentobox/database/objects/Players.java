@@ -296,4 +296,22 @@ public class Players implements DataObject, MetaDataAble {
         this.lastLogin = lastLogin;
     }
 
+    /**
+     * @return the display mode the player last chose in the settings panel, never
+     * {@link Flag.Mode#TOP_ROW}
+     * @since 3.23.2
+     */
+    public Flag.Mode getFlagsDisplayMode() {
+        return flagsDisplayMode == null || flagsDisplayMode == Flag.Mode.TOP_ROW ? Flag.Mode.BASIC
+                : flagsDisplayMode;
+    }
+
+    /**
+     * @param flagsDisplayMode the display mode to show the settings panel in
+     * @since 3.23.2
+     */
+    public void setFlagsDisplayMode(Flag.Mode flagsDisplayMode) {
+        this.flagsDisplayMode = flagsDisplayMode;
+    }
+
 }
