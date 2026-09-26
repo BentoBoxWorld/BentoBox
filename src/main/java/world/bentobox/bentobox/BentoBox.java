@@ -58,6 +58,10 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
 public class BentoBox extends JavaPlugin implements Listener {
 
     private static final String PANELS = "panels";
+    /** Panel templates written to the panels folder on first start, without extension. */
+    private static final List<String> DEFAULT_PANELS = List.of("island_creation_panel", "language_panel",
+            "island_homes_panel", "team_invite_panel", "team_panel", "settings_panel", "admin_settings_panel",
+            "command_ranks_panel");
 
     private static BentoBox instance;
 
@@ -495,39 +499,11 @@ public class BentoBox extends JavaPlugin implements Listener {
         }
         log("Saving default panels...");
 
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_creation_panel.yml"))) {
-            log("Saving default island_creation_panel...");
-            this.saveResource("panels/island_creation_panel.yml", false);
-        }
-
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "language_panel.yml"))) {
-            log("Saving default language_panel...");
-            this.saveResource("panels/language_panel.yml", false);
-        }
-
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "island_homes_panel.yml"))) {
-            log("Saving default island_homes_panel...");
-            this.saveResource("panels/island_homes_panel.yml", false);
-        }
-
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_invite_panel.yml"))) {
-            log("Saving default team_invite_panel...");
-            this.saveResource("panels/team_invite_panel.yml", false);
-        }
-
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "team_panel.yml"))) {
-            log("Saving default team_panel...");
-            this.saveResource("panels/team_panel.yml", false);
-        }
-
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "settings_panel.yml"))) {
-            log("Saving default settings_panel...");
-            this.saveResource("panels/settings_panel.yml", false);
-        }
-
-        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "admin_settings_panel.yml"))) {
-            log("Saving default admin_settings_panel...");
-            this.saveResource("panels/admin_settings_panel.yml", false);
+        for (String panel : DEFAULT_PANELS) {
+            if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, panel + ".yml"))) {
+                log("Saving default " + panel + "...");
+                this.saveResource(PANELS + "/" + panel + ".yml", false);
+            }
         }
 
         return true;

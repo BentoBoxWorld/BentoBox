@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -20,24 +22,33 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
+import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.customizable.CommandRanksPanel;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
+import world.bentobox.bentobox.util.ItemParser;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -196,6 +207,29 @@ class CommandRankClickListenerTest extends RanksManagerTestSetup {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
                 "protection.panel.flag-item.command-instructions.");
+    }
+
+    /**
+     * When the game mode has a player command, the Command Ranks panel is laid out by its template (#3095).
+     */
+    @Test
+    void testOnClickOpensTemplatedPanel() {
+        when(panel.getName()).thenReturn("different");
+        CompositeCommand playerCommand = mock(CompositeCommand.class);
+        when(playerCommand.getPlugin()).thenReturn(plugin);
+        when(gma.getPlayerCommand()).thenReturn(Optional.of(playerCommand));
+        when(plugin.getDataFolder()).thenReturn(Path.of("src", "main", "resources").toFile());
+        try (MockedStatic<ItemParser> itemParser = Mockito.mockStatic(ItemParser.class)) {
+            itemParser.when(() -> ItemParser.parse(anyString()))
+                    .thenAnswer(inv -> new ItemStack(Material.valueOf(inv.getArgument(0, String.class))));
+            assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
+        } finally {
+            TemplateReader.clearPanels();
+        }
+        Panel opened = PanelListenerManager.getOpenPanels().get(uuid);
+        assertInstanceOf(TemplatedPanel.class, opened);
+        assertInstanceOf(CommandRanksPanel.class, opened.getListener().orElseThrow());
+        assertEquals(Material.MAP, opened.getItems().get(0).getItem().getType());
     }
 
     /**
