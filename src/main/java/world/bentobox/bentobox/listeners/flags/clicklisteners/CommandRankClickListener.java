@@ -150,25 +150,32 @@ public class CommandRankClickListener implements ClickHandler {
         return plugin.getCommandsManager().getCommands().values().stream()
                 .filter(c -> c.getWorld() != null && c.getWorld().equals(world)) // Only allow commands in this world
                 .filter(c -> c.testPermission(user.getSender())) // Only allow them to see commands they have permission to see
-                .flatMap(c -> getCmdRecursively("/", c).stream())
+                .flatMap(c -> getCmdRecursively("/", c, user).stream())
                 .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label)) // Hide any hidden commands
                 .limit(49) // Silently limit to 49
                 .toList();
     }
 
     /**
-     * Recursively traverses the command tree looking for any configurable rank command and returns a string list of commands
+     * Recursively traverses the command tree looking for any configurable rank command and returns a string list of commands.
+     * Commands the user has no permission for are skipped, along with their sub-commands, because setting a rank for a
+     * command nobody on the island can run is pointless (#3092).
      * @param labels - preceding command's label list
      * @param cc - composite command
+     * @param user - the user viewing the panel
      * @return string list of commands
      */
-    private List<String> getCmdRecursively(String labels, CompositeCommand cc) {
+    private List<String> getCmdRecursively(String labels, CompositeCommand cc, User user) {
         List<String> result = new ArrayList<>();
+        if (!user.isOp() && cc.getPermission() != null && !cc.getPermission().isEmpty()
+                && !user.hasPermission(cc.getPermission())) {
+            return result;
+        }
         String newLabel = labels + cc.getName();
         if (cc.isConfigurableRankCommand()) {
             result.add(newLabel);
         }
-        cc.getSubCommands().values().forEach(s -> result.addAll(getCmdRecursively(newLabel + " ", s)));
+        cc.getSubCommands().values().forEach(s -> result.addAll(getCmdRecursively(newLabel + " ", s, user)));
         return result;
     }
 

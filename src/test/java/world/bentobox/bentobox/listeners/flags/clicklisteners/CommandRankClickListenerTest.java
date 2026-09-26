@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -195,6 +196,34 @@ class CommandRankClickListenerTest extends RanksManagerTestSetup {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         verify(user).getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
                 "protection.panel.flag-item.command-instructions.");
+    }
+
+    /**
+     * Sub-commands the viewer has no permission for are not listed, so their rank cannot be set (#3092).
+     * The listed commands are "/test" and "/test allowed", so slot 1 is "/test allowed".
+     */
+    @Test
+    void testOnClickHidesSubCommandsWithoutPermission() {
+        when(user.isOp()).thenReturn(false);
+        when(user.hasPermission("oneblock.island.border")).thenReturn(false);
+        CompositeCommand cc = cm.getCommands().get("test");
+        Map<String, CompositeCommand> subCommands = new LinkedHashMap<>();
+        subCommands.put("border", subCommand("border", "oneblock.island.border"));
+        subCommands.put("allowed", subCommand("allowed", "oneblock.island.allowed"));
+        when(cc.getSubCommands()).thenReturn(subCommands);
+
+        assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 1));
+        verify(user).getTranslationOrNothing("protection.panel.flag-item.command-instructions.allowed");
+        verify(user, never()).getTranslationOrNothing("protection.panel.flag-item.command-instructions.border");
+    }
+
+    private CompositeCommand subCommand(String name, String permission) {
+        CompositeCommand sub = mock(CompositeCommand.class);
+        when(sub.isConfigurableRankCommand()).thenReturn(true);
+        when(sub.getName()).thenReturn(name);
+        when(sub.getPermission()).thenReturn(permission);
+        when(sub.getSubCommands()).thenReturn(Collections.emptyMap());
+        return sub;
     }
 
     /**

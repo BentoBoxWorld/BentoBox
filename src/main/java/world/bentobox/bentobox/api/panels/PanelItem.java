@@ -4,16 +4,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
@@ -269,7 +273,7 @@ public class PanelItem {
         if (existing != null) {
             builder.hideTooltip(existing.hideTooltip());
             builder.addHiddenComponents(
-                    existing.hiddenComponents().toArray(io.papermc.paper.datacomponent.DataComponentType[]::new));
+                    existing.hiddenComponents().toArray(DataComponentType[]::new));
         }
         // Hide additional components that don't have non-deprecated ItemFlag equivalents
         builder.addHiddenComponents(
@@ -282,6 +286,26 @@ public class PanelItem {
                 DataComponentTypes.BUNDLE_CONTENTS,
                 DataComponentTypes.MAP_DECORATIONS
         );
+        DataComponentType blockEntityData = blockEntityData();
+        if (blockEntityData != null) {
+            builder.addHiddenComponents(blockEntityData);
+        }
         icon.setData(DataComponentTypes.TOOLTIP_DISPLAY, builder.build());
+    }
+
+    /**
+     * Hiding this component drops the "Interact with Spawn Egg: Sets Mob Type" lines that a
+     * spawner or trial spawner icon otherwise shows (#3092). Paper has no constant for it because
+     * it has no API value, so it is looked up in the registry.
+     * @return the {@code minecraft:block_entity_data} component type, or null if unavailable
+     */
+    @Nullable
+    private static DataComponentType blockEntityData() {
+        try {
+            return Registry.DATA_COMPONENT_TYPE.get(NamespacedKey.minecraft("block_entity_data"));
+        } catch (RuntimeException e) {
+            // Registry not available, e.g., in a test environment
+            return null;
+        }
     }
 }

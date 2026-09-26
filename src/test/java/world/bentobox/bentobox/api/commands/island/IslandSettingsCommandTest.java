@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
@@ -153,6 +154,7 @@ class IslandSettingsCommandTest extends CommonTestSetup {
         when(user.getTranslationOrNothing(anyString())).thenReturn("");
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.of(island));
         when(island.getWorld()).thenReturn(world);
+        when(plugin.getPlayers().getFlagsDisplayMode(any())).thenReturn(Mode.BASIC);
         isc.canExecute(user, "settings", Collections.emptyList());
 
         assertTrue(isc.execute(user, "settings", Collections.emptyList()));

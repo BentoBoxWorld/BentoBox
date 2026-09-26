@@ -24,6 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.player.PlayerEvent;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
@@ -347,6 +348,32 @@ public class PlayersManager {
      */
     public int getDeaths(World world, UUID playerUUID) {
         return getPlayer(playerUUID).getDeaths(Util.getWorld(world));
+    }
+
+    /**
+     * Returns the display mode the player last chose in the settings panel, so it opens the
+     * way they left it.
+     * @param playerUUID - the player's UUID
+     * @return the basic, advanced or expert display mode
+     * @since 3.23.2
+     */
+    public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
+        return getPlayer(playerUUID).getFlagsDisplayMode();
+    }
+
+    /**
+     * Remembers the display mode the player chose in the settings panel. Saves only when it
+     * changes.
+     * @param playerUUID - the player's UUID
+     * @param mode - the basic, advanced or expert display mode
+     * @since 3.23.2
+     */
+    public void setFlagsDisplayMode(UUID playerUUID, Flag.Mode mode) {
+        Players p = getPlayer(playerUUID);
+        if (p.getFlagsDisplayMode() != mode) {
+            p.setFlagsDisplayMode(mode);
+            handler.saveObjectAsync(p);
+        }
     }
 
     /**

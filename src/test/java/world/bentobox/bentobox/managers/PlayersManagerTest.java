@@ -54,6 +54,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
@@ -685,6 +686,17 @@ class PlayersManagerTest extends CommonTestSetup {
     void testSetLocale() {
         pm.setLocale(uuid, "en-UK");
         assertEquals("en-UK", pm.getLocale(uuid));
+    }
+
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlayersManager#setFlagsDisplayMode(java.util.UUID, world.bentobox.bentobox.api.flags.Flag.Mode)}.
+     */
+    @Test
+    void testFlagsDisplayMode() {
+        assertEquals(Flag.Mode.BASIC, pm.getFlagsDisplayMode(uuid));
+        pm.setFlagsDisplayMode(uuid, Flag.Mode.EXPERT);
+        assertEquals(Flag.Mode.EXPERT, pm.getFlagsDisplayMode(uuid));
     }
 
     /**

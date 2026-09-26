@@ -172,7 +172,14 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     @Nullable
     private final Island island;
     private final List<TabType> tabs;
-    private final Flag.Mode defaultMode;
+    /** The display mode the viewer chose; shared by every tab. */
+    private Flag.Mode selectedMode;
+    /** Whether a mode change is saved as the viewer's preference for next time. */
+    private boolean remembersMode;
+    /**
+     * Per-tab overrides of {@link #selectedMode}, set when a tab has nothing to show in the
+     * chosen mode and skips ahead.
+     */
     private final Map<TabType, Flag.Mode> modes = new EnumMap<>(TabType.class);
     private final Map<TabType, ItemTemplateRecord> tabTemplates = new EnumMap<>(TabType.class);
     /**
@@ -198,7 +205,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      * @param world the world the settings are for
      * @param island the island, or null if the viewer is not on one
      * @param tabs the tabs to show, in order; the first the viewer may see is shown initially
-     * @param defaultMode the display mode each tab starts in
+     * @param defaultMode the display mode the panel starts in
      */
     protected SettingsPanel(@NonNull CompositeCommand command, @NonNull User user, @NonNull String templateName,
             @NonNull World world, @Nullable Island island, @NonNull List<TabType> tabs, Flag.Mode defaultMode) {
@@ -210,13 +217,14 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         this.tabs = tabs.stream()
                 .filter(t -> t.getPermission(prefix).isEmpty() || user.hasPermission(t.getPermission(prefix)))
                 .toList();
-        this.defaultMode = defaultMode;
+        this.selectedMode = defaultMode;
         this.activeTab = this.tabs.isEmpty() ? tabs.get(0) : this.tabs.get(0);
     }
 
     /**
      * Opens the settings panel for a player. With an island the protection and settings tabs are
-     * shown; without one, only the read-only view of the world's protection flags.
+     * shown; without one, only the read-only view of the world's protection flags. It opens in the
+     * display mode the player last chose.
      * @param command the island settings command
      * @param user the viewer
      * @param island the island, or null if the viewer is not on one
@@ -226,7 +234,10 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         List<TabType> tabs = island == null ? List.of(TabType.WORLD_PROTECTION)
                 : List.of(TabType.PROTECTION, TabType.SETTING);
         World world = island == null ? command.getWorld() : island.getWorld();
-        return new SettingsPanel(command, user, SETTINGS_PANEL, world, island, tabs, Mode.BASIC).open();
+        SettingsPanel settingsPanel = new SettingsPanel(command, user, SETTINGS_PANEL, world, island, tabs,
+                command.getPlugin().getPlayers().getFlagsDisplayMode(user.getUniqueId()));
+        settingsPanel.remembersMode = true;
+        return settingsPanel.open();
     }
 
     /**
@@ -441,7 +452,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     }
 
     private Flag.Mode currentMode() {
-        return modes.getOrDefault(activeTab, defaultMode);
+        return modes.getOrDefault(activeTab, selectedMode);
     }
 
     private boolean isVisibleToUser(Flag flag) {
@@ -623,7 +634,12 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
                                 user.getTranslation(PROTECTION_PANEL + "mode." + nextKey + ".name")))
                 .clickHandler((p, u, clickType, s) -> {
                     if (clickAllowed(template, clickType)) {
-                        modes.put(activeTab, currentMode().getNext());
+                        // One mode for every tab, remembered for the next time the player opens it
+                        selectedMode = currentMode().getNext();
+                        modes.clear();
+                        if (remembersMode) {
+                            plugin.getPlayers().setFlagsDisplayMode(u.getUniqueId(), selectedMode);
+                        }
                         pageIndex = 0;
                         u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
                     }
