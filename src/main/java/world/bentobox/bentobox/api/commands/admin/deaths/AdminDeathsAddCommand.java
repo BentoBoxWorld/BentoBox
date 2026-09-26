@@ -3,9 +3,12 @@ package world.bentobox.bentobox.api.commands.admin.deaths;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.player.PlayerDeathsChangedEvent;
+import world.bentobox.bentobox.api.events.player.PlayerDeathsChangedEvent.Action;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
@@ -40,10 +43,15 @@ public class AdminDeathsAddCommand extends CompositeCommand {
         } else if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
-            getPlayers().setDeaths(getWorld(), targetUUID, getPlayers().getDeaths(getWorld(), targetUUID) + Integer.parseInt(args.get(1)));
+            int oldDeaths = getPlayers().getDeaths(getWorld(), targetUUID);
+            int amount = Integer.parseInt(args.get(1));
+            getPlayers().setDeaths(getWorld(), targetUUID, oldDeaths + amount);
+            int newDeaths = getPlayers().getDeaths(getWorld(), targetUUID);
+            Bukkit.getPluginManager().callEvent(new PlayerDeathsChangedEvent(getWorld(), targetUUID, Action.ADD,
+                    amount, oldDeaths, newDeaths));
             user.sendMessage("commands.admin.deaths.add.success",
                     TextVariables.NAME, args.getFirst(), TextVariables.NUMBER, args.get(1),
-                    "[total]", String.valueOf(getPlayers().getDeaths(getWorld(), targetUUID)));
+                    "[total]", String.valueOf(newDeaths));
             return true;
         }
 
