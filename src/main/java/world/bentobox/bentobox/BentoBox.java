@@ -530,6 +530,11 @@ public class BentoBox extends JavaPlugin implements Listener {
             this.saveResource("panels/admin_settings_panel.yml", false);
         }
 
+        if (!Files.exists(Path.of(this.getDataFolder().getPath(), PANELS, "command_ranks_panel.yml"))) {
+            log("Saving default command_ranks_panel...");
+            this.saveResource("panels/command_ranks_panel.yml", false);
+        }
+
         return true;
     }
 

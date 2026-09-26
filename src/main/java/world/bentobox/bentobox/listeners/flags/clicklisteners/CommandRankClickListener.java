@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
@@ -18,10 +22,12 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.customizable.CommandRanksPanel;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -91,11 +97,18 @@ public class CommandRankClickListener implements ClickHandler {
     private void openPanel(User user, String panelName, World world) {
         // Close the current panel
         user.closeInventory();
-        // Open a new panel
+        // Open the templated panel, laid out by panels/command_ranks_panel.yml
+        Optional<CompositeCommand> command = plugin.getIWM().getAddon(world)
+                .flatMap(GameModeAddon::getPlayerCommand);
+        if (command.isPresent() && CommandRanksPanel.openPanel(command.get(), user, world, island, this)) {
+            return;
+        }
+        // Fall back to the built-in layout if the template cannot be loaded
         PanelBuilder pb = new PanelBuilder();
         pb.user(user).name(panelName).world(world);
         // Make panel items
-        getCommands(world, user).forEach(c -> pb.item(getPanelItem(c, user, world)));
+        getCommands(world, user).stream().limit(49) // Silently limit to 49
+                .forEach(c -> pb.item(getPanelItem(c, user, world)));
         Panel p = pb.build();
         p.setIsland(island);
     }
@@ -108,10 +121,30 @@ public class CommandRankClickListener implements ClickHandler {
      * @return panel item for this command
      */
     public PanelItem getPanelItem(String c, User user, World world) {
+        return getPanelItemBuilder(c, user, world, island, null).build();
+    }
+
+    /**
+     * Gets a builder for the rank command panel item, laid out by a panel template's button.
+     * @param c - command label, e.g., "/island sethome"
+     * @param user - user
+     * @param world - world for this panel
+     * @param island - island whose command ranks are shown
+     * @param template - the template button, whose icon, title and description override the
+     * defaults: the title is a locale reference used as the name layout with [name], the
+     * description a locale reference used as the lore layout with [description]. The ranks are
+     * listed after it. May be null for the defaults.
+     * @return builder for the panel item for this command
+     * @since 3.23.3
+     */
+    public PanelItemBuilder getPanelItemBuilder(String c, User user, World world, Island island,
+            @Nullable ItemTemplateRecord template) {
         PanelItemBuilder pib = new PanelItemBuilder();
-        pib.name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, c));
+        String nameLayout = template != null && template.title() != null ? template.title()
+                : "protection.panel.flag-item.name-layout";
+        pib.name(user.getTranslation(nameLayout, TextVariables.NAME, c));
         pib.clickHandler(new CommandCycleClick(this, c));
-        pib.icon(Material.MAP);
+        pib.icon(template != null && template.icon() != null ? template.icon().clone() : new ItemStack(Material.MAP));
         String result = "";
         // Remove the first word (everything before the first space)
         String[] words = c.split(" ", 2); // Split into two parts, the first word and the rest
@@ -120,8 +153,9 @@ public class CommandRankClickListener implements ClickHandler {
         }
         String ref = "protection.panel.flag-item.command-instructions." + result.toLowerCase(Locale.ENGLISH);
         String commandDescription = user.getTranslationOrNothing(ref);
-        String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION,
-                commandDescription);
+        String descriptionLayout = template != null && template.description() != null ? template.description()
+                : "protection.panel.flag-item.description-layout";
+        String d = user.getTranslation(descriptionLayout, TextVariables.DESCRIPTION, commandDescription);
         pib.description(d);
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             String rankName = user.getTranslation(reference);
@@ -134,7 +168,7 @@ public class CommandRankClickListener implements ClickHandler {
             }
         });
         pib.invisible(plugin.getIWM().getHiddenFlags(world).contains(CommandCycleClick.COMMAND_RANK_PREFIX + c));
-        return pib.build();
+        return pib;
     }
 
     private String getRankTranslation(User user, String key, String rankName) {
@@ -145,14 +179,21 @@ public class CommandRankClickListener implements ClickHandler {
         return translation;
     }
 
-    private List<String> getCommands(World world, User user) {
+    /**
+     * Gets the commands whose rank can be set in this world and that the user may see: they have
+     * permission for the command and, unless they are an op, it has not been hidden.
+     * @param world - world
+     * @param user - user viewing the panel
+     * @return command labels, e.g., "/island sethome"
+     * @since 3.23.3
+     */
+    public List<String> getCommands(World world, User user) {
         List<String> hiddenItems = plugin.getIWM().getHiddenFlags(world);
         return plugin.getCommandsManager().getCommands().values().stream()
                 .filter(c -> c.getWorld() != null && c.getWorld().equals(world)) // Only allow commands in this world
                 .filter(c -> c.testPermission(user.getSender())) // Only allow them to see commands they have permission to see
                 .flatMap(c -> getCmdRecursively("/", c, user).stream())
                 .filter(label -> user.isOp() || !hiddenItems.contains(CommandCycleClick.COMMAND_RANK_PREFIX + label)) // Hide any hidden commands
-                .limit(49) // Silently limit to 49
                 .toList();
     }
 
