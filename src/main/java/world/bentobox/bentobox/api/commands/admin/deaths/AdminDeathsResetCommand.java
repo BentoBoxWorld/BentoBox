@@ -3,9 +3,12 @@ package world.bentobox.bentobox.api.commands.admin.deaths;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.player.PlayerDeathsChangedEvent;
+import world.bentobox.bentobox.api.events.player.PlayerDeathsChangedEvent.Action;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
@@ -38,7 +41,10 @@ public class AdminDeathsResetCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         } else {
+            int oldDeaths = getPlayers().getDeaths(getWorld(), targetUUID);
             getPlayers().setDeaths(getWorld(), targetUUID, 0);
+            Bukkit.getPluginManager().callEvent(new PlayerDeathsChangedEvent(getWorld(), targetUUID, Action.RESET,
+                    0, oldDeaths, 0));
             user.sendMessage("commands.admin.deaths.reset.success", TextVariables.NAME, args.getFirst());
             return true;
         }
