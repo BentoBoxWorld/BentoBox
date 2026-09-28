@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.panels.customizable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -15,14 +14,11 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -32,7 +28,6 @@ import world.bentobox.bentobox.api.flags.clicklisteners.IslandDefaultCycleClick;
 import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
-import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
@@ -68,7 +63,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  * @since 3.23.1
  */
-public class SettingsPanel extends AbstractPanel implements PanelListener {
+public class SettingsPanel extends AbstractRefreshingPanel {
 
     /** Name of the template file, without extension. */
     public static final String SETTINGS_PANEL = "settings_panel";
@@ -192,10 +187,6 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     /** The flags of the active tab that the viewer may see, in display order. */
     private List<Flag> pagedFlags = new ArrayList<>();
     private List<String> hiddenFlags = new ArrayList<>();
-    @Nullable
-    private TemplatedPanel panel;
-    private boolean refreshing;
-    private boolean closed;
     private boolean deferringSaves;
 
     /**
@@ -271,12 +262,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
             return true;
         }
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
-        if (command.getAddon() instanceof GameModeAddon gma && doesCustomPanelExists(gma, templateName)) {
-            // The game mode has its own settings panel
-            panelBuilder.template(templateName, new File(gma.getDataFolder(), "panels"));
-        } else {
-            panelBuilder.template(templateName, new File(plugin.getDataFolder(), "panels"));
-        }
+        selectTemplate(panelBuilder, templateName);
         PanelTemplateRecord template = panelBuilder.getPanelTemplate();
         if (template == null) {
             return false;
@@ -296,7 +282,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         }
         prepareFlags();
         panelBuilder.parameters(titleParameters());
-        panel = panelBuilder.build();
+        setPanel(panelBuilder.build());
         return true;
     }
 
@@ -337,69 +323,18 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     // Section: Lifecycle
     // ---------------------------------------------------------------------
 
-    /**
-     * Next and previous buttons call this; the panel is refreshed by {@link #refreshPanel()} after
-     * every click anyway, so there is nothing to do here.
-     */
     @Override
-    protected void build() {
-        // Refreshed by the listener after the click
-    }
-
-    @Override
-    protected void onPageChanged() {
-        // Refreshed by the listener after the click
-    }
-
-    @Override
-    public void setup() {
-        // Nothing to set up
-    }
-
-    @Override
-    public void onInventoryClick(User user, InventoryClickEvent event) {
-        // Clicks are handled by the buttons
-    }
-
-    @Override
-    public void refreshPanel() {
-        if (closed || panel == null) {
-            return;
-        }
+    protected void prepareRefresh() {
         prepareFlags();
-        // Mark as refreshing so that the inventory close fired by a reopen is not treated as a
-        // true close
-        refreshing = true;
-        try {
-            panel.regenerate(titleParameters());
-        } finally {
-            refreshing = false;
-        }
-        closed = false;
     }
 
     @Override
-    public void onInventoryClose(InventoryCloseEvent event) {
-        closed = true;
-        // Only stop deferring saves when the panel is truly closed, not during a refresh
-        if (!refreshing && deferringSaves && island != null) {
+    protected void onClosed() {
+        // Stop deferring saves only when the panel is truly closed, not during a refresh
+        if (deferringSaves && island != null) {
             island.endDeferSaves();
             deferringSaves = false;
         }
-    }
-
-    @Override
-    public boolean hasClickCooldown() {
-        return true;
-    }
-
-    @Override
-    public boolean isActionableSlot(int rawSlot) {
-        if (panel == null) {
-            return false;
-        }
-        PanelItem item = panel.getItems().get(rawSlot);
-        return item != null && item.getClickHandler().isPresent();
     }
 
     // ---------------------------------------------------------------------
@@ -601,7 +536,8 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     /**
      * @return the parameters for the panel title
      */
-    private String[] titleParameters() {
+    @Override
+    protected String[] titleParameters() {
         return new String[] { TAB_PARAM, tabName(activeTab, tabTemplates.get(activeTab)), WORLD_NAME,
                 plugin.getIWM().getFriendlyName(world) };
     }
@@ -736,13 +672,5 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      */
     public int getPageIndex() {
         return pageIndex;
-    }
-
-    /**
-     * @return the panel that is open, or null if none
-     */
-    @Nullable
-    public TemplatedPanel getPanel() {
-        return panel;
     }
 }
