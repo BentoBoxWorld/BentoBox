@@ -294,6 +294,10 @@ dependencies {
     compileOnly("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
         exclude(group = "org.spigotmc", module = "spigot-api")
     }
+    testImplementation("org.mvplugins.multiverse.core:multiverse-core:$multiverseCore5Version")
+    testImplementation("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
+        isTransitive = false // its old Bukkit API conflicts with paper-api
+    }
     compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
     compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")
     compileOnly("beer.devs:itemsadder-api:$itemsAdderVersion") // Published to Maven Central

@@ -3,7 +3,6 @@ package world.bentobox.bentobox.hooks;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.mvplugins.multiverse.core.MultiverseCoreApi;
-import org.mvplugins.multiverse.core.world.MultiverseWorld;
 import org.mvplugins.multiverse.core.world.options.ImportWorldOptions;
 
 import world.bentobox.bentobox.BentoBox;
@@ -32,16 +31,17 @@ public class MultiverseCore5Hook extends Hook implements WorldManagementHook {
         }
         MultiverseCoreApi api = MultiverseCoreApi.get();
         String generator = islandWorld ? getGenerator(world) : null;
+        // Let BentoBox handle loading on startup by default. Auto-load is only turned off when the world is
+        // first imported. If Multiverse already knows the world the import fails and the entry is left alone,
+        // so an admin who sets auto-load back to true (e.g. so other plugins can use the world during their
+        // own startup) keeps that setting across restarts.
         api.getWorldManager().importWorld(ImportWorldOptions.worldName(world.getName())
                 .environment(world.getEnvironment())
-                .generator(generator));
-        // Let BentoBox handle loading on startup. This is done on the world looked up after the import
-        // rather than on the import result because the import fails if Multiverse already knows the
-        // world, and auto-load has to be turned off for those worlds too.
-        api.getWorldManager().getWorld(world.getName()).filter(MultiverseWorld::isAutoLoad).peek(mvWorld -> {
-            mvWorld.setAutoLoad(false);
-            api.getWorldManager().saveWorldsConfig();
-        });
+                .generator(generator))
+                .peek(mvWorld -> {
+                    mvWorld.setAutoLoad(false);
+                    api.getWorldManager().saveWorldsConfig();
+                });
     }
 
     private String getGenerator(World world) {
