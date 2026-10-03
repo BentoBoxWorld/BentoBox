@@ -34,9 +34,13 @@ public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
         }
         String generator = islandWorld ? getGenerator(world) : null;
         try {
-            core.getMVWorldManager().addWorld(world.getName(), world.getEnvironment(), String.valueOf(world.getSeed()),
-                    world.getWorldType(), world.canGenerateStructures(), generator);
-            core.getMVWorldManager().getMVWorld(world.getName()).setAutoLoad(false);
+            // Let BentoBox handle loading on startup by default, but only set this on a first-time add so an
+            // admin who turns auto-load back on keeps that setting across restarts.
+            if (core.getMVWorldManager().addWorld(world.getName(), world.getEnvironment(),
+                    String.valueOf(world.getSeed()), world.getWorldType(), world.canGenerateStructures(), generator)) {
+                core.getMVWorldManager().getMVWorld(world.getName()).setAutoLoad(false);
+                core.getMVWorldManager().saveWorldsConfig();
+            }
         } catch (Exception e) {
             // Do nothing
         }

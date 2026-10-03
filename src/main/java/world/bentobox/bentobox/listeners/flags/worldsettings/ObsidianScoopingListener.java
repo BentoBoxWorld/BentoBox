@@ -230,7 +230,7 @@ public class ObsidianScoopingListener extends FlagListener {
      */
     private boolean lookForLava(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        ItemStack bucket = e.getItem();
+        EquipmentSlot hand = e.getHand() == null ? EquipmentSlot.HAND : e.getHand();
 
         // Get block player is looking at
         RayTraceResult rtBlocks = e.getPlayer().rayTraceBlocks(5, FluidCollisionMode.ALWAYS);
@@ -257,19 +257,37 @@ public class ObsidianScoopingListener extends FlagListener {
             }
             // Add player to cooldown set to prevent rapid scooping
             getCooldowns().add(player.getUniqueId());
-            user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
-            player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.setCancelled(true);
-            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(player, b, bucket));
+            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(user, b, hand));
             return true;
         }
         return false;
 
     }
 
-    private void givePlayerLava(Player player, Block b, ItemStack bucket) {
+    /**
+     * Converts the obsidian into a lava bucket. This runs a tick after the interact event,
+     * so everything checked there is re-checked here: in the meantime the obsidian may have
+     * been mined (which would give the player both the obsidian and the lava) or the bucket
+     * moved out of the hand (which would give the lava without using up the bucket).
+     *
+     * @param user the player scooping
+     * @param b the obsidian block
+     * @param hand the hand that held the empty bucket
+     * @return true if the lava was given, false if the scoop was abandoned
+     */
+    boolean givePlayerLava(User user, Block b, EquipmentSlot hand) {
+        Player player = user.getPlayer();
+        if (!player.isOnline() || !b.getType().equals(Material.OBSIDIAN)) {
+            return false;
+        }
+        ItemStack bucket = player.getInventory().getItem(hand);
+        if (bucket == null || !bucket.getType().equals(Material.BUCKET)) {
+            return false;
+        }
         // Remove one empty bucket and add a lava bucket to the player's inventory
         bucket.setAmount(bucket.getAmount() - 1);
+        player.getInventory().setItem(hand, bucket);
         Map<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
         if (!map.isEmpty()) {
             map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
@@ -278,6 +296,9 @@ public class ObsidianScoopingListener extends FlagListener {
         b.setType(Material.AIR);
         // Remove the lava tip hologram, if any, since the obsidian is gone
         removeHologramFor(b);
+        user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
+        return true;
     }
 
     private List<Block> getBlocksAround(Block b, int radius) {

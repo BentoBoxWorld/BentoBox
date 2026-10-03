@@ -48,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.23.1"
+val buildVersion = "3.23.3"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -293,6 +293,10 @@ dependencies {
     compileOnly("org.mvplugins.multiverse.core:multiverse-core:$multiverseCore5Version")
     compileOnly("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
         exclude(group = "org.spigotmc", module = "spigot-api")
+    }
+    testImplementation("org.mvplugins.multiverse.core:multiverse-core:$multiverseCore5Version")
+    testImplementation("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
+        isTransitive = false // its old Bukkit API conflicts with paper-api
     }
     compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
     compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")

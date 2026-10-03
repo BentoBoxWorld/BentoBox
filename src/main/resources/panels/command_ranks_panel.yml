@@ -1,0 +1,102 @@
+# The Command Ranks panel, opened from the Command Ranks flag in the island settings panel. It
+# lists the commands whose minimum rank an island can set. Commands the player has no permission
+# for are not listed, nor are commands an op has hidden with shift-left click. This default lays
+# the panel out as it was before it became customizable. A game mode addon may ship its own copy
+# in its own panels folder, which then takes precedence for that game mode.
+#
+# The name of the panel must be the same as the file name.
+command_ranks_panel:
+  # Title of the panel. This is a locale reference, or literal text.
+  title: protection.flags.COMMAND_RANKS.name
+  type: INVENTORY
+  # No filler, so the panel is only as tall as the commands need. Uncomment to fill empty slots,
+  # and add force-shown: 6 to keep the panel the same height on every page.
+  # background:
+  #   icon: LIGHT_BLUE_STAINED_GLASS_PANE
+  #   title: "&b&r"  # Empty text
+  content:
+    # Rows 1 to 5: the paged command list, 45 commands per page. The number of command_button
+    # slots sets the page size. Rows with no command are not shown.
+    1:
+      1: command_button
+      2: command_button
+      3: command_button
+      4: command_button
+      5: command_button
+      6: command_button
+      7: command_button
+      8: command_button
+      9: command_button
+    2:
+      1: command_button
+      2: command_button
+      3: command_button
+      4: command_button
+      5: command_button
+      6: command_button
+      7: command_button
+      8: command_button
+      9: command_button
+    3:
+      1: command_button
+      2: command_button
+      3: command_button
+      4: command_button
+      5: command_button
+      6: command_button
+      7: command_button
+      8: command_button
+      9: command_button
+    4:
+      1: command_button
+      2: command_button
+      3: command_button
+      4: command_button
+      5: command_button
+      6: command_button
+      7: command_button
+      8: command_button
+      9: command_button
+    5:
+      1: command_button
+      2: command_button
+      3: command_button
+      4: command_button
+      5: command_button
+      6: command_button
+      7: command_button
+      8: command_button
+      9: command_button
+    # Row 6: paging. The buttons only appear when there is a page to go to.
+    6:
+      2:
+        icon: ARROW
+        title: protection.panel.previous
+        data:
+          type: PREVIOUS
+        actions:
+          previous:
+            click-type: UNKNOWN
+      8:
+        icon: ARROW
+        title: protection.panel.next
+        data:
+          type: NEXT
+        actions:
+          next:
+            click-type: UNKNOWN
+  reusable:
+    # One slot of the paged command list. How a command is drawn may be overridden here:
+    #   icon: replaces the default MAP icon
+    #   title: a locale reference used as the name layout in place of
+    #          protection.panel.flag-item.name-layout; [name] is the command, e.g. /island sethome
+    #   description: a locale reference used as the lore layout in place of
+    #          protection.panel.flag-item.description-layout; [description] is the command's text
+    #          from protection.panel.flag-item.command-instructions. The ranks are listed after it.
+    #   actions: clicks are handled by the command itself: left click cycles the rank down,
+    #          right click cycles it up, and shift-left click lets an op hide the command from
+    #          players. Only the tooltips matter here; they are added after the ranks. The default
+    #          layout already carries the click hints, so none are declared.
+    command_button:
+      data:
+        type: COMMAND

@@ -30,6 +30,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitTask;
@@ -111,7 +112,10 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
         ItemStack air = mock(ItemStack.class);
         when(air.getType()).thenReturn(Material.AIR);
         when(playerInventory.getItemInOffHand()).thenReturn(air);
+        when(playerInventory.getItem(EquipmentSlot.HAND)).thenReturn(item);
+        when(playerInventory.getItem(EquipmentSlot.OFF_HAND)).thenReturn(air);
         when(mockPlayer.getInventory()).thenReturn(playerInventory);
+        when(mockPlayer.isOnline()).thenReturn(true);
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
@@ -363,6 +367,65 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
 
         // Hologram should have been removed immediately upon scooping
         verify(mockHologram).remove();
+    }
+
+    @Test
+    void testGivePlayerLava() {
+        when(item.getType()).thenReturn(Material.BUCKET);
+        when(clickedBlock.getType()).thenReturn(Material.OBSIDIAN);
+        when(clickedBlock.getLocation()).thenReturn(location);
+        when(mockPlayer.getInventory().addItem(any(ItemStack.class))).thenReturn(new HashMap<>());
+
+        assertTrue(listener.givePlayerLava(User.getInstance(mockPlayer), clickedBlock, EquipmentSlot.HAND));
+
+        verify(item).setAmount(0);
+        verify(mockPlayer.getInventory()).addItem(any(ItemStack.class));
+        verify(clickedBlock).setType(Material.AIR);
+    }
+
+    /**
+     * The lava is handed out a tick after the click. If the obsidian is mined in that
+     * window the player must not also get the lava.
+     */
+    @Test
+    void testGivePlayerLavaObsidianGone() {
+        when(item.getType()).thenReturn(Material.BUCKET);
+        when(clickedBlock.getType()).thenReturn(Material.WATER);
+
+        assertFalse(listener.givePlayerLava(User.getInstance(mockPlayer), clickedBlock, EquipmentSlot.HAND));
+
+        verify(item, never()).setAmount(Mockito.anyInt());
+        verify(mockPlayer.getInventory(), never()).addItem(any(ItemStack.class));
+        verify(clickedBlock, never()).setType(any());
+    }
+
+    /**
+     * If the empty bucket left the hand before the lava is handed out, the scoop is abandoned
+     * rather than giving lava without using up a bucket.
+     */
+    @Test
+    void testGivePlayerLavaBucketNoLongerInHand() {
+        when(clickedBlock.getType()).thenReturn(Material.OBSIDIAN);
+        ItemStack pickaxe = mock(ItemStack.class);
+        when(pickaxe.getType()).thenReturn(Material.DIAMOND_PICKAXE);
+        when(mockPlayer.getInventory().getItem(EquipmentSlot.HAND)).thenReturn(pickaxe);
+
+        assertFalse(listener.givePlayerLava(User.getInstance(mockPlayer), clickedBlock, EquipmentSlot.HAND));
+
+        verify(pickaxe, never()).setAmount(Mockito.anyInt());
+        verify(mockPlayer.getInventory(), never()).addItem(any(ItemStack.class));
+        verify(clickedBlock, never()).setType(any());
+    }
+
+    @Test
+    void testGivePlayerLavaPlayerOffline() {
+        when(item.getType()).thenReturn(Material.BUCKET);
+        when(clickedBlock.getType()).thenReturn(Material.OBSIDIAN);
+        when(mockPlayer.isOnline()).thenReturn(false);
+
+        assertFalse(listener.givePlayerLava(User.getInstance(mockPlayer), clickedBlock, EquipmentSlot.HAND));
+
+        verify(clickedBlock, never()).setType(any());
     }
 
     @Test

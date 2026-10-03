@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.panels.customizable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -15,14 +14,11 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -32,7 +28,6 @@ import world.bentobox.bentobox.api.flags.clicklisteners.IslandDefaultCycleClick;
 import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
-import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
@@ -68,7 +63,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  * @since 3.23.1
  */
-public class SettingsPanel extends AbstractPanel implements PanelListener {
+public class SettingsPanel extends AbstractRefreshingPanel {
 
     /** Name of the template file, without extension. */
     public static final String SETTINGS_PANEL = "settings_panel";
@@ -172,7 +167,14 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     @Nullable
     private final Island island;
     private final List<TabType> tabs;
-    private final Flag.Mode defaultMode;
+    /** The display mode the viewer chose; shared by every tab. */
+    private Flag.Mode selectedMode;
+    /** Whether a mode change is saved as the viewer's preference for next time. */
+    private boolean remembersMode;
+    /**
+     * Per-tab overrides of {@link #selectedMode}, set when a tab has nothing to show in the
+     * chosen mode and skips ahead.
+     */
     private final Map<TabType, Flag.Mode> modes = new EnumMap<>(TabType.class);
     private final Map<TabType, ItemTemplateRecord> tabTemplates = new EnumMap<>(TabType.class);
     /**
@@ -185,10 +187,6 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     /** The flags of the active tab that the viewer may see, in display order. */
     private List<Flag> pagedFlags = new ArrayList<>();
     private List<String> hiddenFlags = new ArrayList<>();
-    @Nullable
-    private TemplatedPanel panel;
-    private boolean refreshing;
-    private boolean closed;
     private boolean deferringSaves;
 
     /**
@@ -198,7 +196,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      * @param world the world the settings are for
      * @param island the island, or null if the viewer is not on one
      * @param tabs the tabs to show, in order; the first the viewer may see is shown initially
-     * @param defaultMode the display mode each tab starts in
+     * @param defaultMode the display mode the panel starts in
      */
     protected SettingsPanel(@NonNull CompositeCommand command, @NonNull User user, @NonNull String templateName,
             @NonNull World world, @Nullable Island island, @NonNull List<TabType> tabs, Flag.Mode defaultMode) {
@@ -210,13 +208,14 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         this.tabs = tabs.stream()
                 .filter(t -> t.getPermission(prefix).isEmpty() || user.hasPermission(t.getPermission(prefix)))
                 .toList();
-        this.defaultMode = defaultMode;
+        this.selectedMode = defaultMode;
         this.activeTab = this.tabs.isEmpty() ? tabs.get(0) : this.tabs.get(0);
     }
 
     /**
      * Opens the settings panel for a player. With an island the protection and settings tabs are
-     * shown; without one, only the read-only view of the world's protection flags.
+     * shown; without one, only the read-only view of the world's protection flags. It opens in the
+     * display mode the player last chose.
      * @param command the island settings command
      * @param user the viewer
      * @param island the island, or null if the viewer is not on one
@@ -226,7 +225,10 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         List<TabType> tabs = island == null ? List.of(TabType.WORLD_PROTECTION)
                 : List.of(TabType.PROTECTION, TabType.SETTING);
         World world = island == null ? command.getWorld() : island.getWorld();
-        return new SettingsPanel(command, user, SETTINGS_PANEL, world, island, tabs, Mode.BASIC).open();
+        SettingsPanel settingsPanel = new SettingsPanel(command, user, SETTINGS_PANEL, world, island, tabs,
+                command.getPlugin().getPlayers().getFlagsDisplayMode(user.getUniqueId()));
+        settingsPanel.remembersMode = true;
+        return settingsPanel.open();
     }
 
     /**
@@ -260,12 +262,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
             return true;
         }
         TemplatedPanelBuilder panelBuilder = new TemplatedPanelBuilder();
-        if (command.getAddon() instanceof GameModeAddon gma && doesCustomPanelExists(gma, templateName)) {
-            // The game mode has its own settings panel
-            panelBuilder.template(templateName, new File(gma.getDataFolder(), "panels"));
-        } else {
-            panelBuilder.template(templateName, new File(plugin.getDataFolder(), "panels"));
-        }
+        selectTemplate(panelBuilder, templateName);
         PanelTemplateRecord template = panelBuilder.getPanelTemplate();
         if (template == null) {
             return false;
@@ -285,7 +282,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
         }
         prepareFlags();
         panelBuilder.parameters(titleParameters());
-        panel = panelBuilder.build();
+        setPanel(panelBuilder.build());
         return true;
     }
 
@@ -326,69 +323,18 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     // Section: Lifecycle
     // ---------------------------------------------------------------------
 
-    /**
-     * Next and previous buttons call this; the panel is refreshed by {@link #refreshPanel()} after
-     * every click anyway, so there is nothing to do here.
-     */
     @Override
-    protected void build() {
-        // Refreshed by the listener after the click
-    }
-
-    @Override
-    protected void onPageChanged() {
-        // Refreshed by the listener after the click
-    }
-
-    @Override
-    public void setup() {
-        // Nothing to set up
-    }
-
-    @Override
-    public void onInventoryClick(User user, InventoryClickEvent event) {
-        // Clicks are handled by the buttons
-    }
-
-    @Override
-    public void refreshPanel() {
-        if (closed || panel == null) {
-            return;
-        }
+    protected void prepareRefresh() {
         prepareFlags();
-        // Mark as refreshing so that the inventory close fired by a reopen is not treated as a
-        // true close
-        refreshing = true;
-        try {
-            panel.regenerate(titleParameters());
-        } finally {
-            refreshing = false;
-        }
-        closed = false;
     }
 
     @Override
-    public void onInventoryClose(InventoryCloseEvent event) {
-        closed = true;
-        // Only stop deferring saves when the panel is truly closed, not during a refresh
-        if (!refreshing && deferringSaves && island != null) {
+    protected void onClosed() {
+        // Stop deferring saves only when the panel is truly closed, not during a refresh
+        if (deferringSaves && island != null) {
             island.endDeferSaves();
             deferringSaves = false;
         }
-    }
-
-    @Override
-    public boolean hasClickCooldown() {
-        return true;
-    }
-
-    @Override
-    public boolean isActionableSlot(int rawSlot) {
-        if (panel == null) {
-            return false;
-        }
-        PanelItem item = panel.getItems().get(rawSlot);
-        return item != null && item.getClickHandler().isPresent();
     }
 
     // ---------------------------------------------------------------------
@@ -441,7 +387,7 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     }
 
     private Flag.Mode currentMode() {
-        return modes.getOrDefault(activeTab, defaultMode);
+        return modes.getOrDefault(activeTab, selectedMode);
     }
 
     private boolean isVisibleToUser(Flag flag) {
@@ -590,7 +536,8 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
     /**
      * @return the parameters for the panel title
      */
-    private String[] titleParameters() {
+    @Override
+    protected String[] titleParameters() {
         return new String[] { TAB_PARAM, tabName(activeTab, tabTemplates.get(activeTab)), WORLD_NAME,
                 plugin.getIWM().getFriendlyName(world) };
     }
@@ -623,7 +570,12 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
                                 user.getTranslation(PROTECTION_PANEL + "mode." + nextKey + ".name")))
                 .clickHandler((p, u, clickType, s) -> {
                     if (clickAllowed(template, clickType)) {
-                        modes.put(activeTab, currentMode().getNext());
+                        // One mode for every tab, remembered for the next time the player opens it
+                        selectedMode = currentMode().getNext();
+                        modes.clear();
+                        if (remembersMode) {
+                            plugin.getPlayers().setFlagsDisplayMode(u.getUniqueId(), selectedMode);
+                        }
                         pageIndex = 0;
                         u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
                     }
@@ -720,13 +672,5 @@ public class SettingsPanel extends AbstractPanel implements PanelListener {
      */
     public int getPageIndex() {
         return pageIndex;
-    }
-
-    /**
-     * @return the panel that is open, or null if none
-     */
-    @Nullable
-    public TemplatedPanel getPanel() {
-        return panel;
     }
 }

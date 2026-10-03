@@ -118,6 +118,7 @@ class SettingsPanelTest extends RanksManagerTestSetup {
             return flags.stream().filter(f -> f.getID().equals(id)).findFirst();
         });
         when(iwm.getHiddenFlags(any())).thenReturn(hidden);
+        when(plugin.getPlayers().getFlagsDisplayMode(any())).thenReturn(Mode.BASIC);
 
         // Command
         when(command.getPlugin()).thenReturn(plugin);
@@ -330,15 +331,49 @@ class SettingsPanelTest extends RanksManagerTestSetup {
     }
 
     /**
-     * The mode is remembered per tab.
+     * One mode is shared by every tab (#3092).
      */
     @Test
-    void testModePerTab() {
+    void testModeSharedAcrossTabs() {
         SettingsPanel sp = openWithIsland();
         click(items(sp), MODE, user, ClickType.LEFT);
         assertEquals(Mode.ADVANCED, sp.getMode());
         click(items(sp), SETTING_TAB, user, ClickType.LEFT);
+        assertEquals(Mode.ADVANCED, sp.getMode());
+    }
+
+    /**
+     * The panel opens in the mode the player last chose, and a change is saved for next time (#3092).
+     */
+    @Test
+    void testModeRemembered() {
+        when(plugin.getPlayers().getFlagsDisplayMode(uuid)).thenReturn(Mode.EXPERT);
+        SettingsPanel sp = openWithIsland();
+        assertEquals(Mode.EXPERT, sp.getMode());
+        assertEquals(Material.NETHER_BRICK, material(items(sp), MODE));
+
+        click(items(sp), MODE, user, ClickType.LEFT);
         assertEquals(Mode.BASIC, sp.getMode());
+        verify(plugin.getPlayers()).setFlagsDisplayMode(uuid, Mode.BASIC);
+    }
+
+    /**
+     * A tab with nothing to show in the chosen mode skips ahead for display only; the player's
+     * choice is neither changed nor saved.
+     */
+    @Test
+    void testSkippedModeNotSaved() {
+        when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
+        flags.removeIf(f -> f.getID().equals("S_GAMMA"));
+        flags.add(flag("S_ADVANCED", Type.SETTING, Mode.ADVANCED));
+        SettingsPanel sp = openWithIsland();
+        click(items(sp), SETTING_TAB, user, ClickType.LEFT);
+        sp.refreshPanel();
+        assertEquals(Mode.ADVANCED, sp.getMode());
+        click(items(sp), PROTECTION_TAB, user, ClickType.LEFT);
+        sp.refreshPanel();
+        assertEquals(Mode.BASIC, sp.getMode());
+        verify(plugin.getPlayers(), never()).setFlagsDisplayMode(any(), any());
     }
 
     /**
@@ -492,6 +527,19 @@ class SettingsPanelTest extends RanksManagerTestSetup {
     // ---------------------------------------------------------------------
     // Section: Admin panel
     // ---------------------------------------------------------------------
+
+    /**
+     * The admin panel always opens in expert mode and does not touch the admin's own preference.
+     */
+    @Test
+    void testAdminModeNotRemembered() {
+        SettingsPanel sp = openAdmin(island);
+        assertEquals(Mode.EXPERT, sp.getMode());
+        click(items(sp), MODE, user, ClickType.LEFT);
+        assertEquals(Mode.BASIC, sp.getMode());
+        verify(plugin.getPlayers(), never()).getFlagsDisplayMode(any());
+        verify(plugin.getPlayers(), never()).setFlagsDisplayMode(any(), any());
+    }
 
     private SettingsPanel openAdmin(Island target) {
         assertTrue(SettingsPanel.openAdminPanel(command, user, target));
