@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -10,8 +11,10 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -28,6 +31,22 @@ public class PanelListenerManager implements Listener {
 
     private static final Map<UUID, Panel> openPanels = new HashMap<>();
 
+    /**
+     * Actions that, when performed on a slot of the player's own inventory, only move items
+     * within that inventory, to the cursor, or out of the world via a drop. None of them can put
+     * an item into the panel. Shift-click ({@link InventoryAction#MOVE_TO_OTHER_INVENTORY}) and
+     * double-click ({@link InventoryAction#COLLECT_TO_CURSOR}, which also gathers matching panel
+     * icons) are deliberately absent.
+     */
+    private static final EnumSet<InventoryAction> PLAYER_INVENTORY_ACTIONS = EnumSet.of(
+            InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_SOME, InventoryAction.PICKUP_HALF,
+            InventoryAction.PICKUP_ONE, InventoryAction.PLACE_ALL, InventoryAction.PLACE_SOME,
+            InventoryAction.PLACE_ONE, InventoryAction.SWAP_WITH_CURSOR, InventoryAction.DROP_ALL_SLOT,
+            InventoryAction.DROP_ONE_SLOT, InventoryAction.HOTBAR_SWAP,
+            InventoryAction.PICKUP_FROM_BUNDLE, InventoryAction.PICKUP_ALL_INTO_BUNDLE,
+            InventoryAction.PICKUP_SOME_INTO_BUNDLE, InventoryAction.PLACE_FROM_BUNDLE,
+            InventoryAction.PLACE_ALL_INTO_BUNDLE, InventoryAction.PLACE_SOME_INTO_BUNDLE);
+
     @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
@@ -42,6 +61,13 @@ public class PanelListenerManager implements Listener {
 
             // Get the panel itself
             Panel panel = openPanels.get(user.getUniqueId());
+
+            // Let the player use their own inventory while the panel is open, unless the panel
+            // reads clicks there (e.g. "click an item in your inventory" icon pickers).
+            if (isPlayerInventoryClickAllowed(panel, event)) {
+                event.setCancelled(false);
+                return;
+            }
 
             // Apply the click cooldown for throttled panels (tabbed and settings panels) first,
             // before any other (potentially expensive) work. A rejected spam click must do the
@@ -74,7 +100,9 @@ public class PanelListenerManager implements Listener {
                 if (pi != null) {
                     pi.getClickHandler().ifPresent(handler ->
                     // Execute the handler's onClick method and optionally cancel the event if the handler returns true
-                    event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot())));
+                    event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot())
+                            // An item picked up from the player's inventory must never be placed in the panel
+                            || hasCursorItem(event)));
                 }
                 // If there is a listener, then run it and refresh the panel
                 panel.getListener().ifPresent(l -> {
@@ -88,6 +116,36 @@ public class PanelListenerManager implements Listener {
                 openPanels.remove(user.getUniqueId());
                 // This avoids GUIs being left open so that items can be taken.
                 user.closeInventory();
+            }
+        }
+    }
+
+    /**
+     * Whether a click can be left to vanilla: it is in the player's own (bottom) inventory, it
+     * cannot move an item into the panel, and the panel does not want to see it.
+     */
+    private boolean isPlayerInventoryClickAllowed(Panel panel, InventoryClickEvent event) {
+        return event.getClickedInventory() != null
+                && event.getClickedInventory().equals(event.getView().getBottomInventory())
+                && PLAYER_INVENTORY_ACTIONS.contains(event.getAction())
+                && panel.getListener().map(PanelListener::allowsPlayerInventoryClicks).orElse(true);
+    }
+
+    private boolean hasCursorItem(InventoryClickEvent event) {
+        return event.getCursor() != null && !event.getCursor().getType().isAir();
+    }
+
+    /**
+     * Stops items being dragged into a panel. Panels never accept items, and anything that got
+     * into one would be lost when it closes. Drags confined to the player's own inventory are fine.
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInventoryDrag(InventoryDragEvent event) {
+        Panel panel = openPanels.get(event.getWhoClicked().getUniqueId());
+        if (panel != null && panel.getInventory().equals(event.getInventory())) {
+            int topSize = event.getView().getTopInventory().getSize();
+            if (event.getRawSlots().stream().anyMatch(slot -> slot < topSize)) {
+                event.setCancelled(true);
             }
         }
     }

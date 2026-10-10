@@ -90,6 +90,14 @@ public abstract class AbstractRefreshingPanel extends AbstractPanel implements P
         // Clicks are handled by the buttons
     }
 
+    /**
+     * All buttons are in the panel, so the player may use their own inventory.
+     */
+    @Override
+    public boolean allowsPlayerInventoryClicks() {
+        return true;
+    }
+
     @Override
     public void refreshPanel() {
         if (closed || panel == null) {
