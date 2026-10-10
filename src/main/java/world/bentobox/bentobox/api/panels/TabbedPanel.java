@@ -207,6 +207,14 @@ public class TabbedPanel extends Panel implements PanelListener {
         }
     }
 
+    /**
+     * Tabs and flag buttons are all in the panel, so the player may use their own inventory.
+     */
+    @Override
+    public boolean allowsPlayerInventoryClicks() {
+        return true;
+    }
+
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
         // Note: click cooldown is now applied in PanelListenerManager before handlers run.

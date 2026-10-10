@@ -14,16 +14,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -31,6 +34,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MenuType;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -339,6 +343,111 @@ class PanelListenerManagerTest extends CommonTestSetup {
         // Check that the onClick is called
         verify(ch).onClick(eq(panel), any(User.class), eq(click), eq(0));
         verify(pl).onInventoryClick(any(), any());
+    }
+
+    /**
+     * A view whose raw slots 0-8 are the panel and 9 onwards are the player's inventory.
+     */
+    class SplitView extends MyView {
+
+        private final Inventory bottom = mock(PlayerInventory.class);
+        private ItemStack cursor;
+
+        SplitView() {
+            super(ChatColor.RED + PANEL_NAME, panel.getInventory());
+        }
+
+        @Override
+        public Inventory getBottomInventory() {
+            return bottom;
+        }
+
+        @Override
+        public Inventory getInventory(int rawSlot) {
+            return rawSlot < 9 ? getTopInventory() : bottom;
+        }
+
+        @Override
+        public ItemStack getCursor() {
+            return cursor;
+        }
+
+        @Override
+        public void setCursor(ItemStack item) {
+            cursor = item;
+        }
+    }
+
+    private InventoryClickEvent clickPlayerInventory(InventoryAction action) {
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+        InventoryClickEvent e = new InventoryClickEvent(new SplitView(), type, 20, click, action);
+        plm.onInventoryClick(e);
+        return e;
+    }
+
+    @Test
+    void testPlayerInventoryClickRoutedToListenerByDefault() {
+        // A listener that has not opted in (e.g. an icon picker) still gets the click, cancelled
+        InventoryClickEvent e = clickPlayerInventory(InventoryAction.PICKUP_ALL);
+        assertTrue(e.isCancelled());
+        verify(pl).onInventoryClick(any(), eq(e));
+    }
+
+    @Test
+    void testPlayerInventoryClickAllowedWhenListenerOptsIn() {
+        when(pl.allowsPlayerInventoryClicks()).thenReturn(true);
+        InventoryClickEvent e = clickPlayerInventory(InventoryAction.PICKUP_ALL);
+        assertFalse(e.isCancelled());
+        verify(pl, never()).onInventoryClick(any(), any());
+        verify(pl, never()).refreshPanel();
+    }
+
+    @Test
+    void testPlayerInventoryClickAllowedWithoutListener() {
+        when(panel.getListener()).thenReturn(Optional.empty());
+        assertFalse(clickPlayerInventory(InventoryAction.DROP_ONE_SLOT).isCancelled());
+        assertFalse(clickPlayerInventory(InventoryAction.PICKUP_FROM_BUNDLE).isCancelled());
+    }
+
+    @Test
+    void testPlayerInventoryShiftAndDoubleClickBlocked() {
+        when(panel.getListener()).thenReturn(Optional.empty());
+        assertTrue(clickPlayerInventory(InventoryAction.MOVE_TO_OTHER_INVENTORY).isCancelled());
+        assertTrue(clickPlayerInventory(InventoryAction.COLLECT_TO_CURSOR).isCancelled());
+    }
+
+    @Test
+    void testPanelClickWithCursorItemStaysCancelled() {
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+        // The handler asks for the click not to be cancelled
+        when(ch.onClick(any(), any(), any(), any(Integer.class))).thenReturn(false);
+        SplitView splitView = new SplitView();
+        ItemStack held = mock(ItemStack.class);
+        when(held.getType()).thenReturn(Material.STONE);
+        splitView.setCursor(held);
+        InventoryClickEvent e = new InventoryClickEvent(splitView, type, 0, click, InventoryAction.PLACE_ALL);
+        plm.onInventoryClick(e);
+        verify(ch).onClick(eq(panel), any(User.class), eq(click), eq(0));
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testDragIntoPanelCancelled() {
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+        InventoryDragEvent e = new InventoryDragEvent(new SplitView(), null, mock(ItemStack.class), false,
+                Map.of(3, mock(ItemStack.class), 20, mock(ItemStack.class)));
+        plm.onInventoryDrag(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testDragWithinPlayerInventoryAllowed() {
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
+        InventoryDragEvent e = new InventoryDragEvent(new SplitView(), null, mock(ItemStack.class), false,
+                Map.of(20, mock(ItemStack.class), 21, mock(ItemStack.class)));
+        plm.onInventoryDrag(e);
+        assertFalse(e.isCancelled());
+        assertEquals(Set.of(20, 21), e.getRawSlots());
     }
 
     /**
