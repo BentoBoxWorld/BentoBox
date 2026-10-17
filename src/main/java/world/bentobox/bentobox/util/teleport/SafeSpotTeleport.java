@@ -181,8 +181,13 @@ public class SafeSpotTeleport {
         location.getBlock().setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
-        Util.teleportAsync(Objects.requireNonNull(entity),
-                Objects.requireNonNull(location.clone().add(new Vector(0.5D, 0D, 0.5D)))).thenRun(() -> {
+        // Centre on the block, as the location may already be off-centre and adding 0.5 would
+        // land on the block's edge.
+        Location centre = location.clone();
+        centre.setX(location.getBlockX() + 0.5D);
+        centre.setY(location.getBlockY());
+        centre.setZ(location.getBlockZ() + 0.5D);
+        Util.teleportAsync(Objects.requireNonNull(entity), centre).thenRun(() -> {
             if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
             result.complete(true);
         });

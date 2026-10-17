@@ -337,6 +337,50 @@ public abstract sealed class AbstractTeleportListener
 
 
     /**
+     * Checks whether an arrival in The End would leave the player or entity with nothing to
+     * stand on.
+     * <p>
+     * When the game mode does not make End portals (no obsidian platform), the server still
+     * performs the teleport itself, in the same tick, to the exact destination. If that spot
+     * has no ground the arrival falls into the void before the safe spot teleport can run.
+     * Callers cancel the event when this returns {@code true} so the safe spot teleport is used.
+     *
+     * @param overWorld the game mode's overworld.
+     * @param environment the portal's environment.
+     * @param destination the arrival location, may be {@code null}.
+     * @return {@code true} if the arrival is in The End without a platform and the spot is not safe.
+     */
+    protected boolean isUnsafeEndArrival(World overWorld, World.Environment environment, @Nullable Location destination)
+    {
+        return World.Environment.THE_END.equals(environment)
+                && !this.isMakePortals(overWorld, environment)
+                && destination != null
+                && destination.getWorld() != null
+                && World.Environment.THE_END.equals(destination.getWorld().getEnvironment())
+                && !this.plugin.getIslands().isSafeLocation(destination);
+    }
+
+
+    /**
+     * Checks whether a repeat portal event, fired while an earlier one is still being handled,
+     * belongs to an End trip without a platform.
+     * <p>
+     * Without a platform the first event is either left to the server (the traveller is gone and
+     * no repeat follows) or cancelled in favour of a safe spot teleport that takes a few ticks.
+     * While the traveller still stands in the portal the server keeps firing portal events; any
+     * of them left uncancelled would send the traveller to the vanilla End spawn instead.
+     *
+     * @param overWorld the game mode's overworld.
+     * @param environment the portal's environment.
+     * @return {@code true} if repeat events for this trip must be cancelled.
+     */
+    protected boolean isPendingEndTeleport(World overWorld, World.Environment environment)
+    {
+        return World.Environment.THE_END.equals(environment) && !this.isMakePortals(overWorld, environment);
+    }
+
+
+    /**
      * Builds the End obsidian arrival platform at the given destination.
      * <p>
      * Vanilla creates the platform at the fixed {@code ServerLevel.END_SPAWN_POINT}
