@@ -284,6 +284,11 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         if (this.inTeleport.contains(event.getPlayer().getUniqueId()))
         {
             // Player is already in teleportation.
+            if (this.isPendingEndTeleport(overWorld, environment))
+            {
+                // A safe spot teleport is still on its way; do not let the server teleport instead.
+                event.setCancelled(true);
+            }
             return;
         }
         this.inTeleport.add(event.getPlayer().getUniqueId());
@@ -345,6 +350,12 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         {
             // If there is no island, then processor already created island. Nothing to do more.
             return;
+        }
+        if (!event.isCancelled() && this.isUnsafeEndArrival(overWorld, environment, event.getTo()))
+        {
+            // No End platform and nothing to stand on: stop the server teleport and let the
+            // safe spot teleport below find somewhere safe.
+            event.setCancelled(true);
         }
         if (!event.isCancelled() && event.getCanCreatePortal())
         {

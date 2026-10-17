@@ -212,6 +212,11 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         if (this.inTeleport.contains(event.getEntity().getUniqueId()))
         {
             // Entity is already in teleportation.
+            if (this.isPendingEndTeleport(overWorld, environment))
+            {
+                // A safe spot teleport is still on its way; do not let the server teleport instead.
+                event.setCancelled(true);
+            }
             return;
         }
         this.inTeleport.add(event.getEntity().getUniqueId());
@@ -275,6 +280,13 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
             return;
         }
         
+        if (!event.isCancelled() && this.isUnsafeEndArrival(overWorld, environment, event.getTo()))
+        {
+            // No End platform and nothing to stand on: stop the server teleport and let the
+            // safe spot teleport below find somewhere safe.
+            event.setCancelled(true);
+        }
+
         if (!event.isCancelled())
         {
             // Let the server teleport

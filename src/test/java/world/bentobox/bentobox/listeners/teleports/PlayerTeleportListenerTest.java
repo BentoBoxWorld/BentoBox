@@ -46,6 +46,7 @@ import org.mockito.Mock;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
@@ -258,6 +259,101 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         // Verify player velocity and fall distance were reset
         verify(mockPlayer, times(1)).setVelocity(new Vector(0, 0, 0));
         verify(mockPlayer, times(1)).setFallDistance(0);
+    }
+
+    /**
+     * Sets up an island End trip with no End platform (create-obsidian-platform: false),
+     * arriving at a location in a separate End world.
+     *
+     * @return the arrival location
+     */
+    private Location setUpEndArrivalWithoutPlatform() {
+        when(Util.getWorld(location.getWorld())).thenReturn(world);
+        when(iwm.inWorld(world)).thenReturn(true);
+        World endWorld = mock(World.class);
+        when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
+        when(iwm.getEndWorld(world)).thenReturn(endWorld);
+        Location arrival = mock(Location.class);
+        when(arrival.getWorld()).thenReturn(endWorld);
+        // PlayerPortalEvent.setTo stores a clone
+        when(arrival.clone()).thenReturn(arrival);
+        when(location.toVector().toLocation(endWorld)).thenReturn(arrival);
+        return arrival;
+    }
+
+    /**
+     * With no End platform, an arrival spot with nothing to stand on must not be left to the
+     * server, which would drop the player into the void. The event is cancelled so the safe
+     * spot teleport is used instead.
+     */
+    @Test
+    void testPortalProcessEndNoPlatformUnsafeArrivalCancels() {
+        Location arrival = setUpEndArrivalWithoutPlatform();
+        when(im.isSafeLocation(arrival)).thenReturn(false);
+        PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0, false,
+                0);
+
+        ptl.onPlayerPortalEvent(e);
+
+        assertTrue(e.isCancelled());
+        assertSame(arrival, e.getTo());
+    }
+
+    /**
+     * With no End platform but solid ground at the arrival spot, the server does the teleport.
+     */
+    @Test
+    void testPortalProcessEndNoPlatformSafeArrivalLetsServerTeleport() {
+        Location arrival = setUpEndArrivalWithoutPlatform();
+        when(im.isSafeLocation(arrival)).thenReturn(true);
+        PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0, false,
+                0);
+
+        ptl.onPlayerPortalEvent(e);
+
+        assertFalse(e.isCancelled());
+        assertSame(arrival, e.getTo());
+    }
+
+    /**
+     * With no End platform, a repeat portal event fired while the safe spot teleport is still
+     * pending must also be cancelled, or the server would send the player to the vanilla End spawn.
+     */
+    @Test
+    void testPortalProcessEndNoPlatformRepeatEventCancels() {
+        Location arrival = setUpEndArrivalWithoutPlatform();
+        when(im.isSafeLocation(arrival)).thenReturn(false);
+        PlayerPortalEvent first = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0,
+                false, 0);
+        ptl.onPlayerPortalEvent(first);
+        assertTrue(ptl.getInTeleport().contains(mockPlayer.getUniqueId()));
+
+        PlayerPortalEvent repeat = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0,
+                false, 0);
+        ptl.onPlayerPortalEvent(repeat);
+
+        assertTrue(repeat.isCancelled());
+    }
+
+    /**
+     * With the End platform on, a repeat portal event is left alone, as before.
+     */
+    @Test
+    void testPortalProcessEndWithPlatformRepeatEventNotCancelled() {
+        when(Util.getWorld(location.getWorld())).thenReturn(world);
+        when(iwm.inWorld(world)).thenReturn(true);
+        GameModeAddon gm = mock(GameModeAddon.class);
+        WorldSettings ws = mock(WorldSettings.class);
+        when(ws.isMakeEndPortals()).thenReturn(true);
+        when(gm.getWorldSettings()).thenReturn(ws);
+        when(iwm.getAddon(world)).thenReturn(Optional.of(gm));
+        ptl.getInTeleport().add(mockPlayer.getUniqueId());
+
+        PlayerPortalEvent repeat = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0,
+                false, 0);
+        ptl.onPlayerPortalEvent(repeat);
+
+        assertFalse(repeat.isCancelled());
     }
 
     /**
