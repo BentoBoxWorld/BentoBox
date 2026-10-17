@@ -24,8 +24,9 @@ public class MongoDBDatabase implements DatabaseSetup {
             Bukkit.getPluginManager().disablePlugin(plugin);
             return null;
         }
-        if (connector == null) {
-            connector = new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
+        MongoDBDatabaseConnector dbConnector = connector;
+        if (dbConnector == null) {
+            dbConnector = new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
                     plugin.getSettings().getDatabaseHost(),
                     plugin.getSettings().getDatabasePort(),
                     plugin.getSettings().getDatabaseName(),
@@ -33,8 +34,9 @@ public class MongoDBDatabase implements DatabaseSetup {
                     plugin.getSettings().getDatabasePassword(),
                     plugin.getSettings().isUseSSL()
             ), plugin.getSettings().getMongodbConnectionUri());
+            connector = dbConnector;
         }
-        return new MongoDBDatabaseHandler<>(plugin, type, connector);
+        return new MongoDBDatabaseHandler<>(plugin, type, dbConnector);
     }
 
 }
