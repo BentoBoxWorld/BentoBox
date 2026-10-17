@@ -641,6 +641,26 @@ class ClosestSafeSpotTeleportTest extends CommonTestSetup {
         verify(blockUpUp).setType(Material.END_STONE, false);
     }
 
+    /**
+     * {@code makeAndTeleport()} teleports to the centre of the pod's block even when the
+     * requested location is off-centre. Adding 0.5 to x = -0.5 would land on the block edge.
+     */
+    @Test
+    void testMakeAndTeleport_offCentreLocation_teleportsToBlockCentre() {
+        Location offCentre = new Location(world, -0.5D, 49.3D, 3.7D, 90F, 10F);
+        Block podBlock = mock(Block.class);
+        when(world.getBlockAt(any(Location.class))).thenReturn(podBlock);
+        when(podBlock.getRelative(BlockFace.DOWN)).thenReturn(blockDown);
+        when(podBlock.getRelative(BlockFace.UP)).thenReturn(blockUp);
+        teleport = ClosestSafeSpotTeleport.builder(plugin).entity(mockPlayer).location(offCentre).build();
+
+        teleport.makeAndTeleport(Material.END_STONE);
+
+        verify(blockDown).setType(Material.END_STONE, false);
+        mockedUtil.verify(() -> Util.teleportAsync(eq(mockPlayer),
+                eq(new Location(world, -0.5D, 49D, 3.5D, 90F, 10F))));
+    }
+
     // -----------------------------------------------------------------------
     // gatherChunks() tests
     // -----------------------------------------------------------------------

@@ -122,8 +122,9 @@ class AddonTest extends CommonTestSetup {
 
     @Test
     void testGetConfig() {
-        // No config file
-        assertNull(test.getConfig());
+        // No config file - an empty config, not null, so saveConfig() is safe
+        assertNotNull(test.getConfig());
+        assertTrue(test.getConfig().getKeys(false).isEmpty());
     }
 
     @Test

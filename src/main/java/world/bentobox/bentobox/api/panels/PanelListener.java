@@ -53,4 +53,19 @@ public interface PanelListener {
     default boolean isActionableSlot(int rawSlot) {
         return true;
     }
+
+    /**
+     * Whether the player may use their own inventory while this panel is open: pick up, place,
+     * swap and drop items, and use bundles. When {@code true}, such clicks are left to vanilla and
+     * are <b>not</b> passed to {@link #onInventoryClick(User, InventoryClickEvent)}. Clicks that
+     * could move an item into the panel, such as shift-clicks, are always blocked.
+     * <p>
+     * Defaults to {@code false} because some panels read clicks in the player's inventory, for
+     * example to let them pick an icon. Panels without a listener always allow it.
+     * @return {@code true} to let the player use their own inventory while the panel is open
+     * @since 3.23.4
+     */
+    default boolean allowsPlayerInventoryClicks() {
+        return false;
+    }
 }

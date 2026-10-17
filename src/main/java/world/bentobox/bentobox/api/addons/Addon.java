@@ -208,15 +208,14 @@ public abstract class Addon {
     /**
      * Load YAML config file
      *
-     * @return Yaml File configuration
+     * @return Yaml File configuration, empty if the file does not exist
      */
     private FileConfiguration loadYamlFile() {
         File yamlFile = new File(dataFolder, ADDON_CONFIG_FILENAME);
 
-        YamlConfiguration yamlConfig = null;
+        YamlConfiguration yamlConfig = new YamlConfiguration();
         if (yamlFile.exists()) {
             try {
-                yamlConfig = new YamlConfiguration();
                 yamlConfig.load(yamlFile);
             } catch (Exception e) {
                 BentoBox.getInstance().logError("Could not load config.yml: " + e.getMessage());

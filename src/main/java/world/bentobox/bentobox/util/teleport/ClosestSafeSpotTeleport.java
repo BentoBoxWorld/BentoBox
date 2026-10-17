@@ -448,8 +448,13 @@ public class ClosestSafeSpotTeleport
         this.location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
         this.location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(baseMaterial, false);
 
-        // Teleport player to the location of the empty space.
-        this.asyncTeleport(this.location.clone().add(new Vector(0.5D, 0D, 0.5D)));
+        // Teleport player to the centre of the empty space. Use the block coordinates, as the
+        // location may already be off-centre and adding 0.5 would land on the block's edge.
+        Location centre = this.location.clone();
+        centre.setX(this.location.getBlockX() + 0.5D);
+        centre.setY(this.location.getBlockY());
+        centre.setZ(this.location.getBlockZ() + 0.5D);
+        this.asyncTeleport(centre);
     }
 
 
