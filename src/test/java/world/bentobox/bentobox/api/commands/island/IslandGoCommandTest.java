@@ -335,6 +335,22 @@ class IslandGoCommandTest extends CommonTestSetup {
     }
 
     /**
+     * Underscores and spaces are interchangeable when resolving destination names.
+     */
+    @Test
+    void testResolveNameUnderscoreAndSpaceEquivalent() {
+        assertEquals("Happy Place", IslandGoCommand.resolveName("happy_place", Set.of("Happy Place", "Hut")));
+    }
+
+    /**
+     * Underscore normalization must not choose arbitrarily between equivalent names.
+     */
+    @Test
+    void testResolveNameAmbiguousUnderscoreAndSpaceEquivalentReturnsNull() {
+        assertNull(IslandGoCommand.resolveName("HAPPY PLACE", Set.of("Happy Place", "Happy_Place")));
+    }
+
+    /**
      * Test method for {@link IslandGoCommand#resolveName(String, Set)}
      */
     @Test
