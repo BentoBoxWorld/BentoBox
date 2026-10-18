@@ -150,7 +150,7 @@ public class FancyNpcsHook extends NPCHook {
         Npc npc = FancyNpcsPlugin.get().getNpcAdapter().apply(data);
         parseEquipment(npcConfig, npc);
 
-        Bukkit.getScheduler().runTask(getPlugin(), () -> {
+        world.bentobox.bentobox.util.TaskScheduler.region(getPlugin(), location, () -> {
             FancyNpcsPlugin.get().getNpcManager().registerNpc(npc);
             npc.create();
             npc.spawnForAll();

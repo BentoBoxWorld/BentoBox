@@ -1,4 +1,5 @@
 package world.bentobox.bentobox.managers;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -341,6 +342,58 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         verify(world, times(2)).unloadChunk(anyInt(), anyInt(), eq(false));
     }
 
+    @Test
+    void testFoliaFailedEvictionKeepsRegionFile() throws IOException {
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Path regionFile = Files.write(regionDir.resolve("r.0.0.mca"), new byte[8192]);
+        PurgeScanResult scan = new PurgeScanResult(world, 0,
+                Map.of(new Pair<>(0, 0), Set.of("del")), false, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+        when(world.isChunkLoaded(5, 7)).thenReturn(true);
+        when(world.unloadChunk(5, 7, false)).thenReturn(false);
+        try (var scheduler = org.mockito.Mockito.mockStatic(TaskScheduler.class,
+                org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            scheduler.when(() -> TaskScheduler.regionFuture(any(), any(), any()))
+                    .thenAnswer(invocation -> {
+                        try {
+                            ((Runnable) invocation.getArgument(2)).run();
+                            return java.util.concurrent.CompletableFuture.completedFuture(null);
+                        } catch (RuntimeException error) {
+                            return java.util.concurrent.CompletableFuture.failedFuture(error);
+                        }
+                    });
+            org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.CompletionException.class,
+                    () -> service.evictChunksAsync(scan).join());
+            verify(world).unloadChunk(5, 7, false);
+        }
+        // The caller must stop after the failed eviction future; delete() is a
+        // separate operation and must never be reached in that failure path.
+        assertTrue(Files.exists(regionFile));
+    }
+
+    @Test
+    void testDeletedSweepFileFailureDoesNotDeferOrRemoveIsland() throws IOException {
+        Island deletable = mock(Island.class);
+        when(deletable.getUniqueId()).thenReturn("failed");
+        when(deletable.isDeletable()).thenReturn(true);
+        when(im.getIslandById("failed")).thenReturn(Optional.of(deletable));
+        when(world.getWorldFolder()).thenReturn(tempDir.toFile());
+
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Path failedRegion = Files.createDirectories(regionDir.resolve("r.0.0.mca"));
+        Files.write(failedRegion.resolve("still-open"), new byte[0]);
+        PurgeScanResult scan = new PurgeScanResult(world, 0,
+                Map.of(new Pair<>(0, 0), Set.of("failed")), false, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+
+        assertFalse(service.delete(scan));
+        assertTrue(Files.exists(failedRegion));
+        assertTrue(service.getPendingDeletions().isEmpty());
+        verify(im, never()).deleteIslandId(anyString());
+        verify(islandCache, never()).deleteIslandFromCache(anyString());
+    }
+
     /**
      * Region coordinates must translate to chunk coordinates via {@code << 5}
      * (each region holds 32×32 chunks). r.1.-1 → chunks (32..63, -32..-1).
@@ -581,6 +634,61 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         verify(islandCache, times(1)).deleteIslandFromCache("del1");
         verify(islandCache, times(1)).deleteIslandFromCache("del2");
         assertTrue(service.getPendingDeletions().isEmpty());
+    }
+
+    @Test
+    void testFlushPendingDeletionsRetainsFailedDatabaseDeleteForRetry() throws IOException {
+        Island del = mock(Island.class);
+        when(del.getUniqueId()).thenReturn("del");
+        when(im.getIslandById("del")).thenReturn(Optional.of(del));
+        when(im.deleteIslandId("del")).thenReturn(false);
+
+        Map<Pair<Integer, Integer>, Set<String>> regions = new HashMap<>();
+        regions.put(new Pair<>(0, 0), Set.of("del"));
+        Files.createDirectories(tempDir.resolve("region"));
+        Files.write(tempDir.resolve("region").resolve("r.0.0.mca"), new byte[0]);
+        service.delete(new PurgeScanResult(world, 0, regions, false, false,
+                new FilterStats(0, 0, 0, 0), Set.of()));
+
+        service.flushPendingDeletions();
+
+        assertTrue(service.getPendingDeletions().contains("del"));
+        verify(islandCache, never()).deleteIslandFromCache(anyString());
+    }
+
+    @Test
+    void testDeferredPurgeRecoversFilesBeforeDatabaseCleanup() throws IOException {
+        when(plugin.getDataFolder()).thenReturn(tempDir.toFile());
+        service = new PurgeRegionsService(plugin);
+        Path regionDir = Files.createDirectories(tempDir.resolve("region"));
+        Path entitiesDir = Files.createDirectories(tempDir.resolve("entities"));
+        Path poiDir = Files.createDirectories(tempDir.resolve("poi"));
+        Path region = Files.write(regionDir.resolve("r.2.-1.mca"), new byte[0]);
+        Path entities = Files.write(entitiesDir.resolve("r.2.-1.mca"), new byte[0]);
+        Path poi = Files.write(poiDir.resolve("r.2.-1.mca"), new byte[0]);
+        Island deferred = mock(Island.class);
+        when(im.getIslandById("recovered")).thenReturn(Optional.of(deferred));
+        when(im.deleteIslandId("recovered")).thenReturn(true);
+
+        PurgeScanResult scan = new PurgeScanResult(world, 0,
+                Map.of(new Pair<>(2, -1), Set.of("recovered")), false, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+        try (var scheduler = org.mockito.Mockito.mockStatic(TaskScheduler.class,
+                org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            service.delete(scan);
+        }
+
+        PurgeRegionsService recovered = new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+        assertFalse(Files.exists(entities));
+        assertFalse(Files.exists(poi));
+        verify(im, never()).deleteIslandId("recovered");
+
+        recovered.completeRecoveredDeletions();
+        recovered.flushPendingDeletions();
+        verify(im).deleteIslandId("recovered");
+        assertTrue(recovered.getPendingDeletions().isEmpty());
     }
 
     /**

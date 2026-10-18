@@ -53,6 +53,7 @@ import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Combines {@link Player}, {@link OfflinePlayer} and {@link CommandSender} to
@@ -69,7 +70,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class User implements MetaDataAble {
 
-    private static final Map<UUID, User> users = new HashMap<>();
+    private static final Map<UUID, User> users = Collections.synchronizedMap(new HashMap<>());
 
     // Patterns for message delivery type tags in locale strings
     private static final Pattern ACTIONBAR_PATTERN = Pattern.compile("^\\[actionbar]", Pattern.CASE_INSENSITIVE);
@@ -132,7 +133,7 @@ public class User implements MetaDataAble {
      * @return user - user
      */
     @NonNull
-    public static User getInstance(@NonNull Player player) {
+    public static synchronized User getInstance(@NonNull Player player) {
         if (users.containsKey(player.getUniqueId())) {
             return users.get(player.getUniqueId());
         }
@@ -147,7 +148,7 @@ public class User implements MetaDataAble {
      * @return user - user
      */
     @NonNull
-    public static User getInstance(@NonNull UUID uuid) {
+    public static synchronized User getInstance(@NonNull UUID uuid) {
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }
@@ -163,7 +164,7 @@ public class User implements MetaDataAble {
      * @since 1.3.0
      */
     @NonNull
-    public static User getInstance(@NonNull OfflinePlayer offlinePlayer) {
+    public static synchronized User getInstance(@NonNull OfflinePlayer offlinePlayer) {
         if (users.containsKey(offlinePlayer.getUniqueId())) {
             return users.get(offlinePlayer.getUniqueId());
         }
@@ -1019,7 +1020,8 @@ public class User implements MetaDataAble {
      */
     public void teleport(Location location) {
         if (player != null) {
-            player.teleport(location);
+            if (TaskScheduler.isFolia()) Util.teleportAsync(player, location);
+            else player.teleport(location);
         }
     }
 

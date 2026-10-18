@@ -45,6 +45,31 @@ class AdminUndeleteCommandTest extends CommonTestSetup {
 
     private AdminUndeleteCommand cmd;
 
+    @Test
+    void testInterleavedUndeletesDoNotRestoreAnotherAdminsIsland() {
+        User other = mock(User.class);
+        var otherIsland = mock(world.bentobox.bentobox.database.objects.Island.class);
+        var otherLocation = mock(org.bukkit.Location.class);
+        when(other.getWorld()).thenReturn(world);
+        when(other.getLocation()).thenReturn(otherLocation);
+        when(im.getIslandAt(otherLocation)).thenReturn(Optional.of(otherIsland));
+        when(otherIsland.isDeletable()).thenReturn(true);
+        assertTrue(cmd.canExecute(user, "undelete", List.of()));
+        assertTrue(cmd.canExecute(other, "undelete", List.of()));
+        assertTrue(cmd.execute(user, "undelete", List.of()));
+        verify(im).undeleteIsland(island);
+        verify(otherIsland, never()).setOwner(any());
+    }
+
+    @Test
+    void testUndeleteRechecksDeletionStatusBeforeClearingOwner() {
+        assertTrue(cmd.canExecute(user, "undelete", List.of()));
+        when(island.isDeletable()).thenReturn(false);
+        assertFalse(cmd.execute(user, "undelete", List.of()));
+        verify(island, never()).setOwner(any());
+        verify(im, never()).undeleteIsland(any());
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

@@ -150,12 +150,12 @@ class DidYouMeanScenarioTest extends CommonTestSetup {
     @Test
     void testPlayerAcceptsByTypingYes() {
         listener.onUnknownCommand(unknownCommand("teams"));
+        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(mockPlayer);
         // Player answers yes (this is what the chat listener calls)
         assertTrue(listener.acceptPending(uuid));
         // The suggested command is run for the player on the main thread
         ArgumentCaptor<Runnable> task = ArgumentCaptor.forClass(Runnable.class);
         verify(sch).runTask(eq(plugin), task.capture());
-        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(mockPlayer);
         task.getValue().run();
         verify(mockPlayer).performCommand("oneblock team");
     }

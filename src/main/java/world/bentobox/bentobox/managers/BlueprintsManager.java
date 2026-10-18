@@ -26,6 +26,7 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -198,7 +199,7 @@ public class BlueprintsManager {
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
         // Set loading flag
         blueprintsLoaded.add(addon);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        TaskScheduler.async(plugin, () -> {
             // Load bundles
             blueprintBundles.put(addon, new ArrayList<>());
             if (!loadBundles(addon)) {
@@ -386,7 +387,7 @@ public class BlueprintsManager {
      * @param bb    blueprint bundle to save
      */
     public void saveBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        TaskScheduler.async(plugin, () -> {
             File bpf = getBlueprintsFolder(addon);
             if (!bpf.exists()) {
                 bpf.mkdirs();
@@ -481,14 +482,47 @@ public class BlueprintsManager {
      * @return true if okay, false is there is a problem
      */
     public boolean paste(GameModeAddon addon, Island island, String name, Runnable task, boolean useNMS) {
+        CompletableFuture<Void> result = startPaste(addon, island, name, task, useNMS, true);
+        if (result == null) return false;
+        result.exceptionally(error -> {
+            plugin.logStacktrace(error);
+            return null;
+        });
+        return true;
+    }
+
+    /** Completes after all dimensions and the owner's blueprint commands have finished. */
+    public CompletableFuture<Void> pasteAsync(GameModeAddon addon, Island island, String name, boolean useNMS) {
+        CompletableFuture<Void> result = startPaste(addon, island, name, null, useNMS, true);
+        return result == null ? CompletableFuture.failedFuture(new IllegalStateException("Blueprint is unavailable: " + name)) : result;
+    }
+
+    /** Prepares terrain without granting items or executing owner commands before a reset commits. */
+    public CompletableFuture<Void> pasteTerrainAsync(GameModeAddon addon, Island island, String name, boolean useNMS) {
+        CompletableFuture<Void> result = startPaste(addon, island, name, null, useNMS, false);
+        return result == null ? CompletableFuture.failedFuture(new IllegalStateException("Blueprint is unavailable: " + name)) : result;
+    }
+
+    /** Runs owner commands after old-island leave resets have finished. */
+    public CompletableFuture<Void> completePasteAsync(GameModeAddon addon, Island island, String name) {
+        BlueprintBundle bundle = getBlueprintBundles(addon).get(name.toLowerCase());
+        if (bundle == null) return CompletableFuture.failedFuture(new IllegalStateException("Blueprint is unavailable: " + name));
+        return TaskScheduler.userFuture(plugin, User.getInstance(island.getOwner()), () -> {
+            sendMessage(island);
+            runBlueprintCommands(bundle, island);
+        });
+    }
+
+    private CompletableFuture<Void> startPaste(GameModeAddon addon, Island island, String name, Runnable task, boolean useNMS,
+            boolean finish) {
         if (validate(addon, name) == null) {
             plugin.logError("Tried to paste '" + name + "' but the bundle is not loaded!");
-            return false;
+            return null;
         }
         BlueprintBundle bb = getBlueprintBundles(addon).get(name.toLowerCase());
         if (!blueprints.containsKey(addon) || blueprints.get(addon).isEmpty()) {
             plugin.logError("No blueprints loaded for bundle '" + name + "'!");
-            return false;
+            return null;
         }
         Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NORMAL));
         if (bp == null) {
@@ -501,17 +535,20 @@ public class BlueprintsManager {
         }
         // Paste
         if (bp != null) {
-            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste(useNMS)
-                    .thenAccept(b -> pasteNether(addon, bb, island).thenAccept(
-                            b2 ->
-            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, () -> {
-                runBlueprintCommands(bb, island);
-                if (task != null) task.run();
-            }))));
+            island.putMetaData("bundle", new MetaDataValue(name));
+            return new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste(useNMS)
+                    .thenCompose(b -> {
+                        if (!Boolean.TRUE.equals(b)) throw new IllegalStateException("Overworld blueprint paste failed");
+                        return pasteNether(addon, bb, island);
+                    }).thenCompose(b -> pasteEnd(addon, bb, island))
+                     .thenCompose(b -> !finish ? CompletableFuture.completedFuture(null)
+                             : TaskScheduler.userFuture(plugin, User.getInstance(island.getOwner()), () -> {
+                 sendMessage(island);
+                 runBlueprintCommands(bb, island);
+                 if (task != null) task.run();
+              }));
         }
-        // Set the bundle name
-        island.putMetaData("bundle", new MetaDataValue(name));
-        return true;
+        return null;
 
     }
 
@@ -522,7 +559,10 @@ public class BlueprintsManager {
                 && addon.getNetherWorld() != null) {
             Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NETHER));
             if (bp != null) {
-                return new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island).paste();
+                return new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island).paste().thenApply(success -> {
+                    if (!Boolean.TRUE.equals(success)) throw new IllegalStateException("Nether blueprint paste failed");
+                    return success;
+                });
             }
         }
         return CompletableFuture.completedFuture(false);
@@ -536,7 +576,10 @@ public class BlueprintsManager {
                 && addon.getEndWorld() != null) {
             Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.THE_END));
             if (bp != null) {
-                return new BlueprintPaster(plugin, bp, addon.getEndWorld(), island).paste();
+                return new BlueprintPaster(plugin, bp, addon.getEndWorld(), island).paste().thenApply(success -> {
+                    if (!Boolean.TRUE.equals(success)) throw new IllegalStateException("End blueprint paste failed");
+                    return success;
+                });
             }
         }
         return CompletableFuture.completedFuture(false);

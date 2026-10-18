@@ -104,7 +104,7 @@ public class Database<T> {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
                 | IntrospectionException e) {
             logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
-            return new CompletableFuture<>();
+            return CompletableFuture.failedFuture(e);
         }
     }
 

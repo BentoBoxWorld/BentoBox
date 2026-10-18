@@ -1,8 +1,11 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -43,6 +46,11 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class NewIsland {
+    private static final java.util.Set<java.util.UUID> CREATING = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    public static boolean isCreating(User user) {
+        return CREATING.contains(user.getUniqueId());
+    }
     private final BentoBox plugin;
     private Island island;
     private final User user;
@@ -51,6 +59,12 @@ public class NewIsland {
     private String name;
     private final boolean noPaste;
     private final GameModeAddon addon;
+    private CompletableFuture<Void> completion = CompletableFuture.completedFuture(null);
+    private final Supplier<CompletableFuture<Void>> beforeTeleport;
+    private boolean newlyAllocated;
+    private boolean creationGuardHeld;
+    private boolean leaveCleanupStarted;
+    private boolean leaveCleanupCompleted;
 
     private NewIslandLocationStrategy locationStrategy;
 
@@ -70,6 +84,7 @@ public class NewIsland {
         this.noPaste = builder.noPaste2;
         this.addon = builder.addon2;
         this.locationStrategy = builder.locationStrategy2;
+        this.beforeTeleport = builder.beforeTeleport2;
 
         // Use default location strategy if none provided
         if (this.locationStrategy == null) {
@@ -114,6 +129,9 @@ public class NewIsland {
         private boolean noPaste2;
         private GameModeAddon addon2;
         private NewIslandLocationStrategy locationStrategy2;
+        private Supplier<CompletableFuture<Void>> beforeTeleport2 = () -> CompletableFuture.completedFuture(null);
+        private java.util.function.Function<Island, CompletableFuture<Void>> afterBuild2 =
+                island -> CompletableFuture.completedFuture(null);
 
         /**
          * Sets the old island to be replaced.
@@ -184,6 +202,21 @@ public class NewIsland {
         }
 
         /**
+         * Runs after a successful Folia paste, before join resets or teleport.
+         * CancellationException signals a veto and must be returned before mutating old-player state.
+         */
+        public Builder beforeTeleport(Supplier<CompletableFuture<Void>> action) {
+            this.beforeTeleport2 = java.util.Objects.requireNonNull(action);
+            return this;
+        }
+
+        /** Folia settlement runs after successful creation, while the player creation guard is held. */
+        public Builder afterBuild(java.util.function.Function<Island, CompletableFuture<Void>> action) {
+            this.afterBuild2 = java.util.Objects.requireNonNull(action);
+            return this;
+        }
+
+        /**
          * Builds the island.
          * 
          * @return Island
@@ -191,10 +224,70 @@ public class NewIsland {
          */
         public Island build() throws IOException {
             if (user2 != null) {
-                NewIsland newIsland = new NewIsland(this);
-                return newIsland.getIsland();
+                if (!CREATING.add(user2.getUniqueId())) {
+                    throw new IOException("commands.island.create.creating-island");
+                }
+                try {
+                    NewIsland newIsland = new NewIsland(this);
+                    if (newIsland.getIsland() == null) CREATING.remove(user2.getUniqueId());
+                    else newIsland.creationGuardHeld = true;
+                    return newIsland.getIsland();
+                } catch (Throwable error) {
+                    CREATING.remove(user2.getUniqueId());
+                    if (error instanceof IOException io) throw io;
+                    throw error;
+                }
             }
             throw new IOException("Insufficient parameters. Must have a user!");
+        }
+
+        /** Selects terrain on its owning regions, then creates the island on the player's thread. */
+        public CompletableFuture<Island> buildAsync() {
+            if (!TaskScheduler.isFolia()) {
+                try {
+                    return CompletableFuture.completedFuture(build());
+                } catch (IOException error) {
+                    return CompletableFuture.failedFuture(error);
+                }
+            }
+            if (user2 == null) return CompletableFuture.failedFuture(new IOException("Insufficient parameters. Must have a user!"));
+            if (!CREATING.add(user2.getUniqueId())) {
+                return CompletableFuture.failedFuture(new IllegalStateException("Island creation is already in progress"));
+            }
+            try {
+                return selectAndBuildAsync().thenCompose(island -> island == null
+                        ? CompletableFuture.<Island>completedFuture(null)
+                        : afterBuild2.apply(island).thenApply(ignored -> island))
+                        .whenComplete((island, error) -> CREATING.remove(user2.getUniqueId()));
+            } catch (Throwable error) {
+                CREATING.remove(user2.getUniqueId());
+                return CompletableFuture.failedFuture(error);
+            }
+        }
+
+        private CompletableFuture<Island> selectAndBuildAsync() {
+            var plugin = BentoBox.getInstance();
+            var reserved = plugin.getIslands().getIsland(world2, user2);
+            var strategy = locationStrategy2 == null ? new DefaultNewIslandLocationStrategy() : locationStrategy2;
+            CompletableFuture<Location> selected = reserved != null && reserved.isReserved()
+                    ? CompletableFuture.completedFuture(reserved.getCenter())
+                    : strategy.getNextLocationAsync(world2, user2);
+            return selected.thenCompose(location -> {
+                CompletableFuture<Island> result = new CompletableFuture<>();
+                locationStrategy2 = world -> location;
+                TaskScheduler.userFuture(plugin, user2, () -> {
+                    try {
+                        NewIsland created = new NewIsland(this);
+                        created.completion.whenComplete((ignored, error) -> {
+                            if (error != null) result.completeExceptionally(error);
+                            else result.complete(created.getIsland());
+                        });
+                    } catch (Throwable error) {
+                        result.completeExceptionally(error);
+                    }
+                }).exceptionally(error -> { result.completeExceptionally(error); return null; });
+                return result;
+            });
         }
     }
 
@@ -212,7 +305,8 @@ public class NewIsland {
             next = this.makeNextIsland();
         }
         // Clean up user data before moving to new island
-        cleanUpUser(next);
+        if (!TaskScheduler.isFolia()) cleanUpUser();
+        setProtectionRange();
         // Fire event for plugins/addons to react or cancel
         IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(reason).island(island)
                 .location(island.getCenter())
@@ -220,6 +314,8 @@ public class NewIsland {
                 .oldIsland(oldIsland).build();
         if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
             // Event was cancelled, abort creation
+            completion = discardUnfinishedIsland();
+            island = null;
             return;
         }
         event = event.getNewEvent().orElse(event);
@@ -231,12 +327,74 @@ public class NewIsland {
             // Do nothing for other cases
         }
         }
+        // Initialize before a no-paste or already-completed future can fire completion events.
+        island.setFlagsDefaults();
+        plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        island.log(new LogEntry.Builder(LogType.JOINED).data(user.getUniqueId().toString(), "owner").build());
+        IslandsManager.updateIsland(island);
         // Set the player's primary island
-        plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
+        if (!TaskScheduler.isFolia()) plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
         // Run post-creation tasks after creating the island
-        if (noPaste) {
+        if (TaskScheduler.isFolia()) {
+            CompletableFuture<Void> pasted = noPaste ? CompletableFuture.completedFuture(null)
+                    : plugin.getBlueprintsManager().pasteTerrainAsync(addon, island, name, true);
+            completion = pasted.thenCompose(ignored -> {
+                CompletableFuture<Void> prepared = new CompletableFuture<>();
+                TaskScheduler.userFuture(plugin, user, () -> {
+                    // Leave commands and economy hooks cannot in general be rolled back.
+                    leaveCleanupStarted = true;
+                    beforeTeleport.get().whenComplete((done, error) -> {
+                        if (error != null) prepared.completeExceptionally(error);
+                        else {
+                            leaveCleanupCompleted = true;
+                            prepared.complete(null);
+                        }
+                    });
+                }).exceptionally(error -> { prepared.completeExceptionally(error); return null; });
+                return prepared;
+            }).thenCompose(ignored -> TaskScheduler.userFuture(plugin, user, () -> {
+                cleanUpUser();
+                plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
+                if (island.getSpawnPoint(Environment.NORMAL) != null) {
+                    plugin.getIslands().setHomeLocation(island, island.getSpawnPoint(Environment.NORMAL), "");
+                }
+            })).thenCompose(ignored -> noPaste ? CompletableFuture.completedFuture(null)
+                    : plugin.getBlueprintsManager().completePasteAsync(addon, island, name)).thenCompose(ignored -> {
+                if (reason == Reason.RESET || plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world)) {
+                    CompletableFuture<Void> teleported = new CompletableFuture<>();
+                    TaskScheduler.userFuture(plugin, user, () -> {
+                        user.getPlayer().setVelocity(new Vector(0, 0, 0));
+                        user.getPlayer().setFallDistance(0F);
+                        plugin.getIslands().homeTeleportAsync(island, user, true).whenComplete((done, error) -> {
+                            if (error != null) teleported.completeExceptionally(error);
+                            else teleported.complete(null);
+                        });
+                    }).whenComplete((done, error) -> {
+                        if (error != null) teleported.completeExceptionally(error);
+                    });
+                    return teleported;
+                }
+                return TaskScheduler.userFuture(plugin, user, () -> {
+                    user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
+                    applyJoinResets(user);
+                });
+            }).thenCompose(ignored -> TaskScheduler.userFuture(plugin, user, () -> tidyUp(oldIsland)));
+            completion = completion.exceptionallyCompose(error -> {
+                Throwable cause = error instanceof java.util.concurrent.CompletionException && error.getCause() != null
+                        ? error.getCause() : error;
+                if (leaveCleanupStarted && !leaveCleanupCompleted
+                        && cause instanceof java.util.concurrent.CancellationException) {
+                    return discardUnfinishedIsland().thenRun(() -> island = null);
+                }
+                if (leaveCleanupStarted) return CompletableFuture.failedFuture(error);
+                return discardUnfinishedIsland().handle((ignored, cleanupError) -> {
+                    if (cleanupError != null) error.addSuppressed(cleanupError);
+                    throw new java.util.concurrent.CompletionException(error);
+                });
+            });
+        } else if (noPaste) {
             // If noPaste is true, skip blueprint paste and run post-creation immediately
-            Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
+            TaskScheduler.user(plugin, user, () -> postCreationTask(oldIsland));
         } else {
             if (user.getWorld().equals(island.getWorld())) {
                 // Determine if NMS (native Minecraft server) paste is needed based on player state
@@ -249,14 +407,6 @@ public class NewIsland {
                 plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland), true);
             }
         }
-        // Set default island flags/settings
-        island.setFlagsDefaults();
-        // Register metrics for island creation
-        plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
-        // Add history record for island creation
-        island.log(new LogEntry.Builder(LogType.JOINED).data(user.getUniqueId().toString(), "owner").build());
-        // Save island to database
-        IslandsManager.updateIsland(island);
     }
 
     /**
@@ -296,20 +446,38 @@ public class NewIsland {
 
     /**
      * Cleans up a user before moving them to a new island.
-     * Resets deaths and checks range permissions.
-     * 
-     * @param loc - the new island location
+     * Resets deaths once creation has been accepted.
      */
-    private void cleanUpUser(Location loc) {
+    private void cleanUpUser() {
         // Reset deaths if configured
         if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
         }
+    }
+
+    private void setProtectionRange() {
         // Set protection range based on user's permission, if different from default
         island.setProtectionRange(user.getPermissionValue(
                 plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("")
                 + "island.range",
                 island.getProtectionRange()));
+    }
+
+    private CompletableFuture<Void> discardUnfinishedIsland() {
+        Island unfinished = island;
+        if (!newlyAllocated) {
+            unfinished.setReserved(true);
+            IslandsManager.updateIsland(unfinished);
+            CREATING.remove(user.getUniqueId());
+            return CompletableFuture.completedFuture(null);
+        }
+        return TaskScheduler.regionFuture(plugin, unfinished.getCenter(), () -> {
+            plugin.getIslands().deleteIsland(unfinished, true, user.getUniqueId());
+            if (unfinished.isOwned()) {
+                throw new IllegalStateException("Unfinished island deletion was cancelled: " + unfinished.getUniqueId());
+            }
+            CREATING.remove(user.getUniqueId());
+        });
     }
 
     /**
@@ -336,6 +504,7 @@ public class NewIsland {
             }
             throw new IOException("commands.island.create.unable-create-island");
         }
+        newlyAllocated = true;
         return next;
     }
 
@@ -409,6 +578,7 @@ public class NewIsland {
         IslandEvent.builder().involvedPlayer(user.getUniqueId())
         .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED).island(island)
         .location(island.getCenter()).oldIsland(oldIsland).build();
+        if (creationGuardHeld) CREATING.remove(user.getUniqueId());
 
     }
 }

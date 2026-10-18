@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -254,7 +255,7 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
                 && event.getTo() != null
                 && World.Environment.THE_END.equals(event.getTo().getWorld().getEnvironment()))
         {
-            this.createEndPlatform(event.getTo());
+            if (!TaskScheduler.isFolia()) this.createEndPlatform(event.getTo());
         }
 
         // Check if there is an island there or not
@@ -275,6 +276,15 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
             return;
         }
         
+        if (TaskScheduler.isFolia() && !event.isCancelled() && this.isMakePortals(overWorld, environment)
+                && event.getTo() != null && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
+            event.setCancelled(true);
+            Location destination = event.getTo().clone();
+            this.createEndPlatformAsync(destination)
+                    .thenCompose(ignored -> Util.teleportAsync(event.getEntity(), destination))
+                    .exceptionally(error -> { plugin.logStacktrace(error); return false; });
+            return;
+        }
         if (!event.isCancelled())
         {
             // Let the server teleport
@@ -295,7 +305,7 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         // It is placed outside THE_END check, as technically it could happen with the nether portal too.
 
         // If there is a portal to go to already, then the player will go there
-        Bukkit.getScheduler().runTask(this.plugin, () -> {
+        TaskScheduler.entity(this.plugin, event.getEntity(), () -> {
             if (!event.getEntity().getWorld().equals(toWorld))
             {
                 // Else manually teleport entity

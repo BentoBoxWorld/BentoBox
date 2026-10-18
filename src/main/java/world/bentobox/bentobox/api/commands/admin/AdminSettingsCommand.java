@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -34,13 +33,7 @@ import world.bentobox.bentobox.util.Util;
 public class AdminSettingsCommand extends CompositeCommand {
 
     private static final String SPAWN_ISLAND = "spawn-island";
-    private List<String> protectionFlagNames;
-    private Island island;
-    private List<String> settingFlagNames;
-    private List<String> worldSettingFlagNames;
-    private @NonNull Optional<Flag> flag = Optional.empty();
-    private boolean activeState;
-    private int rank;
+    private record SettingChange(Island island, Flag flag, int value) { }
     private final GameModeAddon gameMode;
 
     public AdminSettingsCommand(CompositeCommand islandCommand) {
@@ -48,19 +41,9 @@ public class AdminSettingsCommand extends CompositeCommand {
         gameMode = getPlugin().getIWM().getAddon(getWorld()).orElse(null);
     }
 
-    private void makeLists() {
-        protectionFlagNames = getPlugin().getFlagsManager().getFlags().stream()
-                .filter(f -> f.getType().equals(Type.PROTECTION))
-                .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
-                .map(Flag::getID)
-                .toList();
-        settingFlagNames = getPlugin().getFlagsManager().getFlags().stream()
-                .filter(f -> f.getType().equals(Type.SETTING))
-                .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
-                .map(Flag::getID)
-                .toList();
-        worldSettingFlagNames = getPlugin().getFlagsManager().getFlags().stream()
-                .filter(f -> f.getType().equals(Type.WORLD_SETTING))
+    private List<String> flagNames(Type type) {
+        return getPlugin().getFlagsManager().getFlags().stream()
+                .filter(f -> f.getType().equals(type))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
                 .map(Flag::getID)
                 .toList();
@@ -75,143 +58,123 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (args.isEmpty()) {
-            // World settings
-            return true;
-        }
-        if (args.size() > 1) {
-            // Command
-            return checkSyntax(user, args);
-        }
-        return getIsland(user, args);
+        return resolveChange(user, args) != null;
     }
 
-    private boolean getIsland(User user, List<String> args) {
-        if (args.getFirst().equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
-            island = getIslands().getSpawn(getWorld()).get();
-            return true;
+    private @Nullable SettingChange resolveChange(User user, List<String> args) {
+        if (args.isEmpty()) {
+            // World settings
+            return new SettingChange(null, null, 0);
+        }
+        if (args.size() == 1) {
+            Island island = getIsland(user, args);
+            return island == null ? null : new SettingChange(island, null, 0);
+        }
+        return args.size() == 2 ? checkWorldSetting(user, args) : checkIslandSetting(user, args);
+    }
+
+    private @Nullable Island getIsland(User user, List<String> args) {
+        if (args.getFirst().equalsIgnoreCase(SPAWN_ISLAND)) {
+            Optional<Island> spawn = getIslands().getSpawn(getWorld());
+            if (spawn.isPresent()) return spawn.get();
         }
         // Get target player
         @Nullable UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
-        island = getIslands().getIsland(getWorld(), targetUUID);
+        Island island = getIslands().getIsland(getWorld(), targetUUID);
         if (island == null || !getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
-        return true;
+        return island;
     }
 
-    /**
-     * Check that this command is correct to set a setting
-     *
-     * @param user - user
-     * @param args - args
-     * @return true if the syntax is correct
-     */
-    private boolean checkSyntax(User user, List<String> args) {
-        this.makeLists();
-
-        int argSize = args.size();
-
-        if (argSize == 2) {
-            return checkWorldSetting(user, args);
-        } else if (argSize > 2) {
-            return checkIslandSetting(user, args);
-        }
-
-        return false;
-    }
-
-    private boolean checkWorldSetting(User user, List<String> args) {
+    private @Nullable SettingChange checkWorldSetting(User user, List<String> args) {
         String arg0 = args.getFirst().toUpperCase(Locale.ENGLISH);
 
-        if (worldSettingFlagNames.contains(arg0)) {
-            if (checkActiveDisabled(user, args.get(1))) {
-                flag = getPlugin().getFlagsManager().getFlag(args.getFirst().toUpperCase(Locale.ENGLISH));
-                return true;
-            }
-        } else {
+        if (!flagNames(Type.WORLD_SETTING).contains(arg0)) {
             this.showHelp(this, user);
-            return false;
+            return null;
         }
-        return false;
+        Flag flag = getPlugin().getFlagsManager().getFlag(arg0).orElse(null);
+        Boolean active = checkActiveDisabled(user, args.get(1));
+        return flag == null || active == null ? null : new SettingChange(null, flag, active ? 1 : 0);
     }
 
-    private boolean checkIslandSetting(User user, List<String> args) {
+    private @Nullable SettingChange checkIslandSetting(User user, List<String> args) {
         // Get island
-        if (!getIsland(user, args)) {
-            return false;
-        }
+        Island island = getIsland(user, args);
+        if (island == null) return null;
 
         String arg1 = args.get(1).toUpperCase(Locale.ENGLISH);
 
-        if (!settingFlagNames.contains(arg1) && !protectionFlagNames.contains(arg1)) {
-            user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(2));
-            return false;
+        if (!flagNames(Type.SETTING).contains(arg1) && !flagNames(Type.PROTECTION).contains(arg1)) {
+            user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(1));
+            return null;
         }
         // Set flag
-        flag = getPlugin().getFlagsManager().getFlag(arg1);
+        Optional<Flag> flag = getPlugin().getFlagsManager().getFlag(arg1);
         // Check settings
         if (flag.isPresent()) {
             if (flag.get().getType().equals(Type.SETTING)) {
-                return checkActiveDisabled(user, args.get(2));
+                Boolean active = checkActiveDisabled(user, args.get(2));
+                return active == null ? null : new SettingChange(island, flag.get(), active ? 1 : 0);
             } else {
                 // Protection flag
-                return checkRank(user, String.join(" ", args.subList(2, args.size())));
+                Integer rank = checkRank(user, String.join(" ", args.subList(2, args.size())));
+                return rank == null ? null : new SettingChange(island, flag.get(), rank);
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Check the rank given.
      * @param user - user
      * @param string - the rank given in the command line
-     * @return true if rank is valid
+     * @return the rank, or null if invalid
      */
-    private boolean checkRank(User user, String string) {
+    private @Nullable Integer checkRank(User user, String string) {
         for (Entry<String, Integer> en : RanksManager.getInstance().getRanks().entrySet()) {
             if (en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK
                     && string.equalsIgnoreCase(Util.stripColor(user.getTranslation(en.getKey())))) {
                 // We have a winner
-                rank = en.getValue();
-                return true;
+                return en.getValue();
             }
         }
         user.sendMessage("commands.admin.setrank.unknown-rank");
-        return false;
+        return null;
     }
 
-    private boolean checkActiveDisabled(User user, String string) {
+    private @Nullable Boolean checkActiveDisabled(User user, String string) {
         String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
         String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         if (!string.equalsIgnoreCase(active) && !string.equalsIgnoreCase(disabled)) {
             user.sendMessage("commands.admin.settings.unknown-setting", TextVariables.NAME, string);
-            return false;
+            return null;
         }
-        activeState = string.equalsIgnoreCase(active);
-        return true;
+        return string.equalsIgnoreCase(active);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        SettingChange change = resolveChange(user, args);
+        if (change == null) return false;
         if (args.size() > 1) {
             // Command line setting
-            flag.ifPresent(f -> {
-                switch (f.getType()) {
-                case PROTECTION -> island.setFlag(f, rank);
-                case SETTING -> island.setSettingsFlag(f, activeState);
-                case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
-                default -> {
-                    // Do nothing
-                }
-                }
-            });
+            Flag f = change.flag();
+            switch (f.getType()) {
+            case PROTECTION -> change.island().setFlag(f, change.value());
+            case SETTING -> change.island().setSettingsFlag(f, change.value() != 0);
+            case WORLD_SETTING -> f.setSetting(getWorld(), change.value() != 0);
+            default -> {
+                // Do nothing
+            }
+            }
             user.sendMessage("general.success");
             return true;
         }
@@ -221,7 +184,7 @@ public class AdminSettingsCommand extends CompositeCommand {
             return false;
         }
         // World settings without a player argument, otherwise the player's island settings
-        Island target = args.isEmpty() ? null : island;
+        Island target = change.island();
         if (!SettingsPanel.openAdminPanel(this, user, target)) {
             getPlugin().logError("Could not load the admin settings panel template; showing the built-in panel");
             openLegacyPanel(user, target);
@@ -262,7 +225,9 @@ public class AdminSettingsCommand extends CompositeCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         // Update with the latest lists
-        this.makeLists();
+        List<String> protectionFlagNames = flagNames(Type.PROTECTION);
+        List<String> settingFlagNames = flagNames(Type.SETTING);
+        List<String> worldSettingFlagNames = flagNames(Type.WORLD_SETTING);
         String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
         String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();

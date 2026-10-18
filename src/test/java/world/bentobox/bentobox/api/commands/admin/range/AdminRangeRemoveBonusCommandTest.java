@@ -21,12 +21,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.BonusRangeRecord;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -162,7 +164,7 @@ class AdminRangeRemoveBonusCommandTest extends CommonTestSetup {
     @Test
     void testRemoveAllBonusRanges() {
         assertTrue(command.canExecute(user, "removebonus", List.of("tastybento")));
-        command.removeBonusRanges(user, "tastybento");
+        command.removeBonusRanges(user, "tastybento", island, uuid, null);
         verify(island, times(1)).clearAllBonusRanges();
         verify(island, never()).clearBonusRange(any());
         verify(user).sendMessage("commands.admin.range.removebonus.success", "[number]", "100", "[name]",
@@ -172,7 +174,7 @@ class AdminRangeRemoveBonusCommandTest extends CommonTestSetup {
     @Test
     void testRemoveBonusRangeById() {
         assertTrue(command.canExecute(user, "removebonus", List.of("tastybento", "Level")));
-        command.removeBonusRanges(user, "tastybento");
+        command.removeBonusRanges(user, "tastybento", island, uuid, "Level");
         verify(island, times(1)).clearBonusRange("Level");
         verify(island, never()).clearAllBonusRanges();
         verify(user).sendMessage("commands.admin.range.removebonus.success-id", "[id]", "Level", "[number]", "50",
@@ -189,5 +191,49 @@ class AdminRangeRemoveBonusCommandTest extends CommonTestSetup {
         List<String> ids = command.tabComplete(user, "removebonus", List.of("tastybento", "L"))
                 .orElse(Collections.emptyList());
         assertTrue(ids.contains("Level"));
+    }
+
+    @Test
+    void delayedConfirmationsKeepTheirIslandAndBonusId() {
+        command = Mockito.spy(command);
+        List<Runnable> pending = new ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(1));
+            return null;
+        }).when(command).askConfirmation(any(), any(Runnable.class));
+        Island other = mock(Island.class);
+        UUID otherId = UUID.randomUUID();
+        when(pm.getUUID("other")).thenReturn(otherId);
+        when(im.getIsland(world, otherId)).thenReturn(other);
+        when(other.getBonusRanges()).thenReturn(List.of(new BonusRangeRecord("Other", 10, "Reward")));
+        assertTrue(command.canExecute(user, "", List.of("tastybento", "Level")));
+        assertTrue(command.canExecute(user, "", List.of("other")));
+        assertTrue(command.execute(user, "", List.of("tastybento", "Level")));
+        assertTrue(command.execute(user, "", List.of("other")));
+        pending.getFirst().run();
+        verify(island).clearBonusRange("Level");
+        verify(island, never()).clearAllBonusRanges();
+        verify(other, never()).clearAllBonusRanges();
+        pending.getLast().run();
+        verify(other).clearAllBonusRanges();
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void delayedConfirmationRechecksIslandAndBonus(boolean islandChanged) {
+        command = Mockito.spy(command);
+        List<Runnable> pending = new ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(1));
+            return null;
+        }).when(command).askConfirmation(any(), any(Runnable.class));
+        assertTrue(command.execute(user, "", List.of("tastybento", "Level")));
+        if (islandChanged) when(im.getIsland(world, uuid)).thenReturn(mock(Island.class));
+        else when(island.getBonusRangeRecord("Level")).thenReturn(Optional.empty());
+        pending.getFirst().run();
+        verify(island, never()).clearBonusRange(any());
+        verify(island, never()).clearAllBonusRanges();
+        if (islandChanged) verify(user).sendMessage("general.errors.player-has-no-island");
+        else verify(user).sendMessage("commands.admin.range.removebonus.unknown-bonus", "[id]", "Level");
     }
 }

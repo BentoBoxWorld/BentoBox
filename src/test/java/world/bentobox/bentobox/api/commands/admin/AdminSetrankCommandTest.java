@@ -58,6 +58,31 @@ class AdminSetrankCommandTest extends RanksManagerTestSetup {
     private UUID targetUUID;
     private UUID ownerUUID;
 
+    @Test
+    void testInterleavedChangesKeepTargetIslandAndRankTogether() {
+        UUID otherId = UUID.randomUUID();
+        when(pm.getUUID("other")).thenReturn(otherId);
+        when(im.getIslands(world, otherId)).thenReturn(List.of(island));
+        when(island.getOwner()).thenReturn(ownerUUID);
+        when(island.getRank(otherId)).thenReturn(RanksManager.SUB_OWNER_RANK);
+        var first = List.of(TARGET, "sub-owner");
+        var second = List.of("other", "trusted");
+        assertTrue(c.canExecute(user, "setrank", first));
+        assertTrue(c.canExecute(user, "setrank", second));
+        assertTrue(c.execute(user, "setrank", first));
+        verify(island2).setRank(targetUUID, RanksManager.SUB_OWNER_RANK);
+        verify(island, never()).setRank(any(UUID.class), org.mockito.ArgumentMatchers.anyInt());
+    }
+
+    @Test
+    void testExecutionRejectsTargetWhoBecameOwnerAfterValidation() {
+        var args = List.of(TARGET, "sub-owner", OWNER);
+        assertTrue(c.canExecute(user, "setrank", args));
+        when(island2.getOwner()).thenReturn(targetUUID);
+        assertFalse(c.execute(user, "setrank", args));
+        verify(island2, never()).setRank(any(UUID.class), org.mockito.ArgumentMatchers.anyInt());
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

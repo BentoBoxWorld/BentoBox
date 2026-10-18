@@ -30,6 +30,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * This class pastes the clipboard it is given
@@ -191,7 +192,17 @@ public class BlueprintPaster {
         Bits bits = new Bits(blocks, attached, entities,
                 blocks.entrySet().iterator(), attached.entrySet().iterator(), entities.entrySet().iterator(),
                 plugin.getSettings().getPasteSpeed());
-        pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> pasterTask(result, owner, bits, useNMS), 0L, 1L);
+        // NMS paste implementations assume a single main thread; Folia uses region-owned API writes.
+        boolean nativePaste = useNMS && !TaskScheduler.isFolia();
+        pastingTask = TaskScheduler.globalTimer(plugin, () -> {
+            try {
+                if (currentTask.isCompletedExceptionally()) currentTask.join();
+                pasterTask(result, owner, bits, nativePaste);
+            } catch (Exception error) {
+                pastingTask.cancel();
+                result.completeExceptionally(error);
+            }
+        }, 0L, 1L);
 
         return result;
     }
@@ -313,7 +324,7 @@ public class BlueprintPaster {
         long timer = System.currentTimeMillis();
         pasteState = PasteState.CHUNK_LOADING;
         // Load chunk
-        currentTask = Util.getChunkAtAsync(location).thenRun(() -> {
+        currentTask = Util.getChunkAtAsync(location).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, location, () -> {
             pasteState = PasteState.BLOCKS;
             long duration = System.currentTimeMillis() - timer;
             chunkLoadTime.updateAndGet(current -> Math.max(current, duration));
@@ -324,7 +335,7 @@ public class BlueprintPaster {
                 location = new Location(location.getWorld(), location.getX(),
                         location.getWorld().getHighestBlockYAt(location, HeightMap.OCEAN_FLOOR), location.getZ());
             }
-        });
+        }));
 
     }
 

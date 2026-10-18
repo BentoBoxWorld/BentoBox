@@ -35,6 +35,9 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
@@ -208,6 +211,60 @@ class AdminTeamDisbandCommandTest extends CommonTestSetup {
         verify(p2).sendMessage(any(Component.class));
         // 2 + 1
         verify(pim, times(3)).callEvent(any());
+    }
+
+    @Test
+    void testInterleavedDisbandsKeepOriginalTeam() {
+        when(Util.getUUID("first")).thenReturn(uuid);
+        when(Util.getUUID("second")).thenReturn(notUUID);
+        Island other = mock(Island.class);
+        when(other.getOwner()).thenReturn(notUUID);
+        when(other.getCenter()).thenReturn(location);
+        when(other.getMemberSet()).thenReturn(ImmutableSet.of(notUUID, UUID.randomUUID()));
+        when(im.getOwnedIslands(any(), eq(notUUID))).thenReturn(Set.of(other));
+        assertTrue(itl.canExecute(user, "disband", List.of("first")));
+        assertTrue(itl.canExecute(user, "disband", List.of("second")));
+        assertTrue(itl.execute(user, "disband", List.of("first")));
+        verify(im).removePlayer(island, notUUID);
+        verify(im, never()).removePlayer(eq(other), any());
+        verify(im, never()).removePlayer(island, uuid);
+    }
+
+    @Test
+    void testMultipleTeamsRequireCoordinatesWithoutStaleIsland() {
+        when(Util.getUUID("first")).thenReturn(uuid);
+        when(pm.getName(uuid)).thenReturn("first");
+        Island other = mock(Island.class);
+        when(other.getCenter()).thenReturn(new org.bukkit.Location(world, 256, 64, 256));
+        when(other.getMemberSet()).thenReturn(ImmutableSet.of(uuid, notUUID));
+        mockedUtil.when(() -> Util.xyz(any(Vector.class))).thenCallRealMethod();
+        when(im.getOwnedIslands(any(), eq(uuid))).thenReturn(Set.of(island, other));
+        assertFalse(itl.canExecute(user, "disband", List.of("first")));
+        verify(user).sendMessage("commands.admin.team.disband.more-than-one-island", TextVariables.NAME, "first");
+    }
+
+    @Test
+    void testChangedOwnerBeforeExecutionPreventsDisband() {
+        when(Util.getUUID("first")).thenReturn(uuid);
+        assertTrue(itl.canExecute(user, "disband", List.of("first")));
+        when(island.getOwner()).thenReturn(notUUID);
+        assertFalse(itl.execute(user, "disband", List.of("first")));
+        verify(im, never()).removePlayer(any(Island.class), any());
+    }
+
+    @Test
+    void testRankEventUsesRemovedMemberAndRankBeforeRemoval() {
+        when(Util.getUUID("first")).thenReturn(uuid);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
+        org.mockito.Mockito.doAnswer(call -> {
+            when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
+            return null;
+        }).when(im).removePlayer(island, notUUID);
+        assertTrue(itl.execute(user, "disband", List.of("first")));
+        verify(pim).callEvent(org.mockito.ArgumentMatchers.argThat(event -> event instanceof IslandRankChangeEvent e
+                && notUUID.equals(e.getPlayerUUID())
+                && e.getOldRank() == RanksManager.MEMBER_RANK
+                && e.getNewRank() == RanksManager.VISITOR_RANK));
     }
 
     /**

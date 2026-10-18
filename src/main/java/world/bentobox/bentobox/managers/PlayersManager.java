@@ -32,6 +32,7 @@ import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.ExpiringMap;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 public class PlayersManager {
 
@@ -65,7 +66,7 @@ public class PlayersManager {
         // Set up the names database
         names = new Database<>(plugin, Names.class);
         names.loadObjects().forEach(this::cacheName);
-        inTeleport = new HashSet<>();
+        inTeleport = ConcurrentHashMap.newKeySet();
     }
 
     /**
@@ -470,6 +471,28 @@ public class PlayersManager {
      * @since 1.15.4
      */
     public void cleanLeavingPlayer(World world, User target, boolean kicked, Island island) {
+        if (TaskScheduler.isFolia() && target.isOnline() && target.isPlayer()) {
+            cleanLeavingPlayerAsync(world, target, kicked, island).exceptionally(error -> {
+                plugin.logStacktrace(error);
+                return null;
+            });
+        } else cleanLeavingPlayerOwned(world, target, kicked, island);
+    }
+
+    /** Completes after player-owned leave resets, so join resets cannot overtake them. */
+    public CompletableFuture<Void> cleanLeavingPlayerAsync(World world, User target, boolean kicked, Island island) {
+        if (TaskScheduler.isFolia() && target.isOnline() && target.isPlayer()) {
+            return TaskScheduler.userFuture(plugin, target, () -> cleanLeavingPlayerOwned(world, target, kicked, island));
+        }
+        try {
+            cleanLeavingPlayerOwned(world, target, kicked, island);
+            return CompletableFuture.completedFuture(null);
+        } catch (Throwable error) {
+            return CompletableFuture.failedFuture(error);
+        }
+    }
+
+    private void cleanLeavingPlayerOwned(World world, User target, boolean kicked, Island island) {
         // Execute on-leave commands unconditionally (not a player-state reset, no event needed)
         String ownerName = this.getName(island.getOwner());
         Util.runCommands(target, ownerName, plugin.getIWM().getOnLeaveCommands(world), "leave");
@@ -478,10 +501,14 @@ public class PlayersManager {
         if (!PlayerEvent.builder()
                 .world(world).island(island).involvedPlayer(target.getUniqueId())
                 .reason(PlayerEvent.Reason.TAMED_REMOVAL).build().isCancelled()) {
-            world.getEntitiesByClass(Tameable.class).stream()
-                    .filter(Tameable::isTamed)
-                    .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
-                    .forEach(t -> t.setOwner(null));
+            world.getEntitiesByClass(Tameable.class).forEach(t -> {
+                Runnable untame = () -> {
+                    if (t.isTamed() && t.getOwner() != null
+                            && t.getOwner().getUniqueId().equals(target.getUniqueId())) t.setOwner(null);
+                };
+                if (TaskScheduler.isFolia()) TaskScheduler.entity(plugin, t, untame);
+                else untame.run();
+            });
         }
 
         // Clear ender chest – skipped if the ENDERCHEST_RESET event is cancelled

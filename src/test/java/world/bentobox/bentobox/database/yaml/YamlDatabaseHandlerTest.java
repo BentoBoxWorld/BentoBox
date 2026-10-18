@@ -40,6 +40,7 @@ import org.mockito.Mock;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.database.objects.DataObject;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 class YamlDatabaseHandlerTest extends CommonTestSetup {
 
@@ -579,6 +580,29 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
     }
 
     // ---- deleteObject() ----
+    @Test
+    void testAsyncSerializationRuntimeFailureCompletesFalse() throws Exception {
+        TestDataObject obj = new TestDataObject();
+        Map<String, Integer> scores = org.mockito.Mockito.mock(Map.class);
+        when(scores.entrySet()).thenThrow(new java.util.ConcurrentModificationException());
+        obj.setScores(scores);
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(() -> TaskScheduler.async(any(), any()))
+                    .thenAnswer(call -> {
+                        call.getArgument(1, Runnable.class).run();
+                        return null;
+                    });
+            assertFalse(handler.saveObject(obj).get(2, java.util.concurrent.TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
+    void testConnectorRuntimeFailureCompletesFalse() throws Exception {
+        when(plugin.isShutdown()).thenReturn(true);
+        when(connector.saveYamlFile(anyString(), anyString(), anyString(), any()))
+                .thenThrow(new IllegalStateException("Disk unavailable"));
+        assertFalse(handler.saveObject(new TestDataObject()).get(2, java.util.concurrent.TimeUnit.SECONDS));
+    }
 
     @Test
     void testDeleteObjectNull() throws Exception {

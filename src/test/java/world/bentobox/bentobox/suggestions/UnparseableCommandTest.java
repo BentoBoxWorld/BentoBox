@@ -167,10 +167,10 @@ class UnparseableCommandTest extends CommonTestSetup {
     void testAcceptedSuggestionSwallowsDispatchFailures() {
         when(mockPlayer.hasPermission(anyString())).thenReturn(true);
         listener.onUnknownCommand(unknownCommand("teams"));
+        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(mockPlayer);
         assertTrue(listener.acceptPending(uuid));
         ArgumentCaptor<Runnable> task = ArgumentCaptor.forClass(Runnable.class);
         verify(sch).runTask(eq(plugin), task.capture());
-        mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(mockPlayer);
         doThrow(new CommandException("Unhandled exception executing 'oneblock team'"))
                 .when(mockPlayer).performCommand(anyString());
 

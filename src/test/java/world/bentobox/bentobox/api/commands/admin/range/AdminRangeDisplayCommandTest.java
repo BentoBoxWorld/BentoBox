@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.admin.range;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ class AdminRangeDisplayCommandTest extends CommonTestSetup {
 
     private CompositeCommand ac;
     private User user;
+    private BukkitTask displayTask;
 
     @Override
     @BeforeEach
@@ -83,6 +86,8 @@ class AdminRangeDisplayCommandTest extends CommonTestSetup {
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        displayTask = mock(BukkitTask.class);
+        when(sch.runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong())).thenReturn(displayTask);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -112,6 +117,7 @@ class AdminRangeDisplayCommandTest extends CommonTestSetup {
         ardc.execute(user, "display", new ArrayList<>());
         // Remove
         verify(user).sendMessage("commands.admin.range.display.hiding");
+        verify(displayTask).cancel();
     }
 
     /**

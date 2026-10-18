@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -101,7 +102,7 @@ public class LockAndBanListener extends FlagListener {
         // Check from - just in case the player is inside the island
         if (!check(e.getPlayer(), e.getFrom()).isAllowed()) {
             // Has to be done 1 tick later otherwise it doesn't happen for some reason...
-            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> eject(e.getPlayer()));
+            TaskScheduler.entity(BentoBox.getInstance(), e.getPlayer(), () -> eject(e.getPlayer()));
         }
     }
 
@@ -125,7 +126,8 @@ public class LockAndBanListener extends FlagListener {
                 }
                 if (!checkAndNotify(p, e.getTo(), island).isAllowed()) {
                     p.leaveVehicle();
-                    p.teleport(e.getFrom());
+                    if (TaskScheduler.isFolia()) Util.teleportAsync(p, e.getFrom());
+                    else p.teleport(e.getFrom());
                     e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                     eject(p);
                 }

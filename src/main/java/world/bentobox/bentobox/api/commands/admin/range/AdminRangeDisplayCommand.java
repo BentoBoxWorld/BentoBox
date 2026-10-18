@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.api.commands.admin.range;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +28,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final Particle PARTICLE2 = Particle.DUST;
 
     // Map of users to which ranges must be displayed
-    private final Map<User, Integer> displayRanges = new HashMap<>();
+    private final Map<User, BukkitTask> displayRanges = new ConcurrentHashMap<>();
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
         super(parent, DISPLAY, SHOW, HIDE);
@@ -67,9 +68,10 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private void showZones(User user) {
         user.sendMessage("commands.admin.range.display.showing");
         user.sendMessage("commands.admin.range.display.hint");
-        displayRanges.put(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
+        BukkitTask task = TaskScheduler.entityTimer(getPlugin(), user.getPlayer(), () -> {
             if (!user.getPlayer().isOnline()) {
                 hideZones(user);
+                return;
             }
 
             getIslands().getIslandAt(user.getLocation()).ifPresent(island -> {
@@ -85,13 +87,14 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
                 // Draw the island area
                 drawZone(user, PARTICLE, new Particle.DustOptions(Color.GRAY, 1.0F), island, island.getRange());
             });
-        }, 20, 30));
+        }, 20, 30);
+        if (task != null) displayRanges.put(user, task);
     }
 
     private void hideZones(User user) {
         user.sendMessage("commands.admin.range.display.hiding");
-        Bukkit.getScheduler().cancelTask(displayRanges.get(user));
-        displayRanges.remove(user);
+        BukkitTask task = displayRanges.remove(user);
+        if (task != null) task.cancel();
     }
 
     private void drawZone(User user, Particle particle, Object dustOptions, Island island, int range) {

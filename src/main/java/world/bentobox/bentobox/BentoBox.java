@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -212,7 +213,7 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         final long loadTime = System.currentTimeMillis() - loadStart;
 
-        Bukkit.getScheduler().runTask(instance, () -> {
+        TaskScheduler.global(instance, () -> {
             try {
                 completeSetup(loadTime);
             } catch (Exception e) {
@@ -253,6 +254,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         log("Loading islands from database...");
         try {
             islandsManager.load();
+            purgeRegionsService.completeRecoveredDeletions();
         } catch (Exception e) {
             fireCriticalError(e.getMessage(), "Could not load islands!");
             return;
@@ -291,7 +293,7 @@ public class BentoBox extends JavaPlugin implements Listener {
                 "[time]", String.valueOf(loadTime + enableTime));
 
         // Poll for blueprints loading to be finished - async so could be a completely variable time
-        blueprintLoadingTask = Bukkit.getScheduler().runTaskTimer(instance, () -> {
+        blueprintLoadingTask = TaskScheduler.globalTimer(instance, () -> {
             if (getBlueprintsManager().isBlueprintsLoaded()) {
                 blueprintLoadingTask.cancel();
                 // Tell all addons that everything is loaded

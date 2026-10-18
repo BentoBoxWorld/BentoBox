@@ -191,6 +191,19 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         verify(user).sendMessage("commands.island.lock.locked");
     }
 
+    @Test
+    void testInterleavedValidationDoesNotChangeExecutionTarget() {
+        User other = mock(User.class);
+        var otherIsland = mock(world.bentobox.bentobox.database.objects.Island.class);
+        when(im.getIsland(any(), eq(other))).thenReturn(otherIsland);
+        when(otherIsland.getRank(other)).thenReturn(RanksManager.OWNER_RANK);
+        assertTrue(ilc.canExecute(user, "lock", List.of()));
+        assertTrue(ilc.canExecute(other, "lock", List.of()));
+        assertTrue(ilc.execute(user, "lock", List.of()));
+        verify(island).setFlag(Flags.LOCK, RanksManager.MEMBER_RANK);
+        verify(otherIsland, never()).setFlag(any(Flag.class), org.mockito.ArgumentMatchers.anyInt());
+    }
+
     /**
      * Test execute when island is locked - should unlock it.
      */
@@ -310,11 +323,11 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
     }
 
     /**
-     * Test execute safety check - returns false when island field is null (canExecute not called first).
+     * Execution must resolve the current island rather than reuse validation state.
      */
     @Test
     void testExecuteNoIsland() {
-        // island field is null because canExecute was never called
+        when(im.getIsland(any(), any(User.class))).thenReturn(null);
         assertFalse(ilc.execute(user, "lock", Collections.emptyList()));
     }
 }

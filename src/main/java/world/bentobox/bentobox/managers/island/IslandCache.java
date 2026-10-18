@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
@@ -65,7 +66,7 @@ public class IslandCache {
      * Used by MultiLib to update database based on another server's operation.
      * @param newIsland island
      */
-    public void updateMultiLibIsland(@NonNull Island newIsland) {
+    public synchronized void updateMultiLibIsland(@NonNull Island newIsland) {
         // Get the old island
         Island oldIsland = getIslandById(newIsland.getUniqueId());
         Set<UUID> newMembers = newIsland.getMembers().keySet();
@@ -113,7 +114,7 @@ public class IslandCache {
      * @param noCache - if true, island will not be cached
      * @return true if successfully added, false if not
      */
-    public boolean addIsland(@NonNull Island island, boolean noCache) {
+    public synchronized boolean addIsland(@NonNull Island island, boolean noCache) {
         if (island.getCenter() == null || island.getWorld() == null) {
             return false;
         }
@@ -137,7 +138,7 @@ public class IslandCache {
      * @param island island to associate with this uuid. Only one island can be
      *               associated per world.
      */
-    public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
+    public synchronized void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
         this.islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).add(island.getUniqueId());
     }
 
@@ -151,7 +152,7 @@ public class IslandCache {
         return grids.computeIfAbsent(newIsland.getWorld(), k -> new IslandGrid(this)).addToGrid(newIsland);
     }
 
-    public void clear() {
+    public synchronized void clear() {
         islandsById.clear();
         islandsByUUID.clear();
     }
@@ -161,7 +162,7 @@ public class IslandCache {
      * 
      * @param island island to delete
      */
-    public void deleteIslandFromCache(@NonNull Island island) {
+    public synchronized void deleteIslandFromCache(@NonNull Island island) {
         islandsById.remove(island.getUniqueId(), island);
         removeFromIslandsByUUID(island);
         // Remove from grid
@@ -188,7 +189,7 @@ public class IslandCache {
      * 
      * @param uniqueId - island unique ID
      */
-    public void deleteIslandFromCache(@NonNull String uniqueId) {
+    public synchronized void deleteIslandFromCache(@NonNull String uniqueId) {
         if (islandsById.containsKey(uniqueId)) {
             deleteIslandFromCache(getIslandById(uniqueId));
         }
@@ -209,7 +210,7 @@ public class IslandCache {
      * @param island the island to de-index
      * @since 3.23.1
      */
-    public void removeIslandFromUUIDIndex(@NonNull Island island) {
+    public synchronized void removeIslandFromUUIDIndex(@NonNull Island island) {
         removeFromIslandsByUUID(island);
     }
 
@@ -222,7 +223,7 @@ public class IslandCache {
      * @return island or null if none
      */
     @Nullable
-    public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
+    public synchronized Island getIsland(@NonNull World world, @NonNull UUID uuid) {
         List<Island> islands = getIslands(world, uuid);
         if (islands.isEmpty()) {
             return null;
@@ -245,7 +246,7 @@ public class IslandCache {
      * @param uuid  player's UUID
      * @return list of island or empty list if none sorted from oldest to youngest
      */
-    public List<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
+    public synchronized List<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
         if (w == null) {
             return new ArrayList<>();
@@ -262,7 +263,7 @@ public class IslandCache {
      * @param uuid   UUID of user
      * @param island island to make primary
      */
-    public void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
+    public synchronized void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
         if (island.getPrimaries().contains(uuid)) {
             return;
         }
@@ -284,7 +285,7 @@ public class IslandCache {
      * @param location the location
      * @return true if there is an island there
      */
-    public boolean isIslandAt(@NonNull Location location) {
+    public synchronized boolean isIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
         if (w == null) {
             return false;
@@ -301,7 +302,7 @@ public class IslandCache {
      * @return Island object
      */
     @Nullable
-    public Island getIslandAt(@NonNull Location location) {
+    public synchronized Island getIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
         if (w == null) {
             return null;
@@ -318,7 +319,7 @@ public class IslandCache {
      * @return unmodifiable collection containing every island.
      */
     @NonNull
-    public Collection<Island> getIslands() {
+    public synchronized Collection<Island> getIslands() {
         List<Island> result = new ArrayList<>();
         for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
             Island island = entry.getValue() != null ? entry.getValue() : loadIsland(entry.getKey());
@@ -349,7 +350,7 @@ public class IslandCache {
      * @return unmodifiable collection containing every cached island.
      */
     @NonNull
-    public Collection<Island> getCachedIslands() {
+    public synchronized Collection<Island> getCachedIslands() {
         return islandsById.values().stream().filter(Objects::nonNull).toList();
     }
 
@@ -364,7 +365,7 @@ public class IslandCache {
      * @since 1.7.0
      */
     @NonNull
-    public Collection<Island> getIslands(@NonNull World world) {
+    public synchronized Collection<Island> getIslands(@NonNull World world) {
         World overworld = Util.getWorld(world);
         if (overworld == null) {
             return Collections.emptyList();
@@ -389,7 +390,7 @@ public class IslandCache {
      * @param uuid  the player
      * @return true if player has an island and owns it
      */
-    public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
+    public synchronized boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
         if (!islandsByUUID.containsKey(uuid)) {
             return false;
         }
@@ -406,7 +407,7 @@ public class IslandCache {
      * @param uuid  player's UUID
      * @return set of islands player had or empty if none
      */
-    public Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
+    public synchronized Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
         World resolvedWorld = Util.getWorld(world);
         Set<String> playerIslandIds = islandsByUUID.get(uuid);
         Set<Island> removedIslands = new HashSet<>();
@@ -444,7 +445,7 @@ public class IslandCache {
      * @param island member's island
      * @param uuid   uuid of member to remove
      */
-    public void removePlayer(@NonNull Island island, @NonNull UUID uuid) {
+    public synchronized void removePlayer(@NonNull Island island, @NonNull UUID uuid) {
         Set<String> islandSet = islandsByUUID.get(uuid);
         if (islandSet != null) {
             islandSet.remove(island.getUniqueId());
@@ -460,7 +461,7 @@ public class IslandCache {
      * 
      * @return the number of islands
      */
-    public int size() {
+    public synchronized int size() {
         return islandsById.size();
     }
 
@@ -470,7 +471,7 @@ public class IslandCache {
      * @param world world to get the number of islands in
      * @return the number of islands
      */
-    public long size(World world) {
+    public synchronized long size(World world) {
         // Get from grids because this is where we have islands by world
         return this.grids.containsKey(world) ? this.grids.get(world).getSize() : 0L;
     }
@@ -481,7 +482,15 @@ public class IslandCache {
      * @param island       island
      * @param newOwnerUUID new owner
      */
-    public void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
+    public synchronized void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
+        UUID oldOwnerUUID = island.getOwner();
+        if (oldOwnerUUID != null && !oldOwnerUUID.equals(newOwnerUUID)) {
+            Set<String> oldIslands = islandsByUUID.get(oldOwnerUUID);
+            if (oldIslands != null) {
+                oldIslands.remove(island.getUniqueId());
+                if (oldIslands.isEmpty()) islandsByUUID.remove(oldOwnerUUID);
+            }
+        }
         island.setOwner(newOwnerUUID);
         if (newOwnerUUID != null) {
             islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island.getUniqueId());
@@ -512,7 +521,7 @@ public class IslandCache {
      * @since 2.4.0
      */
     @Nullable
-    public Island getIslandById(@NonNull String uniqueId, boolean cache) {
+    public synchronized Island getIslandById(@NonNull String uniqueId, boolean cache) {
         Island island = islandsById.get(uniqueId);
         if (island != null) {
             return island;
@@ -531,7 +540,7 @@ public class IslandCache {
      * @return true if the island was in the cache, false otherwise.
      * @since 2.4.1
      */
-    public boolean expireIslandById(@NonNull String uniqueId) {
+    public synchronized boolean expireIslandById(@NonNull String uniqueId) {
         return islandsById.containsKey(uniqueId) && islandsById.put(uniqueId, null) != null;
     }
 
@@ -540,7 +549,7 @@ public class IslandCache {
      * @param island island
      * @return the previous value associated with island, or null if this is a new entry
      */
-    Island setIslandById(Island island) {
+    synchronized Island setIslandById(Island island) {
         return islandsById.put(island.getUniqueId().intern(), island);
     }
 
@@ -551,7 +560,7 @@ public class IslandCache {
      * @since 1.3.0
      */
     public void resetAllFlags(World world) {
-        Bukkit.getScheduler().runTaskAsynchronously(BentoBox.getInstance(),
+        TaskScheduler.async(BentoBox.getInstance(),
                 () -> this.getIslands(world).forEach(Island::setFlagsDefaults));
     }
 
@@ -574,8 +583,8 @@ public class IslandCache {
      * @return set of ids
      * @since 1.8.0
      */
-    public Set<String> getAllIslandIds() {
-        return islandsById.keySet();
+    public synchronized Set<String> getAllIslandIds() {
+        return new HashSet<>(islandsById.keySet());
     }
 
     /**
@@ -583,7 +592,7 @@ public class IslandCache {
      * @param uniqueId player's UUID
      * @return list of islands
      */
-    public @NonNull List<Island> getIslands(UUID uniqueId) {
+    public synchronized @NonNull List<Island> getIslands(UUID uniqueId) {
         return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById)
                 .filter(Objects::nonNull) // Filter out null values
                 .toList();
@@ -594,7 +603,7 @@ public class IslandCache {
      * @param uniqueId - unique id of island
      * @return true if this island exists
      */
-    public boolean isIslandId(String uniqueId) {
+    public synchronized boolean isIslandId(String uniqueId) {
         return this.islandsById.containsKey(uniqueId);
     }
 
@@ -603,7 +612,7 @@ public class IslandCache {
      * @param uniqueId - unique id of island
      * @return true if this island is caches, false if not, or if the island is unknown
      */
-    public boolean isIslandCached(String uniqueId) {
+    public synchronized boolean isIslandCached(String uniqueId) {
         return islandsById.get(uniqueId) != null;
     }
     
@@ -612,7 +621,7 @@ public class IslandCache {
      * @param world world
      * @return IslandGrid for the world, or null if there is none or the world is unknown.
      */
-    public IslandGrid getIslandGrid(World world) {
+    public synchronized IslandGrid getIslandGrid(World world) {
         World w = Util.getWorld(world);
         if (w == null) {
             return null;

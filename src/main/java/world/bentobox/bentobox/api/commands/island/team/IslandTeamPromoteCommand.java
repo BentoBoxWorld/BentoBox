@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
@@ -39,9 +38,6 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
 
     private static final Object PROMOTE = "promote";
     
-    /** The target player for promotion/demotion */
-    private User target;
-
     public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
         super(islandTeamCommand, string);
     }
@@ -91,7 +87,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
+        if (island == null) {
+            user.sendMessage("general.errors.no-team");
+            return false;
+        }
+        int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
                     user.getTranslation(RanksManager.getInstance().getRank(rank)));
@@ -99,7 +99,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
 
         // Get target
-        target = getPlayers().getUser(args.getFirst());
+        User target = getPlayers().getUser(args.getFirst());
         if (target == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
@@ -135,7 +135,14 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
     
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        return change(user, target);
+        if (args.size() != 1 || getIWM().isTeamsDisabled(getWorld())) return false;
+        User target = getPlayers().getUser(args.getFirst());
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (target == null || target.equals(user) || island == null
+                || !island.inTeam(user.getUniqueId()) || !island.inTeam(target.getUniqueId())
+                || island.getRank(user) < island.getRankCommand(getUsage())
+                || island.getRank(target) >= island.getRank(user)) return false;
+        return change(user, target, island);
     }
 
     /**
@@ -150,11 +157,10 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
      * 
      * @param user command issuer
      * @param target player being promoted/demoted
+     * @param island island on which the rank is being changed
      * @return true if rank change successful, false otherwise
      */
-    private boolean change(User user, User target) {
-        Island island = getIslands().getIsland(getWorld(), user);
-        assert island != null;
+    private boolean change(User user, User target, Island island) {
         int currentRank = island.getRank(target);
         if (this.getLabel().equals(PROMOTE)) {
             int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);

@@ -16,7 +16,7 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class VaultHook extends Hook {
 
-    private static final String AMOUNT_MUST_BE_POSITIVE = "Amount must be positive.";
+    private static final String AMOUNT_MUST_BE_POSITIVE = "Amount must be finite and non-negative.";
     private static final String PLAYER_OR_OFFLINEPLAYER_REQUIRED = "User must be a Player or an OfflinePlayer";
     private Economy economy;
 
@@ -110,21 +110,106 @@ public class VaultHook extends Hook {
      * @return the EconomyResponse of this withdrawal.
      */
     public EconomyResponse withdraw(User user, double amount, World world) {
+        return captureWithdrawal(user, amount, world).get();
+    }
+
+    /** Captures the account and provider before a delayed payment; does not withdraw yet. */
+    public java.util.function.Supplier<EconomyResponse> captureWithdrawal(User user, double amount, World world) {
         if (!user.isOfflinePlayer()) {
             throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
         }
-        if (amount < 0.0D) {
+        if (!Double.isFinite(amount) || amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
 
-        if (world == null)
-            return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
+        var provider = economy;
+        var account = java.util.Objects.requireNonNull(user.getOfflinePlayer(), PLAYER_OR_OFFLINEPLAYER_REQUIRED);
+        String worldName = world == null ? null : world.getName();
+        return () -> {
+            if (worldName == null) return provider.withdrawPlayer(account, amount);
+            EconomyResponse response = provider.withdrawPlayer(account, worldName, amount);
+            // An absent response is an unknown outcome, not permission to try a second account.
+            if (response != null && response.type == ResponseType.NOT_IMPLEMENTED)
+                return provider.withdrawPlayer(account, amount);
+            return response;
+        };
+    }
 
-        EconomyResponse response = economy.withdrawPlayer(user.getOfflinePlayer(), world.getName(), amount);
+    /** Keeps compensation on the account actually debited, including an explicit world fallback. */
+    public CapturedWithdrawal captureRefundableWithdrawal(User user, double amount, World world) {
+        if (!user.isOfflinePlayer()) throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
+        if (!Double.isFinite(amount) || amount < 0.0D) throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
+        return new CapturedWithdrawal(java.util.Objects.requireNonNull(economy),
+                java.util.Objects.requireNonNull(user.getOfflinePlayer(), PLAYER_OR_OFFLINEPLAYER_REQUIRED),
+                world == null ? null : world.getName(), amount);
+    }
 
-        if (response == null || response.type == ResponseType.NOT_IMPLEMENTED)
-            return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
-        return response;
+    public static final class CapturedWithdrawal implements java.util.function.Supplier<EconomyResponse> {
+        private final Economy provider;
+        private final org.bukkit.OfflinePlayer account;
+        private final double amount;
+        private String worldName;
+        private java.util.concurrent.CompletableFuture<EconomyResponse> debit;
+        private java.util.concurrent.CompletableFuture<EconomyResponse> credit;
+
+        private CapturedWithdrawal(Economy provider, org.bukkit.OfflinePlayer account, String worldName, double amount) {
+            this.provider = provider;
+            this.account = account;
+            this.worldName = worldName;
+            this.amount = amount;
+        }
+
+        @Override
+        public synchronized EconomyResponse get() {
+            if (debit == null) {
+                debit = new java.util.concurrent.CompletableFuture<>();
+                try {
+                    EconomyResponse response = worldName == null ? provider.withdrawPlayer(account, amount)
+                            : provider.withdrawPlayer(account, worldName, amount);
+                    if (worldName != null && response != null && response.type == ResponseType.NOT_IMPLEMENTED) {
+                        worldName = null;
+                        response = provider.withdrawPlayer(account, amount);
+                    }
+                    debit.complete(response);
+                } catch (Exception error) {
+                    debit.completeExceptionally(error);
+                }
+            }
+            return debit.join();
+        }
+
+        public synchronized EconomyResponse refund() {
+            if (debit == null) throw new IllegalStateException("Withdrawal has not been attempted");
+            EconomyResponse response = debit.join();
+            if (response == null || !response.transactionSuccess())
+                throw new IllegalStateException("Cannot refund an unconfirmed withdrawal");
+            if (credit == null) {
+                credit = new java.util.concurrent.CompletableFuture<>();
+                try {
+                    // A world debit must never be refunded to a different account on NOT_IMPLEMENTED.
+                    credit.complete(worldName == null ? provider.depositPlayer(account, amount)
+                            : provider.depositPlayer(account, worldName, amount));
+                } catch (Exception error) {
+                    credit.completeExceptionally(error);
+                }
+            }
+            return credit.join();
+        }
+    }
+
+    /** Captures the same provider, account and world used by a delayed credit. */
+    public java.util.function.Supplier<EconomyResponse> captureDeposit(User user, double amount, World world) {
+        if (!user.isOfflinePlayer()) throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
+        if (!Double.isFinite(amount) || amount < 0.0D) throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
+        var provider = economy;
+        var account = java.util.Objects.requireNonNull(user.getOfflinePlayer(), PLAYER_OR_OFFLINEPLAYER_REQUIRED);
+        String worldName = world == null ? null : world.getName();
+        return () -> {
+            if (worldName == null) return provider.depositPlayer(account, amount);
+            EconomyResponse response = provider.depositPlayer(account, worldName, amount);
+            return response != null && response.type == ResponseType.NOT_IMPLEMENTED
+                    ? provider.depositPlayer(account, amount) : response;
+        };
     }
 
     /**
@@ -153,7 +238,7 @@ public class VaultHook extends Hook {
         if (!user.isOfflinePlayer()) {
             throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
         }
-        if (amount < 0.0D) {
+        if (!Double.isFinite(amount) || amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
 
@@ -162,7 +247,7 @@ public class VaultHook extends Hook {
 
         EconomyResponse response = economy.depositPlayer(user.getOfflinePlayer(), world.getName(), amount);
 
-        if (response == null || response.type == ResponseType.NOT_IMPLEMENTED)
+        if (response != null && response.type == ResponseType.NOT_IMPLEMENTED)
             return economy.depositPlayer(user.getOfflinePlayer(), amount);
         return response;
     }
@@ -178,7 +263,7 @@ public class VaultHook extends Hook {
      * @see #has(User, double, World)
      */
     public boolean has(User user, double amount) {
-        if (amount < 0.0D) {
+        if (!Double.isFinite(amount) || amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
         return user.isOfflinePlayer() && economy.has(user.getOfflinePlayer(), amount);
@@ -195,7 +280,7 @@ public class VaultHook extends Hook {
      * @return whether the User has the amount or not.
      */
     public boolean has(User user, double amount, World world) {
-        if (amount < 0.0D) {
+        if (!Double.isFinite(amount) || amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
 

@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.commands.admin.range;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,9 +35,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminRangeRemoveBonusCommand extends ConfirmableCommand {
 
-    private Island targetIsland;
-    private @Nullable UUID targetUUID;
-    private @Nullable String bonusId;
+    private record BonusTarget(Island island, UUID player, String bonusId) { }
 
     /**
      * Admin command to remove bonus ranges from a player's island.
@@ -58,55 +55,75 @@ public class AdminRangeRemoveBonusCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable BonusTarget resolveTarget(User user, List<String> args) {
         // Expect the player's name and an optional bonus id
         if (args.isEmpty() || args.size() > 2) {
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Get target player
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         // Target must have an island in this world
-        targetIsland = getIslands().getIsland(getWorld(), targetUUID);
+        Island targetIsland = getIslands().getIsland(getWorld(), targetUUID);
         if (targetIsland == null) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
         // Nothing to do if there are no bonus ranges at all
         if (targetIsland.getBonusRanges().isEmpty()) {
             user.sendMessage("commands.admin.range.removebonus.no-bonus");
-            return false;
+            return null;
         }
         // A specific bonus id was supplied - it must exist on this island
-        bonusId = args.size() == 2 ? args.get(1) : null;
+        String bonusId = args.size() == 2 ? args.get(1) : null;
         if (bonusId != null && targetIsland.getBonusRangeRecord(bonusId).isEmpty()) {
             user.sendMessage("commands.admin.range.removebonus.unknown-bonus", "[id]", bonusId);
-            return false;
+            return null;
         }
-        return true;
+        return new BonusTarget(targetIsland, targetUUID, bonusId);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(targetIsland);
-        Objects.requireNonNull(targetUUID);
-        askConfirmation(user, () -> removeBonusRanges(user, args.getFirst()));
+        BonusTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        String name = args.getFirst();
+        askConfirmation(user, () -> removeBonusRanges(user, name, target.island(), target.player(), target.bonusId()));
         return true;
     }
 
     /**
-     * Removes the bonus range(s) from the target island. If {@link #bonusId} is
+     * Removes the bonus range(s) from the target island. If {@code bonusId} is
      * set, only that id's bonus ranges are removed, otherwise all of them are.
      * Fires a range change event if the effective protection range changed and
      * notifies the user. The island is persisted automatically via {@code setChanged()}.
      *
      * @param user the admin running the command
      * @param name the target player's name (for the feedback message)
+     * @param targetIsland the confirmed island
+     * @param targetUUID the confirmed player
+     * @param bonusId the bonus id, or null for all bonus ranges
      */
-    void removeBonusRanges(User user, String name) {
+    void removeBonusRanges(User user, String name, Island targetIsland, UUID targetUUID, String bonusId) {
+        if (!targetIsland.equals(getIslands().getIsland(getWorld(), targetUUID))) {
+            user.sendMessage("general.errors.player-has-no-island");
+            return;
+        }
+        if (targetIsland.getBonusRanges().isEmpty()) {
+            user.sendMessage("commands.admin.range.removebonus.no-bonus");
+            return;
+        }
+        if (bonusId != null && targetIsland.getBonusRangeRecord(bonusId).isEmpty()) {
+            user.sendMessage("commands.admin.range.removebonus.unknown-bonus", "[id]", bonusId);
+            return;
+        }
         int oldRange = targetIsland.getProtectionRange();
 
         int removed;

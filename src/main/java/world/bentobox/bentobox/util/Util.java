@@ -541,6 +541,30 @@ public class Util {
     @NonNull
     public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location,
             TeleportCause cause) {
+        if (TaskScheduler.isFolia()) {
+            CompletableFuture<Boolean> result = new CompletableFuture<>();
+            Runnable teleport = () -> {
+                try {
+                    entity.teleportAsync(location, cause).whenComplete((success, error) -> {
+                        if (error != null) result.completeExceptionally(error);
+                        else result.complete(success);
+                    });
+                } catch (Throwable error) {
+                    result.completeExceptionally(error);
+                }
+            };
+            try {
+                if (Bukkit.isOwnedByCurrentRegion(entity)) {
+                    teleport.run();
+                } else if (!entity.getScheduler().execute(BentoBox.getInstance(), teleport,
+                        () -> result.complete(false), 1L)) {
+                    result.complete(false);
+                }
+            } catch (Throwable error) {
+                result.completeExceptionally(error);
+            }
+            return result;
+        }
         try {
             // Use reflection to check if the method exists
             Method method = Entity.class.getMethod("teleportAsync", Location.class, TeleportCause.class);
@@ -554,8 +578,7 @@ public class Util {
             plugin.logStacktrace(e); // Report other exceptions
         }
         // Fallback for Spigot servers
-        entity.teleport(location, cause);
-        return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(entity.teleport(location, cause));
     }
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
@@ -601,7 +624,21 @@ public class Util {
      */
     @SuppressWarnings("unchecked")
     @NonNull
+    public static CompletableFuture<org.bukkit.ChunkSnapshot> getChunkSnapshotAsync(World world, int x, int z) {
+        return getChunkAtAsync(world, x, z).thenCompose(chunk -> {
+            CompletableFuture<org.bukkit.ChunkSnapshot> snapshot = new CompletableFuture<>();
+            TaskScheduler.regionFuture(BentoBox.getInstance(), new Location(world, x << 4, 0, z << 4),
+                    () -> snapshot.complete(chunk.getChunkSnapshot())).whenComplete((unused, error) -> {
+                        if (error != null) snapshot.completeExceptionally(error);
+                    });
+            return snapshot;
+        });
+    }
+
     public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
+        if (TaskScheduler.isFolia()) {
+            return world.getChunkAtAsync(x, z, gen);
+        }
         try {
             // Use reflection to check if the method exists
             Method method = World.class.getMethod("getChunkAtAsync", int.class, int.class, boolean.class);

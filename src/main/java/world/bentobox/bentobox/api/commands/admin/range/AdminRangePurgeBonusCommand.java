@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -15,6 +14,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.BonusRangeRecord;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Admin command to remove every bonus range carrying a given id from <b>all</b>
@@ -94,7 +94,7 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
         inPurge = true;
         getPlugin().getIslands().getIslandsASync().thenAccept(all -> {
             List<String> ids = findIslandIds(all, id);
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+            TaskScheduler.user(getPlugin(), user, () -> {
                 inPurge = false;
                 if (ids.isEmpty()) {
                     user.sendMessage("commands.admin.range.purgebonus.none", "[id]", id);
@@ -109,7 +109,7 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
             });
         }).exceptionally(ex -> {
             getPlugin().logStacktrace(ex);
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+            TaskScheduler.user(getPlugin(), user, () -> {
                 inPurge = false;
                 user.sendMessage("commands.admin.range.purgebonus.failed");
             });

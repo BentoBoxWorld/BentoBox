@@ -483,7 +483,7 @@ class SQLDatabaseHandlerTest extends CommonTestSetup {
 
         assertTrue(handler.queue().isEmpty());
         assertTrue(last.get(5, TimeUnit.SECONDS));
-        verify(plugin).logError(contains("Could not flush a queued database write"));
+        verify(plugin).logError(contains("Could not complete a queued database write"));
     }
 
     /**

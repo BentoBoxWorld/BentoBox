@@ -216,6 +216,27 @@ class IslandUnbanCommandTest extends RanksManagerTestSetup {
                 TextVariables.DISPLAY_NAME, user.getDisplayName());
     }
 
+    @Test
+    void testInterleavedValidationKeepsRequestedUnbanTarget() {
+        UUID first = UUID.randomUUID();
+        UUID second = UUID.randomUUID();
+        when(pm.getUUID("first")).thenReturn(first);
+        when(pm.getUUID("second")).thenReturn(second);
+        when(island.isBanned(any())).thenReturn(true);
+        when(island.unban(any(), any())).thenReturn(true);
+        try (MockedStatic<User> users = Mockito.mockStatic(User.class)) {
+            User target = mock(User.class);
+            when(target.getUniqueId()).thenReturn(first);
+            users.when(() -> User.getInstance(first)).thenReturn(target);
+            IslandUnbanCommand command = new IslandUnbanCommand(ic);
+            assertTrue(command.canExecute(user, "unban", List.of("first")));
+            assertTrue(command.canExecute(user, "unban", List.of("second")));
+            assertTrue(command.execute(user, "unban", List.of("first")));
+            verify(island).unban(uuid, first);
+            verify(island, Mockito.never()).unban(uuid, second);
+        }
+    }
+
     /**
      * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
      */

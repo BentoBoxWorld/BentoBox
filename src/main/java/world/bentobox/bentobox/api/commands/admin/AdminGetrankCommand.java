@@ -22,9 +22,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminGetrankCommand extends CompositeCommand {
 
-    private Island island;
-    private @Nullable UUID targetUUID;
-
     public AdminGetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "getrank");
     }
@@ -39,16 +36,20 @@ public class AdminGetrankCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return findIsland(user, args) != null;
+    }
+
+    private Island findIsland(User user, List<String> args) {
         if (args.size() != 1 && args.size() != 2) {
             // Show help
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Get target player
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
 
         if (args.size() == 1) {
@@ -56,34 +57,34 @@ public class AdminGetrankCommand extends CompositeCommand {
             // So we have to make sure that this player has an island
             if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
                 user.sendMessage("general.errors.player-has-no-island");
-                return false;
+                return null;
             }
 
-            island = getIslands().getIsland(getWorld(), targetUUID);
+            return getIslands().getIsland(getWorld(), targetUUID);
         } else {
             // We want to get the rank of the player on the island of the owner we specify.
             // So we have to make sure that the island owner actually owns an island
             @Nullable UUID ownerUUID = getPlayers().getUUID(args.get(1));
             if (ownerUUID == null) {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
-                return false;
+                return null;
             }
 
             if (!getPlugin().getIslands().hasIsland(getWorld(), ownerUUID)) {
                 user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.get(1));
-                return false;
+                return null;
             }
 
-            island = getIslands().getIsland(getWorld(), ownerUUID);
+            return getIslands().getIsland(getWorld(), ownerUUID);
         }
-
-        return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Get rank
-        assert targetUUID != null;
+        Island island = findIsland(user, args);
+        if (island == null) return false;
+        UUID targetUUID = Util.getUUID(args.getFirst());
+        if (targetUUID == null) return false;
         User target = User.getInstance(targetUUID);
         int currentRank = island.getRank(target);
         user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK,

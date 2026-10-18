@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -31,6 +32,8 @@ import org.mockito.stubbing.Answer;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.HooksManager;
+import world.bentobox.bentobox.util.TaskScheduler;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -54,6 +57,7 @@ class BlueprintClipboardTest extends CommonTestSetup {
         super.setUp();
         // Required for NamespacedKey
         when(plugin.getName()).thenReturn("BentoBox");
+        when(plugin.namespace()).thenReturn("bentobox");
         // Hooks
         HooksManager hooksManager = mock(HooksManager.class);
         when(hooksManager.getHook(anyString())).thenReturn(Optional.empty());
@@ -242,6 +246,50 @@ class BlueprintClipboardTest extends CommonTestSetup {
         bc.setPos2(noWorldLoc2);
         bc.setOrigin(new Vector(0, 64, 0)); // Set origin to avoid user.getLocation() call
         assertFalse(bc.copy(user, false, false, false));
+    }
+
+    @Test
+    void testFoliaCopyWaitsForRegionAndRejectsConcurrentCopy() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+        plugin.getSettings().setPasteSpeed(100);
+        bc.setPos1(new Location(world, 0, 64, 0));
+        bc.setPos2(new Location(world, 1, 64, 0));
+        bc.setOrigin(new Vector(0, 64, 0));
+        var chunk = mock(org.bukkit.Chunk.class);
+        when(chunk.getEntities()).thenReturn(new org.bukkit.entity.Entity[0]);
+        var block = mock(org.bukkit.block.Block.class);
+        when(block.getType()).thenReturn(org.bukkit.Material.AIR);
+        when(world.getBlockAt(any(Location.class))).thenReturn(block);
+        mockedUtil.when(() -> Util.getChunkAtAsync(world, 0, 0))
+                .thenReturn(CompletableFuture.completedFuture(chunk));
+        Runnable[] tick = new Runnable[1];
+        Runnable[] region = new Runnable[1];
+        CompletableFuture<Void> regionDone = new CompletableFuture<>();
+        var task = mock(BukkitTask.class);
+        try (var routing = Mockito.mockStatic(TaskScheduler.class)) {
+            routing.when(TaskScheduler::isFolia).thenReturn(true);
+            routing.when(() -> TaskScheduler.async(Mockito.eq(plugin), any(Runnable.class))).thenAnswer(inv -> {
+                inv.getArgument(1, Runnable.class).run();
+                return task;
+            });
+            routing.when(() -> TaskScheduler.globalTimer(Mockito.eq(plugin), any(Runnable.class), Mockito.eq(1L), Mockito.eq(1L)))
+                    .thenAnswer(inv -> { tick[0] = inv.getArgument(1); return task; });
+            routing.when(() -> TaskScheduler.regionFuture(Mockito.eq(plugin), any(Location.class), any(Runnable.class)))
+                    .thenAnswer(inv -> { region[0] = inv.getArgument(2); return regionDone; });
+            assertTrue(bc.copy(user, false, false, false));
+            assertFalse(bc.copy(user, false, false, false));
+            tick[0].run();
+            tick[0].run();
+            verify(task, never()).cancel();
+            assertNotNull(region[0]);
+            region[0].run();
+            regionDone.complete(null);
+            tick[0].run();
+            verify(task).cancel();
+            assertNotNull(bc.getBlueprint());
+            assertTrue(bc.getBlueprint().getBlocks().isEmpty());
+        }
     }
 
     @Test

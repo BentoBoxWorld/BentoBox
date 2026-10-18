@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -36,12 +35,6 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class IslandSethomeCommand extends ConfirmableCommand {
 
-    /**
-     * Cached island instance to avoid multiple database lookups.
-     * Set during canExecute and used in execute.
-     */
-    private @Nullable Island island;
-
     public IslandSethomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "sethome");
     }
@@ -68,7 +61,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
      */
     @Override
     public boolean canExecute(@NonNull User user, String label, List<String> args) {
-        island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getIsland(getWorld(), user);
         // Check island
         if (island == null || island.getOwner() == null) {
             user.sendMessage("general.errors.no-island");
@@ -158,6 +151,9 @@ public class IslandSethomeCommand extends ConfirmableCommand {
      * @param name The name of the home location
      */
     private void doSetHome(User user, String name) {
+        if (!canExecute(user, getLabel(), name.isEmpty() ? List.of() : List.of(name))) return;
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null) return;
         // Define a runnable as we will be using it often in the code below.
         getIslands().setHomeLocation(user, user.getLocation(), name);
         user.sendMessage("commands.island.sethome.home-set");

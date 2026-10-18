@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -180,6 +182,27 @@ class CleanSuperFlatListenerTest extends CommonTestSetup {
         when(iwm.isEndIslands(any())).thenReturn(false);
         l.onChunkLoad(e);
         verify(sch).runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
+    }
+
+    @Test
+    void waitsForRegenerationAndReportsFailure() {
+        var task = mock(org.bukkit.scheduler.BukkitTask.class);
+        when(sch.runTaskTimer(any(), any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L)))
+                .thenReturn(task);
+        CompletableFuture<Void> result = new CompletableFuture<>();
+        when(regenerator.regenerateChunk(chunk)).thenReturn(result);
+        l.onChunkLoad(new ChunkLoadEvent(chunk, false));
+        var callback = ArgumentCaptor.forClass(Runnable.class);
+        verify(sch).runTaskTimer(any(), callback.capture(), Mockito.eq(0L), Mockito.eq(1L));
+        callback.getValue().run();
+        callback.getValue().run();
+        verify(regenerator).regenerateChunk(chunk);
+        verify(task, never()).cancel();
+        var failure = new IllegalStateException("unsupported generator");
+        result.completeExceptionally(failure);
+        verify(plugin).logStacktrace(failure);
+        callback.getValue().run();
+        verify(task).cancel();
     }
 
 }

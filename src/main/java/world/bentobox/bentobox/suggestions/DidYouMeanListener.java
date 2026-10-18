@@ -125,9 +125,9 @@ public class DidYouMeanListener implements Listener {
      */
     boolean acceptPending(UUID uuid) {
         return plugin.getSuggestionsManager().acceptPending(uuid).map(command -> {
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player != null) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                world.bentobox.bentobox.util.TaskScheduler.entity(plugin, player, () -> {
                     try {
                         player.performCommand(command.substring(1));
                     } catch (Exception ex) {
@@ -137,8 +137,8 @@ public class DidYouMeanListener implements Listener {
                         plugin.logError("Could not run the accepted suggestion '" + command + "' for "
                                 + player.getName() + ": " + ex.getMessage());
                     }
-                }
-            });
+                });
+            }
             return true;
         }).orElse(false);
     }

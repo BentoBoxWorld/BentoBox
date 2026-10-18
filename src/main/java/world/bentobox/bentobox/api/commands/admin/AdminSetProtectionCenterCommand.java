@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -24,8 +25,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminSetProtectionCenterCommand extends ConfirmableCommand
 {
-    private Location targetLoc;
-    private Island island;
+    private record ProtectionTarget(Island island, Location location) { }
 
 
     /**
@@ -48,23 +48,35 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable ProtectionTarget resolveTarget(User user, List<String> args) {
+        if (!args.isEmpty() && args.size() != 3) {
+            user.sendMessage("commands.admin.setprotectionlocation.xyz-error");
+            return null;
+        }
+        Location targetLoc;
         if (args.size() == 3) {
             // Get location
             targetLoc = getLocation(args);
         } else {
+            if (!user.isPlayer()) {
+                user.sendMessage("general.errors.use-in-game");
+                return null;
+            }
             targetLoc = new Location(getWorld(), user.getLocation().getBlockX(), user.getLocation().getBlockY(), user.getLocation().getBlockZ());
         }
         if (targetLoc == null) {
             user.sendMessage("commands.admin.setprotectionlocation.xyz-error");
-            return false;
+            return null;
         }
         Optional<Island> optionalIsland = getIslands().getIslandAt(targetLoc);
         if (optionalIsland.isEmpty()) {
             user.sendMessage("commands.admin.setspawnpoint.no-island-here");
-            return false;
+            return null;
         }
-        island = optionalIsland.get();
-        return true;
+        return new ProtectionTarget(optionalIsland.get(), targetLoc);
     }
 
     private Location getLocation(List<String> args) {
@@ -80,11 +92,15 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        ProtectionTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Island island = target.island();
+        Location targetLoc = target.location();
         String name = getPlayers().getName(island.getOwner());
         user.sendMessage("commands.admin.setprotectionlocation.island", TextVariables.XYZ, Util.xyz(island.getCenter().toVector()), TextVariables.NAME, name);
         // Confirm
         this.askConfirmation(user, user.getTranslation("commands.admin.setprotectionlocation.confirmation", TextVariables.XYZ, Util.xyz(targetLoc.toVector())),
-                () -> this.setLocation(user));
+                () -> this.setLocation(user, island, targetLoc));
         return true;
     }
 
@@ -92,15 +108,21 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
     /**
      * Set the island location to the user's location.
      * @param user User who initiate change.
+     * @param island the confirmed island
+     * @param targetLoc the confirmed location
      */
-    private void setLocation(User user) {
+    private void setLocation(User user, Island island, Location targetLoc) {
+        if (getIslands().getIslandAt(targetLoc).filter(island::equals).isEmpty()) {
+            user.sendMessage("commands.admin.setspawnpoint.no-island-here");
+            return;
+        }
         try {
             // Set
             island.setProtectionCenter(targetLoc);
             user.sendMessage("commands.admin.setprotectionlocation.success", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
         } catch (Exception e) {
             user.sendMessage("commands.admin.setprotectionlocation.failure", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
-            getAddon().logError("Protection location could not be changed because the island does not exist");
+            getPlugin().logError("Protection location could not be changed: " + e.getMessage());
         }
 
     }

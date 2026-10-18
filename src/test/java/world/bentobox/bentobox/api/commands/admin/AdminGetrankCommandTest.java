@@ -58,6 +58,29 @@ class AdminGetrankCommandTest extends CommonTestSetup {
 
     private MockedStatic<RanksManager> mockedRanksManager;
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void testInterleavedQueriesDoNotReplacePlayerOrIsland(boolean explicitOwner) {
+        UUID otherId = UUID.randomUUID();
+        var otherIsland = mock(world.bentobox.bentobox.database.objects.Island.class);
+        when(pm.getUUID("first")).thenReturn(targetUUID);
+        when(pm.getUUID("second")).thenReturn(otherId);
+        when(pm.getUUID("ownerA")).thenReturn(targetUUID);
+        when(pm.getUUID("ownerB")).thenReturn(otherId);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.getIsland(any(), org.mockito.ArgumentMatchers.eq(targetUUID))).thenReturn(island);
+        when(im.getIsland(any(), org.mockito.ArgumentMatchers.eq(otherId))).thenReturn(otherIsland);
+        var first = explicitOwner ? List.of("first", "ownerA") : List.of("first");
+        var second = explicitOwner ? List.of("second", "ownerB") : List.of("second");
+        assertTrue(c.canExecute(user, "getrank", first));
+        assertTrue(c.canExecute(user, "getrank", second));
+        assertTrue(c.execute(user, "getrank", first));
+        var target = org.mockito.ArgumentCaptor.forClass(User.class);
+        verify(island).getRank(target.capture());
+        assertEquals(targetUUID, target.getValue().getUniqueId());
+        verify(otherIsland, org.mockito.Mockito.never()).getRank(any(User.class));
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

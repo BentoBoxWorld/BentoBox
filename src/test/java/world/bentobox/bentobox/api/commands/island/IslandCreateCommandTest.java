@@ -67,6 +67,21 @@ class IslandCreateCommandTest extends CommonTestSetup {
     @Mock
     private @NonNull WorldSettings ws;
 
+    @Test
+    void testCancelledCreationDoesNotChargeOrStartCooldown() throws Exception {
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(settings.isResetCooldownOnCreate()).thenReturn(true);
+        when(builder.build()).thenReturn(null);
+        GameModeAddon addon = ic.getAddon();
+        try (var costs = Mockito.mockStatic(BlueprintCostHelper.class)) {
+            costs.when(() -> BlueprintCostHelper.checkCost(plugin, addon, user, "custom", false)).thenReturn(true);
+            assertFalse(cc.execute(user, "", List.of("custom")));
+            costs.verify(() -> BlueprintCostHelper.checkCost(plugin, addon, user, "custom", true), never());
+            verify(ic, never()).getSubCommand("reset");
+        }
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -393,8 +408,9 @@ class IslandCreateCommandTest extends CommonTestSetup {
     /**
      * Test method for cost check - can afford
      */
-    @Test
-    void testMakeIslandWithCostCanAfford() {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void testMakeIslandWithCostCanAfford(boolean paymentSucceeds) {
         // Multiple bundles
         BlueprintBundle bb = new BlueprintBundle();
         bb.setCost(100.0);
@@ -409,10 +425,13 @@ class IslandCreateCommandTest extends CommonTestSetup {
         // Vault present and can afford
         VaultHook vault = mock(VaultHook.class);
         when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
+        when(vault.withdraw(user, 100.0)).thenReturn(new net.milkbowl.vault.economy.EconomyResponse(
+                100, 0, paymentSucceeds ? net.milkbowl.vault.economy.EconomyResponse.ResponseType.SUCCESS
+                        : net.milkbowl.vault.economy.EconomyResponse.ResponseType.FAILURE, "payment rejected"));
         when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
-        assertTrue(cc.execute(user, "", List.of("custom")));
+        assertEquals(paymentSucceeds, cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(vault).withdraw(user, 100.0);
     }

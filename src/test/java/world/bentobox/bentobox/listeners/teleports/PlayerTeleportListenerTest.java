@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,9 +47,11 @@ import org.mockito.Mock;
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -227,6 +230,33 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         assertEquals(location.getWorld(), e.getTo().getWorld());
     }
 
+    @Test
+    void testPortalProcessStandardNetherTeleportsItselfOnFolia() {
+        // islands: false - the addon uses one shared nether world. BentoBox picks that world
+        // and, because the native transfer is cancelled on Folia, does the teleport itself.
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(Environment.NETHER);
+        when(nether.getSpawnLocation()).thenReturn(new Location(nether, 0, 64, 0));
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        when(Util.getWorld(world)).thenReturn(world);
+        when(plugin.getIWM().inWorld(world)).thenReturn(true);
+        when(ptl.isAllowedInConfig(world, Environment.NETHER)).thenReturn(true);
+        when(ptl.isAllowedOnServer(Environment.NETHER)).thenReturn(true);
+        when(ptl.isIslandWorld(world, Environment.NETHER)).thenReturn(false);
+        Location from = new Location(world, 10, 80, 10);
+        PlayerPortalEvent event = new PlayerPortalEvent(mockPlayer, from, from, TeleportCause.NETHER_PORTAL, 0, false,
+                0);
+
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            ptl.onPlayerPortalEvent(event);
+            tasks.verify(() -> TaskScheduler.entity(eq(plugin), eq(mockPlayer), any(Runnable.class)), times(1));
+        }
+
+        assertFalse(event.isCancelled());
+        assertSame(nether, event.getTo().getWorld());
+    }
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
@@ -243,6 +273,83 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         // Verify that the portal creation settings were adjusted
         assertEquals(2, e.getCreationRadius());
         assertNotNull(e.getTo());
+    }
+
+    @Test
+    void testPortalProcessIslandTeleportTargetsAddonNether() {
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(Environment.NETHER);
+        Location from = new Location(world, 10, 80, 10);
+        Location netherLocation = new Location(nether, 10, 80, 10);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        when(Util.getWorld(world)).thenReturn(world);
+        when(plugin.getIWM().inWorld(world)).thenReturn(true);
+        when(ptl.isAllowedInConfig(world, Environment.NETHER)).thenReturn(true);
+        when(ptl.isAllowedOnServer(Environment.NETHER)).thenReturn(true);
+        when(ptl.isIslandWorld(world, Environment.NETHER)).thenReturn(true);
+
+        PlayerPortalEvent event = new PlayerPortalEvent(mockPlayer, from, from,
+                TeleportCause.NETHER_PORTAL, 0, false, 0);
+
+        ptl.onPlayerPortalEvent(event);
+
+        assertSame(nether, event.getTo().getWorld());
+    }
+
+    @Test
+    void testPortalProcessFoliaDoesNotLetServerTeleport() {
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(Environment.NETHER);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        when(Util.getWorld(world)).thenReturn(world);
+        when(plugin.getIWM().inWorld(world)).thenReturn(true);
+        when(ptl.isAllowedInConfig(world, Environment.NETHER)).thenReturn(true);
+        when(ptl.isAllowedOnServer(Environment.NETHER)).thenReturn(true);
+        when(ptl.isIslandWorld(world, Environment.NETHER)).thenReturn(true);
+        // Make the addon want portals created, so BentoBox would normally leave the transfer
+        // to the server.
+        GameModeAddon addon = mock(GameModeAddon.class);
+        WorldSettings addonSettings = mock(WorldSettings.class);
+        when(addonSettings.isMakeNetherPortals()).thenReturn(true);
+        when(addon.getWorldSettings()).thenReturn(addonSettings);
+        when(iwm.getAddon(world)).thenReturn(Optional.of(addon));
+        Location from = new Location(world, 10, 80, 10);
+        PlayerPortalEvent event = new PlayerPortalEvent(mockPlayer, from, from,
+                TeleportCause.NETHER_PORTAL, 0, false, 0);
+
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            mockedUtil.when(() -> Util.getWorld(world)).thenReturn(world);
+            ptl.onPlayerPortalEvent(event);
+            // The native transfer is cancelled on Folia, so BentoBox has to teleport itself
+            tasks.verify(() -> TaskScheduler.entity(eq(plugin), eq(mockPlayer), any(Runnable.class)), times(1));
+        }
+
+        assertFalse(event.isCancelled());
+        assertSame(nether, event.getTo().getWorld());
+    }
+
+    @Test
+    void testHandleFoliaPortalNetherFiresPlayerPortalEvent() {
+        ptl.handleFoliaPortal(mockPlayer, location, Environment.NETHER);
+
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+        verify(pim).callEvent(eventCaptor.capture());
+        PlayerPortalEvent event = assertInstanceOf(PlayerPortalEvent.class, eventCaptor.getValue());
+        assertEquals(TeleportCause.NETHER_PORTAL, event.getCause());
+        assertEquals(location, event.getFrom());
+        assertNull(event.getTo());
+    }
+
+    @Test
+    void testHandleFoliaPortalEndFiresPlayerPortalEvent() {
+        ptl.handleFoliaPortal(mockPlayer, location, Environment.THE_END);
+
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+        verify(pim).callEvent(eventCaptor.capture());
+        PlayerPortalEvent event = assertInstanceOf(PlayerPortalEvent.class, eventCaptor.getValue());
+        assertEquals(TeleportCause.END_PORTAL, event.getCause());
+        assertNull(event.getTo());
     }
 
     /**
@@ -310,6 +417,30 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.createEndPlatform(dest);
 
         verify(normalWorld, times(0)).getBlockAt(anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    void testAsyncEndPlatformWaitsForAllRegionWrites() {
+        World endWorld = mock(World.class);
+        when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
+        Location destination = new Location(endWorld, 16, 70, 16);
+        java.util.List<java.util.concurrent.CompletableFuture<Void>> writes = new java.util.ArrayList<>();
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(Location.class)))
+                .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(mock(org.bukkit.Chunk.class)));
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any()))
+                    .thenAnswer(call -> {
+                        var pending = new java.util.concurrent.CompletableFuture<Void>();
+                        writes.add(pending);
+                        return pending;
+                    });
+            var result = ptl.createEndPlatformAsync(destination);
+            assertEquals(25, writes.size());
+            org.junit.jupiter.api.Assertions.assertFalse(result.isDone());
+            writes.forEach(write -> write.complete(null));
+            org.junit.jupiter.api.Assertions.assertTrue(result.isDone());
+            org.junit.jupiter.api.Assertions.assertFalse(result.isCompletedExceptionally());
+        }
     }
 
     /**

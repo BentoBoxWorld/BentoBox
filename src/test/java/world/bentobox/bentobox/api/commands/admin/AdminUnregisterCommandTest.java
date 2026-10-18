@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -118,6 +119,7 @@ class AdminUnregisterCommandTest extends CommonTestSetup {
         when(location2.toVector()).thenReturn(new Vector(4, 5, 6));
         when(island.getCenter()).thenReturn(location1);
         when(island2.getCenter()).thenReturn(location2);
+        when(island2.getOwner()).thenReturn(uuid);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, notUUID));
         when(island2.getMemberSet()).thenReturn(ImmutableSet.of(uuid, notUUID));
         when(im.getOwnedIslands(world, uuid)).thenReturn(Set.of(island, island2));
@@ -224,12 +226,12 @@ class AdminUnregisterCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link AdminUnregisterCommand#unregisterIsland(User)}
+     * Test method for {@link AdminUnregisterCommand#unregisterIsland(User, Island, UUID)}
      */
     @Test
     void testUnregisterIsland() {
         this.testCanExecuteSuccessOneIsland();
-        itl.unregisterIsland(user);
+        itl.unregisterIsland(user, island, uuid);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3",
                 TextVariables.NAME, "name");
         verify(island).setOwner(null);
@@ -238,12 +240,12 @@ class AdminUnregisterCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link AdminUnregisterCommand#unregisterIsland(User)}
+     * Test method for {@link AdminUnregisterCommand#unregisterIsland(User, Island, UUID)}
      */
     @Test
     void testUnregisterIslandMulti() {
         this.testCanExecutePlayerSuccessMultiIsland();
-        itl.unregisterIsland(user);
+        itl.unregisterIsland(user, island2, uuid);
         verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "4,5,6",
                 TextVariables.NAME, "name");
     }
@@ -256,5 +258,40 @@ class AdminUnregisterCommandTest extends CommonTestSetup {
     void testCanExecuteHelp() {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento", "help")));
         verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
+    }
+
+    @Test
+    void testDelayedConfirmationKeepsItsOwnIsland() {
+        AdminUnregisterCommand command = Mockito.spy(itl);
+        List<Runnable> pending = new java.util.ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(1));
+            return null;
+        }).when(command).askConfirmation(any(), any(Runnable.class));
+        assertTrue(command.canExecute(user, "unregister", List.of("tastybento", "1,2,3")));
+        assertTrue(command.canExecute(user, "unregister", List.of("tastybento", "4,5,6")));
+        assertTrue(command.execute(user, "unregister", List.of("tastybento", "1,2,3")));
+        assertTrue(command.execute(user, "unregister", List.of("tastybento", "4,5,6")));
+        pending.getFirst().run();
+        verify(island).setOwner(null);
+        verify(island2, never()).setOwner(any());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void testDelayedConfirmationRejectsChangedOwnershipOrRemovedIsland(boolean ownerChanged) {
+        AdminUnregisterCommand command = Mockito.spy(itl);
+        List<Runnable> pending = new java.util.ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(1));
+            return null;
+        }).when(command).askConfirmation(any(), any(Runnable.class));
+        assertTrue(command.execute(user, "unregister", List.of("tastybento", "1,2,3")));
+        if (ownerChanged) when(island.getOwner()).thenReturn(notUUID);
+        else when(im.getOwnedIslands(world, uuid)).thenReturn(Set.of(island2));
+        pending.getFirst().run();
+        verify(island, never()).setOwner(any());
+        verify(im, never()).removePlayer(any(Island.class), any());
+        verify(user).sendMessage("general.errors.player-has-no-island");
     }
 }

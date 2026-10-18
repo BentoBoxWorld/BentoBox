@@ -1,11 +1,8 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -25,7 +22,6 @@ import world.bentobox.bentobox.util.Util;
 public class IslandTeamTrustCommand extends CompositeCommand {
 
     IslandTeamCommand itc;
-    private @Nullable UUID targetUUID;
 
     public IslandTeamTrustCommand(IslandTeamCommand parentCommand) {
         super(parentCommand, "trust");
@@ -55,14 +51,18 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
+        if (island == null) {
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
+        int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
                     user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.getFirst());
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
@@ -77,7 +77,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             return false;
         }
         User target = User.getInstance(targetUUID);
-        rank = getIslands().getIsland(getWorld(), user).getRank(target);
+        rank = island.getRank(target);
         if (rank >= RanksManager.TRUSTED_RANK) {
             user.sendMessage("commands.island.team.trust.player-already-trusted");
             return false;
@@ -92,7 +92,9 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        assert targetUUID != null;
+        if (!canExecute(user, label, args)) return false;
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
+        if (targetUUID == null) return false;
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {

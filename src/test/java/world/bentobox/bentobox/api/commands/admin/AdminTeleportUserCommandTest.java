@@ -43,6 +43,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * Tests for {@link AdminTeleportUserCommand}.
@@ -221,18 +222,12 @@ class AdminTeleportUserCommandTest extends CommonTestSetup {
         verify(user).sendMessage("general.errors.offline-player");
     }
 
-    /**
-     * The source uses {@code args.getFirst()} (the teleportee's name) in the error
-     * message even when it is the second arg (the target) that is unresolvable.
-     * This test documents that behaviour.
-     */
     @Test
     void testCanExecuteUnknownTarget() {
         // "bad-target" is not registered → pm.getUUID returns null
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertFalse(cmd.canExecute(user, "tpuser", List.of("teleportee", "bad-target")));
-        // Source sends args.getFirst() ("teleportee"), not the actual unknown name
-        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "teleportee");
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "bad-target");
     }
 
     // -------------------------------------------------------------------------
@@ -478,5 +473,67 @@ class AdminTeleportUserCommandTest extends CommonTestSetup {
     void testTabCompleteFiveOrMoreArgs() {
         AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
         assertTrue(cmd.tabComplete(user, "tpuser", List.of("a", "b", "c", "d", "e")).isEmpty());
+    }
+    @Test
+    void testInterleavedTargetsDoNotChangeTeleportDestination() {
+        UUID otherTarget = UUID.randomUUID();
+        Island otherIsland = mock(Island.class);
+        when(pm.getUUID("other-target")).thenReturn(otherTarget);
+        when(im.getIsland(world, targetUUID)).thenReturn(island);
+        when(im.getIsland(world, otherTarget)).thenReturn(otherIsland);
+        when(island.getSpawnPoint(Environment.NORMAL)).thenReturn(spawnPoint);
+        when(otherIsland.getSpawnPoint(Environment.NORMAL)).thenReturn(location);
+        AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
+        assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
+        assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "other-target")));
+        try (var builders = Mockito.mockConstruction(SafeSpotTeleport.Builder.class, Mockito.withSettings()
+                .defaultAnswer(Mockito.RETURNS_SELF))) {
+            assertTrue(cmd.execute(user, "tpuser", List.of("teleportee", "target")));
+            verify(builders.constructed().getFirst()).entity(mockPlayer);
+            verify(builders.constructed().getFirst()).location(spawnPoint);
+        }
+    }
+
+    @Test
+    void testInterleavedTeleporteesDoNotChangePlayer() {
+        UUID otherId = UUID.randomUUID();
+        User otherUser = mock(User.class);
+        when(otherUser.isOnline()).thenReturn(true);
+        when(pm.getUUID("other-player")).thenReturn(otherId);
+        User originalUser = User.getInstance(teleporteeUUID);
+        try (var users = Mockito.mockStatic(User.class);
+                var builders = Mockito.mockConstruction(SafeSpotTeleport.Builder.class, Mockito.withSettings()
+                        .defaultAnswer(Mockito.RETURNS_SELF))) {
+            users.when(() -> User.getInstance(teleporteeUUID)).thenReturn(originalUser);
+            users.when(() -> User.getInstance(otherId)).thenReturn(otherUser);
+            AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
+            assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
+            assertTrue(cmd.canExecute(user, "tpuser", List.of("other-player", "target")));
+            assertTrue(cmd.execute(user, "tpuser", List.of("teleportee", "target")));
+            verify(builders.constructed().getFirst()).entity(mockPlayer);
+        }
+    }
+
+    @Test
+    void testDisconnectAfterValidationDoesNotStartTeleport() {
+        AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
+        assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
+        when(mockPlayer.isOnline()).thenReturn(false);
+        try (var builders = Mockito.mockConstruction(SafeSpotTeleport.Builder.class)) {
+            assertFalse(cmd.execute(user, "tpuser", List.of("teleportee", "target")));
+            assertTrue(builders.constructed().isEmpty());
+        }
+        verify(user).sendMessage("general.errors.offline-player");
+    }
+
+    @Test
+    void testRemovedIslandAfterValidationDoesNotStartTeleport() {
+        AdminTeleportUserCommand cmd = new AdminTeleportUserCommand(ac, "tpuser");
+        assertTrue(cmd.canExecute(user, "tpuser", List.of("teleportee", "target")));
+        when(im.getIsland(world, targetUUID)).thenReturn(null);
+        try (var builders = Mockito.mockConstruction(SafeSpotTeleport.Builder.class)) {
+            assertFalse(cmd.execute(user, "tpuser", List.of("teleportee", "target")));
+            assertTrue(builders.constructed().isEmpty());
+        }
     }
 }

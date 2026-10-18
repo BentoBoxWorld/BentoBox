@@ -1,6 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.conversations;
 
-import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -41,10 +41,10 @@ public class ConfirmPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(@NonNull ConversationContext context, String input) {
         if (input != null && input.equals(response)) {
-            Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("general.success"));
-            Bukkit.getScheduler().runTask(plugin, action);
+            TaskScheduler.user(plugin, user, () -> user.sendMessage("general.success"));
+            TaskScheduler.user(plugin, user, action);
         } else {
-            Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("general.errors.command-cancelled"));
+            TaskScheduler.user(plugin, user, () -> user.sendMessage("general.errors.command-cancelled"));
         }
         return Prompt.END_OF_CONVERSATION;
     }

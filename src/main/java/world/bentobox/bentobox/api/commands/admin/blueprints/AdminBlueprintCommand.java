@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -9,6 +9,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
+import org.bukkit.scheduler.BukkitTask;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -26,7 +28,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand implements Listene
     private Map<UUID, BlueprintClipboard> clipboards;
 
     // Map containing selection cuboid display tasks
-    private Map<User, Integer> displayClipboards;
+    private Map<User, BukkitTask> displayClipboards;
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
     public AdminBlueprintCommand(CompositeCommand parent) {
@@ -40,8 +42,8 @@ public class AdminBlueprintCommand extends ConfirmableCommand implements Listene
         setDescription("commands.admin.blueprint.description");
         setOnlyPlayer(true);
 
-        clipboards = new HashMap<>();
-        displayClipboards = new HashMap<>();
+        clipboards = new ConcurrentHashMap<>();
+        displayClipboards = new ConcurrentHashMap<>();
         Bukkit.getPluginManager().registerEvents(this, getPlugin());
 
         // Sub commands
@@ -77,6 +79,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand implements Listene
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         clipboards.remove(e.getPlayer().getUniqueId());
+        hideClipboard(User.getInstance(e.getPlayer()));
     }
 
 
@@ -87,11 +90,12 @@ public class AdminBlueprintCommand extends ConfirmableCommand implements Listene
     protected void showClipboard(User user)
     {
         this.displayClipboards.computeIfAbsent(user,
-            key -> Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getPlugin(), () ->
+            key -> TaskScheduler.entityTimer(this.getPlugin(), key.getPlayer(), () ->
             {
                 if (!key.isPlayer() || !key.getPlayer().isOnline())
                 {
                     this.hideClipboard(key);
+                    return;
                 }
 
                 if (this.clipboards.containsKey(key.getUniqueId()))
@@ -153,10 +157,8 @@ public class AdminBlueprintCommand extends ConfirmableCommand implements Listene
     }
 
     protected void hideClipboard(User user) {
-        if (displayClipboards.containsKey(user)) {
-            Bukkit.getScheduler().cancelTask(displayClipboards.get(user));
-            displayClipboards.remove(user);
-        }
+        BukkitTask task = displayClipboards.remove(user);
+        if (task != null) task.cancel();
     }
 
     protected File getBlueprintsFolder() {

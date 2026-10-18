@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -33,12 +32,6 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @since 1.0
  */
 public class IslandBanlistCommand extends CompositeCommand {
-
-    /**
-     * Cached island instance to avoid multiple database lookups.
-     * Set during canExecute and used in execute.
-     */
-    private Island island;
 
     public IslandBanlistCommand(CompositeCommand islandCommand) {
         super(islandCommand, "banlist", "banned", "bans");
@@ -74,8 +67,12 @@ public class IslandBanlistCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        int rank = Objects.requireNonNull(island).getRank(user);
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (island == null) {
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
+        int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
                     user.getTranslation(RanksManager.getInstance().getRank(rank)));
@@ -98,8 +95,12 @@ public class IslandBanlistCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        if (!args.isEmpty()) return false;
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (island == null || island.getRank(user) < island.getRankCommand(getUsage())) return false;
+        var banned = island.getBanned();
         // Show all the players banned on the island
-        if (island.getBanned().isEmpty()) {
+        if (banned.isEmpty()) {
             user.sendMessage("commands.island.banlist.noone");
             return true;
         }
@@ -107,7 +108,7 @@ public class IslandBanlistCommand extends CompositeCommand {
         user.sendMessage("commands.island.banlist.the-following");
         
         // Create a nicely formatted list with names sorted alphabetically
-        List<String> names = island.getBanned().stream()
+        List<String> names = banned.stream()
                 .map(u -> getPlayers().getName(u))
                 .sorted()
                 .toList();
@@ -138,10 +139,10 @@ public class IslandBanlistCommand extends CompositeCommand {
         // Show remaining ban slots if there's a limit
         int banLimit = user.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", 
                 getIWM().getBanLimit(getWorld()));
-        if (banLimit > -1 && island.getBanned().size() < banLimit) {
+        if (banLimit > -1 && banned.size() < banLimit) {
             user.sendMessage("commands.island.banlist.you-can-ban", 
                     TextVariables.NUMBER, 
-                    String.valueOf(banLimit - island.getBanned().size()));
+                    String.valueOf(banLimit - banned.size()));
         }
         return true;
     }

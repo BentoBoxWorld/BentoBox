@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,8 +22,7 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminUnregisterCommand extends ConfirmableCommand {
 
-    private Island targetIsland;
-    private @Nullable UUID targetUUID;
+    private record UnregisterTarget(Island island, UUID owner) { }
 
     public AdminUnregisterCommand(CompositeCommand parent) {
         super(parent, "unregister");
@@ -39,62 +37,68 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable UnregisterTarget resolveTarget(User user, List<String> args) {
         // If args are not right, show help
         if (args.isEmpty()) {
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Get target
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         if (!getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
         // Check if the player has more than one island
         Map<String, Island> islands = getIslandsXYZ(targetUUID);
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         } else if (args.size() == 1) {
             if (islands.size() == 1) {
-                targetIsland = islands.values().iterator().next();
-                return true;
+                return new UnregisterTarget(islands.values().iterator().next(), targetUUID);
             } else {
                 // They need to specify which island
                 user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
                 user.sendMessage("commands.admin.unregister.errors.specify-island-location");
-                return false;
+                return null;
             }
         } else if (args.size() != 2) {
             // Check if the name given works
             user.sendMessage("commands.admin.unregister.errors.specify-island-location");
-            return false;
+            return null;
         } else if (!islands.containsKey(args.get(1))) {
             if (args.get(1).equalsIgnoreCase("help")) {
                 this.showHelp(this, user);
-                return false;
+                return null;
             }
             user.sendMessage("commands.admin.unregister.errors.unknown-island-location");
-            return false;
+            return null;
         }
-        targetIsland = islands.get(args.get(1));
-        return true;
+        return new UnregisterTarget(islands.get(args.get(1)), targetUUID);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(targetIsland);
-        Objects.requireNonNull(targetUUID);
-        // Everything's fine, we can set the island as spawn :)
-        askConfirmation(user, () -> unregisterIsland(user));
+        UnregisterTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        askConfirmation(user, () -> unregisterIsland(user, target.island(), target.owner()));
         return true;
     }
 
-    void unregisterIsland(User user) {
+    void unregisterIsland(User user, Island targetIsland, UUID targetUUID) {
+        if (!targetUUID.equals(targetIsland.getOwner())
+                || !getIslands().getOwnedIslands(getWorld(), targetUUID).contains(targetIsland)) {
+            user.sendMessage("general.errors.player-has-no-island");
+            return;
+        }
         // Unregister island
         IslandEvent.builder()
         .island(targetIsland)

@@ -8,6 +8,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import org.bukkit.Chunk;
+import org.mockito.Mockito;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -100,6 +104,63 @@ class DefaultNewIslandLocationStrategyTest extends CommonTestSetup {
     void testGetNextLocationSuccess() {
         assertEquals(location,dnils.getNextLocation(world));
         verify(im).setLast(location);
+    }
+
+    @Test
+    void testFoliaSelectionChecksBlocksOnOwnerAndAdvances() {
+        Location[] last = { new Location(world, 0, 120, 0) };
+        when(im.getLast(world)).thenAnswer(invocation -> last[0]);
+        Mockito.doAnswer(invocation -> { last[0] = invocation.getArgument(0); return null; })
+                .when(im).setLast(any());
+        when(world.getBlockAt(any(Location.class))).thenReturn(adjBlock);
+        var chunk = Mockito.mock(Chunk.class);
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(Location.class), Mockito.eq(false)))
+                .thenReturn(CompletableFuture.completedFuture(chunk));
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(Location.class)))
+                .thenReturn(CompletableFuture.completedFuture(chunk));
+        try (var scheduler = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            scheduler.when(() -> TaskScheduler.async(any(), any())).thenAnswer(invocation -> {
+                ((Runnable) invocation.getArgument(1)).run();
+                return null;
+            });
+            scheduler.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(invocation -> {
+                ((Runnable) invocation.getArgument(2)).run();
+                return CompletableFuture.completedFuture(null);
+            });
+            Location first = dnils.getNextLocationAsync(world, null).join();
+            Location second = new DefaultNewIslandLocationStrategy().getNextLocationAsync(world, null).join();
+            assertEquals(new Location(world, 0, 120, 0), first);
+            assertEquals(new Location(world, 0, 120, 100), second);
+            scheduler.verify(() -> TaskScheduler.regionFuture(any(), any(), any()), Mockito.atLeastOnce());
+            mockedUtil.verify(() -> Util.isChunkGenerated(any(Location.class)), never());
+        }
+    }
+
+    @Test
+    void testFoliaSelectionDoesNotOverwriteImportedBlocks() {
+        when(im.getLast(world)).thenReturn(new Location(world, 0, 120, 0));
+        when(world.getBlockAt(any(Location.class))).thenReturn(adjBlock);
+        when(adjBlock.getType()).thenReturn(Material.STONE);
+        var chunk = Mockito.mock(Chunk.class);
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(Location.class), Mockito.eq(false)))
+                .thenReturn(CompletableFuture.completedFuture(chunk));
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(Location.class)))
+                .thenReturn(CompletableFuture.completedFuture(chunk));
+        try (var scheduler = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            scheduler.when(() -> TaskScheduler.async(any(), any())).thenAnswer(invocation -> {
+                ((Runnable) invocation.getArgument(1)).run();
+                return null;
+            });
+            scheduler.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(invocation -> {
+                ((Runnable) invocation.getArgument(2)).run();
+                return CompletableFuture.completedFuture(null);
+            });
+            assertNull(dnils.getNextLocationAsync(world, null).join());
+            verify(im, Mockito.times(20)).createIsland(any(Location.class));
+            verify(im, never()).setLast(any());
+        }
     }
 
     /**

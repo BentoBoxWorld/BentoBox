@@ -18,11 +18,11 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 public class AdminRegisterCommand extends ConfirmableCommand {
 
-    private Island island;
-    private @Nullable UUID targetUUID;
+    private record RegisterTarget(Island island, UUID player) { }
 
     public AdminRegisterCommand(CompositeCommand parent) {
         super(parent, "register");
@@ -38,21 +38,25 @@ public class AdminRegisterCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable RegisterTarget resolveTarget(User user, List<String> args) {
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Check world
         if (!getWorld().equals(user.getWorld())) {
             user.sendMessage("general.errors.wrong-world");
-            return false;
+            return null;
         }
         // Get target
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         // Check if this spot is being deleted
         Location closestIsland = Util.getClosestIsland(user.getLocation());
@@ -67,25 +71,25 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             final String name = args.getFirst();
             this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"),
                     () -> reserve(user, uuid, loc, name));
-            return false;
+            return null;
         }
-        island = opIsland.get();
+        Island island = opIsland.get();
         if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.register.already-owned");
-            return false;
+            return null;
         }
         // Island is pending deletion - registering it will cancel the deletion, so confirm first
         if (inDeletion) {
-            confirmRegister(user, "commands.admin.register.in-deletion", args.getFirst());
-            return false;
+            confirmRegister(user, "commands.admin.register.in-deletion", args.getFirst(), targetUUID, island);
+            return null;
         }
         // Check if island is spawn
         if (island.isSpawn()) {
-            confirmRegister(user, "commands.admin.register.island-is-spawn", args.getFirst());
-            return false;
+            confirmRegister(user, "commands.admin.register.island-is-spawn", args.getFirst(), targetUUID, island);
+            return null;
         }
 
-        return true;
+        return new RegisterTarget(island, targetUUID);
     }
 
     /**
@@ -96,17 +100,26 @@ public class AdminRegisterCommand extends ConfirmableCommand {
      * @param user user doing the registering
      * @param messageKey confirmation prompt translation key
      * @param targetName name of the target player
+     * @param uuid target player UUID
+     * @param targetIsland island selected for registration
      */
-    private void confirmRegister(User user, String messageKey, String targetName) {
-        final UUID uuid = targetUUID;
-        final Island targetIsland = island;
-        askConfirmation(user, user.getTranslation(messageKey),
-                () -> register(user, uuid, targetIsland, targetName));
+    private void confirmRegister(User user, String messageKey, String targetName, UUID uuid, Island targetIsland) {
+        UUID owner = targetIsland.getOwner();
+        askConfirmation(user, user.getTranslation(messageKey), () -> {
+            if (!Objects.equals(owner, targetIsland.getOwner())
+                    || getIslands().getIslandAt(targetIsland.getCenter()).filter(targetIsland::equals).isEmpty()) {
+                user.sendMessage("commands.admin.register.cannot-make-island");
+                return;
+            }
+            register(user, uuid, targetIsland, targetName);
+        });
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        register(user, targetUUID, island, args.getFirst());
+        RegisterTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        register(user, target.player(), target.island(), args.getFirst());
         return true;
     }
 
@@ -120,6 +133,11 @@ public class AdminRegisterCommand extends ConfirmableCommand {
     void reserve(User user, UUID targetUUID, Location closestIsland, String targetName) {
         Objects.requireNonNull(closestIsland);
         Objects.requireNonNull(targetUUID);
+        if (getIslands().getIslandAt(closestIsland).isPresent()
+                || getPlugin().getIslandDeletionManager().inDeletion(closestIsland)) {
+            user.sendMessage("commands.admin.register.cannot-make-island");
+            return;
+        }
         // Island does not exist - this is a reservation
         // Make island here
         Island i = getIslands().createIsland(closestIsland, targetUUID);
@@ -129,9 +147,36 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
         getIslands().setOwner(user, targetUUID, i, RanksManager.VISITOR_RANK);
         i.setReserved(true);
+        if (TaskScheduler.isFolia()) {
+            Location center = i.getCenter().clone();
+            Util.getChunkAtAsync(center)
+                    .thenCompose(chunk -> TaskScheduler.regionFuture(getPlugin(), center,
+                            () -> {
+                                if (getIslands().getIslandAt(center).filter(i::equals).isEmpty()
+                                        || !i.isReserved() || !targetUUID.equals(i.getOwner())) {
+                                    throw new IllegalStateException("Reservation changed before marker placement");
+                                }
+                                center.getBlock().setType(Material.BEDROCK);
+                            }))
+                    .thenRun(() -> completeReservation(user, targetUUID, targetName, i))
+                    .exceptionally(error -> {
+                        getPlugin().logError("Reserved island " + i.getUniqueId()
+                                + " could not place its marker: " + error.getMessage());
+                        TaskScheduler.user(getPlugin(), user,
+                                () -> user.sendMessage("commands.admin.register.cannot-make-island"));
+                        return null;
+                    });
+            return;
+        }
         i.getCenter().getBlock().setType(Material.BEDROCK);
-        user.sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ,
+        completeReservation(user, targetUUID, targetName, i);
+    }
+
+    private void completeReservation(User user, UUID targetUUID, String targetName, Island i) {
+        Runnable notify = () -> user.sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ,
                 Util.xyz(i.getCenter().toVector()), TextVariables.NAME, targetName);
+        if (TaskScheduler.isFolia()) TaskScheduler.user(getPlugin(), user, notify);
+        else notify.run();
         // Build and fire event
         IslandEvent.builder().island(i).location(i.getCenter()).reason(IslandEvent.Reason.RESERVED)
                 .involvedPlayer(targetUUID).admin(true).build();

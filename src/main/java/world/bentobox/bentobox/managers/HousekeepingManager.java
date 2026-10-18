@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitTask;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -79,7 +80,7 @@ public class HousekeepingManager {
         if (scheduledTask != null) {
             return;
         }
-        scheduledTask = Bukkit.getScheduler().runTaskTimer(plugin,
+        scheduledTask = TaskScheduler.globalTimer(plugin,
                 this::checkAndMaybeRun, STARTUP_DELAY_TICKS, CHECK_INTERVAL_TICKS);
         plugin.log("Housekeeping scheduler started (deleted-sweep="
                 + plugin.getSettings().isHousekeepingDeletedEnabled()
@@ -177,7 +178,7 @@ public class HousekeepingManager {
             return;
         }
         inProgress = true;
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        TaskScheduler.async(plugin, () -> {
             try {
                 // Save worlds once per cycle — both sweeps see a consistent
                 // on-disk snapshot.
@@ -206,7 +207,7 @@ public class HousekeepingManager {
     private boolean saveAllWorlds() {
         plugin.log("Housekeeping: saving all worlds before purge...");
         CompletableFuture<Void> saved = new CompletableFuture<>();
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        TaskScheduler.global(plugin, () -> {
             try {
                 Bukkit.getWorlds().forEach(World::save);
                 saved.complete(null);
@@ -245,12 +246,19 @@ public class HousekeepingManager {
         int totalWorlds = 0;
         int totalRegionsPurged = 0;
         boolean hasErrors = false;
+        boolean deferred = false;
         for (GameModeAddon gm : gameModes) {
             World overworld = gm.getOverWorld();
             if (overworld == null) {
                 continue;
             }
             totalWorlds++;
+            if (TaskScheduler.isFolia()) {
+                deferred = true;
+                PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
+                if (!scan.isEmpty()) plugin.getPurgeRegionsService().defer(scan);
+                continue;
+            }
             plugin.log("Housekeeping age sweep: scanning '" + gm.getDescription().getName()
                     + "' world '" + overworld.getName() + "'");
             PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
@@ -265,9 +273,11 @@ public class HousekeepingManager {
         Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
         plugin.log("Housekeeping age sweep: complete — " + totalWorlds + " world(s) processed, "
                 + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
-        if (!hasErrors) {
+        if (!hasErrors && !deferred) {
             lastAgeRunMillis = System.currentTimeMillis();
             saveState();
+        } else if (deferred) {
+            plugin.logWarning("Housekeeping age sweep: deferred; last-run timestamp was not advanced");
         } else {
             plugin.logError("Housekeeping age sweep: completed with errors, last-run timestamp not advanced");
         }
@@ -281,12 +291,19 @@ public class HousekeepingManager {
         int totalWorlds = 0;
         int totalRegionsPurged = 0;
         boolean hasErrors = false;
+        boolean deferred = false;
         for (GameModeAddon gm : gameModes) {
             World overworld = gm.getOverWorld();
             if (overworld == null) {
                 continue;
             }
             totalWorlds++;
+            if (TaskScheduler.isFolia()) {
+                deferred = true;
+                PurgeScanResult scan = plugin.getPurgeRegionsService().scanDeleted(overworld);
+                if (!scan.isEmpty()) plugin.getPurgeRegionsService().defer(scan);
+                continue;
+            }
             plugin.log("Housekeeping deleted sweep: scanning '" + gm.getDescription().getName()
                     + "' world '" + overworld.getName() + "'");
             PurgeScanResult scan = plugin.getPurgeRegionsService().scanDeleted(overworld);
@@ -306,17 +323,20 @@ public class HousekeepingManager {
         Duration elapsed = Duration.ofMillis(System.currentTimeMillis() - startMillis);
         plugin.log("Housekeeping deleted sweep: complete — " + totalWorlds + " world(s) processed, "
                 + totalRegionsPurged + " region(s) purged in " + elapsed.toSeconds() + "s");
-        if (!hasErrors) {
+        if (!hasErrors && !deferred) {
             lastDeletedRunMillis = System.currentTimeMillis();
             saveState();
+        } else if (deferred) {
+            plugin.logWarning("Housekeeping deleted sweep: deferred; last-run timestamp was not advanced");
         } else {
             plugin.logError("Housekeeping deleted sweep: completed with errors, last-run timestamp not advanced");
         }
     }
 
     private void evictChunksOnMainThread(PurgeScanResult scan) {
+        if (TaskScheduler.isFolia()) return; // delete() rejects unsafe online region-file deletion.
         CompletableFuture<Void> done = new CompletableFuture<>();
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        TaskScheduler.global(plugin, () -> {
             try {
                 plugin.getPurgeRegionsService().evictChunks(scan);
                 done.complete(null);

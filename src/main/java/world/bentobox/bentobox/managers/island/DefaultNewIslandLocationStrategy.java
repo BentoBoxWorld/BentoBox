@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +14,8 @@ import org.bukkit.block.BlockFace;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
+import world.bentobox.bentobox.api.user.User;
 
 /**
  * The default strategy for generating locations for new islands.
@@ -65,6 +68,91 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
     }
 
     protected final BentoBox plugin = BentoBox.getInstance();
+    private static CompletableFuture<?> allocation = CompletableFuture.completedFuture(null);
+
+    @Override
+    public CompletableFuture<Location> getNextLocationAsync(World world, User user) {
+        if (!TaskScheduler.isFolia()) return NewIslandLocationStrategy.super.getNextLocationAsync(world, user);
+        synchronized (DefaultNewIslandLocationStrategy.class) {
+            CompletableFuture<Location> next = allocation.handle((unused, error) -> null)
+                    .thenCompose(unused -> {
+                        CompletableFuture<Location> selected = new CompletableFuture<>();
+                        TaskScheduler.async(plugin, () -> {
+                            try {
+                                findNextAsync(world).whenComplete((location, error) -> {
+                                    if (error != null) selected.completeExceptionally(error);
+                                    else selected.complete(location);
+                                });
+                            } catch (Throwable error) {
+                                selected.completeExceptionally(error);
+                            }
+                        });
+                        return selected;
+                    });
+            allocation = next;
+            return next;
+        }
+    }
+
+    private CompletableFuture<Location> findNextAsync(World world) {
+        Location last = plugin.getIslands().getLast(world);
+        if (last == null) last = new Location(world,
+                (double) plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
+                plugin.getIWM().getIslandHeight(world),
+                (double) plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
+        return findNextAsync(last.clone(), 0);
+    }
+
+    private CompletableFuture<Location> findNextAsync(Location candidate, int occupied) {
+        while (checkIsland(candidate, false) == Result.ISLAND_FOUND) nextGridLocation(candidate);
+        return isIslandAsync(candidate).thenCompose(result -> {
+            if (result == Result.FREE) {
+                // Advance before handing the candidate to another region's creation task.
+                plugin.getIslands().setLast(nextGridLocation(candidate.clone()));
+                return CompletableFuture.completedFuture(candidate);
+            }
+            int found = occupied + (result == Result.BLOCKS_IN_AREA ? 1 : 0);
+            if (found >= MAX_UNOWNED_ISLANDS) {
+                plugin.logError("Could not find a free spot for islands! Is this world empty?");
+                return CompletableFuture.completedFuture(null);
+            }
+            return findNextAsync(nextGridLocation(candidate), found);
+        });
+    }
+
+    private CompletableFuture<Result> isIslandAsync(Location location) {
+        Result cached = checkIsland(location, false);
+        if (cached != null) return CompletableFuture.completedFuture(cached);
+        CompletableFuture<Boolean> generated = CompletableFuture.completedFuture(false);
+        for (Location point : checkLocations(location)) {
+            generated = generated.thenCompose(found -> found ? CompletableFuture.completedFuture(true)
+                    : Util.getChunkAtAsync(point, false).thenApply(chunk -> chunk != null));
+        }
+        return generated.thenCompose(found -> found ? checkBlocksAsync(location)
+                : CompletableFuture.completedFuture(Result.FREE));
+    }
+
+    private CompletableFuture<Result> checkBlocksAsync(Location location) {
+        CompletableFuture<Boolean> blocks = CompletableFuture.completedFuture(false);
+        for (BlockFace face : BlockFace.values()) {
+            Location adjacent = location.clone().add(face.getModX(), face.getModY(), face.getModZ());
+            blocks = blocks.thenCompose(found -> {
+                if (found) return CompletableFuture.completedFuture(true);
+                return Util.getChunkAtAsync(adjacent).thenCompose(chunk -> {
+                    boolean[] occupied = new boolean[1];
+                    return TaskScheduler.regionFuture(plugin, adjacent, () -> {
+                        Material type = adjacent.getBlock().getType();
+                        occupied[0] = !type.isAir() && type != Material.WATER;
+                    }).thenApply(unused -> occupied[0]);
+                });
+            });
+        }
+        return blocks.thenApply(found -> {
+            if (!found) return Result.FREE;
+            plugin.getIslands().createIsland(location);
+            return Result.BLOCKS_IN_AREA;
+        });
+    }
 
     @Override
     public Location getNextLocation(World world) {
@@ -113,6 +201,23 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
      * @return {@link Result} enum indicating what was found.
      */
     protected Result isIsland(Location location) {
+        Result cached = checkIsland(location);
+        if (cached != null) return cached;
+        if (Arrays.stream(BlockFace.values()).anyMatch(bf ->
+                !location.getBlock().getRelative(bf).isEmpty()
+                && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
+            plugin.getIslands().createIsland(location);
+            return Result.BLOCKS_IN_AREA;
+        }
+        return Result.FREE;
+    }
+
+    /** Null means the center's neighboring blocks still need an owner-thread check. */
+    private Result checkIsland(Location location) {
+        return checkIsland(location, true);
+    }
+
+    private Result checkIsland(Location location, boolean checkGenerated) {
         // Quick check using the island grid cache.
         if (plugin.getIslands().isIslandAt(location)) {
             return Result.ISLAND_FOUND;
@@ -121,24 +226,14 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         World world = location.getWorld();
 
         // Check the four corners of the island protection area to be more thorough.
-        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
-        Set<Location> locs = new HashSet<>();
-        locs.add(location);
-
-        // Define the corners of the island's bounding box.
-        locs.add(new Location(world, location.getX() - dist, 0, location.getZ() - dist));
-        locs.add(new Location(world, location.getX() - dist, 0, location.getZ() + dist - 1));
-        locs.add(new Location(world, location.getX() + dist - 1, 0, location.getZ() - dist));
-        locs.add(new Location(world, location.getX() + dist - 1, 0, location.getZ() + dist - 1));
-
-        boolean generated = false;
-        for (Location l : locs) {
+        boolean generated = !checkGenerated;
+        for (Location l : checkLocations(location)) {
             // Check if an island exists or is being deleted at any of the check points.
             if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {
                 return Result.ISLAND_FOUND;
             }
             // Check if the chunk is generated. An ungenerated chunk is considered free.
-            if (Util.isChunkGenerated(l)) generated = true;
+            if (checkGenerated && Util.isChunkGenerated(l)) generated = true;
         }
         // If no chunks in the area have been generated yet, then it's definitely not occupied.
         if (!generated) {
@@ -146,18 +241,20 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         }
         // If configured, check for any non-air/non-water blocks in the immediate vicinity of the center.
         // This is to detect pre-existing structures in imported worlds.
-        if (plugin.getIWM().isCheckForBlocks(world) 
-                && !plugin.getIWM().isUseOwnGenerator(world) 
-                && Arrays.stream(BlockFace.values()).anyMatch(bf ->
-                !location.getBlock().getRelative(bf).isEmpty() 
-                && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
-            // A block was found. Create a temporary, reserved island object at this location
-            // to mark it as occupied in the database and prevent it from being checked again.
-            plugin.getIslands().createIsland(location);
-            return Result.BLOCKS_IN_AREA;
-        }
-        // The location is free.
-        return Result.FREE;
+        return plugin.getIWM().isCheckForBlocks(world) && !plugin.getIWM().isUseOwnGenerator(world)
+                ? null : Result.FREE;
+    }
+
+    private Set<Location> checkLocations(Location location) {
+        World world = location.getWorld();
+        int dist = plugin.getIWM().getIslandDistance(world);
+        Set<Location> locations = new HashSet<>();
+        locations.add(location);
+        locations.add(new Location(world, location.getX() - dist, 0, location.getZ() - dist));
+        locations.add(new Location(world, location.getX() - dist, 0, location.getZ() + dist - 1));
+        locations.add(new Location(world, location.getX() + dist - 1, 0, location.getZ() - dist));
+        locations.add(new Location(world, location.getX() + dist - 1, 0, location.getZ() + dist - 1));
+        return locations;
     }
 
     /**

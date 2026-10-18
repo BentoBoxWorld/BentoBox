@@ -40,6 +40,7 @@ import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
+import world.bentobox.bentobox.panels.customizable.SettingsPanel;
 import world.bentobox.bentobox.panels.settings.WorldProtectionInfoTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -59,6 +60,43 @@ class IslandSettingsCommandTest extends CommonTestSetup {
     private LocalesManager testLm;
 
     private IslandSettingsCommand isc;
+
+    @Test
+    void testInterleavedPlayersKeepTheirOwnLegacyPanelIsland() {
+        User other = mock(User.class);
+        Location otherLocation = mock(Location.class);
+        var otherIsland = mock(world.bentobox.bentobox.database.objects.Island.class);
+        when(other.getWorld()).thenReturn(world);
+        when(other.getLocation()).thenReturn(otherLocation);
+        when(island.getWorld()).thenReturn(world);
+        when(otherIsland.getWorld()).thenReturn(world);
+        when(im.getIslandAt(user.getLocation())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(otherLocation)).thenReturn(Optional.of(otherIsland));
+
+        assertTrue(isc.canExecute(user, "settings", Collections.emptyList()));
+        assertTrue(isc.canExecute(other, "settings", Collections.emptyList()));
+        assertEquals(island, isc.buildPanel(user).getIsland());
+        assertEquals(otherIsland, isc.buildPanel(other).getIsland());
+    }
+
+    @Test
+    void testInterleavedPlayersKeepTheirOwnTemplatedPanelIsland() {
+        User other = mock(User.class);
+        Location otherLocation = mock(Location.class);
+        var otherIsland = mock(world.bentobox.bentobox.database.objects.Island.class);
+        when(other.getWorld()).thenReturn(world);
+        when(other.getLocation()).thenReturn(otherLocation);
+        when(im.getIslandAt(user.getLocation())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(otherLocation)).thenReturn(Optional.of(otherIsland));
+        try (var panels = org.mockito.Mockito.mockStatic(SettingsPanel.class)) {
+            panels.when(() -> SettingsPanel.openPanel(isc, user, island))
+                    .thenReturn(true);
+            assertTrue(isc.canExecute(user, "settings", Collections.emptyList()));
+            assertTrue(isc.canExecute(other, "settings", Collections.emptyList()));
+            assertTrue(isc.execute(user, "settings", Collections.emptyList()));
+            panels.verify(() -> SettingsPanel.openPanel(isc, user, island));
+        }
+    }
 
     @Override
     @BeforeEach

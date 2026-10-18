@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -165,7 +166,7 @@ public class Island implements DataObject, MetaDataAble {
      * {@link RanksManager#OWNER_RANK OWNER}.
      */
     @Expose
-    private Map<UUID, Integer> members = new HashMap<>();
+    private volatile Map<UUID, Integer> members = new ConcurrentHashMap<>();
 
     /**
      * Maximum number of members allowed on this island. Key is rank, value is
@@ -184,7 +185,7 @@ public class Island implements DataObject, MetaDataAble {
 
     //// Protection flags ////
     @Expose
-    private Map<String, Integer> flags = new HashMap<>();
+    private volatile Map<String, Integer> flags = new ConcurrentHashMap<>();
 
     //// Island History ////
 
@@ -1098,7 +1099,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param flags the flags to set
      */
     public void setFlags(Map<String, Integer> flags) {
-        this.flags = flags;
+        this.flags = new ConcurrentHashMap<>(flags);
         setChanged();
     }
 
@@ -1125,7 +1126,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param members the members to set
      */
     public void setMembers(Map<UUID, Integer> members) {
-        this.members = members;
+        this.members = new ConcurrentHashMap<>(members);
         setChanged();
     }
 

@@ -132,6 +132,33 @@ class IslandTest extends CommonTestSetup {
     }
 
     // ======================== Member Management ========================
+    @Test
+    void testMembersAndFlagsRemainIterableDuringConcurrentUpdates() throws Exception {
+        island.setMembers(new HashMap<>());
+        island.setFlags(new HashMap<>());
+        var start = new java.util.concurrent.CountDownLatch(1);
+        var writer = java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                start.await();
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(error);
+            }
+            for (int i = 0; i < 10000; i++) {
+                UUID member = new UUID(0, i);
+                island.getMembers().put(member, RanksManager.MEMBER_RANK);
+                island.getFlags().put("flag" + i, i);
+                island.getMembers().remove(member);
+                island.getFlags().remove("flag" + i);
+            }
+        });
+        start.countDown();
+        for (int i = 0; i < 10000; i++) {
+            new HashMap<>(island.getMembers());
+            new HashMap<>(island.getFlags());
+        }
+        writer.get(10, java.util.concurrent.TimeUnit.SECONDS);
+    }
 
     @Test
     void testAddMember() {

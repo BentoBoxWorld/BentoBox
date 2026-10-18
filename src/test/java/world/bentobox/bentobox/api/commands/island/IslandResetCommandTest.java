@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -52,6 +54,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -71,6 +74,148 @@ class IslandResetCommandTest extends CommonTestSetup {
     private BlueprintsManager bpm;
 
     private IslandResetCommand irc;
+
+    @Test
+    void testFoliaResetCleanupWaitsForEveryMember() {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        UUID otherId = UUID.randomUUID();
+        User other = mock(User.class);
+        when(other.getUniqueId()).thenReturn(otherId);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, otherId));
+        var ownerCleanup = new java.util.concurrent.CompletableFuture<Void>();
+        var otherCleanup = new java.util.concurrent.CompletableFuture<Void>();
+        when(pm.cleanLeavingPlayerAsync(world, user, false, island)).thenReturn(ownerCleanup);
+        when(pm.cleanLeavingPlayerAsync(world, other, false, island)).thenReturn(otherCleanup);
+        NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
+        when(builder.buildAsync()).thenReturn(new java.util.concurrent.CompletableFuture<>());
+        try (var creation = Mockito.mockStatic(NewIsland.class);
+                var users = Mockito.mockStatic(User.class);
+                var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            creation.when(NewIsland::builder).thenReturn(builder);
+            users.when(() -> User.getInstance(uuid)).thenReturn(user);
+            users.when(() -> User.getInstance(otherId)).thenReturn(other);
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+            var callback = org.mockito.ArgumentCaptor.forClass(java.util.function.Supplier.class);
+            verify(builder).beforeTeleport(callback.capture());
+            var cleanup = (java.util.concurrent.CompletableFuture<?>) callback.getValue().get();
+            assertFalse(cleanup.isDone());
+            ownerCleanup.complete(null);
+            assertFalse(cleanup.isDone());
+            otherCleanup.complete(null);
+            cleanup.join();
+            verify(im).removePlayer(island, uuid);
+            verify(im).removePlayer(island, otherId);
+            verify(pm, never()).addReset(any(), any());
+        }
+    }
+
+    @Test
+    void testPreclearCancellationDoesNotRemoveMembersOrBuildIsland() throws Exception {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        org.mockito.Mockito.doAnswer(call -> {
+            var event = call.getArgument(0);
+            if (event instanceof world.bentobox.bentobox.api.events.island.IslandPreclearEvent preclear) {
+                preclear.setCancelled(true);
+            }
+            return null;
+        }).when(pim).callEvent(any(org.bukkit.event.Event.class));
+        try (var creation = Mockito.mockStatic(NewIsland.class)) {
+            assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
+            creation.verify(NewIsland::builder, never());
+            verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+            verify(pm, never()).addReset(any(), any());
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void testCancelledOrFailedBuildDoesNotConsumeResetOrCharge(boolean failure) throws Exception {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(s.isChargeForBlueprintOnReset()).thenReturn(true);
+        NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
+        if (failure) when(builder.build()).thenThrow(new IOException("creation failed"));
+        else when(builder.build()).thenReturn(null);
+        try (var creation = Mockito.mockStatic(NewIsland.class);
+                var costs = Mockito.mockStatic(BlueprintCostHelper.class)) {
+            creation.when(NewIsland::builder).thenReturn(builder);
+            costs.when(() -> BlueprintCostHelper.checkCost(plugin, ic.getAddon(), user, "custom", false)).thenReturn(true);
+            assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(pm, never()).addReset(any(), any());
+            costs.verify(() -> BlueprintCostHelper.checkCost(plugin, ic.getAddon(), user, "custom", true), never());
+            verify(im, never()).deleteIsland(eq(island), anyBoolean(), any());
+            verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void testAsyncCancelledOrFailedBuildDoesNotConsumeReset(boolean failure) {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
+        var pending = new java.util.concurrent.CompletableFuture<Island>();
+        when(builder.buildAsync()).thenReturn(pending);
+        try (var creation = Mockito.mockStatic(NewIsland.class);
+                var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            creation.when(NewIsland::builder).thenReturn(builder);
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.global(any(), any())).thenAnswer(call -> {
+                call.getArgument(1, Runnable.class).run();
+                return mock(org.bukkit.scheduler.BukkitTask.class);
+            });
+            assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(pm, never()).addReset(any(), any());
+            verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+            if (failure) pending.completeExceptionally(new IOException("creation failed"));
+            else pending.complete(null);
+            verify(pm, never()).addReset(any(), any());
+            verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+            if (failure) tasks.verify(() -> TaskScheduler.user(eq(plugin), eq(user), any()));
+            else tasks.verify(() -> TaskScheduler.user(any(), any(), any()), never());
+        }
+    }
+
+    @Test
+    void testAsyncSuccessCountsResetEvenIfPlayerTaskCannotRun() {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
+        var pending = new java.util.concurrent.CompletableFuture<Island>();
+        when(builder.buildAsync()).thenReturn(pending);
+        try (var creation = Mockito.mockStatic(NewIsland.class);
+                var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            creation.when(NewIsland::builder).thenReturn(builder);
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.globalFuture(any(), any())).thenAnswer(call -> {
+                call.getArgument(1, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(pm, never()).addReset(any(), any());
+            var settlement = org.mockito.ArgumentCaptor.forClass(java.util.function.Function.class);
+            verify(builder).afterBuild(settlement.capture());
+            ((java.util.concurrent.CompletableFuture<?>) settlement.getValue().apply(island)).join();
+            pending.complete(island);
+            verify(pm).addReset(world, uuid);
+            tasks.verify(() -> TaskScheduler.globalFuture(eq(plugin), any()));
+        }
+    }
+
+    @Test
+    void testPendingCreationRejectsDelayedConfirmationBeforeCleanup() {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        try (var creation = Mockito.mockStatic(NewIsland.class)) {
+            creation.when(() -> NewIsland.isCreating(user)).thenReturn(true);
+            assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+            verify(pm, never()).addReset(any(), any());
+        }
+    }
 
     @Override
     @BeforeEach
@@ -233,12 +378,12 @@ class IslandResetCommandTest extends CommonTestSetup {
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
         // TODO Verify that panel was shown
         // Verify event (13 * 2)
-        verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
+        verify(pim, times(2)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq(TextVariables.GAMEMODE), anyString());
-        // Only 11 because the leader should not see this
-        checkSpigotMessage("commands.island.reset.kicked-from-island", 11);
+        // Member cleanup is deferred until the replacement island is complete.
+        checkSpigotMessage("commands.island.reset.kicked-from-island", 0);
     }
 
     /**
@@ -439,7 +584,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         assertTrue(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
         // Verify event (13 * 2)
-        verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
+        verify(pim, times(2)).callEvent(any(IslandBaseEvent.class));
 
     }
 
@@ -475,8 +620,9 @@ class IslandResetCommandTest extends CommonTestSetup {
     /**
      * Test method for reset with cost - can afford
      */
-    @Test
-    void testResetIslandWithCostCanAfford() throws Exception {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void testResetIslandWithCostCanAfford(boolean paymentSucceeds) throws Exception {
         // Enable reset charging
         when(s.isChargeForBlueprintOnReset()).thenReturn(true);
         // Now has island
@@ -497,6 +643,9 @@ class IslandResetCommandTest extends CommonTestSetup {
         // Vault present and can afford
         VaultHook vault = mock(VaultHook.class);
         when(vault.has(any(User.class), eq(100.0))).thenReturn(true);
+        when(vault.withdraw(user, 100.0)).thenReturn(new net.milkbowl.vault.economy.EconomyResponse(
+                100, 0, paymentSucceeds ? net.milkbowl.vault.economy.EconomyResponse.ResponseType.SUCCESS
+                        : net.milkbowl.vault.economy.EconomyResponse.ResponseType.FAILURE, "payment rejected"));
         when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
@@ -511,7 +660,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
-        assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+        assertEquals(paymentSucceeds, irc.execute(user, irc.getLabel(), List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(vault).withdraw(user, 100.0);
     }

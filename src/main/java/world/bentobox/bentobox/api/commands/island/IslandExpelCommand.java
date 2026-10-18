@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -19,6 +18,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles the island expel command (/island expel).
@@ -51,9 +51,6 @@ public class IslandExpelCommand extends CompositeCommand {
     /** Common message keys to avoid duplication */
     private static final String CANNOT_EXPEL = "commands.island.expel.cannot-expel";
     private static final String SUCCESS = "commands.island.expel.success";
-
-    /** Cached target player, set during canExecute and used in execute */
-    private @Nullable User target;
 
     public IslandExpelCommand(CompositeCommand islandCommand) {
         super(islandCommand, "expel");
@@ -119,7 +116,7 @@ public class IslandExpelCommand extends CompositeCommand {
             return false;
         }
         // Cannot expel offline players or invisible players
-        target = User.getInstance(targetUUID);
+        User target = User.getInstance(targetUUID);
         if (!target.isOnline() || !user.getPlayer().canSee(Bukkit.getPlayer(targetUUID))) {
             user.sendMessage("general.errors.offline-player");
             return false;
@@ -158,6 +155,10 @@ public class IslandExpelCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(@NonNull User user, String label, List<String> args) {
+        if (!canExecute(user, label, args)) return false;
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
+        if (targetUUID == null) return false;
+        User target = User.getInstance(targetUUID);
         // Finished error checking - expel player
         Island island = getIslands().getIsland(getWorld(), user);
         // Fire event
@@ -167,9 +168,25 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }
+        if (TaskScheduler.isFolia()) {
+            TaskScheduler.userFuture(getPlugin(), target, () -> expel(user, target, island)).exceptionally(error -> {
+                getPlugin().logStacktrace(error);
+                user.sendMessage(CANNOT_EXPEL);
+                return null;
+            });
+            return true;
+        }
+        return expel(user, target, island);
+    }
+
+    private boolean expel(User user, User target, Island island) {
+        if (!target.isOnline() || (TaskScheduler.isFolia() && !island.onIsland(target.getLocation()))) {
+            user.sendMessage("commands.island.expel.not-on-island");
+            return false;
+        }
         target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName(),
                 TextVariables.DISPLAY_NAME, user.getDisplayName());
-        island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+        target.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
         if (getIslands().hasIsland(getWorld(), target) || getIslands().inTeam(getWorld(), target.getUniqueId())) {
             // Success
             user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME,

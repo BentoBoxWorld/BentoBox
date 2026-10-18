@@ -236,6 +236,27 @@ class SafeSpotTeleportTest extends CommonTestSetup {
     // ---- tryToGo - safe location ----
 
     @Test
+    void testRejectedTeleportCompletesFalse() {
+        when(im.isSafeLocation(location)).thenReturn(true);
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(true);
+        mockedUtil.when(() -> Util.teleportAsync(mockPlayer, location))
+                .thenReturn(CompletableFuture.completedFuture(false));
+        var future = new SafeSpotTeleport.Builder(plugin).entity(mockPlayer).location(location).buildFuture();
+        assertTrue(future.isDone());
+        assertFalse(future.join());
+    }
+
+    @Test
+    void testFailedTeleportCompletesExceptionally() {
+        when(im.isSafeLocation(location)).thenReturn(true);
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(true);
+        mockedUtil.when(() -> Util.teleportAsync(mockPlayer, location))
+                .thenReturn(CompletableFuture.failedFuture(new IllegalStateException("retired")));
+        var future = new SafeSpotTeleport.Builder(plugin).entity(mockPlayer).location(location).buildFuture();
+        assertTrue(future.isCompletedExceptionally());
+    }
+
+    @Test
     void testTryToGoSafeLocation() {
         // If location is already safe, should teleport immediately
         when(im.isSafeLocation(location)).thenReturn(true);

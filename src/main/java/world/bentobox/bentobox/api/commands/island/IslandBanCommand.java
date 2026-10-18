@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -19,6 +18,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles the island ban command, which allows island owners and team members
@@ -46,11 +46,6 @@ import world.bentobox.bentobox.util.Util;
  * @since 1.0
  */
 public class IslandBanCommand extends CompositeCommand {
-
-    /**
-     * Cached target player to ban, set during canExecute and used in execute.
-     */
-    private @Nullable User target;
 
     public IslandBanCommand(CompositeCommand islandCommand) {
         super(islandCommand, "ban");
@@ -125,7 +120,7 @@ public class IslandBanCommand extends CompositeCommand {
         if (getSettings().getBanCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
         }
-        target = User.getInstance(targetUUID);
+        User target = User.getInstance(targetUUID);
         // Cannot ban ops
         if (target.isOp() || (target.isOnline() && target.hasPermission(this.getPermissionPrefix() + "admin.noban"))) {
             user.sendMessage("commands.island.ban.cannot-ban");
@@ -140,8 +135,9 @@ public class IslandBanCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Finished error checking - start the banning
-        return ban(user, target);
+        if (!canExecute(user, label, args)) return false;
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
+        return targetUUID != null && ban(user, User.getInstance(targetUUID));
     }
 
     /**
@@ -182,11 +178,19 @@ public class IslandBanCommand extends CompositeCommand {
                         TextVariables.DISPLAY_NAME, issuer.getDisplayName());
                 // If the player is online, has an island and on the banned island, move them
                 // home immediately
-                if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId())
+                Runnable moveHome = () -> {
+                    if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId())
                         && island.onIsland(target.getLocation())) {
-                    getIslands().homeTeleportAsync(getWorld(), target.getPlayer());
-                    island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
-                }
+                        target.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+                        getIslands().homeTeleportAsync(getWorld(), target.getPlayer());
+                    }
+                };
+                if (TaskScheduler.isFolia() && target.isOnline()) {
+                    TaskScheduler.userFuture(getPlugin(), target, moveHome).exceptionally(error -> {
+                        getPlugin().logStacktrace(error);
+                        return null;
+                    });
+                } else moveHome.run();
                 return true;
             }
         } else {

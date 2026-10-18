@@ -1,6 +1,6 @@
 package world.bentobox.bentobox.api.commands;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.dialogs.DialogButton;
 import world.bentobox.bentobox.api.dialogs.Dialogs;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * An extension of {@link CompositeCommand} that adds a confirmation step for
@@ -44,7 +45,7 @@ public abstract class ConfirmableCommand extends CompositeCommand {
      * Key: The user who needs to confirm an action
      * Value: A {@link Confirmer} record containing the confirmation details
      */
-    private static final Map<User, Confirmer> toBeConfirmed = new HashMap<>();
+    private static final Map<User, Confirmer> toBeConfirmed = new ConcurrentHashMap<>();
 
     /**
      * Creates a top-level confirmable command registered by an addon.
@@ -107,11 +108,11 @@ public abstract class ConfirmableCommand extends CompositeCommand {
             return;
         }
         // Check for pending confirmations
-        if (toBeConfirmed.containsKey(user)) {
-            if (toBeConfirmed.get(user).topLabel().equals(getTopLabel()) && toBeConfirmed.get(user).label().equalsIgnoreCase(getLabel())) {
-                toBeConfirmed.get(user).task().cancel();
-                Bukkit.getScheduler().runTask(getPlugin(), toBeConfirmed.get(user).runnable());
-                toBeConfirmed.remove(user);
+        Confirmer pending = toBeConfirmed.remove(user);
+        if (pending != null) {
+            pending.task().cancel();
+            if (pending.topLabel().equals(getTopLabel()) && pending.label().equalsIgnoreCase(getLabel())) {
+                TaskScheduler.user(getPlugin(), user, pending.runnable());
                 return;
             } else {
                 // Player has another outstanding confirmation request that will now be cancelled
@@ -125,9 +126,12 @@ public abstract class ConfirmableCommand extends CompositeCommand {
         // Tell user that they need to confirm
         user.sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
         // Set up a cancellation task
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            user.sendMessage("commands.confirmation.request-cancelled");
-            toBeConfirmed.remove(user);
+        BukkitTask task = TaskScheduler.userLater(getPlugin(), user, () -> {
+            toBeConfirmed.computeIfPresent(user, (key, current) -> {
+                if (current.runnable() != confirmed) return current;
+                user.sendMessage("commands.confirmation.request-cancelled");
+                return null;
+            });
         }, getPlugin().getSettings().getConfirmationTime() * 20L);
 
         // Add to the global confirmation map

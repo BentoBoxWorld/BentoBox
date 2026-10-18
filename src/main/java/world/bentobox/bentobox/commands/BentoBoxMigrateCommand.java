@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
@@ -51,7 +51,7 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
             // Put classSet into classQueue
             classQueue = new LinkedList<>(classSet);
             // Start a scheduler to step through these in a reasonable time
-            task = Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
+            task = TaskScheduler.globalTimer(getPlugin(), () -> {
                 Class<? extends DataObject> t = classQueue.poll();
                 if (t != null) {
                     user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION,

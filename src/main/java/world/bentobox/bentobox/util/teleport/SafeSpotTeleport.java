@@ -27,6 +27,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * A class that calculates finds a safe spot asynchronously and then teleports the player there.
@@ -77,7 +78,11 @@ public class SafeSpotTeleport {
         this.maxHeight = world.getMaxHeight() - 20;
         this.cancelIfFail = builder.isCancelIfFail();
         // Try to go
-        Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
+        Util.getChunkAtAsync(location).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, location,
+                () -> tryToGo(builder.getFailureMessage()))).exceptionally(error -> {
+                    result.completeExceptionally(error);
+                    return null;
+                });
     }
 
     void tryToGo(String failureMessage) {
@@ -87,10 +92,7 @@ public class SafeSpotTeleport {
                 bestSpot = location;
             } else {
                 // If this is not a portal teleport, then go to the safe location immediately
-                Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(location)).thenRun(() -> {
-                    if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
-                    result.complete(true);
-                });
+                completeTeleport(location);
                 return;
             }
         }
@@ -98,7 +100,7 @@ public class SafeSpotTeleport {
         chunksToScanIterator = getChunksToScan().iterator();
 
         // Start a recurring task until done or cancelled
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> gatherChunks(failureMessage), 0L, SPEED);
+        task = TaskScheduler.globalTimer(plugin, () -> gatherChunks(failureMessage), 0L, SPEED);
     }
 
     boolean gatherChunks(String failureMessage) {
@@ -123,10 +125,12 @@ public class SafeSpotTeleport {
         }
 
         // Get the chunk snapshot and scan it
-        Util.getChunkAtAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())
-        .thenApply(Chunk::getChunkSnapshot)
+        Util.getChunkSnapshotAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())
         .whenCompleteAsync((snapshot, e) -> {
-            if (snapshot != null && scanChunk(snapshot)) {
+            if (e != null) {
+                task.cancel();
+                result.completeExceptionally(e);
+            } else if (snapshot != null && scanChunk(snapshot)) {
                 task.cancel();
             } else {
                 checking.set(false);
@@ -145,7 +149,7 @@ public class SafeSpotTeleport {
             teleportEntity(bestSpot);
         } else if (entity instanceof Player player) {
             // Return to main thread and teleport the player
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            TaskScheduler.entity(plugin, entity, () -> {
                 // Failed, no safe spot
                 if (!failureMessage.isEmpty()) {
                     User.getInstance(entity).notify(failureMessage);
@@ -162,30 +166,32 @@ public class SafeSpotTeleport {
                     } else {
                         makeAndTeleport(Material.COBBLESTONE);
                     }
+                    return;
                 }
                 if (failRunnable != null) {
-                    Bukkit.getScheduler().runTask(plugin, failRunnable);
+                    TaskScheduler.entity(plugin, entity, failRunnable);
                 }
                 result.complete(false);
             });
         } else {
             if (failRunnable != null) {
-                Bukkit.getScheduler().runTask(plugin, failRunnable);
+                TaskScheduler.entity(plugin, entity, failRunnable);
             }
             result.complete(false);
         }
     }
 
     void makeAndTeleport(Material m) {
+        if (TaskScheduler.isFolia() && !Bukkit.isOwnedByCurrentRegion(location)) {
+            TaskScheduler.regionFuture(plugin, location, () -> makeAndTeleport(m))
+                    .exceptionally(error -> { result.completeExceptionally(error); return null; });
+            return;
+        }
         location.getBlock().getRelative(BlockFace.DOWN).setType(m, false);
         location.getBlock().setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
-        Util.teleportAsync(Objects.requireNonNull(entity),
-                Objects.requireNonNull(location.clone().add(new Vector(0.5D, 0D, 0.5D)))).thenRun(() -> {
-            if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
-            result.complete(true);
-        });
+        completeTeleport(location.clone().add(new Vector(0.5D, 0D, 0.5D)));
     }
 
     /**
@@ -280,15 +286,24 @@ public class SafeSpotTeleport {
     void teleportEntity(@NonNull final Location loc) {
         task.cancel();
         // Return to main thread and teleport the player
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        TaskScheduler.entity(plugin, entity, () -> {
             if (!portal && entity instanceof Player && (homeNumber > 0 || !homeName.isEmpty())) {
                 // Set home if so marked
                 plugin.getIslands().setHomeLocation(User.getInstance(entity), loc, homeName);
             }
-            Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(loc)).thenRun(() -> {
-                if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
-                result.complete(true);
-            });
+            completeTeleport(loc);
+        });
+    }
+
+    private void completeTeleport(Location destination) {
+        Util.teleportAsync(entity, destination).whenComplete((success, error) -> {
+            if (error != null) {
+                result.completeExceptionally(error);
+                return;
+            }
+            Runnable callback = Boolean.TRUE.equals(success) ? runnable : failRunnable;
+            if (callback != null) TaskScheduler.entity(plugin, entity, callback);
+            result.complete(Boolean.TRUE.equals(success));
         });
     }
 

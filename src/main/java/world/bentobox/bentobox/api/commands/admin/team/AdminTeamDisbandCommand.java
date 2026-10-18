@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin.team;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,8 +20,7 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminTeamDisbandCommand extends CompositeCommand {
 
-    private Island island;
-    private @Nullable UUID targetUUID;
+    private record TeamTarget(Island island, UUID owner) { }
 
     /**
      * Disbands a team
@@ -41,32 +39,37 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable TeamTarget resolveTarget(User user, List<String> args) {
         // If args are not right, show help
         if (args.isEmpty() || args.size() > 2) {
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Get target
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
 
         // Find the island the player is an owner of
         Map<String, Island> islands = getIslandsXYZ(targetUUID);
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
 
+        Island island;
         if (islands.size() > 1) {
             if (args.size() != 2 || !islands.containsKey(args.get(1))) {
                 user.sendMessage("commands.admin.team.disband.more-than-one-island", TextVariables.NAME,
-                        getPlayers().getName(island.getOwner()));
+                        getPlayers().getName(targetUUID));
                 islands.keySet().forEach(coords -> user.sendMessage("commands.admin.team.disband.more-than-one-island",
                         TextVariables.XYZ, coords));
-                return false;
+                return null;
             }
             // Get the named island
             island = islands.get(args.get(1));
@@ -77,9 +80,9 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
         // Check that the target owns the island
         if (island.getOwner() == null || !island.getOwner().equals(targetUUID)) {
             user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
-        return true;
+        return new TeamTarget(island, targetUUID);
     }
 
     private Map<String, Island> getIslandsXYZ(UUID target) {
@@ -89,19 +92,22 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(island);
-        Objects.requireNonNull(targetUUID);
+        TeamTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Island island = target.island();
+        UUID targetUUID = target.owner();
         // Disband team
         island.getMemberSet().forEach(m -> {
             User mUser = User.getInstance(m);
             mUser.sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
+                int previousRank = island.getRank(mUser);
                 getIslands().removePlayer(island, m);
                 TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(m).admin(true).build();
-                IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                IslandEvent.builder().island(island).involvedPlayer(m).admin(true)
                         .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK).build();
+                         .rankChange(previousRank, RanksManager.VISITOR_RANK).build();
             }
         });
         user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.getFirst());

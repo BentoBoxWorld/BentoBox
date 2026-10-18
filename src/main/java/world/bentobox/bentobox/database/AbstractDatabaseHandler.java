@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -51,9 +52,8 @@ public abstract class AbstractDatabaseHandler<T> {
      * Async save task that runs repeatedly
      */
     private BukkitTask asyncSaveTask;
-    private boolean inSave;
 
-    protected boolean shutdown;
+    protected volatile boolean shutdown;
 
     /**
      * True while {@link #flush()} is draining the queue on the calling thread. Queued writes
@@ -124,18 +124,16 @@ public abstract class AbstractDatabaseHandler<T> {
         if (!plugin.isEnabled()) return;
         // Run async queue
         processQueue = new ConcurrentLinkedQueue<>();
-        asyncSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        asyncSaveTask = TaskScheduler.asyncTimer(plugin, () -> {
+            synchronized (this) {
             // Check shutdown
             if(shutdown || plugin.isShutdown()) {
                 // Cancel - this will only get called if the plugin is shutdown separately to the server
                 databaseConnector.closeConnection(dataObject);
                 asyncSaveTask.cancel();
-            } else if (!inSave && !processQueue.isEmpty()) {
-                inSave = true;
-                while(!processQueue.isEmpty()) {
-                    processQueue.poll().run();
-                }
-                inSave = false;
+            } else if (!processQueue.isEmpty()) {
+                drainQueue();
+            }
             }
         }, 0L, 1L);
         HANDLERS.add(this);
@@ -153,21 +151,26 @@ public abstract class AbstractDatabaseHandler<T> {
      *
      * @since 3.22.0
      */
-    public void flush() {
+    public synchronized void flush() {
         if (processQueue == null || processQueue.isEmpty()) {
             return;
         }
         draining = true;
         try {
-            while (!processQueue.isEmpty()) {
-                try {
-                    processQueue.poll().run();
-                } catch (Exception e) {
-                    plugin.logError("Could not flush a queued database write: " + e.getMessage());
-                }
-            }
+            drainQueue();
         } finally {
             draining = false;
+        }
+    }
+
+    private void drainQueue() {
+        Runnable write;
+        while ((write = processQueue.poll()) != null) {
+            try {
+                write.run();
+            } catch (Exception e) {
+                plugin.logError("Could not complete a queued database write: " + e.getMessage());
+            }
         }
     }
 
@@ -209,7 +212,7 @@ public abstract class AbstractDatabaseHandler<T> {
     public CompletableFuture<List<T>> loadObjectsASync() {
         CompletableFuture<List<T>> completableFuture = new CompletableFuture<>();
 
-        Bukkit.getScheduler().runTaskAsynchronously(BentoBox.getInstance(), () -> {
+        TaskScheduler.async(BentoBox.getInstance(), () -> {
             try {
                 completableFuture.complete(loadObjects()); // Complete the future with the result
             } catch (Exception e) {

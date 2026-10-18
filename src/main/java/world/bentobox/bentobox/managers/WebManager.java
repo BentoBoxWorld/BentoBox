@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -60,11 +61,11 @@ public class WebManager {
             long connectionInterval = plugin.getSettings().getGithubConnectionInterval() * 20L * 60L;
             if (connectionInterval <= 0) {
                 // If below 0, it means we shouldn't run this as a repeating task.
-                plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, this::requestGitHubData, 20L);
+                TaskScheduler.asyncLater(plugin, this::requestGitHubData, 20L);
             } else {
                 // Set connection interval to be at least 60 minutes.
                 connectionInterval = Math.max(connectionInterval, 60 * 20 * 60L);
-                plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::requestGitHubData, 20L, connectionInterval);
+                TaskScheduler.asyncTimer(plugin, this::requestGitHubData, 20L, connectionInterval);
             }
         }
     }

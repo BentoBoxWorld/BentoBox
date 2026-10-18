@@ -7,7 +7,7 @@
 package world.bentobox.bentobox.listeners.teleports;
 
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,6 +29,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.ExpiringSet;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 
 /**
@@ -46,7 +47,7 @@ public abstract sealed class AbstractTeleportListener
         this.plugin = bentoBox;
         this.inPortal = new ExpiringSet<>(10, TimeUnit.SECONDS);
         this.inTeleport = new ExpiringSet<>(10, TimeUnit.SECONDS);
-        this.teleportOrigin = new HashMap<>();
+        this.teleportOrigin = new ConcurrentHashMap<>();
     }
 
 
@@ -390,6 +391,30 @@ public abstract sealed class AbstractTeleportListener
         }
     }
 
+    /** Each column may belong to a different region at a chunk boundary. */
+    protected java.util.concurrent.CompletableFuture<Void> createEndPlatformAsync(Location destination) {
+        var world = destination.getWorld();
+        if (world == null || world.getEnvironment() != World.Environment.THE_END) {
+            return java.util.concurrent.CompletableFuture.completedFuture(null);
+        }
+        var columns = new java.util.ArrayList<java.util.concurrent.CompletableFuture<Void>>();
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                Location column = new Location(world, destination.getBlockX() + dx,
+                        destination.getBlockY(), destination.getBlockZ() + dz);
+                columns.add(Util.getChunkAtAsync(column).thenCompose(chunk ->
+                        TaskScheduler.regionFuture(plugin, column, () -> {
+                            column.getBlock().getRelative(org.bukkit.block.BlockFace.DOWN).setType(Material.OBSIDIAN, false);
+                            for (int dy = 0; dy < 3; dy++) {
+                                world.getBlockAt(column.getBlockX(), column.getBlockY() + dy, column.getBlockZ())
+                                        .setType(Material.AIR, false);
+                            }
+                        })));
+            }
+        }
+        return java.util.concurrent.CompletableFuture.allOf(columns.toArray(java.util.concurrent.CompletableFuture[]::new));
+    }
+
 
     /**
      * This method returns spawn location for given world.
@@ -403,8 +428,16 @@ public abstract sealed class AbstractTeleportListener
         island.getSpawnPoint(World.Environment.NORMAL) == null ?
                 island.getCenter() :
                     island.getSpawnPoint(World.Environment.NORMAL)).
-                orElse(this.plugin.getIslands().isSafeLocation(world.getSpawnLocation()) ?
-                        world.getSpawnLocation() : null);
+                orElseGet(() -> {
+                    // Folia must not inspect another world from this region thread. The safe spot
+                    // teleport sorts out an unsafe spawn instead of this check.
+                    if (TaskScheduler.isFolia())
+                    {
+                        return world.getSpawnLocation();
+                    }
+                    return this.plugin.getIslands().isSafeLocation(world.getSpawnLocation()) ?
+                            world.getSpawnLocation() : null;
+                });
     }
 
 

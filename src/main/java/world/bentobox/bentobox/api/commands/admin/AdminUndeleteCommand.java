@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.Location;
@@ -27,8 +26,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminUndeleteCommand extends CompositeCommand {
 
-    private Island island;
-
     public AdminUndeleteCommand(CompositeCommand parent) {
         super(parent, "undelete");
     }
@@ -42,28 +39,32 @@ public class AdminUndeleteCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return findIsland(user, args) != null;
+    }
+
+    private Island findIsland(User user, List<String> args) {
         // Location-based command: right world, no arguments, standing on the island
         if (!getWorld().equals(user.getWorld())) {
             user.sendMessage("general.errors.wrong-world");
-            return false;
+            return null;
         }
         if (!args.isEmpty()) {
             showHelp(this, user);
-            return false;
+            return null;
         }
         // The island here must exist and be pending deletion
         Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
         if (opIsland.isEmpty() || !opIsland.get().isDeletable()) {
             user.sendMessage("commands.admin.undelete.not-in-deletion");
-            return false;
+            return null;
         }
-        island = opIsland.get();
-        return true;
+        return opIsland.get();
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(island);
+        Island island = findIsland(user, args);
+        if (island == null) return false;
         // Make sure the island is unowned
         island.setOwner(null);
         // Clear the pending-deletion status so the region purge skips it

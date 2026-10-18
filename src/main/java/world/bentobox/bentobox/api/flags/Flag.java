@@ -147,7 +147,7 @@ public class Flag implements Comparable<Flag> {
     private final Material icon;
     private final Listener listener;
     private final Type type;
-    private boolean setting;
+    private volatile boolean setting;
     private final int defaultRank;
     private final int minimumRank;
     private final PanelItem.ClickHandler clickHandler;
@@ -214,11 +214,14 @@ public class Flag implements Comparable<Flag> {
         }
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
         if (type.equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
-            return ws.getWorldFlags().computeIfAbsent(getID(), k -> {
-                // Save config file
+            synchronized (ws) {
+                Boolean value = ws.getWorldFlags().get(getID());
+                if (value != null) return value;
+                ws.getWorldFlags().put(getID(), setting);
+                // Publish before saving: config serialization may read flags again.
                 BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
                 return setting;
-            });
+            }
         }
         return setting;
     }
@@ -230,25 +233,20 @@ public class Flag implements Comparable<Flag> {
      */
     public void setSetting(World world, boolean setting) {
         if (getType().equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
-            BentoBox.getInstance()
-            .getIWM()
-            .getWorldSettings(world)
-            .getWorldFlags()
-            .put(getID(), setting);
+            WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+            synchronized (ws) {
+            ws.getWorldFlags().put(getID(), setting);
 
             // Subflag support
             if (hasSubflags()) {
                 subflags.stream()
                 .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
-                .forEach(subflag -> BentoBox.getInstance()
-                        .getIWM()
-                        .getWorldSettings(world)
-                        .getWorldFlags()
-                        .put(subflag.getID(), setting));
+                .forEach(subflag -> ws.getWorldFlags().put(subflag.getID(), setting));
             }
 
             // Save config file
             BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
+            }
         }
     }
 
@@ -273,9 +271,11 @@ public class Flag implements Comparable<Flag> {
             BentoBox.getInstance().logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
             return;
         }
-        BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), defaultSetting);
-        // Save config file
-        BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
+        WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+        synchronized (ws) {
+            ws.getWorldFlags().put(getID(), defaultSetting);
+            BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
+        }
     }
 
     /**

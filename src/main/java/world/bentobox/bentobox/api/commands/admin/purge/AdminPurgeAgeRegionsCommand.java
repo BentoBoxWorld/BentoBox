@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.event.Listener;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -77,10 +78,10 @@ public class AdminPurgeAgeRegionsCommand extends CompositeCommand implements Lis
 
         running = true;
         final int finalDays = days;
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+        TaskScheduler.async(getPlugin(), () -> {
             try {
                 int count = getPlugin().getPurgeRegionsService().ageRegions(getWorld(), finalDays);
-                Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                TaskScheduler.user(getPlugin(), user, () -> {
                     user.sendMessage("commands.admin.purge.age-regions.done",
                             TextVariables.NUMBER, String.valueOf(count));
                     getPlugin().log("Age-regions: " + count + " region file(s) aged by "

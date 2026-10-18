@@ -52,6 +52,38 @@ class IslandTeamTrustCommandTest extends RanksManagerTestSetup {
     @Mock
     private Settings s;
 
+    @Test
+    void testInterleavedTrustKeepsOriginalTarget() {
+        UUID otherId = UUID.randomUUID();
+        when(pm.getUUID("first")).thenReturn(notUUID);
+        when(pm.getUUID("second")).thenReturn(otherId);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getMaxMembers(island, RanksManager.TRUSTED_RANK)).thenReturn(10);
+        var command = new IslandTeamTrustCommand(ic);
+        var first = Collections.singletonList("first");
+        assertTrue(command.canExecute(user, "trust", first));
+        assertTrue(command.canExecute(user, "trust", Collections.singletonList("second")));
+        assertTrue(command.execute(user, "trust", first));
+        var target = org.mockito.ArgumentCaptor.forClass(User.class);
+        verify(island).setRank(target.capture(), eq(RanksManager.TRUSTED_RANK));
+        org.junit.jupiter.api.Assertions.assertEquals(notUUID, target.getValue().getUniqueId());
+    }
+
+    @Test
+    void testTrustRechecksRankBeforeGrantingAccess() {
+        when(pm.getUUID("target")).thenReturn(notUUID);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
+        var command = new IslandTeamTrustCommand(ic);
+        var args = Collections.singletonList("target");
+        assertTrue(command.canExecute(user, "trust", args));
+        when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
+        assertFalse(command.execute(user, "trust", args));
+        verify(island, never()).setRank(any(User.class), anyInt());
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -29,6 +30,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import world.bentobox.bentobox.util.TaskScheduler;
+import world.bentobox.bentobox.util.Util;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -65,7 +68,8 @@ public class BlueprintClipboard {
     private @Nullable Vector origin;
     private BukkitTask copyTask;
     private int count;
-    private boolean copying;
+    private volatile boolean copying;
+    private CompletableFuture<Void> copyBatch = CompletableFuture.completedFuture(null);
     private int index;
     private int lastPercentage;
     private final Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
@@ -105,7 +109,7 @@ public class BlueprintClipboard {
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
-    public boolean copy(User user, boolean copyAir, boolean copyBiome, boolean noWater) {
+    public synchronized boolean copy(User user, boolean copyAir, boolean copyBiome, boolean noWater) {
         if (copying) {
             user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
@@ -140,14 +144,18 @@ public class BlueprintClipboard {
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,
+        copying = true;
+        TaskScheduler.async(plugin,
                 () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome, noWater));
         return true;
     }
 
     private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir,
             boolean copyBiome, boolean noWater) {
-        copying = false;
+        if (TaskScheduler.isFolia()) {
+            copyByRegion(world, user, vectorsToCopy, Math.max(1, speed), copyAir, copyBiome, noWater);
+            return;
+        }
         // FancyNpcs
         // Add all the citizens for the area in one go. This is pretty fast.
         npc.ifPresent(fancyNpcsHook -> bpEntities.putAll(fancyNpcsHook.getNpcsInArea(world, vectorsToCopy, origin)));
@@ -155,11 +163,7 @@ public class BlueprintClipboard {
         znpc.ifPresent(znpCsPlusHook -> bpEntities.putAll(znpCsPlusHook.getNpcsInArea(world, vectorsToCopy, origin)));
 
         // Repeating copy task
-        copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (copying) {
-                return;
-            }
-            copying = true;
+        copyTask = TaskScheduler.globalTimer(plugin, () -> {
             NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
             // Index the world's entities by block position once per tick instead of scanning
             // the full entity list for every copied block
@@ -190,9 +194,62 @@ public class BlueprintClipboard {
                 blueprint.setEntities(bpEntities);
                 user.sendMessage("general.success");
                 user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+                copying = false;
             }
-            copying = false;
         }, 0L, 1L);
+    }
+
+    private void copyByRegion(World world, User user, List<Vector> vectors, int speed, boolean copyAir,
+            boolean copyBiome, boolean noWater) {
+        copyBatch = CompletableFuture.completedFuture(null);
+        copyTask = TaskScheduler.globalTimer(plugin, () -> {
+            if (!copyBatch.isDone()) return;
+            try {
+                copyBatch.join();
+                if (index >= vectors.size()) {
+                    copyTask.cancel();
+                    blueprint.setAttached(bpAttachable);
+                    blueprint.setBlocks(bpBlocks);
+                    blueprint.setEntities(bpEntities);
+                    copying = false;
+                    TaskScheduler.user(plugin, user, () -> {
+                        user.sendMessage("general.success");
+                        user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+                    });
+                    return;
+                }
+                var batches = vectors.subList(index, Math.min(index + speed, vectors.size())).stream()
+                        .collect(Collectors.groupingBy(v -> new Vector(v.getBlockX() >> 4, 0, v.getBlockZ() >> 4),
+                                LinkedHashMap::new, Collectors.toList()));
+                for (var batch : batches.entrySet()) {
+                    Vector chunkKey = batch.getKey();
+                    List<Vector> positions = batch.getValue();
+                    copyBatch = copyBatch.thenCompose(unused -> Util.getChunkAtAsync(world, chunkKey.getBlockX(),
+                            chunkKey.getBlockZ()).thenCompose(chunk -> TaskScheduler.regionFuture(plugin,
+                                    new Location(world, chunkKey.getBlockX() << 4, 0, chunkKey.getBlockZ() << 4), () -> {
+                        NamespacedKey hidden = new NamespacedKey(plugin, "associatedDisplayEntity");
+                        Map<Vector, List<Entity>> entities = Arrays.stream(chunk.getEntities())
+                                .filter(Bukkit::isOwnedByCurrentRegion)
+                                .filter(e -> !(e instanceof Player))
+                                .filter(e -> !e.getPersistentDataContainer().has(hidden, PersistentDataType.STRING))
+                                .collect(Collectors.groupingBy(e -> new Vector(e.getLocation().getBlockX(),
+                                        e.getLocation().getBlockY(), e.getLocation().getBlockZ())));
+                        npc.ifPresent(hook -> bpEntities.putAll(hook.getNpcsInArea(world, positions, origin)));
+                        znpc.ifPresent(hook -> bpEntities.putAll(hook.getNpcsInArea(world, positions, origin)));
+                        for (Vector v : positions) {
+                            if (copyBlock(v.toLocation(world), copyAir, copyBiome, entities.getOrDefault(v, List.of()), noWater)) count++;
+                        }
+                    })));
+                }
+                index = Math.min(index + speed, vectors.size());
+            } catch (Exception error) {
+                copyTask.cancel();
+                copying = false;
+                blueprint = null;
+                plugin.logStacktrace(error);
+                TaskScheduler.user(plugin, user, () -> user.sendMessage("general.errors.general"));
+            }
+        }, 1, 1);
     }
 
     /**
@@ -424,6 +481,10 @@ public class BlueprintClipboard {
      */
     public @Nullable Blueprint getBlueprint() {
         return blueprint;
+    }
+
+    public boolean isCopying() {
+        return copying;
     }
 
     /**

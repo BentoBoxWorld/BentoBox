@@ -1,11 +1,13 @@
 package world.bentobox.bentobox.listeners.flags.settings;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
@@ -41,8 +43,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class PVPListener extends FlagListener {
 
-    private final Map<Integer, UUID> thrownPotions = new HashMap<>();
-    private final Map<Entity, Player> firedFireworks = new WeakHashMap<>();
+    private final Map<Integer, UUID> thrownPotions = new ConcurrentHashMap<>();
+    private final Map<Entity, Player> firedFireworks = Collections.synchronizedMap(new WeakHashMap<>());
 
     /**
      * This method protects players from PVP if it is not allowed and from
@@ -213,8 +215,9 @@ public class PVPListener extends FlagListener {
         // Try to get the shooter
         if (e.getEntity().getShooter() instanceof Player player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             // Store it and remove it when the effect is gone (Entity ID, UUID of throwing player)
-            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), player.getUniqueId());
-            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
+            int entityId = e.getAreaEffectCloud().getEntityId();
+            thrownPotions.put(entityId, player.getUniqueId());
+            TaskScheduler.globalLater(getPlugin(), () -> thrownPotions.remove(entityId), e.getAreaEffectCloud().getDuration());
         }
     }
 

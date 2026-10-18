@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -31,6 +33,8 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
@@ -185,7 +189,7 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link AdminTeamSetownerCommand#changeOwner(User)}
+     * Test method for {@link AdminTeamSetownerCommand#changeOwner(User, UUID, world.bentobox.bentobox.database.objects.Island, UUID)}
      */
     @Test
     void testChangeOwner() {
@@ -194,13 +198,13 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
 
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        itl.changeOwner(user);
+        itl.changeOwner(user, uuid, island, notUUID);
         // Add other verifications
         verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
     }
 
     /**
-     * Test method for {@link AdminTeamSetownerCommand#changeOwner(User)}
+     * Test method for {@link AdminTeamSetownerCommand#changeOwner(User, UUID, world.bentobox.bentobox.database.objects.Island, UUID)}
      */
     @Test
     void testChangeOwnerNoOwner() {
@@ -209,7 +213,7 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         when(Util.getUUID("tastybento")).thenReturn(uuid);
 
         assertTrue(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        itl.changeOwner(user);
+        itl.changeOwner(user, uuid, island, null);
         // Add other verifications
         verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, "tastybento");
     }
@@ -224,6 +228,7 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         when(Util.getUUID("victim")).thenReturn(notUUID);
         when(im.getIsland(any(), eq(notUUID))).thenReturn(island);
         when(island.getOwner()).thenReturn(notUUID);
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
 
         List<String> args = List.of("tastybento", "victim");
         assertTrue(itl.canExecute(user, itl.getLabel(), args));
@@ -297,5 +302,65 @@ class AdminTeamSetownerCommandTest extends CommonTestSetup {
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("commands.admin.team.setowner.errors.at-max", TextVariables.NAME, "tastybento",
                 TextVariables.NUMBER, "1", "[max]", "1");
+    }
+
+    @Test
+    void interleavedConfirmationsKeepTheirIslandAndRecipient() {
+        itl = Mockito.spy(itl);
+        List<Runnable> pending = new ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(2));
+            return null;
+        }).when(itl).askConfirmation(any(), anyString(), any(Runnable.class));
+        Island other = mock(Island.class);
+        org.bukkit.Location otherLocation = new org.bukkit.Location(world, 512, 64, 512);
+        UUID otherOwner = UUID.randomUUID();
+        org.bukkit.entity.Player recipient = mock(org.bukkit.entity.Player.class);
+        when(recipient.getUniqueId()).thenReturn(notUUID);
+        User.getInstance(recipient);
+        when(other.getCenter()).thenReturn(otherLocation);
+        when(other.getOwner()).thenReturn(otherOwner);
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getIslandAt(otherLocation)).thenReturn(Optional.of(other));
+        when(island.getOwner()).thenReturn(notUUID);
+        when(Util.getUUID("first")).thenReturn(uuid);
+        when(Util.getUUID("second")).thenReturn(notUUID);
+        UUID firstOwner = UUID.randomUUID();
+        when(island.getOwner()).thenReturn(firstOwner);
+        when(Util.getUUID("owner-one")).thenReturn(firstOwner);
+        when(Util.getUUID("owner-two")).thenReturn(otherOwner);
+        when(im.getIsland(any(), eq(firstOwner))).thenReturn(island);
+        when(im.getIsland(any(), eq(otherOwner))).thenReturn(other);
+        assertTrue(itl.canExecute(user, "", List.of("first", "owner-one")));
+        assertTrue(itl.canExecute(user, "", List.of("second", "owner-two")),
+                () -> Mockito.mockingDetails(user).printInvocations());
+        assertTrue(itl.execute(user, "", List.of("first", "owner-one")));
+        assertTrue(itl.execute(user, "", List.of("second", "owner-two")));
+        pending.getFirst().run();
+        verify(im).setOwner(user, uuid, island, RanksManager.MEMBER_RANK);
+        verify(im, never()).setOwner(any(), any(), eq(other), Mockito.anyInt());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"owner", "island", "limit"})
+    void delayedConfirmationRechecksOwnershipIslandAndRecipientLimit(String change) {
+        itl = Mockito.spy(itl);
+        List<Runnable> pending = new ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(2));
+            return null;
+        }).when(itl).askConfirmation(any(), anyString(), any(Runnable.class));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.getOwner()).thenReturn(notUUID);
+        when(Util.getUUID("tastybento")).thenReturn(uuid);
+        assertTrue(itl.execute(user, "", List.of("tastybento")));
+        switch (change) {
+        case "owner" -> when(island.getOwner()).thenReturn(UUID.randomUUID());
+        case "island" -> when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        case "limit" -> when(im.getNumberOfConcurrentIslands(eq(uuid), any())).thenReturn(1);
+        default -> throw new AssertionError(change);
+        }
+        pending.getFirst().run();
+        verify(im, never()).setOwner(any(), any(), any(), Mockito.anyInt());
     }
 }

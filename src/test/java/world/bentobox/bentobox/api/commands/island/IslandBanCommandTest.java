@@ -45,6 +45,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -268,6 +269,33 @@ class IslandBanCommandTest extends RanksManagerTestSetup {
         verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME,
                 mockPlayer.getName(), TextVariables.DISPLAY_NAME, mockPlayer.getDisplayName());
         verify(mockPlayer, never()).sendMessage("commands.island.ban.owner-banned-you");
+    }
+
+    @Test
+    void testInterleavedValidationKeepsRequestedBanTarget() {
+        UUID first = mockPlayer.getUniqueId();
+        UUID second = UUID.randomUUID();
+        when(pm.getUUID("first")).thenReturn(first);
+        when(pm.getUUID("second")).thenReturn(second);
+        when(island.ban(any(), any())).thenReturn(true);
+        assertTrue(ibc.canExecute(user, "ban", List.of("first")));
+        assertTrue(ibc.canExecute(user, "ban", List.of("second")));
+        assertTrue(ibc.execute(user, "ban", List.of("first")));
+        verify(island).ban(uuid, first);
+        verify(island, never()).ban(uuid, second);
+    }
+
+    @Test
+    void testFoliaBanQueuesTargetMovement() {
+        when(island.ban(any(), any())).thenReturn(true);
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any()))
+                    .thenReturn(new java.util.concurrent.CompletableFuture<>());
+            assertTrue(ibc.execute(user, "ban", List.of("bill")));
+            tasks.verify(() -> TaskScheduler.userFuture(any(), any(), any()));
+            verify(im, never()).homeTeleportAsync(any(), any(Player.class));
+        }
     }
 
     @Test

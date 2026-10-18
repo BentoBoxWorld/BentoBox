@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -59,6 +59,7 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
@@ -74,6 +75,7 @@ public class IslandsManager {
 
     private final BentoBox plugin;
     private final Random rand = new Random();
+    private BukkitTask saveTask;
 
     private final Map<World, Island> spawns = new ConcurrentHashMap<>();
 
@@ -175,11 +177,13 @@ public class IslandsManager {
      */
     public CompletableFuture<Boolean> isSafeLocationAsync(@NonNull Location l) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-        Util.getChunkAtAsync(l).thenRun(() -> {
+        Util.getChunkAtAsync(l).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, l, () -> {
             Block ground = l.getBlock().getRelative(BlockFace.DOWN);
             Block space1 = l.getBlock();
             Block space2 = l.getBlock().getRelative(BlockFace.UP);
             result.complete(checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType()));
+        })).whenComplete((ignored, error) -> {
+            if (error != null) result.completeExceptionally(error);
         });
         return result;
     }
@@ -778,7 +782,7 @@ public class IslandsManager {
         Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);
         Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
-            Util.getChunkAtAsync(l).thenRun(() -> {
+            Util.getChunkAtAsync(l).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, l, () -> {
                 // Check if it is safe
                 if (isSafeLocation(l)) {
                     result.complete(l);
@@ -794,6 +798,9 @@ public class IslandsManager {
                 }
                 // Try island
                 tryIsland(result, islandLoc, user, name);
+            })).exceptionally(error -> {
+                result.completeExceptionally(error);
+                return null;
             });
             return result;
         }
@@ -803,7 +810,7 @@ public class IslandsManager {
     }
 
     private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String name) {
-        Util.getChunkAtAsync(islandLoc).thenRun(() -> {
+        Util.getChunkAtAsync(islandLoc).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, islandLoc, () -> {
             World w = islandLoc.getWorld();
             if (isSafeLocation(islandLoc)) {
                 setHomeLocation(user, islandLoc, name);
@@ -836,6 +843,9 @@ public class IslandsManager {
                 }
             }
             result.complete(null);
+        })).exceptionally(error -> {
+            result.completeExceptionally(error);
+            return null;
         });
 
     }
@@ -958,6 +968,8 @@ public class IslandsManager {
      */
     @Nullable
     public Location getSafeRespawnLocation(@NonNull World world, @NonNull UUID uuid) {
+        // Respawn events cannot wait for another region; callers already provide an async fallback.
+        if (TaskScheduler.isFolia()) return null;
         Location home = getHomeLocation(world, uuid);
         if (home != null) {
             if (isSafeLocation(home)) {
@@ -1200,35 +1212,43 @@ public class IslandsManager {
             boolean newIsland) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         User user = User.getInstance(player);
-        user.sendMessage("commands.island.go.teleport");
-        goingHome.add(user.getUniqueId());
-        
-        readyPlayer(player);
-        this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
-            Island island = getIsland(world, user);
-            if (home == null) {
-                // Try to fix this teleport location and teleport the player if possible
-                new SafeSpotTeleport.Builder(plugin).entity(player).island(island).homeName(name)
-                        .thenRun(() -> teleported(world, user, name, newIsland, island))
-                        .ifFail(() -> {
-                            plugin.logError(user.getName() + " could not be teleported to home because a safe spot could not be found on island " + island.getCenter());
-                            goingHome.remove(user.getUniqueId());
-                            }).buildFuture().thenAccept(result::complete);
-                return;
+        Runnable begin = () -> {
+            try {
+                user.sendMessage("commands.island.go.teleport");
+                goingHome.add(user.getUniqueId());
+                readyPlayer(player);
+                getAsyncSafeHomeLocation(world, user, name).thenCompose(home -> {
+                    Island island = getIsland(world, user);
+                    CompletableFuture<Boolean> teleport = home == null
+                            ? new SafeSpotTeleport.Builder(plugin).entity(player).island(island).homeName(name)
+                                    .ifFail(() -> plugin.logError(user.getName()
+                                            + " could not be teleported to home because a safe spot could not be found"))
+                                    .buildFuture()
+                            : Util.teleportAsync(player, home);
+                    return teleport.thenCompose(success -> {
+                        if (!Boolean.TRUE.equals(success)) return CompletableFuture.completedFuture(false);
+                        if (TaskScheduler.isFolia()) {
+                            return TaskScheduler.userFuture(plugin, user,
+                                    () -> teleported(world, user, name, newIsland, island)).thenApply(done -> true);
+                        }
+                        teleported(world, user, name, newIsland, island);
+                        return CompletableFuture.completedFuture(true);
+                    });
+                }).whenComplete((success, error) -> {
+                    if (error != null) result.completeExceptionally(error);
+                    else result.complete(success);
+                });
+            } catch (RuntimeException error) {
+                result.completeExceptionally(error);
             }
-            Util.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
-                // Only run the commands if the player is successfully teleported
-                if (b != null && b) {
-                    teleported(world, user, name, newIsland, island);
-                    result.complete(true);
-                } else {
-                    // Remove from mid-teleport set
-                    goingHome.remove(user.getUniqueId());
-                    result.complete(false);
-                }
+        };
+        if (TaskScheduler.isFolia()) {
+            TaskScheduler.userFuture(plugin, user, begin).exceptionally(error -> {
+                result.completeExceptionally(error);
+                return null;
             });
-        });
-        return result;
+        } else begin.run();
+        return result.whenComplete((success, error) -> goingHome.remove(user.getUniqueId()));
     }
 
     /**
@@ -1571,9 +1591,10 @@ public class IslandsManager {
      */
     public void removePlayersFromIsland(Island island) {
         World w = island.getWorld();
-        Bukkit.getOnlinePlayers().stream()
-                .filter(p -> p.getGameMode().equals(plugin.getIWM().getDefaultGameMode(island.getWorld())))
-                .filter(p -> island.onIsland(p.getLocation())).forEach(p -> {
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            Runnable remove = () -> {
+                if (!p.getGameMode().equals(plugin.getIWM().getDefaultGameMode(w))
+                        || !island.onIsland(p.getLocation())) return;
                     // Teleport island players to their island home
                     if (!island.inTeam(p.getUniqueId())
                             && (hasIsland(w, p.getUniqueId()) || inTeam(w, p.getUniqueId()))) {
@@ -1585,7 +1606,14 @@ public class IslandsManager {
                                         () -> plugin.logWarning("Spawn exists but its location is null!"));
 
                     }
+            };
+            if (TaskScheduler.isFolia()) {
+                TaskScheduler.userFuture(plugin, User.getInstance(p), remove).exceptionally(error -> {
+                    plugin.logStacktrace(error);
+                    return null;
                 });
+            } else remove.run();
+        });
     }
 
     public boolean isSaveTaskRunning() {
@@ -1632,20 +1660,17 @@ public class IslandsManager {
     private void saveAllScheduled() {
         isSaveTaskRunning = true;
         Queue<Island> queue = new LinkedList<>(islandCache.getCachedIslands());
-        new BukkitRunnable() {
-            @Override
-            public void run() {
+        saveTask = TaskScheduler.globalTimer(plugin, () -> {
                 for (int i = 0; i < plugin.getSettings().getMaxSavedIslandsPerTick(); i++) {
                     Island island = queue.poll();
                     if (island == null) {
                         isSaveTaskRunning = false;
-                        cancel();
+                        saveTask.cancel();
                         return;
                     }
                     trySaveIsland(island);
                 }
-            }
-        }.runTaskTimer(plugin, 0, 1);
+        }, 0, 1);
     }
 
     /**
@@ -1774,6 +1799,10 @@ public class IslandsManager {
      * @param loc - location to clear
      */
     public void clearArea(Location loc) {
+        if (TaskScheduler.isFolia() && !Bukkit.isOwnedByCurrentRegion(loc)) {
+            TaskScheduler.region(plugin, loc, () -> clearArea(loc));
+            return;
+        }
         if (!plugin.getIWM().inWorld(loc))
             return;
         loc.getWorld()
@@ -1818,7 +1847,7 @@ public class IslandsManager {
      * @param uniqueId - UUID of player
      */
     public void clearRank(int rank, UUID uniqueId) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> clearRankSync(rank, uniqueId));
+        TaskScheduler.async(plugin, () -> clearRankSync(rank, uniqueId));
     }
 
     void clearRankSync(int rank, UUID uniqueId) {
@@ -1968,14 +1997,22 @@ public class IslandsManager {
         CompletableFuture<Void> result = new CompletableFuture<>();
         isSafeLocationAsync(loc).thenAccept(safe -> {
             if (Boolean.TRUE.equals(safe)) {
-                Util.teleportAsync(player, loc).thenAccept(b -> {
-                    if (b != null && b) {
+                Util.teleportAsync(player, loc).thenCompose(b -> {
+                    if (!Boolean.TRUE.equals(b)) {
+                        return CompletableFuture.failedFuture(new IllegalStateException("Home teleport was rejected"));
+                    }
+                    if (!TaskScheduler.isFolia()) {
                         teleported(island.getWorld(), user, "", newIsland, island);
                         this.setPrimaryIsland(user.getUniqueId(), island);
-                    } else {
-                        goingHome.remove(user.getUniqueId());
+                        return CompletableFuture.completedFuture(null);
                     }
-                    result.complete(null);
+                    return TaskScheduler.userFuture(plugin, user, () -> {
+                        teleported(island.getWorld(), user, "", newIsland, island);
+                        this.setPrimaryIsland(user.getUniqueId(), island);
+                    });
+                }).whenComplete((ignored, error) -> {
+                    if (error != null) result.completeExceptionally(error);
+                    else result.complete(null);
                 });
             } else {
                 // Location is not safe, use SafeSpotTeleport to find a safe spot
@@ -1989,15 +2026,20 @@ public class IslandsManager {
                                     + " could not be teleported to home on island "
                                     + island.getCenter());
                             goingHome.remove(user.getUniqueId());
-                        }).buildFuture().thenAccept(b -> result.complete(null));
+                        }).buildFuture().whenComplete((success, error) -> {
+                            if (error != null) result.completeExceptionally(error);
+                            else if (!Boolean.TRUE.equals(success)) {
+                                result.completeExceptionally(new IllegalStateException("No safe home teleport could be completed"));
+                            } else result.complete(null);
+                        });
             }
         }).exceptionally(e -> {
             plugin.logError("Error checking safe location for " + user.getName() + ": " + e.getMessage());
             goingHome.remove(user.getUniqueId());
-            result.complete(null);
+            result.completeExceptionally(e);
             return null;
         });
-        return result;
+        return result.whenComplete((ignored, error) -> goingHome.remove(user.getUniqueId()));
     }
 
 }

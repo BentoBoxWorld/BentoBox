@@ -2,7 +2,6 @@ package world.bentobox.bentobox.managers.island;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +49,7 @@ public class IslandGrid {
      * @param island - island to add
      * @return true if successfully added, false if there is an overlap with a different island
      */
-    public boolean addToGrid(Island island) {
+    public synchronized boolean addToGrid(Island island) {
         int minX = island.getMinX();
         int minZ = island.getMinZ();
         int range = island.getRange();
@@ -115,7 +114,7 @@ public class IslandGrid {
      * @param island - the island to remove
      * @return true if island existed and was deleted, false if there was nothing to delete
      */
-    public boolean removeFromGrid(Island island) {
+    public synchronized boolean removeFromGrid(Island island) {
         IslandData data = islandById.remove(island.getUniqueId());
         if (data == null) {
             return false;
@@ -176,7 +175,7 @@ public class IslandGrid {
      * @param z coord
      * @return Unique Island ID string, or null if there is no island here.
      */
-    public @Nullable String getIslandStringAt(int x, int z) {
+    public synchronized @Nullable String getIslandStringAt(int x, int z) {
         long cellKey = packCellKey(Math.floorDiv(x, CELL_SIZE), Math.floorDiv(z, CELL_SIZE));
         Set<String> ids = cellMap.get(cellKey);
         if (ids == null) {
@@ -196,16 +195,16 @@ public class IslandGrid {
     /**
      * @return number of islands stored in the grid
      */
-    public long getSize() {
+    public synchronized long getSize() {
         return islandById.size();
     }
 
     /**
-     * Returns an unmodifiable view of all islands in the grid.
+     * Returns an unmodifiable snapshot of all islands in the grid.
      * @return all island data entries
      */
-    public Collection<IslandData> getAllIslands() {
-        return Collections.unmodifiableCollection(islandById.values());
+    public synchronized Collection<IslandData> getAllIslands() {
+        return List.copyOf(islandById.values());
     }
 
     /**
@@ -218,7 +217,7 @@ public class IslandGrid {
      * @param maxZ maximum Z of the query rectangle (inclusive)
      * @return collection of island data entries overlapping the rectangle
      */
-    public Collection<IslandData> getIslandsInBounds(int minX, int minZ, int maxX, int maxZ) {
+    public synchronized Collection<IslandData> getIslandsInBounds(int minX, int minZ, int maxX, int maxZ) {
         // Use maxX+1 and maxZ+1 for cell coverage since maxX/maxZ are inclusive
         List<Long> cells = getCoveredCells(minX, minZ, maxX + 1, maxZ + 1);
         Set<String> seen = new HashSet<>();

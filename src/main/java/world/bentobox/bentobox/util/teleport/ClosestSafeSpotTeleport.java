@@ -37,6 +37,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 
 public class ClosestSafeSpotTeleport
@@ -166,7 +167,8 @@ public class ClosestSafeSpotTeleport
         this.cancelIfFail = builder.isCancelIfFail();
 
         // Try starting location
-        Util.getChunkAtAsync(this.location).thenRun(this::checkLocation);
+        Util.getChunkAtAsync(this.location).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, location,
+                this::checkLocation)).exceptionally(error -> { result.completeExceptionally(error); return null; });
     }
 
 
@@ -210,7 +212,7 @@ public class ClosestSafeSpotTeleport
         this.chunksToScanIterator = this.getChunksToScan().iterator();
 
         // Start a recurring task until done or cancelled
-        this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, this::gatherChunks, 0L, CHUNK_LOAD_SPEED);
+        this.task = TaskScheduler.globalTimer(this.plugin, this::gatherChunks, 0L, CHUNK_LOAD_SPEED);
     }
 
 
@@ -247,8 +249,13 @@ public class ClosestSafeSpotTeleport
         this.chunksToScanIterator.remove();
 
         // Get the chunk snapshot and scan it
-        Util.getChunkAtAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())
-                .thenApply(Chunk::getChunkSnapshot).whenCompleteAsync((snapshot, e) -> {
+        Util.getChunkSnapshotAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())
+                .whenCompleteAsync((snapshot, e) -> {
+            if (e != null) {
+                this.task.cancel();
+                this.result.completeExceptionally(e);
+                return;
+            }
             if (snapshot != null)
             {
                 // Find best spot based on collected information chunks.
@@ -394,11 +401,13 @@ public class ClosestSafeSpotTeleport
         if (this.portal && this.noPortalPosition != null)
         {
             this.teleportEntity(this.noPortalPosition);
+            return;
         }
         else if (this.entity instanceof Player player)
         {
             // Return to main thread and teleport the player
-            Bukkit.getScheduler().runTask(this.plugin, () -> returnAndTeleport(player));
+            TaskScheduler.entity(this.plugin, entity, () -> returnAndTeleport(player));
+            return;
         }
         // We do not teleport entities if position failed.
         // Fail the completion
@@ -407,8 +416,14 @@ public class ClosestSafeSpotTeleport
     }
 
     void returnAndTeleport(Player player) {
+        if (TaskScheduler.isFolia() && !Bukkit.isOwnedByCurrentRegion(location)) {
+            TaskScheduler.regionFuture(plugin, location, () -> returnAndTeleport(player))
+                    .exceptionally(error -> { result.completeExceptionally(error); return null; });
+            return;
+        }
         // Notify player
-        User.getInstance(this.entity).notify("general.errors.no-safe-location-found");
+        TaskScheduler.entity(plugin, entity,
+                () -> User.getInstance(this.entity).notify("general.errors.no-safe-location-found"));
 
         // Check highest block
         Block highestBlock = this.world.getHighestBlockAt(this.location);
@@ -419,19 +434,19 @@ public class ClosestSafeSpotTeleport
             // Try to teleport player to the highest block.
             this.asyncTeleport(highestBlock.getLocation().add(new Vector(0.5D, 0D, 0.5D)));
         }
-        else if (!this.plugin.getIWM().inWorld(this.entity.getLocation()))
-        {
-            // Last resort
-            player.performCommand("spawn");
-        }
-        else if (!this.cancelIfFail)
-        {
-            // Create a spot for the player to be
-            switch(world.getEnvironment()) {
-            case NETHER -> this.makeAndTeleport(Material.NETHERRACK);
-            case THE_END -> this.makeAndTeleport(Material.END_STONE);
-            default -> this.makeAndTeleport(Material.COBBLESTONE);
-            }
+        else {
+            TaskScheduler.entity(plugin, entity, () -> {
+                if (!this.plugin.getIWM().inWorld(this.entity.getLocation())) {
+                    player.performCommand("spawn");
+                    result.complete(false);
+                } else if (!this.cancelIfFail) {
+                    switch(world.getEnvironment()) {
+                    case NETHER -> this.makeAndTeleport(Material.NETHERRACK);
+                    case THE_END -> this.makeAndTeleport(Material.END_STONE);
+                    default -> this.makeAndTeleport(Material.COBBLESTONE);
+                    }
+                } else result.complete(false);
+            });
         }
     }
 
@@ -443,6 +458,11 @@ public class ClosestSafeSpotTeleport
      */
     void makeAndTeleport(Material baseMaterial)
     {
+        if (TaskScheduler.isFolia() && !Bukkit.isOwnedByCurrentRegion(location)) {
+            TaskScheduler.regionFuture(plugin, location, () -> makeAndTeleport(baseMaterial))
+                    .exceptionally(error -> { result.completeExceptionally(error); return null; });
+            return;
+        }
         this.location.getBlock().getRelative(BlockFace.DOWN).setType(baseMaterial, false);
         this.location.getBlock().setType(Material.AIR, false);
         this.location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
@@ -476,7 +496,7 @@ public class ClosestSafeSpotTeleport
     void teleportEntity(final Location location)
     {
         // Return to main thread and teleport the player
-        Bukkit.getScheduler().runTask(this.plugin, () -> this.asyncTeleport(location));
+        TaskScheduler.entity(this.plugin, entity, () -> this.asyncTeleport(location));
     }
 
 
@@ -486,14 +506,17 @@ public class ClosestSafeSpotTeleport
      */
     void asyncTeleport(final Location location)
     {
-        Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(location)).thenRun(() ->
-        {
-            if (this.successRunnable != null)
+        Util.teleportAsync(Objects.requireNonNull(entity), Objects.requireNonNull(location)).whenComplete((success, error) -> {
+            if (error != null) {
+                this.result.completeExceptionally(error);
+                return;
+            }
+            if (Boolean.TRUE.equals(success) && this.successRunnable != null)
             {
-                Bukkit.getScheduler().runTask(this.plugin, this.successRunnable);
+                TaskScheduler.entity(this.plugin, entity, this.successRunnable);
             }
 
-            this.result.complete(true);
+            this.result.complete(Boolean.TRUE.equals(success));
         });
     }
 

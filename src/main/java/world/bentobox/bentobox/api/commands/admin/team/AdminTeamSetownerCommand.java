@@ -27,9 +27,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
-    private @Nullable UUID targetUUID;
-    private Island island;
-    private @Nullable UUID previousOwnerUUID;
+    private record OwnerTarget(Island island, UUID player, UUID previousOwner) { }
 
     public AdminTeamSetownerCommand(CompositeCommand parent) {
         super(parent, "setowner");
@@ -47,26 +45,31 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable OwnerTarget resolveTarget(User user, List<String> args) {
         // Syntax: <new owner> [current island owner]
         if (args.isEmpty() || args.size() > 2) {
             showHelp(this, user);
-            return false;
+            return null;
         }
 
         // Get the new owner
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
 
         // Work out which island to transfer
+        Island island;
         if (args.size() == 2) {
             // Island named by its current owner - location independent, so this works from the console
             UUID islandOwnerUUID = Util.getUUID(args.get(1));
             if (islandOwnerUUID == null) {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
-                return false;
+                return null;
             }
             island = getIslands().getIsland(getWorld(), islandOwnerUUID);
             // getIsland() returns the player's active/primary island, which may be a team island
@@ -74,26 +77,31 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
             // wrong island out from under its real owner.
             if (island == null || !islandOwnerUUID.equals(island.getOwner())) {
                 user.sendMessage("general.errors.player-has-no-island");
-                return false;
+                return null;
             }
         } else {
             // No island named - use the one the player is standing on. This requires an in-game player.
             if (!user.isPlayer()) {
                 user.sendMessage("commands.admin.team.setowner.specify-island");
-                return false;
+                return null;
             }
             Optional<Island> opIsland = getIslands().getIslandAt(user.getLocation());
             if (opIsland.isEmpty()) {
                 user.sendMessage("commands.admin.team.setowner.must-be-on-island");
-                return false;
+                return null;
             }
             island = opIsland.get();
         }
-        previousOwnerUUID = island.getOwner();
+        UUID previousOwnerUUID = island.getOwner();
         if (targetUUID.equals(previousOwnerUUID)) {
             user.sendMessage("commands.admin.team.setowner.already-owner", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
+        return canReceiveIsland(user, targetUUID, island, args.getFirst())
+                ? new OwnerTarget(island, targetUUID, previousOwnerUUID) : null;
+    }
+
+    private boolean canReceiveIsland(User user, UUID targetUUID, Island island, String name) {
         // Refuse if the recipient would exceed their concurrent-islands cap by gaining this island (#2908).
         // If the target is already a member of this island it is already counted, so discount it -
         // otherwise a member whose only island is this one is wrongly blocked at the limit (#2996).
@@ -106,7 +114,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
                 this.getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number",
                 this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
         if (num >= max) {
-            user.sendMessage("commands.admin.team.setowner.errors.at-max", TextVariables.NAME, args.getFirst(),
+            user.sendMessage("commands.admin.team.setowner.errors.at-max", TextVariables.NAME, name,
                     TextVariables.NUMBER, String.valueOf(num), "[max]", String.valueOf(max));
             return false;
         }
@@ -115,24 +123,31 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(island);
-        Objects.requireNonNull(targetUUID);
+        OwnerTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Island island = target.island();
 
         // The console (e.g. Skript automation) cannot answer a confirmation prompt, so transfer at once.
         if (!user.isPlayer()) {
-            changeOwner(user);
+            changeOwner(user, target.player(), island, target.previousOwner());
             return true;
         }
 
         this.askConfirmation(user, user.getTranslation("commands.admin.team.setowner.confirmation", TextVariables.NAME,
-                args.getFirst(), TextVariables.XYZ, Util.xyz(island.getCenter().toVector())), () -> changeOwner(user));
+                args.getFirst(), TextVariables.XYZ, Util.xyz(island.getCenter().toVector())),
+                () -> changeOwner(user, target.player(), island, target.previousOwner()));
         return true;
 
     }
 
-    protected void changeOwner(User user) {
-        assert targetUUID != null;
+    protected void changeOwner(User user, UUID targetUUID, Island island, UUID previousOwnerUUID) {
+        if (!Objects.equals(previousOwnerUUID, island.getOwner())
+                || getIslands().getIslandAt(island.getCenter()).filter(island::equals).isEmpty()) {
+            user.sendMessage("general.errors.player-has-no-island");
+            return;
+        }
         User target = User.getInstance(targetUUID);
+        if (!canReceiveIsland(user, targetUUID, island, target.getName())) return;
         // Fire event so add-ons know
         // Call the setowner event
         TeamEvent.builder().island(island).reason(TeamEvent.Reason.SETOWNER).involvedPlayer(targetUUID).admin(true)

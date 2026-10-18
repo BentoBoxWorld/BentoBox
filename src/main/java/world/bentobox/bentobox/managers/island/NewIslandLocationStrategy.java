@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers.island;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import java.util.concurrent.CompletableFuture;
 
 import world.bentobox.bentobox.api.user.User;
 
@@ -31,5 +32,9 @@ public interface NewIslandLocationStrategy {
      */
     default Location getNextLocation(World world, User user) {
         return this.getNextLocation(world);
+    }
+
+    default CompletableFuture<Location> getNextLocationAsync(World world, User user) {
+        return CompletableFuture.completedFuture(getNextLocation(world, user));
     }
 }

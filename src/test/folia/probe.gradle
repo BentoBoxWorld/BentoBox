@@ -1,0 +1,20 @@
+allprojects {
+    afterEvaluate {
+        tasks.register('compileFoliaProbe', JavaCompile) {
+            dependsOn tasks.named('classes'), tasks.named('copyLocales')
+            source = fileTree('src/test/folia') { include '**/*.java' }
+            classpath = sourceSets.main.output + sourceSets.main.compileClasspath
+            destinationDirectory = layout.buildDirectory.dir('folia-probe/classes')
+            options.encoding = 'UTF-8'
+            options.release = 25
+            javaCompiler = javaToolchains.compilerFor { languageVersion = JavaLanguageVersion.of(25) }
+        }
+        tasks.register('foliaProbeJar', Jar) {
+            dependsOn tasks.named('compileFoliaProbe')
+            archiveFileName = 'BentoBoxFoliaProbe.jar'
+            destinationDirectory = layout.buildDirectory.dir('folia-probe')
+            from tasks.named('compileFoliaProbe')
+            from('src/test/folia/plugin.yml')
+        }
+    }
+}

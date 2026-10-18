@@ -1,6 +1,6 @@
 package world.bentobox.bentobox.api.commands;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * A command type that requires players to stand still for a configurable period
@@ -50,7 +51,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      * Key: Player UUID
      * Value: DelayedCommand containing the command to run, cancellation task, and original location
      */
-    private static final Map<UUID, DelayedCommand> toBeMonitored = new HashMap<>();
+    private static final Map<UUID, DelayedCommand> toBeMonitored = new ConcurrentHashMap<>();
 
     /**
      * Monitors player movement and cancels delayed commands if the player moves.
@@ -161,7 +162,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
     public void delayCommand(User user, String message, Runnable confirmed) {
         if (getSettings().getDelayTime() < 1 || user.isOp() || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")
                 || user.hasPermission(getPermissionPrefix() + "mod.bypassdelays")) {
-            Bukkit.getScheduler().runTask(getPlugin(), confirmed);
+            TaskScheduler.user(getPlugin(), user, confirmed);
             return;
         }
         // Check for pending delays
@@ -180,9 +181,9 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         // Tell user that they need to stand still
         user.sendMessage("commands.delay.stand-still", "[seconds]", String.valueOf(getSettings().getDelayTime()));
         // Set up the run task
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            Bukkit.getScheduler().runTask(getPlugin(), toBeMonitored.get(uuid).runnable());
-            toBeMonitored.remove(uuid);
+        BukkitTask task = TaskScheduler.userLater(getPlugin(), user, () -> {
+            DelayedCommand delayed = toBeMonitored.remove(uuid);
+            if (delayed != null) TaskScheduler.user(getPlugin(), user, delayed.runnable());
         }, getPlugin().getSettings().getDelayTime() * 20L);
 
         // Add to the monitor

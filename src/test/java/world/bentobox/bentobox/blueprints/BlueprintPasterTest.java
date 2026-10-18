@@ -79,6 +79,7 @@ class BlueprintPasterTest extends CommonTestSetup {
                 .thenReturn(CompletableFuture.completedFuture(null));
 
         // Scheduler
+        mockedBukkit.when(org.bukkit.Bukkit::isPrimaryThread).thenReturn(true);
         when(sch.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(mockTask);
 
         // World

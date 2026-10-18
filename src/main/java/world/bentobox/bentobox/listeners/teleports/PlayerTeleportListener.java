@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -90,7 +91,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL))
         {
             // Schedule a time
-            Bukkit.getScheduler().runTaskLater(this.plugin, () ->
+            TaskScheduler.entityLater(this.plugin, entity, () ->
             {
                 // Check again if still in portal
                 if (this.inPortal.contains(uuid))
@@ -202,7 +203,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                 // Anchor the respawn at the island center so the player does not appear at
                 // the server spawn, then schedule SafeSpotTeleport to find a truly safe spot.
                 event.setRespawnLocation(island.getProtectionCenter());
-                Bukkit.getScheduler().runTask(this.plugin, () ->
+                TaskScheduler.entity(this.plugin, event.getPlayer(), () ->
                         new SafeSpotTeleport.Builder(this.plugin)
                                 .entity(event.getPlayer())
                                 .island(island)
@@ -234,8 +235,25 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
      *
      * @param event the player portal event.
      */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerPortalEvent(PlayerPortalEvent event) {
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL
+                && event.getFrom().getWorld() != null
+                && event.getFrom().getWorld().getEnvironment() == World.Environment.NORMAL) {
+            World overWorld = Util.getWorld(event.getFrom().getWorld());
+            World netherWorld = overWorld == null ? null : this.plugin.getIWM().getNetherWorld(overWorld);
+            if (netherWorld != null && overWorld != null && this.plugin.getIWM().inWorld(overWorld)
+                    && this.isAllowedInConfig(overWorld, World.Environment.NETHER)
+                    && this.isAllowedOnServer(World.Environment.NETHER)
+                    && !this.isIslandWorld(overWorld, World.Environment.NETHER)) {
+                event.setTo(this.calculateLocation(event.getFrom(), event.getFrom().getWorld(), netherWorld,
+                        World.Environment.NETHER, event.getCanCreatePortal()));
+                // Folia's native transfer is cancelled by FoliaPortalBridge, so the teleport has
+                // to be done here instead of leaving it to the server.
+                this.teleportToStandardNetherOrEnd(event);
+                return;
+            }
+        }
         switch (event.getCause()) {
         case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
         case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
@@ -249,6 +267,30 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         }
     }
 
+    /**
+     * Handles a portal transfer that the server will not deliver as a PlayerPortalEvent.
+     * Folia resolves portals asynchronously and never fires PlayerPortalEvent, so
+     * {@link FoliaPortalBridge} cancels the native transfer and calls this method. The event
+     * is posted on the normal event bus so protection flag listeners (e.g. PortalListener)
+     * can inspect and cancel it before BentoBox teleports the player.
+     *
+     * @param player      the player using the portal
+     * @param portalPos   the portal block the player entered
+     * @param environment the dimension the player is sent to
+     */
+    void handleFoliaPortal(Player player, Location portalPos, World.Environment environment) {
+        PlayerPortalEvent event = new PlayerPortalEvent(player,
+                portalPos,
+                null,
+                World.Environment.THE_END.equals(environment) ?
+                        PlayerTeleportEvent.TeleportCause.END_PORTAL :
+                            PlayerTeleportEvent.TeleportCause.NETHER_PORTAL,
+                0,
+                false,
+                0);
+
+        Bukkit.getPluginManager().callEvent(event);
+    }
 
     // ---------------------------------------------------------------------
     // Section: Processors
@@ -326,7 +368,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                 && event.getTo() != null
                 && World.Environment.THE_END.equals(event.getTo().getWorld().getEnvironment()))
         {
-            this.createEndPlatform(event.getTo());
+            if (!TaskScheduler.isFolia()) this.createEndPlatform(event.getTo());
         }
 
         // Check if there is an island there or not
@@ -346,10 +388,25 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             // If there is no island, then processor already created island. Nothing to do more.
             return;
         }
+        if (TaskScheduler.isFolia() && !event.isCancelled() && event.getCanCreatePortal()
+                && event.getTo() != null && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
+            event.setCancelled(true);
+            Location destination = event.getTo().clone();
+            this.createEndPlatformAsync(destination)
+                    .thenCompose(ignored -> Util.teleportAsync(event.getPlayer(), destination))
+                    .exceptionally(error -> { plugin.logStacktrace(error); return false; });
+            return;
+        }
         if (!event.isCancelled() && event.getCanCreatePortal())
         {
-            // Let the server teleport
-            return;
+            if (!TaskScheduler.isFolia())
+            {
+                // Let the server teleport
+                return;
+            }
+            // Folia: the native transfer is already cancelled (see FoliaPortalBridge) and the
+            // server can no longer build the destination portal, so fall through to the manual
+            // safe spot search below.
         }
         if (World.Environment.THE_END.equals(environment))
         {
@@ -365,7 +422,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         // It is placed outside THE_END check, as technically it could happen with the nether portal too.
 
         // If there is a portal to go to already, then the player will go there
-        Bukkit.getScheduler().runTask(this.plugin, () -> {
+        TaskScheduler.entity(this.plugin, event.getPlayer(), () -> {
             if (!event.getPlayer().getWorld().equals(toWorld))
             {
                 // Else manually teleport entity
@@ -416,6 +473,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         {
             // To Standard Nether or end
             event.setTo(spawnPoint);
+            this.teleportToStandardNetherOrEnd(event);
         }
         else
         {
@@ -427,6 +485,29 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             build();
         }
     }
+
+
+    /**
+     * Finishes a standard nether/end portal transfer on Folia. The server honours
+     * {@link PlayerPortalEvent#setTo(Location)} itself on Paper, but on Folia
+     * {@link FoliaPortalBridge} cancelled the native transfer and nothing else will do it.
+     * @param event portal event with the destination set
+     */
+    private void teleportToStandardNetherOrEnd(PlayerPortalEvent event)
+    {
+        if (!TaskScheduler.isFolia() || event.getTo() == null)
+        {
+            return;
+        }
+        Location destination = event.getTo().clone();
+        TaskScheduler.entity(this.plugin, event.getPlayer(), () ->
+                ClosestSafeSpotTeleport.builder(this.plugin).
+                entity(event.getPlayer()).
+                location(destination).
+                portal().
+                build());
+    }
+
 
 
     /**
@@ -482,6 +563,11 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             location(event.getTo()).
             portal().
             build();
+        }
+        else
+        {
+            // Folia cannot use the event destination, so BentoBox teleports the player itself.
+            this.teleportToStandardNetherOrEnd(event);
         }
     }
 

@@ -28,6 +28,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.hooks.WorldManagementHook;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles registration and management of worlds
@@ -78,7 +79,7 @@ public class IslandWorldManager {
                 if (Bukkit.isPrimaryThread()) {
                     runTask(worldManagementHook, world, islandWorld, reg);
                 } else {
-                    Bukkit.getScheduler().runTask(plugin, () -> runTask(worldManagementHook, world, islandWorld, reg));
+                    TaskScheduler.global(plugin, () -> runTask(worldManagementHook, world, islandWorld, reg));
                 }
             }
         }
@@ -200,7 +201,7 @@ public class IslandWorldManager {
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
                 .forEach(f -> settings.getDefaultIslandSettingNames().putIfAbsent(f.getID(), f.getDefaultRank()));
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        TaskScheduler.global(plugin, () -> {
             // Set world difficulty
             Difficulty diff = settings.getDifficulty();
             if (diff == null) {

@@ -2,12 +2,10 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.conversations.ConversationFactory;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -43,12 +41,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandRenamehomeCommand extends ConfirmableCommand {
 
-    /**
-     * Cached island instance to avoid multiple database lookups.
-     * Set during canExecute and used in execute.
-     */
-    private @Nullable Island island;
-
     public IslandRenamehomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "renamehome");
     }
@@ -76,15 +68,19 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
      */
     @Override
     public boolean canExecute(@NonNull User user, String label, List<String> args) {
+        return findIsland(user, args) != null;
+    }
+
+    private Island findIsland(User user, List<String> args) {
         if (args.isEmpty()) {
             this.showHelp(this, user);
-            return false;
+            return null;
         }
-        island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getIsland(getWorld(), user);
         // Check island
         if (island == null) {
             user.sendMessage("general.errors.no-island");
-            return false;
+            return null;
         }
         // Check if the name is known
         if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
@@ -95,18 +91,18 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
                             + "[run_command: /" + getTopLabel() + " go " + s + "]"
                             + "[hover: " + user.getTranslation("commands.island.sethome.click-to-teleport") + "]"));
             this.showHelp(this, user);
-            return false;
+            return null;
         }
 
         // check command permission
-        int rank = Objects.requireNonNull(island).getRank(user);
+        int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
                     user.getTranslation(RanksManager.getInstance().getRank(rank)));
-            return false;
+            return null;
         }
 
-        return true;
+        return island;
     }
 
     /**
@@ -122,12 +118,13 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        assert island != null;
+        Island island = findIsland(user, args);
+        if (island == null) return false;
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)
         .withLocalEcho(false)
         .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args)))
+        .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args), getUsage()))
         .buildConversation(user.getPlayer()).begin();
         return true;
     }

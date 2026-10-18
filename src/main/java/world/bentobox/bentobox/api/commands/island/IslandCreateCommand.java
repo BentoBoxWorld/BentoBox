@@ -14,6 +14,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles the island creation command (/island create).
@@ -70,6 +71,10 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (NewIsland.isCreating(user)) {
+            user.sendMessage("commands.island.create.creating-island");
+            return false;
+        }
         // Check if the island is reserved
         @Nullable
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
@@ -200,18 +205,43 @@ public class IslandCreateCommand extends CompositeCommand {
         }
         user.sendMessage("commands.island.create.creating-island");
         try {
-            NewIsland.builder().player(user).addon(getAddon()).reason(Reason.CREATE).name(name).build();
+            var builder = NewIsland.builder().player(user).addon(getAddon()).reason(Reason.CREATE).name(name);
+            if (TaskScheduler.isFolia()) {
+                var charge = BlueprintCostHelper.captureCharge(getPlugin(), getAddon(), user, name, getWorld());
+                builder.afterBuild(island -> TaskScheduler.globalFuture(getPlugin(), () -> {
+                        applyCreationCooldown(user);
+                        if (!charge.getAsBoolean()) {
+                            getPlugin().logError("Island " + island.getUniqueId() + " was created but blueprint payment failed for "
+                                    + user.getUniqueId());
+                        }
+                    })).buildAsync().exceptionally(error -> {
+                    getPlugin().logError("Could not complete island creation or settlement for " + user.getUniqueId() + ": " + error);
+                    TaskScheduler.user(getPlugin(), user, () -> user.sendMessage("commands.island.create.cannot-create-island"));
+                    return null;
+                });
+                return true;
+            } else if (builder.build() == null) {
+                return false;
+            }
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage(e.getMessage());
             return false;
         }
-        checkCost(user, name, true); // Charge after success
+        return finishCreation(user, name);
+    }
+
+    private boolean finishCreation(User user, String name) {
+        boolean paid = checkCost(user, name, true);
+        applyCreationCooldown(user);
+        return paid;
+    }
+
+    private void applyCreationCooldown(User user) {
         if (getSettings().isResetCooldownOnCreate()) {
             getParent().getSubCommand("reset").ifPresent(
                     resetCommand -> resetCommand.setCooldown(user.getUniqueId(), getSettings().getResetCooldown()));
         }
-        return true;
     }
 
     private boolean checkCost(User user, String name, boolean charge) {

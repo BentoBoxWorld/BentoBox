@@ -211,6 +211,7 @@ class CommandRanksPanelTest extends RanksManagerTestSetup {
         Path panels = Files.createDirectories(addonFolder.resolve("panels"));
         String yml = Files.readString(RESOURCES.resolve("panels").resolve("command_ranks_panel.yml"),
                 StandardCharsets.UTF_8)
+                .replace("\r\n", "\n")
                 .replace("title: protection.flags.COMMAND_RANKS.name", "title: custom.title")
                 .replace("    command_button:\n      data:",
                         "    command_button:\n      icon: PAPER\n      title: 'custom [name]'\n      data:");

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -264,6 +265,6 @@ public class DialogBuilder {
             return;
         }
         User user = User.getInstance(player);
-        Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> onClick.accept(user));
+                        TaskScheduler.user(BentoBox.getInstance(), user, () -> onClick.accept(user));
     }
 }

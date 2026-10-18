@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.admin;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -25,11 +26,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandReservedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -39,6 +42,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -289,6 +293,165 @@ class AdminRegisterCommandTest extends CommonTestSetup {
         verify(block).setType(Material.BEDROCK);
         verify(user).sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ, "0,0,0", TextVariables.NAME,
                 "tastybento");
+    }
+
+    @Test
+    void interleavedRegistrationsKeepPlayerAndIslandTogether() {
+        Island other = mock(Island.class);
+        User otherAdmin = mock(User.class);
+        Location otherLocation = mock(Location.class);
+        when(otherAdmin.getWorld()).thenReturn(world);
+        when(otherAdmin.getLocation()).thenReturn(otherLocation);
+        when(other.getCenter()).thenReturn(otherLocation);
+        when(otherLocation.toVector()).thenReturn(new Vector(512, 64, 512));
+        when(location.toVector()).thenReturn(new Vector(0, 64, 0));
+        mockedUtil.when(() -> Util.getUUID("first")).thenReturn(uuid);
+        mockedUtil.when(() -> Util.getUUID("second")).thenReturn(notUUID);
+        when(island.getOwner()).thenReturn(null);
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        when(im.getIslandAt(otherLocation)).thenReturn(Optional.of(other));
+        assertTrue(itl.canExecute(user, "register", List.of("first")));
+        assertTrue(itl.canExecute(otherAdmin, "register", List.of("second")));
+        assertTrue(itl.execute(user, "register", List.of("first")));
+        verify(im).setOwner(user, uuid, island, RanksManager.VISITOR_RANK);
+        verify(im, never()).setOwner(any(), any(), eq(other), anyInt());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void pendingRegistrationRejectsChangedOwnerOrReplacedIsland(boolean ownerChanged) {
+        itl = Mockito.spy(itl);
+        List<Runnable> pending = new ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(2));
+            return null;
+        }).when(itl).askConfirmation(any(), anyString(), any(Runnable.class));
+        when(island.getOwner()).thenReturn(null);
+        when(island.isSpawn()).thenReturn(true);
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        assertFalse(itl.canExecute(user, "register", List.of("tastybento")));
+        if (ownerChanged) when(island.getOwner()).thenReturn(notUUID);
+        else when(im.getIslandAt(location)).thenReturn(Optional.of(mock(Island.class)));
+        pending.getFirst().run();
+        verify(im, never()).setOwner(any(), any(), any(), anyInt());
+        verify(user).sendMessage("commands.admin.register.cannot-make-island");
+    }
+
+    @Test
+    void confirmedRegistrationUsesCapturedIslandAfterAdminMoves() {
+        itl = Mockito.spy(itl);
+        List<Runnable> pending = new ArrayList<>();
+        Mockito.doAnswer(call -> {
+            pending.add(call.getArgument(2));
+            return null;
+        }).when(itl).askConfirmation(any(), anyString(), any(Runnable.class));
+        when(island.getOwner()).thenReturn(null);
+        when(island.isSpawn()).thenReturn(true);
+        when(location.toVector()).thenReturn(new Vector(0, 64, 0));
+        when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+        assertFalse(itl.canExecute(user, "register", List.of("tastybento")));
+        when(user.getLocation()).thenReturn(mock(Location.class));
+        pending.getFirst().run();
+        verify(im).setOwner(user, uuid, island, RanksManager.VISITOR_RANK);
+        verify(im).clearSpawn(world);
+        verify(im).undeleteIsland(island);
+    }
+
+    @Test
+    void foliaReservationWaitsForChunkAndRegionMarkerBeforeEvent() {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        when(location.clone()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
+        var loaded = new java.util.concurrent.CompletableFuture<org.bukkit.Chunk>();
+        mockedUtil.when(() -> Util.getChunkAtAsync(location)).thenReturn(loaded);
+        List<Runnable> regionWork = new ArrayList<>();
+        var written = new java.util.concurrent.CompletableFuture<Void>();
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.regionFuture(eq(plugin), eq(location), any(Runnable.class)))
+                    .thenAnswer(call -> {
+                        regionWork.add(call.getArgument(2));
+                        return written;
+                    });
+            itl.reserve(user, uuid, location, "target");
+            verify(island).setReserved(true);
+            verify(block, never()).setType(any());
+            verify(pim, never()).callEvent(any());
+            loaded.complete(mock(org.bukkit.Chunk.class));
+            verify(block, never()).setType(any());
+            when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+            when(island.isReserved()).thenReturn(true);
+            when(island.getOwner()).thenReturn(uuid);
+            regionWork.getFirst().run();
+            verify(block).setType(Material.BEDROCK);
+            verify(pim, never()).callEvent(any());
+            written.complete(null);
+            verify(pim).callEvent(any(IslandReservedEvent.class));
+        }
+    }
+
+    @Test
+    void failedReservationMarkerRetainsIslandAndReportsFailure() {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        when(location.clone()).thenReturn(location);
+        when(island.getUniqueId()).thenReturn("reservation");
+        mockedUtil.when(() -> Util.getChunkAtAsync(location)).thenReturn(
+                java.util.concurrent.CompletableFuture.failedFuture(new IllegalStateException("chunk load failed")));
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            itl.reserve(user, uuid, location, "target");
+            verify(island).setReserved(true);
+            verify(block, never()).setType(any());
+            verify(pim, never()).callEvent(any());
+            verify(plugin).logError(Mockito.contains("reservation could not place its marker"));
+            tasks.verify(() -> TaskScheduler.user(eq(plugin), eq(user), any(Runnable.class)));
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"island", "reserved", "owner"})
+    void changedReservationCannotPlaceMarker(String change) {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        when(location.clone()).thenReturn(location);
+        var loaded = new java.util.concurrent.CompletableFuture<org.bukkit.Chunk>();
+        mockedUtil.when(() -> Util.getChunkAtAsync(location)).thenReturn(loaded);
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.regionFuture(eq(plugin), eq(location), any(Runnable.class)))
+                    .thenAnswer(call -> {
+                        try {
+                            ((Runnable) call.getArgument(2)).run();
+                            return java.util.concurrent.CompletableFuture.completedFuture(null);
+                        } catch (RuntimeException error) {
+                            return java.util.concurrent.CompletableFuture.failedFuture(error);
+                        }
+                    });
+            itl.reserve(user, uuid, location, "target");
+            when(im.getIslandAt(location)).thenReturn(Optional.of(island));
+            when(island.isReserved()).thenReturn(true);
+            when(island.getOwner()).thenReturn(uuid);
+            switch (change) {
+            case "island" -> when(im.getIslandAt(location)).thenReturn(Optional.empty());
+            case "reserved" -> when(island.isReserved()).thenReturn(false);
+            case "owner" -> when(island.getOwner()).thenReturn(UUID.randomUUID());
+            default -> throw new AssertionError(change);
+            }
+            loaded.complete(mock(org.bukkit.Chunk.class));
+            verify(block, never()).setType(any());
+            verify(pim, never()).callEvent(any(IslandReservedEvent.class));
+            verify(plugin).logError(Mockito.contains("Reservation changed before marker placement"));
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void reservationRejectsNewlyOccupiedOrDeletingSpot(boolean occupied) {
+        when(im.getIslandAt(location)).thenReturn(occupied ? Optional.of(island) : Optional.empty());
+        when(idm.inDeletion(location)).thenReturn(!occupied);
+        itl.reserve(user, uuid, location, "target");
+        verify(im, never()).createIsland(any(), any(UUID.class));
+        verify(block, never()).setType(any());
+        verify(user).sendMessage("commands.admin.register.cannot-make-island");
     }
 
 }

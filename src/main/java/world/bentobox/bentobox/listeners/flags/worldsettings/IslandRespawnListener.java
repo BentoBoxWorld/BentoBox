@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  */
 public class IslandRespawnListener extends FlagListener {
 
-    private final Map<UUID, UUID> respawn = new HashMap<>();
+    private final Map<UUID, UUID> respawn = new ConcurrentHashMap<>();
 
     /**
      * Tag players who die in island space and have an island
@@ -87,7 +88,7 @@ public class IslandRespawnListener extends FlagListener {
                     // SafeSpotTeleport to relocate them to the nearest truly safe spot.
                     e.setRespawnLocation(island.getProtectionCenter());
                     Player player = e.getPlayer();
-                    Bukkit.getScheduler().runTask(getPlugin(), () ->
+                    TaskScheduler.entity(getPlugin(), player, () ->
                             new SafeSpotTeleport.Builder(getPlugin())
                                     .entity(player)
                                     .island(island)

@@ -39,6 +39,8 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 
 /**
@@ -496,6 +498,43 @@ class BlueprintsManagerTest extends CommonTestSetup {
         boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
         assertFalse(result);
         verify(plugin).logError("Tried to paste 'default' but the bundle is not loaded!");
+    }
+
+    @Test
+    void testPasteAsyncMissingBundleFails() {
+        assertTrue(manager.pasteAsync(addon, island, BUNDLE_NAME, true).isCompletedExceptionally());
+    }
+
+    @Test
+    void testTerrainPreparationDefersOwnerCommandsUntilCommit() {
+        BlueprintBundle bundle = new BlueprintBundle();
+        bundle.setUniqueId(BUNDLE_NAME);
+        Blueprint blueprint = new Blueprint();
+        blueprint.setName("island");
+        bundle.setBlueprint(World.Environment.NORMAL, blueprint);
+        manager.addBlueprintBundle(addon, bundle);
+        manager.addBlueprint(addon, blueprint);
+        var pasted = new java.util.concurrent.CompletableFuture<Boolean>();
+        var commands = new java.util.concurrent.CompletableFuture<Void>();
+        var owner = mock(User.class);
+        when(island.getOwner()).thenReturn(uuid);
+        try (var pasters = org.mockito.Mockito.mockConstruction(BlueprintPaster.class,
+                (paster, context) -> when(paster.paste(true)).thenReturn(pasted));
+                var users = org.mockito.Mockito.mockStatic(User.class);
+                var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            users.when(() -> User.getInstance(uuid)).thenReturn(owner);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenReturn(commands);
+            var terrain = manager.pasteTerrainAsync(addon, island, BUNDLE_NAME, true);
+            assertFalse(terrain.isDone());
+            pasted.complete(true);
+            terrain.join();
+            tasks.verifyNoInteractions();
+            var finished = manager.completePasteAsync(addon, island, BUNDLE_NAME);
+            assertFalse(finished.isDone());
+            tasks.verify(() -> TaskScheduler.userFuture(eq(plugin), eq(owner), any()));
+            commands.completeExceptionally(new IllegalStateException("owner commands failed"));
+            assertTrue(finished.isCompletedExceptionally());
+        }
     }
 
     @Test

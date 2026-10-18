@@ -45,6 +45,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -346,6 +347,39 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         return t;
     }
 
+    @Test
+    void testFoliaExpelWaitsForTargetThread() {
+        testCanExecute();
+        var pending = new java.util.concurrent.CompletableFuture<Void>();
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenReturn(pending);
+            assertTrue(iec.execute(user, "expel", List.of("tasty")));
+            tasks.verify(() -> TaskScheduler.userFuture(any(), any(), any()));
+            verify(im, never()).homeTeleportAsync(any(), any(Player.class));
+            pending.completeExceptionally(new IllegalStateException("Player disconnected"));
+            verify(user).sendMessage("commands.island.expel.cannot-expel");
+        }
+    }
+
+    @Test
+    void testInterleavedValidationKeepsRequestedExpelTarget() {
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        Player first = setUpTarget();
+        UUID firstId = first.getUniqueId();
+        when(pm.getUUID("first")).thenReturn(firstId);
+        Player second = setUpTarget();
+        UUID secondId = second.getUniqueId();
+        when(pm.getUUID("first")).thenReturn(firstId);
+        when(pm.getUUID("second")).thenReturn(secondId);
+        assertTrue(iec.canExecute(user, "expel", List.of("first")));
+        assertTrue(iec.canExecute(user, "expel", List.of("second")));
+        assertTrue(iec.execute(user, "expel", List.of("first")));
+        verify(im).homeTeleportAsync(any(), eq(first));
+        verify(im, never()).homeTeleportAsync(any(), eq(second));
+    }
+
     /**
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
@@ -369,6 +403,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(im.getSpawn(any())).thenReturn(optionalIsland);
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), eq(user))).thenReturn(true);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
@@ -391,6 +426,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(im.getSpawn(any())).thenReturn(Optional.empty());
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), eq(user))).thenReturn(true);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
@@ -413,6 +449,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(im.getSpawn(any())).thenReturn(Optional.empty());
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), eq(user))).thenReturn(true);
         assertFalse(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(addon).logError("Expel: target had no island, and one could not be created");
         verify(user).sendMessage("commands.island.expel.cannot-expel");
@@ -430,6 +467,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(s.getExpelCommand()).thenReturn("spawn");
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), eq(user))).thenReturn(true);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target",
                 TextVariables.DISPLAY_NAME, "&Ctarget");
@@ -447,6 +485,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(s.getExpelCommand()).thenReturn("");
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), eq(user))).thenReturn(true);
         assertFalse(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(addon).logError("Expel: target had no island, and one could not be created");
         verify(user).sendMessage("commands.island.expel.cannot-expel");

@@ -84,6 +84,15 @@ class IslandGridTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandGrid#addToGrid(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
+    void testAllIslandsIsSnapshot() {
+        assertTrue(ig.addToGrid(island));
+        Collection<IslandData> snapshot = ig.getAllIslands();
+        assertTrue(ig.removeFromGrid(island));
+        assertEquals(1, snapshot.size());
+        assertTrue(ig.getAllIslands().isEmpty());
+    }
+
+    @Test
     void testAddToGrid() {
        assertTrue(ig.addToGrid(island));
        assertFalse(ig.addToGrid(overlappingIsland));

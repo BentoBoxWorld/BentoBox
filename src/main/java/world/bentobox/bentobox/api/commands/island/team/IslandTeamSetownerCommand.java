@@ -41,9 +41,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamSetownerCommand extends CompositeCommand {
 
-    /** UUID of target player to receive ownership - stored between canExecute and execute */
-    private @Nullable UUID targetUUID;
-
     public IslandTeamSetownerCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "setowner");
     }
@@ -85,7 +82,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
-        targetUUID = getPlayers().getUUID(args.getFirst());
+        UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
@@ -116,8 +113,11 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     }
 
    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        return setOwner(user, targetUUID);
+   public boolean execute(User user, String label, List<String> args) {
+         if (args.size() != 1) return false;
+         UUID targetUUID = getPlayers().getUUID(args.getFirst());
+         if (targetUUID == null) return false;
+         return setOwner(user, targetUUID);
 
     }
 

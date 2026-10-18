@@ -53,6 +53,51 @@ class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
     @Mock
     private User target;
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void testInterleavedValidationDoesNotReplaceRankChangeTarget(boolean promote) {
+        var command = promote ? ipc : idc;
+        int current = promote ? RanksManager.MEMBER_RANK : RanksManager.SUB_OWNER_RANK;
+        int next = promote ? RanksManager.SUB_OWNER_RANK : RanksManager.MEMBER_RANK;
+        User other = mock(User.class);
+        UUID otherId = UUID.randomUUID();
+        when(other.getUniqueId()).thenReturn(otherId);
+        when(pm.getUser("other")).thenReturn(other);
+        when(island.inTeam(otherId)).thenReturn(true);
+        when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(target)).thenReturn(current);
+        when(island.getRank(other)).thenReturn(current);
+        if (promote) when(rm.getRankUpValue(current)).thenReturn(next);
+        else when(rm.getRankDownValue(current)).thenReturn(next);
+
+        assertTrue(command.canExecute(user, command.getLabel(), List.of("target")));
+        assertTrue(command.canExecute(user, command.getLabel(), List.of("other")));
+        assertTrue(command.execute(user, command.getLabel(), List.of("target")));
+        verify(island).setRank(target, next);
+        verify(island, never()).setRank(org.mockito.ArgumentMatchers.eq(other), org.mockito.ArgumentMatchers.anyInt());
+    }
+
+    @Test
+    void testExecuteRejectsTargetWhoLeftAfterValidation() {
+        UUID targetId = UUID.randomUUID();
+        when(target.getUniqueId()).thenReturn(targetId);
+        when(island.inTeam(targetId)).thenReturn(true);
+        when(island.getRank(target)).thenReturn(RanksManager.MEMBER_RANK);
+        assertTrue(ipc.canExecute(user, "promote", List.of("target")));
+        when(island.inTeam(targetId)).thenReturn(false);
+        assertFalse(ipc.execute(user, "promote", List.of("target")));
+        verify(island, never()).setRank(any(User.class), org.mockito.ArgumentMatchers.anyInt());
+    }
+
+    @Test
+    void testExecuteRejectsIssuerWhoseRankChangedAfterValidation() {
+        when(island.getRank(target)).thenReturn(RanksManager.MEMBER_RANK);
+        assertTrue(ipc.canExecute(user, "promote", List.of("target")));
+        when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
+        assertFalse(ipc.execute(user, "promote", List.of("target")));
+        verify(island, never()).setRank(any(User.class), org.mockito.ArgumentMatchers.anyInt());
+    }
+
 
     /**
      * @throws java.lang.Exception

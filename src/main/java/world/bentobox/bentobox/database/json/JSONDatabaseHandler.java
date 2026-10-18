@@ -5,12 +5,14 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -158,7 +160,10 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, File backupTableFolder, String fileName, boolean async) {
         // Do not save anything if plug is disabled and this was an async request, unless we are
         // deliberately flushing the queue on shutdown (see AbstractDatabaseHandler#flush)
-        if (async && !plugin.isEnabled() && !draining) return;
+        if (async && !plugin.isEnabled() && !draining) {
+            completableFuture.complete(false);
+            return;
+        }
         File tmpFile = new File(backupTableFolder, fileName);
         if (file.exists()) {
             // Make a backup of file
@@ -169,12 +174,27 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             }
         }
 
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(toStore);
+        Path pending = null;
+        try {
+            pending = Files.createTempFile(tableFolder.toPath(), ".bentobox-", ".pending");
+            Files.writeString(pending, toStore, StandardCharsets.UTF_8);
+            try {
+                Files.move(pending, file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException unsupported) {
+                Files.move(pending, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
             completableFuture.complete(true);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             plugin.logError("Could not save JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
             completableFuture.complete(false);
+        } finally {
+            if (pending != null) {
+                try {
+                    Files.deleteIfExists(pending);
+                } catch (IOException cleanup) {
+                    plugin.logError("Could not remove temporary JSON file: " + pending + " " + cleanup.getMessage());
+                }
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.listeners.flags.protection.CushionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
+import world.bentobox.bentobox.listeners.teleports.FoliaPortalBridge;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
 import world.bentobox.bentobox.managers.ChunkPregenManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
@@ -32,8 +33,12 @@ public class BentoBoxListenerRegistrar {
         manager.registerEvents(new JoinLeaveListener(plugin), plugin);
         manager.registerEvents(new PanelListenerManager(), plugin);
         manager.registerEvents(new StandardSpawnProtectionListener(plugin), plugin);
-        manager.registerEvents(new PlayerTeleportListener(plugin), plugin);
+        PlayerTeleportListener playerTeleportListener = new PlayerTeleportListener(plugin);
+        manager.registerEvents(playerTeleportListener, plugin);
         manager.registerEvents(new EntityTeleportListener(plugin), plugin);
+        // Folia resolves portals without firing PlayerPortalEvent, so Luminol servers get a
+        // bridge on top of the listener. Only bound when the Luminol API is present.
+        FoliaPortalBridge.register(plugin, playerTeleportListener);
         manager.registerEvents(new BlockEndDragon(plugin), plugin);
         manager.registerEvents(new BannedCommands(plugin), plugin);
         manager.registerEvents(new DeathListener(plugin), plugin);

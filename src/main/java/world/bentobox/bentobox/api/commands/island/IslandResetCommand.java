@@ -2,11 +2,13 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -18,6 +20,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
 import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles the island reset command (/island reset).
@@ -90,6 +93,10 @@ public class IslandResetCommand extends ConfirmableCommand {
      */
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        if (NewIsland.isCreating(user)) {
+            user.sendMessage("commands.island.create.creating-island");
+            return false;
+        }
         // Check cooldown
         if (getSettings().getResetCooldown() > 0 && checkCooldown(user)) {
             return false;
@@ -183,6 +190,10 @@ public class IslandResetCommand extends ConfirmableCommand {
      * @return true if reset was successful
      */
     private boolean resetIsland(@NonNull User user, String name) {
+        if (NewIsland.isCreating(user)) {
+            user.sendMessage("commands.island.create.creating-island");
+            return false;
+        }
         if (!checkCost(user, name, false)) {
             return false;
         }
@@ -193,8 +204,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        deleteOldIsland(user, oldIsland);
-
+        if (!preclearAllowed(user, oldIsland)) return false;
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
@@ -202,15 +212,39 @@ public class IslandResetCommand extends ConfirmableCommand {
                     .oldIsland(oldIsland).name(name);
             if (noPaste)
                 builder.noPaste();
-            builder.build();
+            if (TaskScheduler.isFolia()) {
+                java.util.function.BooleanSupplier charge = getPlugin().getSettings().isChargeForBlueprintOnReset()
+                        ? BlueprintCostHelper.captureCharge(getPlugin(), getAddon(), user, name, getWorld()) : () -> true;
+                builder.beforeTeleport(() -> clearOldIslandAsync(user, oldIsland));
+                builder.afterBuild(island -> TaskScheduler.globalFuture(getPlugin(), () -> {
+                            getPlayers().addReset(getWorld(), user.getUniqueId());
+                            setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
+                            if (!charge.getAsBoolean()) {
+                                getPlugin().logError("Island " + island.getUniqueId() + " was reset but blueprint payment failed for "
+                                        + user.getUniqueId());
+                            }
+                        })).buildAsync().exceptionally(error -> {
+                    getPlugin().logError("Could not complete island reset or settlement for " + user.getUniqueId() + ": " + error);
+                    TaskScheduler.user(getPlugin(), user, () -> user.sendMessage("commands.island.create.cannot-create-island"));
+                    return null;
+                });
+                return true;
+            } else if (builder.build() == null) {
+                return false;
+            }
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage(e.getMessage());
             return false;
         }
-        checkCost(user, name, true); // Charge after success
+        getPlayers().addReset(getWorld(), user.getUniqueId());
+        return finishReset(user, name);
+    }
+
+    private boolean finishReset(User user, String name) {
+        boolean paid = checkCost(user, name, true);
         setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
-        return true;
+        return paid;
     }
 
     /**
@@ -237,18 +271,48 @@ public class IslandResetCommand extends ConfirmableCommand {
      * @param user The user resetting their island
      * @param oldIsland The island being reset
      */
-    private void deleteOldIsland(@NonNull User user, @NonNull Island oldIsland) {
-        // Fire island preclear event
-        IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
-                .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
-
-        // Reset the island
+    private boolean deleteOldIsland(@NonNull User user, @NonNull Island oldIsland) {
+        if (!preclearAllowed(user, oldIsland)) return false;
 
         // Kick all island members (including the owner)
         kickMembers(oldIsland);
+        return true;
+    }
 
-        // Add a reset
-        getPlayers().addReset(getWorld(), user.getUniqueId());
+    private boolean preclearAllowed(@NonNull User user, @NonNull Island oldIsland) {
+        // Reserve the old island until the replacement has been built. The event
+        // still gives addons a chance to veto the reset before any mutation.
+        IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
+                .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
+        return !event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled());
+    }
+
+    private CompletableFuture<Void> clearOldIslandAsync(User user, Island oldIsland) {
+        if (!user.getUniqueId().equals(oldIsland.getOwner())) {
+            return CompletableFuture.failedFuture(
+                    new java.util.concurrent.CancellationException("Island ownership changed during reset"));
+        }
+        IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
+                .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
+        if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
+            return CompletableFuture.failedFuture(new java.util.concurrent.CancellationException("Island reset was cancelled"));
+        }
+        var tasks = oldIsland.getMemberSet().stream().map(memberId -> {
+            User member = User.getInstance(memberId);
+            return TaskScheduler.userFuture(getPlugin(), member, () -> {
+                        if (!memberId.equals(oldIsland.getOwner())) {
+                            member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE,
+                                    getAddon().getDescription().getName());
+                        }
+                        getIslands().removePlayer(oldIsland, memberId);
+                    }).thenCompose(ignored -> getPlayers().cleanLeavingPlayerAsync(getWorld(), member, false, oldIsland))
+                    .thenRun(() -> {
+                        TeamEvent.builder().island(oldIsland).reason(TeamEvent.Reason.DELETE)
+                                .involvedPlayer(memberId).build();
+                    });
+        }).toArray(CompletableFuture<?>[]::new);
+        return CompletableFuture.allOf(tasks).exceptionallyCompose(error -> CompletableFuture.failedFuture(
+                new IllegalStateException("Old-island cleanup failed after reset commit started", error)));
     }
 
     /**

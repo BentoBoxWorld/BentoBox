@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -51,6 +49,12 @@ public class AdminResetNameCommand extends CompositeCommand
     @Override
     public boolean canExecute(User user, String label, List<String> args)
     {
+        return findIsland(user, args) != null;
+    }
+
+    private Island findIsland(User user, List<String> args)
+    {
+        Island island;
         if (args.size() == 1)
         {
             UUID playerUUID = Util.getUUID(args.getFirst());
@@ -58,23 +62,23 @@ public class AdminResetNameCommand extends CompositeCommand
             if (playerUUID == null)
             {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-                return false;
+                return null;
             }
 
-            this.island = this.getIslandsManager().getIsland(this.getWorld(), playerUUID);
+            island = this.getIslandsManager().getIsland(this.getWorld(), playerUUID);
         }
         else
         {
-            this.island = this.getIslandsManager().getIslandAt(user.getLocation()).orElse(null);
+            island = this.getIslandsManager().getIslandAt(user.getLocation()).orElse(null);
         }
 
-        if (this.island == null)
+        if (island == null)
         {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
 
-        return true;
+        return island;
     }
 
 
@@ -88,15 +92,15 @@ public class AdminResetNameCommand extends CompositeCommand
     @Override
     public boolean execute(User user, String label, List<String> args)
     {
-        if (this.island == null)
+        Island island = findIsland(user, args);
+        if (island == null)
         {
-            this.showHelp(this, user);
-            return true;
+            return false;
         }
 
         // Resets the island name
-        this.island.setName(null);
-        user.sendMessage("commands.admin.resetname.success", TextVariables.NAME, this.getPlayers().getName(this.island.getOwner()));
+        island.setName(null);
+        user.sendMessage("commands.admin.resetname.success", TextVariables.NAME, this.getPlayers().getName(island.getOwner()));
         return true;
     }
 
@@ -122,9 +126,4 @@ public class AdminResetNameCommand extends CompositeCommand
     }
 
 
-    /**
-     * Island which name must be changed.
-     */
-    @Nullable
-    private Island island;
 }

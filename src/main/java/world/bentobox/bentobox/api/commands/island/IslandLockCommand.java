@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -37,12 +36,6 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class IslandLockCommand extends CompositeCommand {
 
-    /**
-     * Cached island instance for the command execution.
-     * Set during canExecute and used in execute.
-     */
-    private @Nullable Island island;
-
     public IslandLockCommand(CompositeCommand islandCommand) {
         super(islandCommand, "lock");
     }
@@ -57,7 +50,7 @@ public class IslandLockCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(@NonNull User user, String label, List<String> args) {
-        island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getIsland(getWorld(), user);
         if (island == null) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -74,8 +67,8 @@ public class IslandLockCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Defensive safety check in case execute is called without canExecute
-        if (island == null) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null || island.getRank(user) < island.getRankCommand(getUsage())) {
             return false;
         }
 

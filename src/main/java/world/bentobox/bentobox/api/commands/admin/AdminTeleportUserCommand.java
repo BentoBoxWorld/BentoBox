@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +18,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
@@ -30,9 +30,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class AdminTeleportUserCommand extends CompositeCommand {
 
     private static final String NOT_SAFE = "general.errors.no-safe-location-found";
-    private Location warpSpot;
-    private @Nullable UUID targetUUID;
-    private User toBeTeleported;
+    private record TeleportTarget(User teleportee, Location location) { }
 
     /**
      * @param parent - parent command
@@ -52,34 +50,38 @@ public class AdminTeleportUserCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable TeleportTarget resolveTarget(User user, List<String> args) {
         if (args.size() < 2) {
             this.showHelp(this, user);
-            return false;
+            return null;
         }
         // Convert first name to a UUID
         UUID teleportee = Util.getUUID(args.getFirst());
         if (teleportee == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         // Check online
-        toBeTeleported = User.getInstance(teleportee);
+        User toBeTeleported = User.getInstance(teleportee);
         if (!toBeTeleported.isOnline()) {
             user.sendMessage("general.errors.offline-player");
-            return false;
+            return null;
         }
 
         // Convert second name to a UUID
-        targetUUID = Util.getUUID(args.get(1));
+        UUID targetUUID = Util.getUUID(args.get(1));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
+            return null;
         }
 
         // Check island exists
         if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
 
         World world = getWorld();
@@ -90,16 +92,16 @@ public class AdminTeleportUserCommand extends CompositeCommand {
         }
         if (world == null) {
             user.sendMessage(NOT_SAFE);
-            return false;
+            return null;
         }
         // Get default location if there are no arguments
-        warpSpot = getSpot(world);
+        Location warpSpot = getSpot(world, targetUUID);
         if (warpSpot == null) {
             user.sendMessage(NOT_SAFE);
-            return false;
+            return null;
         }
         if (args.size() == 2) {
-            return true;
+            return new TeleportTarget(toBeTeleported, warpSpot);
         }
 
         // They named the island to go to
@@ -112,7 +114,7 @@ public class AdminTeleportUserCommand extends CompositeCommand {
             user.sendMessage("commands.island.sethome.homes-are");
             names.keySet()
                     .forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
-            return false;
+            return null;
         } else if (names.size() > 1) {
             IslandInfo info = names.get(name);
             Island island = info.island();
@@ -120,17 +122,23 @@ public class AdminTeleportUserCommand extends CompositeCommand {
                     ? island.getSpawnPoint(world.getEnvironment())
                     : island.getProtectionCenter().toVector().toLocation(world);
         }
-        return true;
+        return new TeleportTarget(toBeTeleported, warpSpot);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(warpSpot);
+        TeleportTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Location warpSpot = target.location();
         // Otherwise, ask the admin to go to a safe spot
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                 + warpSpot.getBlockZ());
         // Set the player
-        Player player = toBeTeleported.getPlayer();
+        Player player = target.teleportee().getPlayer();
+        if (player == null) {
+            user.sendMessage("general.errors.offline-player");
+            return false;
+        }
         if (args.size() == 2) {
             failureMessage = user.getTranslation(NOT_SAFE);
         }
@@ -140,13 +148,12 @@ public class AdminTeleportUserCommand extends CompositeCommand {
         .entity(player)
         .location(warpSpot)
         .failureMessage(failureMessage)
-        .thenRun(() -> user.sendMessage("general.success"))
+        .thenRun(() -> TaskScheduler.user(getPlugin(), user, () -> user.sendMessage("general.success")))
         .build();
         return true;
     }
 
-    private Location getSpot(World world) {
-        assert targetUUID != null;
+    private Location getSpot(World world, UUID targetUUID) {
         Island island = getIslands().getIsland(world, targetUUID);
         if (island == null) {
             return null;

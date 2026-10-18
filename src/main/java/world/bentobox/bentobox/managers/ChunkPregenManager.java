@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.scheduler.BukkitTask;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -65,7 +66,7 @@ public class ChunkPregenManager implements Listener {
      * @param e the ready event
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBentoBoxReady(BentoBoxReadyEvent e) {
+    public synchronized void onBentoBoxReady(BentoBoxReadyEvent e) {
         bentoBoxReady = true;
         tryStartInitialPregen();
     }
@@ -79,7 +80,7 @@ public class ChunkPregenManager implements Listener {
      * @param e the server load event
      */
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onServerLoad(ServerLoadEvent e) {
+    public synchronized void onServerLoad(ServerLoadEvent e) {
         serverLoaded = true;
         tryStartInitialPregen();
     }
@@ -134,7 +135,7 @@ public class ChunkPregenManager implements Listener {
      *
      * @param addon the game mode addon
      */
-    public void schedulePregen(GameModeAddon addon) {
+    public synchronized void schedulePregen(GameModeAddon addon) {
         if (!addon.isFixIslandCenter()) {
             // Non-grid addons can't be predicted
             return;
@@ -290,13 +291,13 @@ public class ChunkPregenManager implements Listener {
             return;
         }
         int tickInterval = Math.max(1, plugin.getSettings().getPregenTickInterval());
-        schedulerTask = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, tickInterval, tickInterval);
+        schedulerTask = TaskScheduler.globalTimer(plugin, this::tick, tickInterval, tickInterval);
     }
 
     /**
      * Processes one batch of chunk generation requests across all worlds.
      */
-    private void tick() {
+    private synchronized void tick() {
         if (activeWorlds.isEmpty()) {
             // Nothing to do, cancel task
             if (schedulerTask != null) {
@@ -337,10 +338,14 @@ public class ChunkPregenManager implements Listener {
                 // future completes with null — then we fire the real generation call.
                 // Both legs are off the main thread on Paper, so no blocking occurs.
                 Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ(), false)
-                    .thenAccept(existing -> {
-                        if (existing == null) {
-                            Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ(), true);
-                        }
+                    .thenCompose(existing -> existing == null
+                            ? Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ(), true)
+                            : java.util.concurrent.CompletableFuture.completedFuture(existing))
+                    .exceptionally(error -> {
+                        plugin.logError("Chunk pre-generation failed in " + coord.world().getName()
+                                + " at " + coord.chunkX() + ", " + coord.chunkZ());
+                        plugin.logStacktrace(error);
+                        return null;
                     });
                 dispatched++;
             }
@@ -366,7 +371,7 @@ public class ChunkPregenManager implements Listener {
     /**
      * Shuts down the pre-generation task.
      */
-    public void shutdown() {
+    public synchronized void shutdown() {
         if (schedulerTask != null) {
             schedulerTask.cancel();
             schedulerTask = null;

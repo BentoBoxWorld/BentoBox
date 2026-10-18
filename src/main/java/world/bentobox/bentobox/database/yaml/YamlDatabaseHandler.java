@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -372,15 +373,15 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (forceSync || plugin.isShutdown()) {
             try {
                 processFile(completableFuture, instance);
-            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+            } catch (IllegalAccessException | InvocationTargetException | IntrospectionException | RuntimeException e) {
                 completableFuture.complete(false);
                 plugin.logStacktrace(e);
             }
         } else {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+        TaskScheduler.async(plugin, ()-> {
                 try {
                     processFile(completableFuture, instance);
-                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                } catch (IllegalAccessException | InvocationTargetException | IntrospectionException | RuntimeException e) {
                     completableFuture.complete(false);
                     plugin.logStacktrace(e);
                 }
@@ -510,14 +511,21 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {
+        Runnable write = () -> {
+            try {
+                completableFuture.complete(
+                        ((YamlDatabaseConnector) databaseConnector).saveYamlFile(data, path, name, yamlComments));
+            } catch (RuntimeException error) {
+                completableFuture.complete(false);
+                plugin.logStacktrace(error);
+            }
+        };
         if (plugin.isEnabled()) {
             // Async
-            processQueue.add(() -> completableFuture.complete(
-                    ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments)));
+            processQueue.add(write);
         } else {
             // Sync for shutdown
-            completableFuture.complete(
-                    ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
+            write.run();
         }
     }
 

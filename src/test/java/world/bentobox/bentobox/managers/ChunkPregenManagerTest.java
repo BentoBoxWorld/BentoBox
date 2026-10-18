@@ -406,4 +406,19 @@ class ChunkPregenManagerTest extends CommonTestSetup {
         mockedUtil.verify(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt(), anyBoolean()),
                 org.mockito.Mockito.atLeastOnce());
     }
+
+    @Test
+    void testTickReportsAsyncGenerationFailure() {
+        RuntimeException failure = new IllegalStateException("generation failed");
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(World.class), anyInt(), anyInt(), eq(true)))
+                .thenReturn(CompletableFuture.failedFuture(failure));
+        settings.setPregenChunksPerTick(1);
+        manager.schedulePregen(addon);
+        ArgumentCaptor<Runnable> cap = ArgumentCaptor.forClass(Runnable.class);
+        verify(sch).runTaskTimer(eq(plugin), cap.capture(), anyLong(), anyLong());
+        cap.getValue().run();
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("Chunk pre-generation failed"));
+        verify(plugin).logStacktrace(org.mockito.ArgumentMatchers.argThat(
+                error -> error == failure || error.getCause() == failure));
+    }
 }

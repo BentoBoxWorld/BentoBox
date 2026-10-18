@@ -78,6 +78,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         // time. Mockito's clearInlineMocks() removes stubs from that captured mock between tests, so
         // we must re-point the field to the freshly-stubbed plugin mock before each test.
         injectPlugin();
+        mockedBukkit.when(org.bukkit.Bukkit::isPrimaryThread).thenReturn(true);
 
 
         // Util.getChunkAtAsync returns an already-completed future so thenRun fires synchronously
@@ -479,6 +480,31 @@ class DefaultPasteUtilTest extends CommonTestSetup {
     // -------------------------------------------------------------------------
     // writeSign
     // -------------------------------------------------------------------------
+
+    @Test
+    void testWriteSignBackAfterSpawnMarkerRemovedSign() {
+        when(block.getState()).thenReturn(mock(org.bukkit.block.BlockState.class));
+        DefaultPasteUtil.writeSign(island, block, bpBlock, Side.BACK);
+        verify(signState, never()).update();
+    }
+
+    @Test
+    void testWriteSignLegacyMissingBackText() {
+        when(block.getState()).thenReturn(signState);
+        when(bpBlock.getSignLines(Side.BACK)).thenReturn(null);
+        DefaultPasteUtil.writeSign(island, block, bpBlock, Side.BACK);
+        for (int i = 0; i < 4; i++) verify(signSide).line(i, Component.empty());
+        verify(signState).update();
+    }
+
+    @Test
+    void testWriteSignShortTextPadsEmptyLines() {
+        when(block.getState()).thenReturn(signState);
+        when(bpBlock.getSignLines(Side.FRONT)).thenReturn(List.of("hello"));
+        DefaultPasteUtil.writeSign(island, block, bpBlock, Side.FRONT);
+        verify(signSide).line(0, Component.text("hello"));
+        for (int i = 1; i < 4; i++) verify(signSide).line(i, Component.empty());
+    }
 
     @Test
     void testWriteSignNormalPastesLines() {

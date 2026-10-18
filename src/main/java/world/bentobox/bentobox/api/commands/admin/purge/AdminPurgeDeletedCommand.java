@@ -71,7 +71,9 @@ public class AdminPurgeDeletedCommand extends AbstractPurgeCommand {
         // Evict in-memory chunks for the target regions on the main thread,
         // otherwise Paper's autosave/unload would re-flush them over the
         // about-to-be-deleted region files (#region-purge bug).
-        getPlugin().getPurgeRegionsService().evictChunks(scan);
+        if (!world.bentobox.bentobox.util.TaskScheduler.isFolia()) {
+            getPlugin().getPurgeRegionsService().evictChunks(scan);
+        }
     }
 
     @Override

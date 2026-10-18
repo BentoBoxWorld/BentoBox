@@ -20,7 +20,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.TrialSpawner;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -70,7 +69,7 @@ public class DefaultPasteUtil {
      * @param bpBlock  - blueprint block
      */
     public static CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
-        return Util.getChunkAtAsync(location).thenRun(() -> {
+        return Util.getChunkAtAsync(location).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, location, () -> {
             Block block = location.getBlock();
             // Set the block data - default is AIR
             BlockData bd = createBlockData(bpBlock);
@@ -80,7 +79,7 @@ public class DefaultPasteUtil {
             if (bpBlock.getBiome() != null) {
                 block.setBiome(bpBlock.getBiome());
             }
-        });
+        }));
     }
 
     /**
@@ -204,7 +203,8 @@ public class DefaultPasteUtil {
         World world = location.getWorld();
         assert world != null;
         return Util.getChunkAtAsync(location)
-                .thenRun(() -> list.forEach(k -> spawnBlueprintEntity(k, location, island)));
+                .thenCompose(chunk -> TaskScheduler.regionFuture(plugin, location,
+                        () -> list.forEach(k -> spawnBlueprintEntity(k, location, island))));
     }
 
     /**
@@ -323,10 +323,13 @@ public class DefaultPasteUtil {
     @SuppressWarnings("deprecation")
     public static void writeSign(Island island, final Block block, BlueprintBlock bpSign, Side side) {
         List<String> lines = bpSign.getSignLines(side);
+        if (lines == null) lines = List.of(); // Older blueprints have no back-side text.
         boolean glow = bpSign.isGlowingText(side);
         BlockData bd = block.getBlockData();
-        BlockFace bf = (bd instanceof WallSign ws) ? ws.getFacing()
-                : ((org.bukkit.block.data.type.Sign) bd).getRotation();
+        // A front-side spawn marker removes the sign before the back side is visited.
+        if (!(block.getState() instanceof Sign s)) return;
+        BlockFace bf = bd instanceof org.bukkit.block.data.Directional directional ? directional.getFacing()
+                : bd instanceof org.bukkit.block.data.Rotatable rotatable ? rotatable.getRotation() : BlockFace.NORTH;
         // Handle spawn sign
         if (handleSpawnSign(island, block, bf, bd, side, lines)) {
             return;
@@ -337,7 +340,6 @@ public class DefaultPasteUtil {
             name = plugin.getPlayers().getName(island.getOwner());
         }
         // Handle locale text for starting sign
-        Sign s = (org.bukkit.block.Sign) block.getState();
         SignSide signSide = s.getSide(side);
         writeLocalizedSignText(signSide, island, lines, name);
         signSide.setGlowingText(glow);
@@ -402,7 +404,7 @@ public class DefaultPasteUtil {
         } else {
             // Just paste
             for (int i = 0; i < 4; i++) {
-                signSide.line(i, Util.parseMiniMessageOrLegacy(lines.get(i)));
+                signSide.line(i, Util.parseMiniMessageOrLegacy(i < lines.size() ? lines.get(i) : ""));
             }
         }
     }

@@ -82,6 +82,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 class IslandsManagerTest extends CommonTestSetup {
 
@@ -863,6 +864,19 @@ class IslandsManagerTest extends CommonTestSetup {
         islandsManager.removePlayersFromIsland(localIsland);
     }
 
+    @Test
+    void testFoliaIslandEvictionDoesNotReadPlayersBeforeScheduling() {
+        mockedBukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any()))
+                    .thenReturn(new CompletableFuture<>());
+            islandsManager.removePlayersFromIsland(island);
+            tasks.verify(() -> TaskScheduler.userFuture(any(), any(), any()));
+            verify(player, never()).getGameMode();
+        }
+    }
+
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
@@ -1541,6 +1555,7 @@ class IslandsManagerTest extends CommonTestSetup {
      * Returns the mocked home Location with block/chunk/world configured.
      */
     private Location setupSafeHomeLoc() {
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(true);
         Location homeLoc = mock(Location.class);
         when(homeLoc.getWorld()).thenReturn(world);
         Block homeBlock = mock(Block.class);
@@ -1694,7 +1709,8 @@ class IslandsManagerTest extends CommonTestSetup {
         CompletableFuture<Void> result = localIM.homeTeleportAsync(island, user, false);
 
         // Wait for async completion
-        result.get();
+        org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.ExecutionException.class,
+                () -> result.get(2, java.util.concurrent.TimeUnit.SECONDS));
 
         // Verify user was removed from goingHome after failed teleport
         assertFalse(localIM.isGoingHome(user));
@@ -1709,6 +1725,7 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testHomeTeleportAsyncIslandUserBooleanUnsafeLocation() throws Exception {
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(true);
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -1748,6 +1765,78 @@ class IslandsManagerTest extends CommonTestSetup {
     }
 
     // ---- getIsland(World, User) ----
+    @Test
+    void testSafeLocationChunkFailureCompletesFuture() throws Exception {
+        Location home = setupSafeHomeLoc();
+        mockedUtil.when(() -> Util.getChunkAtAsync(home))
+                .thenReturn(CompletableFuture.failedFuture(new IllegalStateException("Chunk load failed")));
+        CompletableFuture<Boolean> result = new IslandsManager(plugin).isSafeLocationAsync(home);
+        org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.ExecutionException.class,
+                () -> result.get(2, java.util.concurrent.TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testWorldHomePreparationFailureCompletesAndClearsGoingHome() throws Exception {
+        org.mockito.Mockito.doThrow(new IllegalStateException("Player unavailable"))
+                .when(player).setGliding(false);
+        IslandsManager manager = new IslandsManager(plugin);
+        CompletableFuture<Boolean> result = manager.homeTeleportAsync(world, player);
+        org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.ExecutionException.class,
+                () -> result.get(2, java.util.concurrent.TimeUnit.SECONDS));
+        assertFalse(manager.isGoingHome(user));
+    }
+
+    @Test
+    void testSafeHomeLookupChunkFailureCompletesExceptionally() throws Exception {
+        Location home = setupSafeHomeLoc();
+        IslandsManager manager = Mockito.spy(new IslandsManager(plugin));
+        Mockito.doReturn(home).when(manager).getIslandLocation(world, uuid);
+        Mockito.doReturn(home).when(manager).getHomeLocation(any(World.class), any(User.class));
+        Mockito.doReturn(List.of()).when(manager).getIslands(any(World.class), any(User.class));
+        mockedUtil.when(() -> Util.getChunkAtAsync(home))
+                .thenReturn(CompletableFuture.failedFuture(new IllegalStateException("Chunk unavailable")));
+        var method = IslandsManager.class.getDeclaredMethod("getAsyncSafeHomeLocation", World.class, User.class,
+                String.class);
+        method.setAccessible(true);
+        CompletableFuture<?> result = (CompletableFuture<?>) method.invoke(manager, world, user, "");
+        org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.ExecutionException.class,
+                () -> result.get(2, java.util.concurrent.TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testWorldHomeWaitsForPlayerThreadAndPropagatesDisconnect() throws Exception {
+        IslandsManager manager = new IslandsManager(plugin);
+        CompletableFuture<Void> scheduled = new CompletableFuture<>();
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenReturn(scheduled);
+            CompletableFuture<Boolean> result = manager.homeTeleportAsync(world, player);
+            assertFalse(result.isDone());
+            verify(player, never()).setGliding(false);
+            scheduled.completeExceptionally(new IllegalStateException("Player disconnected"));
+            org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.ExecutionException.class,
+                    () -> result.get(2, java.util.concurrent.TimeUnit.SECONDS));
+            assertFalse(manager.isGoingHome(user));
+        }
+    }
+
+    @Test
+    void testHomeTeleportExceptionClearsGoingHome() throws Exception {
+        Island island = mock(Island.class);
+        Location home = setupSafeHomeLoc();
+        when(island.getHome("")).thenReturn(home);
+        when(island.getWorld()).thenReturn(world);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getUniqueId()).thenReturn(uuid);
+        mockedUtil.when(() -> Util.teleportAsync(player, home))
+                .thenReturn(CompletableFuture.failedFuture(new IllegalStateException("Teleport failed")));
+        IslandsManager manager = new IslandsManager(plugin);
+        CompletableFuture<Void> result = manager.homeTeleportAsync(island, user, true);
+        org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.ExecutionException.class,
+                () -> result.get(2, java.util.concurrent.TimeUnit.SECONDS));
+        assertFalse(manager.isGoingHome(user));
+        verify(island, never()).setPrimary(any(UUID.class));
+    }
 
     @Test
     void testGetIslandWorldUser() {
@@ -2114,6 +2203,17 @@ class IslandsManagerTest extends CommonTestSetup {
         Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
         Mockito.doReturn(true).when(spyIm).isSafeLocation(location);
         assertEquals(location, spyIm.getSafeRespawnLocation(world, uuid));
+    }
+
+    @Test
+    void testFoliaRespawnUsesAsyncFallbackWithoutReadingHomeBlocks() {
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class,
+                Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            IslandsManager manager = Mockito.spy(islandsManager);
+            assertNull(manager.getSafeRespawnLocation(world, uuid));
+            verify(manager, never()).isSafeLocation(any());
+        }
     }
 
     /**

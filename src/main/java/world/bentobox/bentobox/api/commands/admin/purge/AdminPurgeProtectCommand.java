@@ -8,8 +8,6 @@ import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminPurgeProtectCommand extends CompositeCommand {
 
-    private Island island;
-
     public AdminPurgeProtectCommand(CompositeCommand parent) {
         super(parent, "protect");
     }
@@ -23,26 +21,34 @@ public class AdminPurgeProtectCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return findIsland(user, args) != null;
+    }
+
+    private Island findIsland(User user, List<String> args) {
         if (!args.isEmpty()) {
             // Show help
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Get island where the player is
-        if (!getIslands().getIslandAt(user.getLocation()).map(i -> {
-            island = i;
-            return true;
-        }).orElse(false)) {
+        Island island = getIslands().getIslandAt(user.getLocation()).orElse(null);
+        if (island == null) {
             user.sendMessage("commands.admin.purge.protect.move-to-island");
-            return false;
+            return null;
         }
-        return true;
+        return island;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        island.setPurgeProtected(!island.isPurgeProtected());
-        if (island.isPurgeProtected()) {
+        Island island = findIsland(user, args);
+        if (island == null) return false;
+        boolean protectedFromPurge;
+        synchronized (island) {
+            protectedFromPurge = !island.isPurgeProtected();
+            island.setPurgeProtected(protectedFromPurge);
+        }
+        if (protectedFromPurge) {
             user.sendMessage("commands.admin.purge.protect.protecting");
         } else {
             user.sendMessage("commands.admin.purge.protect.unprotecting");

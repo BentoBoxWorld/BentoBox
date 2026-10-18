@@ -51,6 +51,34 @@ class IslandTeamCoopCommandTest extends RanksManagerTestSetup {
     @Mock
     private Settings s;
 
+    @Test
+    void testInterleavedCoopKeepsOriginalTarget() {
+        UUID otherId = UUID.randomUUID();
+        when(pm.getUUID("first")).thenReturn(notUUID);
+        when(pm.getUUID("second")).thenReturn(otherId);
+        when(im.getMaxMembers(island, RanksManager.COOP_RANK)).thenReturn(10);
+        var command = new IslandTeamCoopCommand(ic);
+        var first = Collections.singletonList("first");
+        assertTrue(command.canExecute(user, "coop", first));
+        assertTrue(command.canExecute(user, "coop", Collections.singletonList("second")));
+        assertTrue(command.execute(user, "coop", first));
+        var target = org.mockito.ArgumentCaptor.forClass(User.class);
+        verify(island).setRank(target.capture(), eq(RanksManager.COOP_RANK));
+        org.junit.jupiter.api.Assertions.assertEquals(notUUID, target.getValue().getUniqueId());
+    }
+
+    @Test
+    void testCoopRechecksRankBeforeGrantingAccess() {
+        when(pm.getUUID("target")).thenReturn(notUUID);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
+        var command = new IslandTeamCoopCommand(ic);
+        var args = Collections.singletonList("target");
+        assertTrue(command.canExecute(user, "coop", args));
+        when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
+        assertFalse(command.execute(user, "coop", args));
+        verify(island, Mockito.never()).setRank(any(User.class), anyInt());
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

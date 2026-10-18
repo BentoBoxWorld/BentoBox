@@ -35,6 +35,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.ExpiringSet;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Enables changing of obsidian back into lava
@@ -156,7 +157,7 @@ public class ObsidianScoopingListener extends FlagListener {
             previous.remove();
         }
         // Schedule removal after the configured duration
-        Bukkit.getScheduler().runTaskLater(bentoBox, () -> {
+        TaskScheduler.entityLater(bentoBox, hologram, () -> {
             if (activeHolograms.remove(key, hologram) && hologram.isValid()) {
                 hologram.remove();
             }
@@ -258,7 +259,7 @@ public class ObsidianScoopingListener extends FlagListener {
             // Add player to cooldown set to prevent rapid scooping
             getCooldowns().add(player.getUniqueId());
             e.setCancelled(true);
-            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(user, b, hand));
+            TaskScheduler.user(BentoBox.getInstance(), user, () -> givePlayerLava(user, b, hand));
             return true;
         }
         return false;
@@ -278,7 +279,9 @@ public class ObsidianScoopingListener extends FlagListener {
      */
     boolean givePlayerLava(User user, Block b, EquipmentSlot hand) {
         Player player = user.getPlayer();
-        if (!player.isOnline() || !b.getType().equals(Material.OBSIDIAN)) {
+        if (!player.isOnline()
+                || (TaskScheduler.isFolia() && !Bukkit.isOwnedByCurrentRegion(b.getLocation()))
+                || !b.getType().equals(Material.OBSIDIAN)) {
             return false;
         }
         ItemStack bucket = player.getInventory().getItem(hand);

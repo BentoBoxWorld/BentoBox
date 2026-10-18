@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -49,13 +50,17 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
      * in {@link #lastScan} and prompts for confirmation if non-empty.
      */
     protected final void runScanAndPrompt(Supplier<PurgeScanResult> scanFn) {
+        if (TaskScheduler.isFolia() && !Bukkit.isGlobalTickThread()) {
+            TaskScheduler.global(getPlugin(), () -> runScanAndPrompt(scanFn));
+            return;
+        }
         user.sendMessage("commands.admin.purge.scanning");
         getPlugin().log(logPrefix() + ": saving all worlds before scanning...");
         Bukkit.getWorlds().forEach(World::save);
         getPlugin().log(logPrefix() + ": world save complete");
 
         inPurge = true;
-        Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+        TaskScheduler.async(getPlugin(), () -> {
             try {
                 lastScan = scanFn.get();
                 displayResultsAndPrompt(lastScan);
@@ -70,6 +75,10 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
      * region-file deletion asynchronously.
      */
     protected final boolean deleteEverything() {
+        if (TaskScheduler.isFolia() && !Bukkit.isGlobalTickThread()) {
+            TaskScheduler.global(getPlugin(), this::deleteEverything);
+            return true;
+        }
         if (lastScan == null || lastScan.isEmpty()) {
             user.sendMessage(NONE_FOUND);
             return false;
@@ -83,13 +92,13 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
         try {
             beforeDelete(scan);
             getPlugin().log(logPrefix() + ": world save complete, dispatching deletion");
-            Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+            TaskScheduler.async(getPlugin(), () -> {
                 boolean ok = false;
                 try {
                     ok = getPlugin().getPurgeRegionsService().delete(scan);
                 } finally {
                     boolean deleteSucceeded = ok;
-                    Bukkit.getScheduler().runTask(getPlugin(), () -> {
+                    TaskScheduler.user(getPlugin(), user, () -> {
                         try {
                             if (deleteSucceeded) {
                                 user.sendMessage(successMessageKey());
@@ -120,9 +129,9 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
         logScanContents(uniqueIslands, scan);
 
         if (scan.isEmpty()) {
-            Bukkit.getScheduler().runTask(getPlugin(), () -> user.sendMessage(NONE_FOUND));
+            TaskScheduler.user(getPlugin(), user, () -> user.sendMessage(NONE_FOUND));
         } else {
-            Bukkit.getScheduler().runTask(getPlugin(), () -> {
+            TaskScheduler.user(getPlugin(), user, () -> {
                 user.sendMessage("commands.admin.purge.purgable-islands",
                         TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
                 sendConfirmPrompt();

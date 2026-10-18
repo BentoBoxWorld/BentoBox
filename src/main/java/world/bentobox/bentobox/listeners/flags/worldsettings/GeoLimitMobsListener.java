@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,7 +29,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class GeoLimitMobsListener extends FlagListener {
 
-    private final Map<Entity, Island> mobSpawnTracker = new WeakHashMap<>();
+    private final Map<Entity, Island> mobSpawnTracker = Collections.synchronizedMap(new WeakHashMap<>());
 
     /**
      * Start the tracker when the plugin is loaded
@@ -36,18 +38,19 @@ public class GeoLimitMobsListener extends FlagListener {
     public void onPluginReady(BentoBoxReadyEvent event) {
         // Kick off the task to remove entities that go outside island boundaries.
         // This runs every second, so avoid stream allocations
-        Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
-            Iterator<Map.Entry<Entity, Island>> it = mobSpawnTracker.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<Entity, Island> entry = it.next();
-                Entity mob = entry.getKey();
-                if (mob == null || mob.isDead()) {
-                    it.remove();
-                } else if (!entry.getValue().onIsland(mob.getLocation())) {
-                    mob.remove();
-                    it.remove();
-                }
+        TaskScheduler.globalTimer(getPlugin(), () -> {
+            Map<Entity, Island> snapshot;
+            synchronized (mobSpawnTracker) {
+                snapshot = new HashMap<>(mobSpawnTracker);
             }
+            snapshot.forEach((mob, island) -> TaskScheduler.entity(getPlugin(), mob, () -> {
+                if (mob.isDead()) {
+                    mobSpawnTracker.remove(mob);
+                } else if (!island.onIsland(mob.getLocation())) {
+                    mob.remove();
+                    mobSpawnTracker.remove(mob);
+                }
+            }));
         }, 20L, 20L);
     }
 

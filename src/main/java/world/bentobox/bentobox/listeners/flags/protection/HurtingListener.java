@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
+import world.bentobox.bentobox.util.TaskScheduler;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -39,8 +41,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class HurtingListener extends FlagListener {
 
-    private final Map<Integer, Player> thrownPotions = new HashMap<>();
-    private final Map<Entity, Entity> firedFireworks = new WeakHashMap<>();
+    private final Map<Integer, Player> thrownPotions = new ConcurrentHashMap<>();
+    private final Map<Entity, Entity> firedFireworks = Collections.synchronizedMap(new WeakHashMap<>());
 
     /**
      * Handles mob and monster protection
@@ -180,8 +182,9 @@ public class HurtingListener extends FlagListener {
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player player) {
             // Store it and remove it when the effect is gone
-            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), player);
-            getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
+            int entityId = e.getAreaEffectCloud().getEntityId();
+            thrownPotions.put(entityId, player);
+            TaskScheduler.globalLater(getPlugin(), () -> thrownPotions.remove(entityId), e.getAreaEffectCloud().getDuration());
         }
     }
 

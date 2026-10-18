@@ -1,11 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,6 +22,7 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Cleans super-flat world chunks or normal nether chunks if they generate accidentally
@@ -37,7 +37,7 @@ public class CleanSuperFlatListener extends FlagListener {
      * Stores chunks that need to be regenerated.
      */
     @NonNull
-    private final Queue<Chunk> chunkQueue = new LinkedList<>();
+    private final Queue<Chunk> chunkQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Task that runs each tick to regenerate chunks that are in the {@link #chunkQueue}.
@@ -52,7 +52,9 @@ public class CleanSuperFlatListener extends FlagListener {
      * This helps to avoid hanging out the server on startup as a lot of {@link ChunkLoadEvent} are called at this time.
      * @since 1.1
      */
-    private boolean ready;
+    private volatile boolean ready;
+
+    private volatile boolean regenerating;
 
     private WorldRegenerator regenerator;
 
@@ -60,7 +62,7 @@ public class CleanSuperFlatListener extends FlagListener {
      * Per-world cache of whether a default world generator exists, so the addon
      * lookup does not run for every superflat chunk load.
      */
-    private final Map<String, Boolean> hasGenerator = new HashMap<>();
+    private final Map<String, Boolean> hasGenerator = new ConcurrentHashMap<>();
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
@@ -103,31 +105,36 @@ public class CleanSuperFlatListener extends FlagListener {
         // Add to queue
         this.chunkQueue.add(e.getChunk());
         
-        if (this.task == null || this.task.isCancelled())
-        {
-            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> this.cleanChunk(world), 0L, 1L);
+        synchronized (this) {
+            if (this.task == null || this.task.isCancelled()) {
+                this.task = TaskScheduler.globalTimer(this.plugin, this::cleanChunk, 0L, 1L);
+            }
         }
     }
 
 
     /**
-     * This method clears the chunk from queue in the given world
-     * @param world The world that must be cleared.
+     * Regenerate one queued chunk at a time, on its owning region.
      */
-    private void cleanChunk(World world)
+    private synchronized void cleanChunk()
     {
-        if (!this.chunkQueue.isEmpty())
+        if (regenerating) return;
+        Chunk chunk = this.chunkQueue.poll();
+        if (chunk != null)
         {
-            Chunk chunk = this.chunkQueue.poll();
-
-            regenerator.regenerateChunk(chunk);
-            
-            if (this.plugin.getSettings().isLogCleanSuperFlatChunks())
-            {
-                this.plugin.log("Regenerating superflat chunk in " + world.getName() +
-                    " at (" + chunk.getX() + ", " + chunk.getZ() + ") " +
-                    "(" + this.chunkQueue.size() + " chunk(s) remaining in the queue)");
-            }
+            regenerating = true;
+            regenerator.regenerateChunk(chunk)
+                    .whenComplete((unused, error) -> {
+                        if (error != null) {
+                            plugin.logError("Could not regenerate chunk in " + chunk.getWorld().getName()
+                                    + " at (" + chunk.getX() + ", " + chunk.getZ() + ")");
+                            plugin.logStacktrace(error);
+                        } else if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
+                            plugin.log("Regenerated superflat chunk in " + chunk.getWorld().getName()
+                                    + " at (" + chunk.getX() + ", " + chunk.getZ() + ")");
+                        }
+                        regenerating = false;
+                    });
         }
         else
         {

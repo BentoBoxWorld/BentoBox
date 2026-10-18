@@ -42,9 +42,7 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     private static final String RANK_PREFIX = "ranks.";
 
-    private int rankValue;
-    private @Nullable UUID targetUUID;
-    private @Nullable Island island;
+    private record RankChange(UUID targetUUID, Island island, int rankValue) { }
 
     public AdminSetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "setrank");
@@ -60,54 +58,61 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveChange(user, args) != null;
+    }
+
+    private @Nullable RankChange resolveChange(User user, List<String> args) {
         // Syntax: <player> <rank> [island owner | x,y,z]
         if (args.size() != 2 && args.size() != 3) {
             showHelp(this, user);
-            return false;
+            return null;
         }
         // Target
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         // Rank
         Optional<Integer> rank = parseRank(user, args.get(1));
         if (rank.isEmpty()) {
             user.sendMessage("commands.admin.setrank.unknown-rank", TextVariables.RANK, args.get(1), "[ranks]",
                     String.join(", ", getAllowedRankNames()));
-            return false;
+            return null;
         }
-        rankValue = rank.get();
+        int rankValue = rank.get();
         if (rankValue <= RanksManager.VISITOR_RANK) {
             user.sendMessage("commands.admin.setrank.not-possible");
-            return false;
+            return null;
         }
         if (rankValue >= RanksManager.OWNER_RANK) {
             user.sendMessage("commands.admin.setrank.cannot-set-owner");
-            return false;
+            return null;
         }
         // Island
-        island = args.size() == 2 ? findTargetIsland(user) : findNamedIsland(user, args.get(2));
+        Island island = args.size() == 2 ? findTargetIsland(user, targetUUID) : findNamedIsland(user, args.get(2));
         if (island == null) {
-            return false;
+            return null;
         }
         if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.setrank.cannot-set-owner");
-            return false;
+            return null;
         }
         if (island.getRank(targetUUID) == rankValue) {
             user.sendMessage("commands.admin.setrank.already-rank", TextVariables.NAME, args.getFirst(),
                     TextVariables.RANK, user.getTranslation(RanksManager.getInstance().getRank(rankValue)));
-            return false;
+            return null;
         }
-        return true;
+        return new RankChange(targetUUID, island, rankValue);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(island);
-        Objects.requireNonNull(targetUUID);
+        RankChange change = resolveChange(user, args);
+        if (change == null) return false;
+        Island island = change.island();
+        UUID targetUUID = change.targetUUID();
+        int rankValue = change.rankValue();
         User target = User.getInstance(targetUUID);
         int currentRank = island.getRank(targetUUID);
         String ownerName = getPlayers().getName(island.getOwner());
@@ -162,7 +167,7 @@ public class AdminSetrankCommand extends CompositeCommand {
     /**
      * No island was named: use the one team island the target belongs to but does not own.
      */
-    private @Nullable Island findTargetIsland(User user) {
+    private @Nullable Island findTargetIsland(User user, UUID targetUUID) {
         List<Island> memberOf = getIslands().getIslands(getWorld(), targetUUID).stream()
                 .filter(i -> !Objects.equals(targetUUID, i.getOwner())).toList();
         if (memberOf.isEmpty()) {

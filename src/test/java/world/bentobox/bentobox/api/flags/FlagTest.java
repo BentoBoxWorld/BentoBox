@@ -176,6 +176,20 @@ class FlagTest extends RanksManagerTestSetup {
         assertTrue(f.isSetForWorld(world));
     }
 
+    @Test
+    void testWorldFlagIsPublishedBeforeSavingSettings() {
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).build();
+        GameModeAddon addon = iwm.getAddon(world).orElseThrow();
+        org.mockito.Mockito.doAnswer(call -> {
+            assertFalse(f.isSetForWorld(world));
+            worldFlags.put("other-flag", true);
+            return null;
+        }).when(addon).saveWorldSettings();
+        assertFalse(f.isSetForWorld(world));
+        assertTrue(worldFlags.containsKey("flagID"));
+        verify(addon).saveWorldSettings();
+    }
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setSetting(org.bukkit.World, boolean)}.
      */

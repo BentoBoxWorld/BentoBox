@@ -338,6 +338,42 @@ class AdminDeleteCommandTest extends CommonTestSetup {
         verify(im, never()).removePlayer(eq(world), any(UUID.class));
     }
 
+    @Test
+    void testInterleavedValidationDoesNotDeleteAnotherPlayersIsland() {
+        AdminDeleteCommand command = setupForDeletion();
+        UUID other = UUID.randomUUID();
+        Island otherIsland = mock(Island.class);
+        when(pm.getUUID("first")).thenReturn(notUUID);
+        when(pm.getUUID("second")).thenReturn(other);
+        when(im.getIslands(world, other)).thenReturn(List.of(otherIsland));
+        assertTrue(command.canExecute(user, "delete", List.of("first")));
+        assertTrue(command.canExecute(user, "delete", List.of("second")));
+        command.execute(user, "delete", List.of("first"));
+        command.execute(user, "delete", List.of("first"));
+        verify(im).deleteIsland(island, true, notUUID);
+        verify(im, never()).deleteIsland(eq(otherIsland), any(Boolean.class), any());
+    }
+
+    @Test
+    void testExpiredConfirmationCannotRemoveReplacementRequest() {
+        AdminDeleteCommand command = setupForDeletion();
+        BukkitScheduler scheduler = Bukkit.getScheduler();
+        java.util.List<Runnable> expirations = new java.util.ArrayList<>();
+        when(scheduler.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenAnswer(call -> {
+            expirations.add(call.getArgument(1));
+            return mock(BukkitTask.class);
+        });
+        Runnable first = mock(Runnable.class);
+        Runnable replacement = mock(Runnable.class);
+        command.askConfirmation(user, first);
+        command.askConfirmation(user, first);
+        verify(first).run();
+        command.askConfirmation(user, replacement);
+        expirations.getFirst().run();
+        command.askConfirmation(user, replacement);
+        verify(replacement).run();
+    }
+
     private AdminDeleteCommand setupForDeletion() {
         when(island.hasTeam()).thenReturn(false);
         when(island.getCenter()).thenReturn(location);

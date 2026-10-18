@@ -3,7 +3,7 @@ package world.bentobox.bentobox.api.commands.admin.blueprints;
 import java.util.List;
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -39,8 +39,10 @@ public class AdminBlueprintOriginCommand extends CompositeCommand {
         if (b != null) {
             clipboard.setOrigin(b.getLocation().toVector());
             user.getPlayer().sendBlockChange(b.getLocation(), Material.REDSTONE_BLOCK.createBlockData());
-            Bukkit.getScheduler().runTaskLater(getPlugin(),
-                    () -> user.getPlayer().sendBlockChange(b.getLocation(), b.getBlockData()), 20L);
+            TaskScheduler.userLater(getPlugin(), user, () -> TaskScheduler.regionFuture(getPlugin(), b.getLocation(), () -> {
+                var data = b.getBlockData();
+                TaskScheduler.user(getPlugin(), user, () -> user.getPlayer().sendBlockChange(b.getLocation(), data));
+            }), 20L);
 
             user.sendMessage("general.success");
             return true;

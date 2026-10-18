@@ -34,12 +34,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandSettingsCommand extends CompositeCommand {
 
-    /**
-     * Cached island instance for the command execution.
-     * Set during canExecute and used in execute.
-     */
-    private Island island;
-
     public IslandSettingsCommand(CompositeCommand islandCommand) {
         super(islandCommand, "settings", "flags", "options");
     }
@@ -51,8 +45,14 @@ public class IslandSettingsCommand extends CompositeCommand {
         setDescription("commands.island.settings.description");
     }
 
+    @Override
+    public boolean canExecute(User user, String label, List<String> args) {
+        // Off-island users can still view the world's protection flags.
+        return true;
+    }
+
     /**
-     * Validates command execution conditions and determines the target island.
+     * Determines the target island for this user without shared command state.
      * <p>
      * Logic:
      * <ul>
@@ -63,17 +63,13 @@ public class IslandSettingsCommand extends CompositeCommand {
      *       in the wilderness and wondering what rules apply there</li>
      * </ul>
      */
-    @Override
-    public boolean canExecute(User user, String label, List<String> args) {
+    private Island getIsland(User user) {
         if (getWorld().equals(Util.getWorld(user.getWorld()))) {
             // Player is in same world
-            island = getIslands().getIslandAt(user.getLocation()).orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+            return getIslands().getIslandAt(user.getLocation()).orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         } else {
-            island = getIslands().getIsland(getWorld(), user);
+            return getIslands().getIsland(getWorld(), user);
         }
-        // A null island is fine: the panel falls back to the world's protection
-        // flags, which are what applies off-island
-        return true;
     }
 
     /**
@@ -89,7 +85,7 @@ public class IslandSettingsCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (!SettingsPanel.openPanel(this, user, island)) {
+        if (!SettingsPanel.openPanel(this, user, getIsland(user))) {
             getPlugin().logError("Could not load the settings panel template; showing the built-in panel");
             buildPanel(user).build().openPanel();
         }
@@ -104,6 +100,7 @@ public class IslandSettingsCommand extends CompositeCommand {
      * @since 3.22.0
      */
     protected TabbedPanelBuilder buildPanel(User user) {
+        Island island = getIsland(user);
         if (island == null) {
             return new TabbedPanelBuilder()
                     .user(user)

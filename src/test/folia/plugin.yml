@@ -1,0 +1,6 @@
+name: BentoBoxFoliaProbe
+version: '1'
+main: probe.FoliaProbe
+api-version: '26.1'
+folia-supported: true
+depend: [BentoBox]

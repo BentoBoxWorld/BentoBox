@@ -37,6 +37,7 @@ import org.mockito.stubbing.Answer;
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
@@ -48,6 +49,8 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.panels.customizable.SettingsPanel;
 import world.bentobox.bentobox.util.Util;
 
@@ -242,8 +245,106 @@ class AdminSettingsCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testExecuteUserStringListOfStringArgs() {
-        assertTrue(asc.execute(user, "", Arrays.asList("blah", "blah")));
-        verify(user).sendMessage("general.success");
+        assertFalse(asc.execute(user, "", Arrays.asList("blah", "blah")));
+        verify(user, never()).sendMessage("general.success");
+    }
+
+    private Flag stubFlag(FlagsManager manager, String id, Flag.Type type) {
+        Flag flag = mock(Flag.class);
+        when(flag.getID()).thenReturn(id);
+        when(flag.getType()).thenReturn(type);
+        when(manager.getFlag(id)).thenReturn(Optional.of(flag));
+        return flag;
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.EnumSource(value = Flag.Type.class, names = {"SETTING", "PROTECTION"})
+    void testInterleavedChangesKeepIslandFlagAndValueTogether(Flag.Type type) {
+        FlagsManager manager = mock(FlagsManager.class);
+        when(plugin.getFlagsManager()).thenReturn(manager);
+        Flag firstFlag = stubFlag(manager, "FIRST", type);
+        Flag secondFlag = stubFlag(manager, "SECOND", type);
+        when(manager.getFlags()).thenReturn(List.of(firstFlag, secondFlag));
+        UUID firstId = UUID.randomUUID();
+        UUID secondId = UUID.randomUUID();
+        Island secondIsland = mock(Island.class);
+        mockedUtil.when(() -> Util.getUUID("first")).thenReturn(firstId);
+        mockedUtil.when(() -> Util.getUUID("second")).thenReturn(secondId);
+        when(im.getIsland(world, firstId)).thenReturn(island);
+        when(im.getIsland(world, secondId)).thenReturn(secondIsland);
+        String firstValue = type == Flag.Type.SETTING ? "protection.panel.flag-item.setting-active" : RanksManager.MEMBER_RANK_REF;
+        String secondValue = type == Flag.Type.SETTING ? "protection.panel.flag-item.setting-disabled" : RanksManager.SUB_OWNER_RANK_REF;
+        var first = List.of("first", "FIRST", firstValue);
+        assertTrue(asc.canExecute(user, "settings", first));
+        assertTrue(asc.canExecute(user, "settings", List.of("second", "SECOND", secondValue)));
+        assertTrue(asc.execute(user, "settings", first));
+        if (type == Flag.Type.SETTING) verify(island).setSettingsFlag(firstFlag, true);
+        else verify(island).setFlag(firstFlag, RanksManager.MEMBER_RANK);
+        verify(secondIsland, never()).setSettingsFlag(any(), Mockito.anyBoolean());
+        verify(secondIsland, never()).setFlag(any(), Mockito.anyInt());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void testInterleavedPanelsKeepCurrentInvocationTarget(boolean templateLoads) {
+        UUID firstId = UUID.randomUUID();
+        UUID secondId = UUID.randomUUID();
+        Island secondIsland = mock(Island.class);
+        mockedUtil.when(() -> Util.getUUID("first")).thenReturn(firstId);
+        mockedUtil.when(() -> Util.getUUID("second")).thenReturn(secondId);
+        when(im.getIsland(world, firstId)).thenReturn(island);
+        when(im.getIsland(world, secondId)).thenReturn(secondIsland);
+        AdminSettingsCommand command = Mockito.spy(asc);
+        Mockito.doNothing().when(command).openLegacyPanel(any(), any());
+        assertTrue(command.canExecute(user, "settings", List.of("first")));
+        assertTrue(command.canExecute(user, "settings", List.of("second")));
+        try (var panels = Mockito.mockStatic(SettingsPanel.class)) {
+            panels.when(() -> SettingsPanel.openAdminPanel(command, user, island)).thenReturn(templateLoads);
+            assertTrue(command.execute(user, "settings", List.of("first")));
+            panels.verify(() -> SettingsPanel.openAdminPanel(command, user, island));
+            if (!templateLoads) verify(command).openLegacyPanel(user, island);
+            else verify(command, never()).openLegacyPanel(any(), any());
+        }
+    }
+
+    @Test
+    void testExecutionRejectsIslandRemovedAfterValidation() {
+        assertTrue(asc.canExecute(user, "settings", List.of("first")));
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+        try (var panels = Mockito.mockStatic(SettingsPanel.class)) {
+            assertFalse(asc.execute(user, "settings", List.of("first")));
+            panels.verifyNoInteractions();
+        }
+        verify(user, never()).sendMessage("general.success");
+    }
+
+    @Test
+    void testWorldSettingDoesNotReuseAnotherCallsFlagOrBoolean() {
+        FlagsManager manager = mock(FlagsManager.class);
+        when(plugin.getFlagsManager()).thenReturn(manager);
+        Flag first = stubFlag(manager, "FIRST", Flag.Type.WORLD_SETTING);
+        Flag second = stubFlag(manager, "SECOND", Flag.Type.WORLD_SETTING);
+        when(manager.getFlags()).thenReturn(List.of(first, second));
+        var args = List.of("FIRST", "protection.panel.flag-item.setting-disabled");
+        assertTrue(asc.canExecute(user, "settings", args));
+        assertTrue(asc.canExecute(user, "settings", List.of("SECOND", "protection.panel.flag-item.setting-active")));
+        assertTrue(asc.execute(user, "settings", args));
+        verify(first).setSetting(world, false);
+        verify(second, never()).setSetting(any(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void testRemovedFlagDoesNotReportSuccessOrWriteStaleSetting() {
+        FlagsManager manager = mock(FlagsManager.class);
+        when(plugin.getFlagsManager()).thenReturn(manager);
+        Flag flag = stubFlag(manager, "FIRST", Flag.Type.WORLD_SETTING);
+        when(manager.getFlags()).thenReturn(List.of(flag));
+        var args = List.of("FIRST", "protection.panel.flag-item.setting-active");
+        assertTrue(asc.canExecute(user, "settings", args));
+        when(manager.getFlag("FIRST")).thenReturn(Optional.empty());
+        assertFalse(asc.execute(user, "settings", args));
+        verify(flag, never()).setSetting(any(), Mockito.anyBoolean());
+        verify(user, never()).sendMessage("general.success");
     }
 
     /**

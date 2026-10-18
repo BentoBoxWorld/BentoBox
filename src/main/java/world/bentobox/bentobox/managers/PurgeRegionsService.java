@@ -23,7 +23,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -67,6 +70,8 @@ public class PurgeRegionsService {
     private static final String PURGE_FOUND = "Purge found ";
 
     private final BentoBox plugin;
+    private final File deferredFile;
+    private final Set<String> recoveredDeletions = ConcurrentHashMap.newKeySet();
 
     /**
      * Island IDs whose region files were deleted by a deleted-sweep
@@ -79,6 +84,83 @@ public class PurgeRegionsService {
 
     public PurgeRegionsService(BentoBox plugin) {
         this.plugin = plugin;
+        this.deferredFile = new File(new File(plugin.getDataFolder(), "database"), "deferred-purge.yml");
+        recoverDeferredRegionFiles();
+    }
+
+    /** Records an online Folia purge for recovery before the next world load. */
+    public synchronized boolean defer(PurgeScanResult scan) {
+        if (scan.isEmpty()) return true;
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(deferredFile);
+        List<Map<String, Object>> entries = new ArrayList<>();
+        for (Map<?, ?> raw : yaml.getMapList("purges")) {
+            Map<String, Object> entry = new HashMap<>();
+            raw.forEach((key, value) -> entry.put(String.valueOf(key), value));
+            entries.add(entry);
+        }
+        String world = scan.world().getWorldFolder().getAbsolutePath();
+        List<String> regions = scan.deletableRegions().keySet().stream()
+                .map(pair -> pair.x() + ":" + pair.z()).toList();
+        boolean duplicate = entries.stream().anyMatch(entry -> world.equals(String.valueOf(entry.get("world")))
+                && regions.equals(entry.get("regions")));
+        if (!duplicate) {
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("world", world);
+            entry.put("regions", regions);
+            entry.put("islands", scan.deletableRegions().values().stream().flatMap(Set::stream).distinct().toList());
+            entries.add(entry);
+        }
+        yaml.set("purges", entries);
+        boolean saved = saveDeferred(yaml);
+        plugin.logWarning("Purge deferred for next startup: " + scan.deletableRegions().size()
+                + " region(s) in " + scan.world().getName());
+        return saved;
+    }
+
+    /** Completes database cleanup for files recovered at startup. Call after islands load. */
+    public synchronized void completeRecoveredDeletions() {
+        pendingDeletions.addAll(recoveredDeletions);
+        recoveredDeletions.clear();
+    }
+
+    private void recoverDeferredRegionFiles() {
+        if (!deferredFile.isFile()) return;
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(deferredFile);
+        List<Map<?, ?>> remaining = new ArrayList<>();
+        for (Map<?, ?> raw : yaml.getMapList("purges")) {
+            File worldFolder = new File(String.valueOf(raw.get("world")));
+            boolean ok = true;
+            Object regionsValue = raw.get("regions");
+            if (regionsValue instanceof List<?> regions) {
+                for (Object value : regions) {
+                    String[] parts = String.valueOf(value).split(":", 2);
+                    if (parts.length != 2) { ok = false; continue; }
+                    String name = "r." + parts[0] + "." + parts[1] + ".mca";
+                    ok &= deleteDimensionFiles(name, new DimFolders(new File(worldFolder, REGION),
+                            new File(worldFolder, ENTITIES), new File(worldFolder, POI)));
+                }
+            }
+            if (ok) {
+                Object islands = raw.get("islands");
+                if (islands instanceof List<?> ids) ids.forEach(id -> recoveredDeletions.add(String.valueOf(id)));
+            } else {
+                remaining.add(raw);
+            }
+        }
+        yaml.set("purges", remaining);
+        saveDeferred(yaml);
+    }
+
+    private boolean saveDeferred(YamlConfiguration yaml) {
+        try {
+            File parent = deferredFile.getParentFile();
+            if (!parent.exists()) parent.mkdirs();
+            yaml.save(deferredFile);
+            return true;
+        } catch (IOException e) {
+            plugin.logError("Failed to save deferred purge state: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -245,10 +327,18 @@ public class PurgeRegionsService {
         if (scan.deletableRegions().isEmpty()) {
             return false;
         }
+        if (TaskScheduler.isFolia()) {
+            // Region scheduling cannot close server-owned region-file handles safely.
+            return defer(scan);
+        }
         plugin.log("Now deleting region files for world " + scan.world().getName());
         boolean ok = deleteRegionFiles(scan);
         if (!ok) {
             plugin.logError("Not all region files could be deleted");
+            // A partial disk cleanup must never remove the island row or add it
+            // to the shutdown queue. Retaining the row keeps the next sweep
+            // able to find and retry the remaining region file.
+            return false;
         }
 
         // Collect unique island IDs across all reaped regions. An island
@@ -337,21 +427,23 @@ public class PurgeRegionsService {
         }
         plugin.log("Flushing " + pendingDeletions.size() + " deferred island deletion(s)...");
         int count = 0;
+        Set<String> flushed = new HashSet<>();
         for (String islandID : pendingDeletions) {
             // Capture island before cache eviction so we can build the event.
             // DELETED was already fired at soft-delete time; PURGED signals that
             // the DB row is now physically removed.
             Optional<Island> opt = plugin.getIslands().getIslandById(islandID);
-            plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
             if (plugin.getIslands().deleteIslandId(islandID)) {
+                plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
                 count++;
+                flushed.add(islandID);
                 opt.ifPresent(island -> IslandEvent.builder()
                         .island(island)
                         .reason(Reason.PURGED)
                         .build());
             }
         }
-        pendingDeletions.clear();
+        pendingDeletions.removeAll(flushed);
         plugin.log("Flushed " + count + " island(s) from cache and database");
     }
 
@@ -385,8 +477,8 @@ public class PurgeRegionsService {
                         .reason(Reason.DELETED)
                         .build();
             }
-            plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
             if (plugin.getIslands().deleteIslandId(islandID)) {
+                plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
                 plugin.log("Island ID " + islandID + " deleted from cache and database");
                 removed++;
                 // Fire PURGED so addons that track physical storage state know
@@ -409,12 +501,12 @@ public class PurgeRegionsService {
      * @throws IllegalStateException if the task could not be scheduled or failed
      */
     private <T> T runOnMainThread(Supplier<T> task) {
-        if (Bukkit.isPrimaryThread()) {
+        if (TaskScheduler.isFolia() ? Bukkit.isGlobalTickThread() : Bukkit.isPrimaryThread()) {
             return task.get();
         }
         CompletableFuture<T> done = new CompletableFuture<>();
         try {
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            TaskScheduler.global(plugin, () -> {
                 try {
                     done.complete(task.get());
                 } catch (Exception e) {
@@ -512,6 +604,9 @@ public class PurgeRegionsService {
      * @param scan a prior scan result whose regions should be evicted
      */
     public void evictChunks(PurgeScanResult scan) {
+        if (TaskScheduler.isFolia()) {
+            throw new IllegalStateException("Use evictChunksAsync on region-threaded servers");
+        }
         if (scan.deletableRegions().isEmpty()) {
             return;
         }
@@ -550,6 +645,34 @@ public class PurgeRegionsService {
             }
         }
         return count;
+    }
+
+    /** Await only from an async task; failed eviction must prevent region-file deletion. */
+    public CompletableFuture<Void> evictChunksAsync(PurgeScanResult scan) {
+        List<CompletableFuture<Void>> tasks = new ArrayList<>();
+        List<World> worlds = new ArrayList<>();
+        worlds.add(scan.world());
+        if (scan.isNether()) worlds.add(plugin.getIWM().getNetherWorld(scan.world()));
+        if (scan.isEnd()) worlds.add(plugin.getIWM().getEndWorld(scan.world()));
+        for (World dimension : worlds) {
+            if (dimension == null) continue;
+            for (Pair<Integer, Integer> region : scan.deletableRegions().keySet()) {
+                for (int dx = 0; dx < 32; dx++) {
+                    for (int dz = 0; dz < 32; dz++) {
+                        int cx = (region.x() << 5) + dx;
+                        int cz = (region.z() << 5) + dz;
+                        if (!dimension.isChunkLoaded(cx, cz)) continue;
+                        tasks.add(TaskScheduler.regionFuture(plugin,
+                                new Location(dimension, cx << 4, 0, cz << 4), () -> {
+                                    if (dimension.isChunkLoaded(cx, cz) && !dimension.unloadChunk(cx, cz, false)) {
+                                        throw new IllegalStateException("Chunk is still in use: " + dimension.getName() + " " + cx + "," + cz);
+                                    }
+                                }));
+                    }
+                }
+            }
+        }
+        return CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new));
     }
 
     // ---------------------------------------------------------------
@@ -986,20 +1109,22 @@ public class PurgeRegionsService {
 
     private boolean deleteOneRegion(String name, DimFolders overworld, DimFolders nether, DimFolders end,
             boolean isNether, boolean isEnd) {
-        boolean ok = deleteIfExists(new File(overworld.region(),   name))
-                  && deleteIfExists(new File(overworld.entities(), name))
-                  && deleteIfExists(new File(overworld.poi(),      name));
+        // Remove sidecars first. If one cannot be removed, leave the region
+        // file in place so a later scan can discover and retry the cleanup.
+        boolean ok = deleteDimensionFiles(name, overworld);
         if (isNether) {
-            ok &= deleteIfExists(new File(nether.region(),   name));
-            ok &= deleteIfExists(new File(nether.entities(), name));
-            ok &= deleteIfExists(new File(nether.poi(),      name));
+            ok = ok && deleteDimensionFiles(name, nether);
         }
         if (isEnd) {
-            ok &= deleteIfExists(new File(end.region(),   name));
-            ok &= deleteIfExists(new File(end.entities(), name));
-            ok &= deleteIfExists(new File(end.poi(),      name));
+            ok = ok && deleteDimensionFiles(name, end);
         }
         return ok;
+    }
+
+    private boolean deleteDimensionFiles(String name, DimFolders folders) {
+        return deleteIfExists(new File(folders.entities(), name))
+                && deleteIfExists(new File(folders.poi(), name))
+                && deleteIfExists(new File(folders.region(), name));
     }
 
     private boolean deleteIfExists(File file) {

@@ -120,7 +120,8 @@ class AdminPurgeCommandTest extends CommonTestSetup {
         when(plugin.getAddonsManager()).thenReturn(addonsManager);
         when(addonsManager.getAddonByName("Level")).thenReturn(Optional.empty());
 
-        when(plugin.getPurgeRegionsService()).thenReturn(new PurgeRegionsService(plugin));
+        PurgeRegionsService purgeRegionsService = new PurgeRegionsService(plugin);
+        when(plugin.getPurgeRegionsService()).thenReturn(purgeRegionsService);
 
         apc = new AdminPurgeCommand(ac);
     }

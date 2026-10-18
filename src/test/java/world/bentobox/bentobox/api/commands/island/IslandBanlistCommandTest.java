@@ -46,6 +46,33 @@ class IslandBanlistCommandTest extends RanksManagerTestSetup {
     @Mock
     private PlayersManager pm;
 
+    @Test
+    void testInterleavedValidationKeepsIssuersIsland() {
+        User other = mock(User.class);
+        UUID otherId = UUID.randomUUID();
+        var otherIsland = mock(world.bentobox.bentobox.database.objects.Island.class);
+        when(other.getUniqueId()).thenReturn(otherId);
+        when(im.inTeam(any(), eq(otherId))).thenReturn(true);
+        when(im.getIsland(any(), eq(otherId))).thenReturn(otherIsland);
+        when(otherIsland.getBanned()).thenReturn(Set.of(UUID.randomUUID()));
+        IslandBanlistCommand command = new IslandBanlistCommand(ic);
+        assertTrue(command.canExecute(user, command.getLabel(), Collections.emptyList()));
+        assertTrue(command.canExecute(other, command.getLabel(), Collections.emptyList()));
+        assertTrue(command.execute(user, command.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("commands.island.banlist.noone");
+        verify(otherIsland, never()).getBanned();
+    }
+
+    @Test
+    void testExecuteRechecksRankBeforeDisclosingBanlist() {
+        IslandBanlistCommand command = new IslandBanlistCommand(ic);
+        assertTrue(command.canExecute(user, command.getLabel(), Collections.emptyList()));
+        when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
+        assertFalse(command.execute(user, command.getLabel(), Collections.emptyList()));
+        verify(island, never()).getBanned();
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

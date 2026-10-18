@@ -64,6 +64,7 @@ import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -772,6 +773,42 @@ class PlayersManagerTest extends CommonTestSetup {
     @Test
     void testSavePlayer() {
         pm.savePlayer(uuid).thenAccept(Assertions::assertTrue);
+    }
+
+    @Test
+    void testFoliaLeavingCleanupWaitsForPlayerOwnerThread() {
+        when(user.isOnline()).thenReturn(true);
+        when(user.isPlayer()).thenReturn(true);
+        java.util.List<Runnable> queued = new java.util.ArrayList<>();
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class,
+                org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), org.mockito.ArgumentMatchers.eq(user), any()))
+                    .thenAnswer(call -> {
+                        queued.add(call.getArgument(2));
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
+                    });
+            pm.cleanLeavingPlayer(world, user, false, island);
+            assertEquals(1, queued.size());
+            verify(p, never()).setFoodLevel(20);
+            verify(world, never()).getEntitiesByClass(Tameable.class);
+        }
+    }
+
+    @Test
+    void testAsyncLeavingCleanupPropagatesPlayerTaskCompletionAndFailure() {
+        when(user.isOnline()).thenReturn(true);
+        when(user.isPlayer()).thenReturn(true);
+        var pending = new java.util.concurrent.CompletableFuture<Void>();
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class, org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), org.mockito.ArgumentMatchers.eq(user), any())).thenReturn(pending);
+            var result = pm.cleanLeavingPlayerAsync(world, user, false, island);
+            org.junit.jupiter.api.Assertions.assertFalse(result.isDone());
+            verify(world, never()).getEntitiesByClass(Tameable.class);
+            pending.completeExceptionally(new IllegalStateException("player disconnected"));
+            org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
+        }
     }
 
     // -----------------------------------------------------------------------
