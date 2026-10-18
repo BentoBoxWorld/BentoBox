@@ -287,7 +287,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
      * @return the normalized form
      */
     private static String normalize(String s) {
-        return Util.stripColor(s).toLowerCase(Locale.ENGLISH).replaceAll("\\s+", " ").trim();
+        return Util.stripColor(s).toLowerCase(Locale.ENGLISH).replace('_', ' ').replaceAll("\\s+", " ").trim();
     }
 
     /**
