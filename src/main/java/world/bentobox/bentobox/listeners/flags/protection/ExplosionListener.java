@@ -2,7 +2,9 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +19,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -28,12 +32,23 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class ExplosionListener extends FlagListener {
     /**
+     * The Sulfur Cube entity type (Minecraft 26.2), resolved at runtime so the code still
+     * compiles and runs on older API versions. {@code null} when absent.
+     */
+    private static final EntityType SULFUR_CUBE = findFirstMatchingEnum(EntityType.class, "SULFUR_CUBE");
+
+    /**
      * Contains {@link EntityType}s that generates an explosion.
+     * A Sulfur Cube with absorbed TNT explodes as itself, not as primed TNT, so it has to be
+     * included here for the TNT damage flags to apply.
      * @since 1.5.0
      */
-    private static final List<EntityType> TNT_TYPES = List.of(
+    private static final List<EntityType> TNT_TYPES = Stream.of(
             findFirstMatchingEnum(EntityType.class, "PRIMED_TNT", "TNT"),
-            findFirstMatchingEnum(EntityType.class, "MINECART_TNT", "TNT_MINECART"));
+            findFirstMatchingEnum(EntityType.class, "MINECART_TNT", "TNT_MINECART"),
+            SULFUR_CUBE)
+            .filter(Objects::nonNull)
+            .toList();
 
     private static <T extends Enum<T>> T findFirstMatchingEnum(Class<T> enumClass, String... values) {
         if (enumClass == null || values == null) {
@@ -84,6 +99,21 @@ public class ExplosionListener extends FlagListener {
                 && e.getClickedBlock().getType().equals(Material.TNT)
                 && PRIMING_ITEMS.contains(e.getMaterial())) {
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.TNT_PRIMING);
+        }
+    }
+
+    /**
+     * Protect against priming a Sulfur Cube (with absorbed TNT) unless TNT priming is allowed.
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onSulfurCubePriming(PlayerInteractEntityEvent e) {
+        if (SULFUR_CUBE == null || e.getRightClicked().getType() != SULFUR_CUBE) {
+            return;
+        }
+        ItemStack item = e.getPlayer().getInventory().getItem(e.getHand());
+        if (item != null && PRIMING_ITEMS.contains(item.getType())) {
+            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TNT_PRIMING);
         }
     }
 
