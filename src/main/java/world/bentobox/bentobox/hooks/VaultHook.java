@@ -159,6 +159,9 @@ public class VaultHook extends Hook {
             this.amount = amount;
         }
 
+        public String providerIdentity() { return provider.getClass().getName(); }
+        public synchronized String worldName() { return worldName; }
+
         @Override
         public synchronized EconomyResponse get() {
             if (debit == null) {

@@ -52,7 +52,13 @@ public final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
             input.nextNull();
             return null;
         }
-        return enumMap.get(input.nextString());
+        String name = input.nextString();
+        T value = enumMap.get(name);
+        // 1.16.1 renamed PIG_ZOMBIE, so old blueprints still use the legacy name
+        if (value == null && "PIG_ZOMBIE".equals(name) && enumMap.containsKey("ZOMBIFIED_PIGLIN")) {
+            value = enumMap.get("ZOMBIFIED_PIGLIN");
+        }
+        return value;
     }
 
     @Override public void write(JsonWriter output, T enumValue) throws IOException {

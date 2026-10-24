@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -14,7 +13,6 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles the island creation command (/island create).
@@ -200,41 +198,10 @@ public class IslandCreateCommand extends CompositeCommand {
      * @return true if island creation was successful
      */
     private boolean makeIsland(User user, String name) {
-        if (!checkCost(user, name, false)) {
-            return false;
-        }
         user.sendMessage("commands.island.create.creating-island");
-        try {
-            var builder = NewIsland.builder().player(user).addon(getAddon()).reason(Reason.CREATE).name(name);
-            if (TaskScheduler.isFolia()) {
-                var charge = BlueprintCostHelper.captureCharge(getPlugin(), getAddon(), user, name, getWorld());
-                builder.afterBuild(island -> TaskScheduler.globalFuture(getPlugin(), () -> {
-                        applyCreationCooldown(user);
-                        if (!charge.getAsBoolean()) {
-                            getPlugin().logError("Island " + island.getUniqueId() + " was created but blueprint payment failed for "
-                                    + user.getUniqueId());
-                        }
-                    })).buildAsync().exceptionally(error -> {
-                    getPlugin().logError("Could not complete island creation or settlement for " + user.getUniqueId() + ": " + error);
-                    TaskScheduler.user(getPlugin(), user, () -> user.sendMessage("commands.island.create.cannot-create-island"));
-                    return null;
-                });
-                return true;
-            } else if (builder.build() == null) {
-                return false;
-            }
-        } catch (IOException e) {
-            getPlugin().logError("Could not create island for player. " + e.getMessage());
-            user.sendMessage(e.getMessage());
-            return false;
-        }
-        return finishCreation(user, name);
-    }
-
-    private boolean finishCreation(User user, String name) {
-        boolean paid = checkCost(user, name, true);
-        applyCreationCooldown(user);
-        return paid;
+        var builder = NewIsland.builder().player(user).addon(getAddon()).reason(Reason.CREATE).name(name);
+        return BlueprintCostHelper.build(getPlugin(), getAddon(), user, name, getWorld(), builder, true,
+                () -> java.util.concurrent.CompletableFuture.completedFuture(null), () -> applyCreationCooldown(user));
     }
 
     private void applyCreationCooldown(User user) {
@@ -244,7 +211,4 @@ public class IslandCreateCommand extends CompositeCommand {
         }
     }
 
-    private boolean checkCost(User user, String name, boolean charge) {
-        return BlueprintCostHelper.checkCost(getPlugin(), getAddon(), user, name, charge);
-    }
 }

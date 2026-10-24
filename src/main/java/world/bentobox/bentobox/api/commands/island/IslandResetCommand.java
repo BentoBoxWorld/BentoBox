@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -194,9 +193,6 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.create.creating-island");
             return false;
         }
-        if (!checkCost(user, name, false)) {
-            return false;
-        }
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
         if (oldIsland == null) {
@@ -207,61 +203,15 @@ public class IslandResetCommand extends ConfirmableCommand {
         if (!preclearAllowed(user, oldIsland)) return false;
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
-        try {
             Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
                     .oldIsland(oldIsland).name(name);
             if (noPaste)
                 builder.noPaste();
-            if (TaskScheduler.isFolia()) {
-                java.util.function.BooleanSupplier charge = getPlugin().getSettings().isChargeForBlueprintOnReset()
-                        ? BlueprintCostHelper.captureCharge(getPlugin(), getAddon(), user, name, getWorld()) : () -> true;
-                builder.beforeTeleport(() -> clearOldIslandAsync(user, oldIsland));
-                builder.afterBuild(island -> TaskScheduler.globalFuture(getPlugin(), () -> {
-                            getPlayers().addReset(getWorld(), user.getUniqueId());
-                            setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
-                            if (!charge.getAsBoolean()) {
-                                getPlugin().logError("Island " + island.getUniqueId() + " was reset but blueprint payment failed for "
-                                        + user.getUniqueId());
-                            }
-                        })).buildAsync().exceptionally(error -> {
-                    getPlugin().logError("Could not complete island reset or settlement for " + user.getUniqueId() + ": " + error);
-                    TaskScheduler.user(getPlugin(), user, () -> user.sendMessage("commands.island.create.cannot-create-island"));
-                    return null;
-                });
-                return true;
-            } else if (builder.build() == null) {
-                return false;
-            }
-        } catch (IOException e) {
-            getPlugin().logError("Could not create island for player. " + e.getMessage());
-            user.sendMessage(e.getMessage());
-            return false;
-        }
-        getPlayers().addReset(getWorld(), user.getUniqueId());
-        return finishReset(user, name);
-    }
-
-    private boolean finishReset(User user, String name) {
-        boolean paid = checkCost(user, name, true);
-        setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
-        return paid;
-    }
-
-    /**
-     * Checks if the user can afford the blueprint bundle cost, and optionally charges them.
-     * Cost is only applied when reset charging is enabled, multiple bundles are available,
-     * and economy is enabled.
-     *
-     * @param user The user to check/charge
-     * @param name The blueprint bundle name
-     * @param charge If true, withdraw the cost; if false, just check affordability
-     * @return true if cost check passes (affordable or not applicable), false if cannot afford
-     */
-    private boolean checkCost(User user, String name, boolean charge) {
-        if (!getPlugin().getSettings().isChargeForBlueprintOnReset()) {
-            return true; // Reset cost disabled by config
-        }
-        return BlueprintCostHelper.checkCost(getPlugin(), getAddon(), user, name, charge);
+            return BlueprintCostHelper.build(getPlugin(), getAddon(), user, name, getWorld(), builder,
+                    getPlugin().getSettings().isChargeForBlueprintOnReset(), () -> clearOldIslandAsync(user, oldIsland), () -> {
+                        getPlayers().addReset(getWorld(), user.getUniqueId());
+                        setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
+                    });
     }
 
     /**

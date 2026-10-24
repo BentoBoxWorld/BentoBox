@@ -164,6 +164,8 @@ public class BentoBox extends JavaPlugin implements Listener {
         // Saving the config now.
         saveConfig();
 
+        world.bentobox.bentobox.api.commands.island.BlueprintSettlement.reportPending(this);
+
         // Set up click timeout
         lastClick = new ExpiringMap<>(getSettings().getClickCooldownMs(), TimeUnit.MILLISECONDS);
         // Note: ExpiringMap.put schedules removal after one cooldown; onTimeout deliberately puts

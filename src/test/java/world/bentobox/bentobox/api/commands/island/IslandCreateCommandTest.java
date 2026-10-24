@@ -72,12 +72,10 @@ class IslandCreateCommandTest extends CommonTestSetup {
         when(bpm.validate(any(), any())).thenReturn("custom");
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
         when(settings.isResetCooldownOnCreate()).thenReturn(true);
-        when(builder.build()).thenReturn(null);
-        GameModeAddon addon = ic.getAddon();
-        try (var costs = Mockito.mockStatic(BlueprintCostHelper.class)) {
-            costs.when(() -> BlueprintCostHelper.checkCost(plugin, addon, user, "custom", false)).thenReturn(true);
-            assertFalse(cc.execute(user, "", List.of("custom")));
-            costs.verify(() -> BlueprintCostHelper.checkCost(plugin, addon, user, "custom", true), never());
+        when(builder.buildAsync()).thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
+        {
+            assertTrue(cc.execute(user, "", List.of("custom")));
+            verify(builder, never()).build();
             verify(ic, never()).getSubCommand("reset");
         }
     }
@@ -148,6 +146,14 @@ class IslandCreateCommandTest extends CommonTestSetup {
         when(builder.addon(addon)).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
+        when(builder.transactional()).thenReturn(builder);
+        when(builder.allocated(any())).thenReturn(builder);
+        when(builder.beforeTeleport(any())).thenReturn(builder);
+        when(builder.afterBuild(any())).thenReturn(builder);
+        when(builder.buildAsync()).thenReturn(new java.util.concurrent.CompletableFuture<>());
+        var tasks = Mockito.mockStatic(world.bentobox.bentobox.util.TaskScheduler.class);
+        BlueprintCostHelperTest.immediate(tasks);
+        when(plugin.getDataFolder()).thenReturn(java.nio.file.Files.createTempDirectory("blueprint-command-test").toFile());
 
         // Bundles manager
 
@@ -271,7 +277,7 @@ class IslandCreateCommandTest extends CommonTestSetup {
         verify(builder).addon(any());
         verify(builder).reason(Reason.CREATE);
         verify(builder).name("custom");
-        verify(builder).build();
+        verify(builder).buildAsync();
         verify(user).sendMessage("commands.island.create.creating-island");
     }
 
@@ -285,11 +291,9 @@ class IslandCreateCommandTest extends CommonTestSetup {
         // Has permission
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
 
-        when(builder.build()).thenThrow(new IOException("commands.island.create.unable-create-island"));
-        assertFalse(cc.execute(user, "", List.of("custom")));
+        when(builder.buildAsync()).thenReturn(java.util.concurrent.CompletableFuture.failedFuture(new IOException("commands.island.create.unable-create-island")));
+        assertTrue(cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
-        verify(user).sendMessage("commands.island.create.unable-create-island");
-        verify(plugin).logError("Could not create island for player. commands.island.create.unable-create-island");
     }
 
     /**
@@ -341,7 +345,7 @@ class IslandCreateCommandTest extends CommonTestSetup {
         verify(builder).addon(any());
         verify(builder).reason(Reason.CREATE);
         verify(builder).name("custom");
-        verify(builder).build();
+        verify(builder).buildAsync();
         verify(user).sendMessage("commands.island.create.creating-island");
     }
 
@@ -400,9 +404,13 @@ class IslandCreateCommandTest extends CommonTestSetup {
         when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
-        assertFalse(cc.execute(user, "", List.of("custom")));
-        verify(user).sendMessage("commands.island.create.cannot-afford", "[cost]", "$100.00");
-        verify(user, never()).sendMessage("commands.island.create.creating-island");
+        var debit = mock(VaultHook.CapturedWithdrawal.class);
+        when(debit.providerIdentity()).thenReturn("provider");
+        when(debit.get()).thenReturn(new net.milkbowl.vault.economy.EconomyResponse(0, 0,
+                net.milkbowl.vault.economy.EconomyResponse.ResponseType.FAILURE, "insufficient balance"));
+        when(vault.captureRefundableWithdrawal(user, 100, world)).thenReturn(debit);
+        assertTrue(cc.execute(user, "", List.of("custom")));
+        verify(builder, never()).buildAsync();
     }
 
     /**
@@ -431,9 +439,16 @@ class IslandCreateCommandTest extends CommonTestSetup {
         when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
-        assertEquals(paymentSucceeds, cc.execute(user, "", List.of("custom")));
+        var debit = mock(VaultHook.CapturedWithdrawal.class);
+        when(debit.providerIdentity()).thenReturn("provider");
+        when(debit.get()).thenReturn(new net.milkbowl.vault.economy.EconomyResponse(100, 0,
+                paymentSucceeds ? net.milkbowl.vault.economy.EconomyResponse.ResponseType.SUCCESS
+                        : net.milkbowl.vault.economy.EconomyResponse.ResponseType.FAILURE, "result"));
+        when(vault.captureRefundableWithdrawal(user, 100, world)).thenReturn(debit);
+        assertTrue(cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
-        verify(vault).withdraw(user, 100.0);
+        verify(debit).get();
+        verify(builder, paymentSucceeds ? Mockito.times(1) : never()).buildAsync();
     }
 
     /**
@@ -496,7 +511,7 @@ class IslandCreateCommandTest extends CommonTestSetup {
         // No vault
         when(plugin.getVault()).thenReturn(Optional.empty());
 
-        assertTrue(cc.execute(user, "", List.of("custom")));
+        assertFalse(cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
     }
 }

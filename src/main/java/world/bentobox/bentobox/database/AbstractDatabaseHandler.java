@@ -190,6 +190,55 @@ public abstract class AbstractDatabaseHandler<T> {
     }
 
     /**
+     * Flushes pending writes, stops the writer task and releases the connection.
+     * <p>
+     * Used when the owner of the data goes away, for example when an addon is
+     * disabled. The writer task holds the data object's class, so a handler that
+     * is left running keeps the owner's class loader alive and can write stale
+     * data over the data of a new instance.
+     *
+     * @since 3.23.4
+     */
+    public void stop() {
+        flush();
+        shutdown = true;
+        BukkitTask task = asyncSaveTask;
+        if (task != null) {
+            asyncSaveTask = null;
+            task.cancel();
+        }
+        if (databaseConnector != null) {
+            databaseConnector.closeConnection(dataObject);
+        }
+    }
+
+    /**
+     * Stops every handler whose data object was defined by the given class loader.
+     * <p>
+     * Addon data objects are defined by the addon's own class loader, so this
+     * finds exactly the database writers an addon owns.
+     *
+     * @param loader class loader that owns the data objects
+     * @since 3.23.4
+     */
+    public static void stopHandlers(@NonNull ClassLoader loader) {
+        List<AbstractDatabaseHandler<?>> handlers;
+        synchronized (HANDLERS) {
+            handlers = new ArrayList<>(HANDLERS);
+        }
+        for (AbstractDatabaseHandler<?> handler : handlers) {
+            Class<?> type = handler.dataObject;
+            if (type == null || !loader.equals(type.getClassLoader())) {
+                continue;
+            }
+            handler.stop();
+            synchronized (HANDLERS) {
+                HANDLERS.remove(handler);
+            }
+        }
+    }
+
+    /**
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
      */

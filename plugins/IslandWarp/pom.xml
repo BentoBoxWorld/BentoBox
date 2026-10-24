@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.islandwarp</groupId><artifactId>IslandWarp</artifactId><version>1.0.0</version>
+  <properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><maven.compiler.release>21</maven.compiler.release><skipTests>false</skipTests></properties>
+  <repositories><repository><id>papermc</id><url>https://repo.papermc.io/repository/maven-public/</url></repository><repository><id>placeholderapi</id><url>https://repo.extendedclip.com/releases/</url></repository></repositories>
+  <dependencies>
+    <dependency><groupId>com.github.MilkBowl</groupId><artifactId>VaultAPI</artifactId><version>1.7</version><scope>system</scope><systemPath>${project.basedir}/libs/Vault.jar</systemPath></dependency>
+    <dependency><groupId>io.papermc.paper</groupId><artifactId>paper-api</artifactId><version>26.3.build.140-beta</version><scope>provided</scope></dependency>
+    <dependency><groupId>me.clip</groupId><artifactId>placeholderapi</artifactId><version>2.12.3</version><scope>provided</scope></dependency>
+    <dependency><groupId>org.xerial</groupId><artifactId>sqlite-jdbc</artifactId><version>3.49.1.0</version></dependency>
+    <dependency><groupId>world.bentobox</groupId><artifactId>bentobox</artifactId><version>3.23.4-SNAPSHOT-LOCAL</version><scope>system</scope><systemPath>${project.basedir}/libs/BentoBox.jar</systemPath></dependency>
+  </dependencies>
+  <build><testSourceDirectory>verification</testSourceDirectory><plugins>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version><configuration><release>21</release><fork>true</fork><testExcludes><testExclude>server/**</testExclude><testExclude>runs/**</testExclude></testExcludes></configuration></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-antrun-plugin</artifactId><version>3.1.0</version><executions><execution><id>verification-checks</id><phase>test</phase><goals><goal>run</goal></goals><configuration><skip>${skipTests}</skip><target>
+      <tempfile property="checks.dir" destDir="${project.build.directory}" prefix="checks-"/>
+      <mkdir dir="${checks.dir}"/>
+      <macrodef name="check"><attribute name="class"/><sequential>
+        <java classname="@{class}" fork="true" failonerror="true"><classpath refid="maven.test.classpath"/><sysproperty key="project.basedir" value="${basedir}"/><arg value="${checks.dir}/@{class}.db"/></java>
+      </sequential></macrodef>
+      <check class="StoreCheck"/><check class="FeatureCheck"/><check class="ExtrasCheck"/><check class="RecoveryCheck"/><check class="StatusCheck"/><check class="NoticeCheck"/><check class="EventSearchCheck"/>
+      <check class="ConfigCheck"/><check class="com.islandwarp.LayoutCheck"/><check class="com.islandwarp.ReviewCheck"/><check class="com.islandwarp.FixCheck"/>
+    </target></configuration></execution></executions></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-shade-plugin</artifactId><version>3.6.0</version><executions><execution><phase>package</phase><goals><goal>shade</goal></goals><configuration><createDependencyReducedPom>false</createDependencyReducedPom><filters><filter><artifact>*:*</artifact><excludes><exclude>META-INF/*.SF</exclude><exclude>META-INF/*.RSA</exclude><exclude>META-INF/*.DSA</exclude></excludes></filter></filters></configuration></execution></executions></plugin>
+  </plugins></build>
+</project>

@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.managers;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
@@ -21,12 +23,17 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.zip.GZIPInputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -71,7 +78,9 @@ public class PurgeRegionsService {
 
     private final BentoBox plugin;
     private final File deferredFile;
-    private final Set<String> recoveredDeletions = ConcurrentHashMap.newKeySet();
+    private final Map<String, RecoveredDeletion> recoveredDeletions = new HashMap<>();
+
+    private record RecoveredDeletion(int days, List<File> dimensions) {}
 
     /**
      * Island IDs whose region files were deleted by a deleted-sweep
@@ -81,6 +90,7 @@ public class PurgeRegionsService {
      * clean shutdown guarantees the cache is cleared.
      */
     private final Set<String> pendingDeletions = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Map<String, List<File>> pendingFiles = new ConcurrentHashMap<>();
 
     public PurgeRegionsService(BentoBox plugin) {
         this.plugin = plugin;
@@ -91,58 +101,127 @@ public class PurgeRegionsService {
     /** Records an online Folia purge for recovery before the next world load. */
     public synchronized boolean defer(PurgeScanResult scan) {
         if (scan.isEmpty()) return true;
-        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(deferredFile);
+        YamlConfiguration yaml = loadDeferred();
+        if (yaml == null) return false;
         List<Map<String, Object>> entries = new ArrayList<>();
         for (Map<?, ?> raw : yaml.getMapList("purges")) {
             Map<String, Object> entry = new HashMap<>();
             raw.forEach((key, value) -> entry.put(String.valueOf(key), value));
             entries.add(entry);
         }
-        String world = scan.world().getWorldFolder().getAbsolutePath();
+        String world;
+        List<Map<String, Object>> dimensions = new ArrayList<>();
+        try {
+            world = scan.world().getWorldFolder().getCanonicalPath();
+            dimensions.add(dimensionManifest(scan.world()));
+            if (scan.isNether()) dimensions.add(dimensionManifest(plugin.getIWM().getNetherWorld(scan.world())));
+            if (scan.isEnd()) dimensions.add(dimensionManifest(plugin.getIWM().getEndWorld(scan.world())));
+        } catch (IOException | RuntimeException error) {
+            plugin.logWarning("Purge not deferred: world identity/path could not be verified: " + error.getMessage());
+            return false;
+        }
         List<String> regions = scan.deletableRegions().keySet().stream()
                 .map(pair -> pair.x() + ":" + pair.z()).toList();
-        boolean duplicate = entries.stream().anyMatch(entry -> world.equals(String.valueOf(entry.get("world")))
-                && regions.equals(entry.get("regions")));
+        boolean duplicate = entries.stream().anyMatch(entry -> Integer.valueOf(2).equals(entry.get("version"))
+                && world.equals(entry.get("world")) && regions.equals(entry.get("regions"))
+                && dimensions.equals(entry.get("dimensions"))
+                && Integer.valueOf(scan.days()).equals(entry.get("days")));
         if (!duplicate) {
             Map<String, Object> entry = new HashMap<>();
             entry.put("world", world);
+            entry.put("world-name", scan.world().getName());
+            entry.put("days", scan.days());
+            entry.put("nether", scan.isNether());
+            entry.put("end", scan.isEnd());
+            entry.put("version", 2);
+            entry.put("dimensions", dimensions);
+            entry.put("straddling", new ArrayList<>(scan.straddlingIslandIds()));
             entry.put("regions", regions);
             entry.put("islands", scan.deletableRegions().values().stream().flatMap(Set::stream).distinct().toList());
             entries.add(entry);
         }
         yaml.set("purges", entries);
         boolean saved = saveDeferred(yaml);
-        plugin.logWarning("Purge deferred for next startup: " + scan.deletableRegions().size()
+        if (saved) plugin.logWarning("Purge deferred for next startup: " + scan.deletableRegions().size()
                 + " region(s) in " + scan.world().getName());
         return saved;
     }
 
     /** Completes database cleanup for files recovered at startup. Call after islands load. */
     public synchronized void completeRecoveredDeletions() {
-        pendingDeletions.addAll(recoveredDeletions);
+        List<Island> aged = new ArrayList<>();
+        recoveredDeletions.forEach((id, recovery) -> plugin.getIslands().getIslandById(id).ifPresent(island -> {
+            if (hasResidualFiles(island, recovery.dimensions())) {
+                plugin.logWarning("Recovered island row retained: residual files could not be ruled out for " + id);
+                return;
+            }
+            if (recovery.days() == 0) {
+                if (island.isDeletable()) {
+                    pendingFiles.put(id, recovery.dimensions());
+                    pendingDeletions.add(id);
+                }
+            } else if (!cannotDeleteIsland(island, recovery.days())) {
+                aged.add(island);
+            }
+        }));
+        if (!aged.isEmpty()) finalizeIslands(aged);
         recoveredDeletions.clear();
+    }
+
+    private Map<String, Object> dimensionManifest(World world) throws IOException {
+        if (world == null) throw new IOException("Dimension is not loaded");
+        return Map.of("world", world.getWorldFolder().getCanonicalPath(),
+                "uuid", world.getUID().toString(), "environment", world.getEnvironment().name(),
+                "data", resolveDataFolder(world).getCanonicalPath());
+    }
+
+    private YamlConfiguration loadDeferred() {
+        YamlConfiguration yaml = new YamlConfiguration();
+        try {
+            if (deferredFile.exists()) yaml.load(deferredFile);
+            if (yaml.contains("purges") && (!(yaml.get("purges") instanceof List<?> entries)
+                    || entries.stream().anyMatch(entry -> !(entry instanceof Map<?, ?>)))) {
+                throw new InvalidConfigurationException("Invalid purge list");
+            }
+            return yaml;
+        } catch (IOException | InvalidConfigurationException error) {
+            plugin.logWarning("Deferred purge manifest retained unread: " + error.getMessage());
+            return null;
+        }
     }
 
     private void recoverDeferredRegionFiles() {
         if (!deferredFile.isFile()) return;
-        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(deferredFile);
+        YamlConfiguration yaml = loadDeferred();
+        if (yaml == null) return;
         List<Map<?, ?>> remaining = new ArrayList<>();
         for (Map<?, ?> raw : yaml.getMapList("purges")) {
             File worldFolder = new File(String.valueOf(raw.get("world")));
+            // Old manifests lack the data needed to revalidate safely; retain them for manual recovery.
+            if (!Integer.valueOf(2).equals(raw.get("version")) || !safeDeferredPurge(raw, worldFolder)) {
+                remaining.add(raw);
+                plugin.logWarning("Deferred purge retained: current island/file state could not be verified for " + worldFolder);
+                continue;
+            }
             boolean ok = true;
             Object regionsValue = raw.get("regions");
             if (regionsValue instanceof List<?> regions) {
                 for (Object value : regions) {
                     String[] parts = String.valueOf(value).split(":", 2);
-                    if (parts.length != 2) { ok = false; continue; }
+                    if (parts.length != 2 || !parts[0].matches("-?\\d+") || !parts[1].matches("-?\\d+")) { ok = false; continue; }
                     String name = "r." + parts[0] + "." + parts[1] + ".mca";
-                    ok &= deleteDimensionFiles(name, new DimFolders(new File(worldFolder, REGION),
-                            new File(worldFolder, ENTITIES), new File(worldFolder, POI)));
+                    for (File dimension : deferredDimensions(raw, worldFolder)) {
+                        ok &= deleteDimensionFiles(name, new DimFolders(new File(dimension, REGION),
+                                new File(dimension, ENTITIES), new File(dimension, POI)));
+                    }
                 }
             }
             if (ok) {
                 Object islands = raw.get("islands");
-                if (islands instanceof List<?> ids) ids.forEach(id -> recoveredDeletions.add(String.valueOf(id)));
+                if (islands instanceof List<?> ids) ids.stream()
+                        .filter(id -> !(raw.get("straddling") instanceof List<?> retained) || !retained.contains(id))
+                         .forEach(id -> recoveredDeletions.put(String.valueOf(id), new RecoveredDeletion(
+                                 ((Number) raw.get("days")).intValue(), deferredDimensions(raw, worldFolder))));
             } else {
                 remaining.add(raw);
             }
@@ -151,16 +230,408 @@ public class PurgeRegionsService {
         saveDeferred(yaml);
     }
 
-    private boolean saveDeferred(YamlConfiguration yaml) {
+    private List<File> deferredDimensions(Map<?, ?> raw, File worldFolder) {
+        return ((List<?>) raw.get("dimensions")).stream()
+                .map(entry -> new File((String) ((Map<?, ?>) entry).get("data"))).toList();
+    }
+
+    /** Read persisted rows without Bukkit deserialization: worlds must still be unloaded. */
+    private boolean safeDeferredPurge(Map<?, ?> raw, File worldFolder) {
+        // shortcut: JSON only; add a strict raw-row database API before enabling other backends.
+        if (plugin.getSettings().getDatabaseType() != world.bentobox.bentobox.database.DatabaseSetup.DatabaseType.JSON) {
+            plugin.logWarning("Deferred purge requires a complete, strict database read; backend is not supported");
+            return false;
+        }
+        if (!(raw.get("world-name") instanceof String worldName)
+                || !(raw.get("regions") instanceof List<?> regions) || regions.isEmpty()
+                || !(raw.get("islands") instanceof List<?> ids) || ids.stream().anyMatch(id -> !(id instanceof String))
+                || !(raw.get("straddling") instanceof List<?> retained)
+                || retained.stream().anyMatch(id -> !(id instanceof String))
+                || !(raw.get("days") instanceof Integer days) || days < 0
+                || !(raw.get("nether") instanceof Boolean) || !(raw.get("end") instanceof Boolean)) return false;
+        File table = new File(plugin.getDataFolder(), "database/Island");
+        File[] files = table.listFiles((dir, name) -> name.endsWith(".json"));
+        if (files == null) return false;
+        Set<String> found = new HashSet<>();
         try {
-            File parent = deferredFile.getParentFile();
-            if (!parent.exists()) parent.mkdirs();
-            yaml.save(deferredFile);
+            if (!validDeferredDimensions(raw, worldFolder)) return false;
+            Set<Pair<Integer, Integer>> coordinates = new HashSet<>();
+            for (Object region : regions) {
+                String[] parts = String.valueOf(region).split(":", -1);
+                if (parts.length != 2) return false;
+                int x = Integer.parseInt(parts[0]), z = Integer.parseInt(parts[1]);
+                if (x < (Integer.MIN_VALUE >> 9) || x > (Integer.MAX_VALUE >> 9)
+                        || z < (Integer.MIN_VALUE >> 9) || z > (Integer.MAX_VALUE >> 9)) return false;
+                coordinates.add(new Pair<>(x, z));
+            }
+            if (coordinates.size() != regions.size()) return false;
+            Set<String> allIds = new HashSet<>();
+            for (File file : files) {
+                JsonObject row = JsonParser.parseString(Files.readString(file.toPath())).getAsJsonObject();
+                String id = row.get("uniqueId").getAsString();
+                if (!allIds.add(id)) return false;
+                String rowWorld = row.get("world").getAsString();
+                if (!worldName.equals(rowWorld)
+                        && !(Boolean.TRUE.equals(raw.get("nether")) && (worldName + "_nether").equals(rowWorld))
+                        && !(Boolean.TRUE.equals(raw.get("end")) && (worldName + "_the_end").equals(rowWorld))) continue;
+                var center = row.getAsJsonArray("center");
+                if (!rowWorld.equals(center.get(0).getAsString())) return false;
+                if (!row.getAsJsonPrimitive("range").isNumber()
+                        || !center.get(1).getAsJsonPrimitive().isNumber()
+                        || !center.get(3).getAsJsonPrimitive().isNumber()
+                        || row.get("range").getAsDouble() != row.get("range").getAsInt()
+                        || center.get(1).getAsDouble() < Integer.MIN_VALUE
+                        || center.get(1).getAsDouble() > Integer.MAX_VALUE
+                        || center.get(3).getAsDouble() < Integer.MIN_VALUE
+                        || center.get(3).getAsDouble() > Integer.MAX_VALUE) return false;
+                int x = (int) Math.floor(center.get(1).getAsDouble()), z = (int) Math.floor(center.get(3).getAsDouble());
+                int range = row.get("range").getAsInt();
+                if (range <= 0 || !Double.isFinite(center.get(1).getAsDouble())
+                        || !Double.isFinite(center.get(3).getAsDouble())) return false;
+                boolean overlaps = coordinates.stream().anyMatch(region ->
+                        ((long) x - range) <= (long) region.x() * 512 + 511
+                        && ((long) x + range) > (long) region.x() * 512
+                        && ((long) z - range) <= (long) region.z() * 512 + 511
+                        && ((long) z + range) > (long) region.z() * 512);
+                if (!overlaps) continue;
+                if (!ids.contains(id) || !eligibleDeferredIsland(row, days)) return false;
+                found.add(id);
+            }
+            if (!found.containsAll(ids)) return false;
+            // A loaded world may still have dirty chunks, even when its files look unchanged.
+            if (days > 0) {
+                long cutoff = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+                for (File dimension : deferredDimensions(raw, worldFolder)) for (var region : coordinates)
+                    for (String kind : List.of(REGION, ENTITIES, POI)) {
+                        File file = new File(new File(dimension, kind), "r." + region.x() + "." + region.z() + ".mca");
+                        if (file.exists() && (!file.isFile() || file.length() < 8192
+                                || file.lastModified() >= cutoff || strictRegionTimestamp(file) >= cutoff)) return false;
+                    }
+            }
+            return true;
+        } catch (IOException | RuntimeException error) {
+            plugin.logWarning("Deferred purge validation failed: " + error.getMessage());
+            return false;
+        }
+    }
+
+    private boolean saveDeferred(YamlConfiguration yaml) {
+        java.nio.file.Path temporary = null;
+        try {
+            Files.createDirectories(deferredFile.getParentFile().toPath());
+            temporary = Files.createTempFile(deferredFile.getParentFile().toPath(), "deferred-purge-", ".tmp");
+            Files.writeString(temporary, yaml.saveToString(), java.nio.charset.StandardCharsets.UTF_8);
+            try {
+                Files.move(temporary, deferredFile.toPath(), java.nio.file.StandardCopyOption.ATOMIC_MOVE,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (java.nio.file.AtomicMoveNotSupportedException error) {
+                Files.move(temporary, deferredFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
             return true;
         } catch (IOException e) {
             plugin.logError("Failed to save deferred purge state: " + e.getMessage());
             return false;
+        } finally {
+            if (temporary != null) try {
+                Files.deleteIfExists(temporary);
+            } catch (IOException error) {
+                plugin.logWarning("Could not remove temporary purge manifest: " + temporary);
+            }
         }
+    }
+
+    private boolean validDeferredDimensions(Map<?, ?> raw, File worldFolder) throws IOException {
+        String worldName = (String) raw.get("world-name");
+        File container = Bukkit.getWorldContainer();
+        if (container == null || worldName.isBlank() || worldName.contains("/") || worldName.contains("\\")) return false;
+        File base = worldFolder.getCanonicalFile();
+        if (!base.getPath().equals(raw.get("world")) || !validWorldFolder(container, base, worldName)) return false;
+        if (!(raw.get("dimensions") instanceof List<?> dimensions)
+                || dimensions.size() != 1 + (Boolean.TRUE.equals(raw.get("nether")) ? 1 : 0)
+                        + (Boolean.TRUE.equals(raw.get("end")) ? 1 : 0)) return false;
+        Set<File> seen = new HashSet<>();
+        for (int i = 0; i < dimensions.size(); i++) {
+            if (!(dimensions.get(i) instanceof Map<?, ?> dimension)
+                    || !(dimension.get("world") instanceof String folderPath)
+                    || !(dimension.get("data") instanceof String dataPath)
+                    || !(dimension.get("uuid") instanceof String uuid)) return false;
+            String environment = i == 0 ? "NORMAL"
+                    : i == 1 && Boolean.TRUE.equals(raw.get("nether")) ? "NETHER" : "THE_END";
+            if (!environment.equals(dimension.get("environment"))) return false;
+            File folder = new File(folderPath).getCanonicalFile();
+            File data = new File(dataPath).getCanonicalFile();
+            File allowedWorld = i == 0 ? base : new File(base.getParentFile(),
+                    worldName + (environment.equals("NETHER") ? "_nether" : "_the_end")).getCanonicalFile();
+            if ((!folder.equals(allowedWorld) && !(i > 0 && folder.equals(base))) || !folder.getPath().equals(folderPath)
+                    || !data.getPath().equals(dataPath) || !seen.add(data)) return false;
+            File nested = new File(folder, environment.equals("NETHER") ? DIM_1 : DIM1);
+            if (!data.equals(folder) && (i == 0 || !data.equals(nested))) return false;
+            if (i > 0 && folder.equals(base) && !data.equals(nested)) return false;
+            if (!UUID.fromString(uuid).equals(worldUuid(folder))) return false;
+            for (World loaded : Bukkit.getWorlds()) {
+                File loadedFolder = loaded.getWorldFolder().getCanonicalFile();
+                if (loaded.getUID().toString().equals(uuid) || loadedFolder.equals(folder)
+                        || resolveDataFolder(loaded).getCanonicalFile().equals(data)) return false;
+            }
+            for (String kind : List.of(REGION, ENTITIES, POI)) {
+                File directory = new File(data, kind);
+                if (!directory.getCanonicalFile().equals(directory.getAbsoluteFile())
+                        || directory.exists() && !directory.isDirectory()) return false;
+                for (Object coordinate : (List<?>) raw.get("regions")) {
+                    String[] parts = String.valueOf(coordinate).split(":", -1);
+                    if (parts.length != 2) return false;
+                    File target = new File(directory, "r." + Integer.parseInt(parts[0]) + "."
+                            + Integer.parseInt(parts[1]) + ".mca");
+                    if (!target.getCanonicalFile().equals(target.getAbsoluteFile())
+                            || target.exists() && !target.isFile()) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Accepts the legacy layout ({@code <container>/<world>}) and the Paper 26.1.1+
+     * dimension layout ({@code <container>/<level>/dimensions/<namespace>/<world>}).
+     * The folder leaf must equal the recorded world name so a manifest cannot
+     * redirect deletion to another world.
+     */
+    private boolean validWorldFolder(File container, File folder, String worldName) throws IOException {
+        if (!folder.getName().equals(worldName)) return false;
+        File parent = folder.getParentFile();
+        if (parent == null) return false;
+        if (parent.equals(container.getCanonicalFile())) return true;
+        File dimensions = parent.getParentFile();
+        return dimensions != null && "dimensions".equals(dimensions.getName())
+                && dimensions.getParentFile() != null
+                && container.getCanonicalFile().equals(dimensions.getParentFile().getParentFile())
+                && parent.getName().matches("[A-Za-z0-9._-]+");
+    }
+
+    /** Level UUID from uid.dat, or from Paper's NBT metadata when that file is absent. */
+    private UUID worldUuid(File folder) throws IOException {
+        File uid = new File(folder, "uid.dat");
+        if (uid.isFile()) try (DataInputStream input = new DataInputStream(new FileInputStream(uid))) {
+            return new UUID(input.readLong(), input.readLong());
+        }
+        File metadata = new File(folder, "data/paper/metadata.dat");
+        if (!metadata.isFile()) throw new IOException("No world identity file in " + folder);
+        return paperMetadataUuid(metadata);
+    }
+
+    private UUID paperMetadataUuid(File file) throws IOException {
+        try (DataInputStream input = new DataInputStream(
+                new GZIPInputStream(new BufferedInputStream(new FileInputStream(file))))) {
+            if (input.readUnsignedByte() != 10) throw new IOException("World metadata is not an NBT compound");
+            readNbtString(input);
+            UUID uuid = null;
+            for (int type; (type = input.readUnsignedByte()) != 0; ) {
+                String name = readNbtString(input);
+                if (type == 10 && "data".equals(name)) {
+                    for (int inner; (inner = input.readUnsignedByte()) != 0; ) {
+                        String innerName = readNbtString(input);
+                        if (inner == 11 && "uuid".equals(innerName)) {
+                            if (uuid != null || input.readInt() != 4) throw new IOException("Invalid world UUID");
+                            uuid = new UUID(
+                                    ((long) input.readInt() << 32) | (input.readInt() & 0xFFFFFFFFL),
+                                    ((long) input.readInt() << 32) | (input.readInt() & 0xFFFFFFFFL));
+                        } else {
+                            skipNbt(input, inner);
+                        }
+                    }
+                } else {
+                    skipNbt(input, type);
+                }
+            }
+            if (uuid == null || input.read() != -1) throw new IOException("World metadata has no single UUID");
+            return uuid;
+        }
+    }
+
+    private String readNbtString(DataInputStream input) throws IOException {
+        byte[] bytes = new byte[input.readUnsignedShort()];
+        input.readFully(bytes);
+        return new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private void skipNbt(DataInputStream input, int type) throws IOException {
+        switch (type) {
+            case 1 -> input.skipNBytes(1);
+            case 2 -> input.skipNBytes(2);
+            case 3, 5 -> input.skipNBytes(4);
+            case 4, 6 -> input.skipNBytes(8);
+            case 7 -> skipNbtBytes(input, input.readInt());
+            case 8 -> readNbtString(input);
+            case 9 -> {
+                int listType = input.readUnsignedByte();
+                int size = input.readInt();
+                if (size < 0 || size > 1_000_000) throw new IOException("Invalid NBT list");
+                for (int i = 0; i < size; i++) skipNbt(input, listType);
+            }
+            case 10 -> {
+                for (int inner; (inner = input.readUnsignedByte()) != 0; ) {
+                    readNbtString(input);
+                    skipNbt(input, inner);
+                }
+            }
+            case 11 -> skipNbtBytes(input, (long) input.readInt() * 4);
+            case 12 -> skipNbtBytes(input, (long) input.readInt() * 8);
+            default -> throw new IOException("Unsupported NBT tag " + type);
+        }
+    }
+
+    private void skipNbtBytes(DataInputStream input, long length) throws IOException {
+        if (length < 0 || length > 100_000_000L) throw new IOException("Invalid NBT length");
+        input.skipNBytes(length);
+    }
+
+    private boolean eligibleDeferredIsland(JsonObject row, int days) throws IOException {
+        for (String flag : List.of("deletable", "spawn", "purgeProtected")) {
+            if (!row.has(flag) || !row.get(flag).isJsonPrimitive()
+                    || !row.getAsJsonPrimitive(flag).isBoolean()) return false;
+        }
+        boolean deletable = row.get("deletable").getAsBoolean();
+        if (row.get("spawn").getAsBoolean() || row.get("purgeProtected").getAsBoolean()) return false;
+        boolean owned = row.has("owner") && !row.get("owner").isJsonNull();
+        if (days == 0) return deletable && !owned;
+        if (deletable) return !owned;
+        if (!owned) return false;
+        // Level is not loaded before worlds; inspect descriptors, never infer addon identity from filenames.
+        if (deferredLevelProtectionUnavailable() && !safeDeferredLevel(row.get("uniqueId").getAsString())) {
+            plugin.logWarning("Deferred age purge retained: Level record is protected, uninitialized, pending or unverifiable for "
+                    + row.get("uniqueId").getAsString());
+            return false;
+        }
+        long cutoff = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
+        Set<UUID> members = new HashSet<>();
+        members.add(UUID.fromString(row.get("owner").getAsString()));
+        for (var member : row.getAsJsonObject("members").entrySet()) {
+            if (member.getValue().getAsInt() >= RanksManager.MEMBER_RANK) members.add(UUID.fromString(member.getKey()));
+        }
+        for (UUID member : members) {
+            File playerFile = new File(plugin.getDataFolder(), "database/Players/" + member + ".json");
+            if (!playerFile.isFile()) return false;
+            JsonObject player = JsonParser.parseString(Files.readString(playerFile.toPath())).getAsJsonObject();
+            if (!member.toString().equals(player.get("uniqueId").getAsString())
+                    || !player.has("lastLogin") || player.get("lastLogin").isJsonNull()
+                    || player.get("lastLogin").getAsLong() <= 0
+                    || player.get("lastLogin").getAsLong() >= cutoff
+                    || Bukkit.getOfflinePlayer(member).getLastSeen() >= cutoff) return false;
+        }
+        return true;
+    }
+
+    private boolean safeDeferredLevel(String islandId) {
+        try {
+            File table = new File(plugin.getDataFolder(), "database/IslandLevels");
+            File file = new File(table, islandId.endsWith(".json") ? islandId : islandId + ".json");
+            if (!file.getCanonicalFile().getParentFile().equals(table.getCanonicalFile()) || !file.isFile()) return false;
+            JsonObject data = new JsonObject();
+            try (var reader = new com.google.gson.stream.JsonReader(Files.newBufferedReader(file.toPath()))) {
+                reader.setStrictness(com.google.gson.Strictness.STRICT);
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String name = reader.nextName();
+                    if (data.has(name)) return false;
+                    data.add(name, JsonParser.parseReader(reader));
+                }
+                reader.endObject();
+                if (reader.peek() != com.google.gson.stream.JsonToken.END_DOCUMENT) return false;
+            }
+            Set<String> numbers = Set.of("level", "initialLevel", "initialCount", "pointsToNextLevel", "maxLevel",
+                    "totalPoints", "donatedPoints", "anonymousDeaths");
+            Set<String> counts = Set.of("uwCount", "mdCount", "donatedBlocks", "memberDeaths");
+            for (var field : data.entrySet()) {
+                String name = field.getKey();
+                var value = field.getValue();
+                if (numbers.contains(name)) {
+                    if (value.isJsonNull() && !Set.of("initialLevel", "initialCount", "donatedPoints").contains(name)) return false;
+                    if (!value.isJsonNull()) strictLong(value);
+                } else if (counts.contains(name)) {
+                    if (!value.isJsonNull()) for (var count : value.getAsJsonObject().entrySet()) {
+                        long amount = strictLong(count.getValue());
+                        if (amount < 0 || amount > Integer.MAX_VALUE) return false;
+                    }
+                } else if (name.equals("uniqueId")) {
+                    if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()
+                            || !islandId.equals(value.getAsString())) return false;
+                } else if (name.equals("pendingInitialCountOwner")) {
+                    if (!value.isJsonNull()) return false;
+                } else if (name.equals("deathsMigrated")) {
+                    if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isBoolean()) return false;
+                } else if (name.equals("donationLog")) {
+                    if (!value.isJsonNull()) for (var donation : value.getAsJsonArray()) {
+                        JsonObject record = donation.getAsJsonObject();
+                        if (!record.keySet().equals(Set.of("timestamp", "donorUUID", "material", "count", "points"))) return false;
+                        strictLong(record.get("timestamp"));
+                        strictLong(record.get("count"));
+                        strictLong(record.get("points"));
+                        UUID.fromString(record.get("donorUUID").getAsString());
+                        if (!record.getAsJsonPrimitive("material").isString()) return false;
+                    }
+                } else return false;
+            }
+            // getIslandLevel returns the stored current level; missing/default or pending baselines are not evidence.
+            return data.has("uniqueId") && data.has("initialCount") && !data.get("initialCount").isJsonNull()
+                    && data.has("level") && !data.get("level").isJsonNull()
+                    && strictLong(data.get("level")) < plugin.getSettings().getIslandPurgeLevel();
+        } catch (IOException | RuntimeException error) {
+            plugin.logWarning("Deferred Level record retained for " + islandId + ": " + error.getMessage());
+            return false;
+        }
+    }
+
+    private long strictLong(com.google.gson.JsonElement value) {
+        if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber())
+            throw new IllegalArgumentException("Expected an integer Level field");
+        return value.getAsBigDecimal().longValueExact();
+    }
+
+    private boolean deferredLevelProtectionUnavailable() throws IOException {
+        if (plugin.getAddonsManager() != null)
+            return plugin.getAddonsManager().getAddonByName("Level").isPresent();
+        File directory = new File(plugin.getDataFolder(), "addons");
+        if (!directory.exists()) return false;
+        File[] jars = directory.listFiles((dir, name) -> name.toLowerCase(java.util.Locale.ROOT).endsWith(".jar"));
+        if (jars == null) throw new IOException("Cannot enumerate addons");
+        boolean levelPresent = false;
+        for (File file : jars) {
+            try (java.util.jar.JarFile jar = new java.util.jar.JarFile(file)) {
+                var descriptor = jar.getJarEntry("addon.yml");
+                if (descriptor == null) throw new IOException("Missing addon descriptor: " + file.getName());
+                YamlConfiguration yaml = new YamlConfiguration();
+                try (var reader = new java.io.InputStreamReader(jar.getInputStream(descriptor),
+                        java.nio.charset.StandardCharsets.UTF_8)) {
+                    yaml.load(reader);
+                } catch (InvalidConfigurationException error) {
+                    throw new IOException("Invalid addon descriptor: " + file.getName(), error);
+                }
+                String name = yaml.getString("name");
+                if (name == null) throw new IOException("Missing addon name: " + file.getName());
+                if ("Level".equalsIgnoreCase(name)) levelPresent = true;
+            }
+        }
+        return levelPresent;
+    }
+
+    private boolean hasResidualFiles(Island island, List<File> dimensions) {
+        // Use the whole island space, not its possibly-shrunk current protection box.
+        if (island.getMaxX() <= island.getMinX() || island.getMaxZ() <= island.getMinZ()) return true;
+        int minX = island.getMinX() >> 9, maxX = (island.getMaxX() - 1) >> 9;
+        int minZ = island.getMinZ() >> 9, maxZ = (island.getMaxZ() - 1) >> 9;
+        for (File dimension : dimensions) for (String kind : List.of(REGION, ENTITIES, POI)) {
+            File directory = new File(dimension, kind);
+            if (!directory.exists()) continue;
+            File[] files = directory.listFiles();
+            if (files == null) return true;
+            for (File file : files) {
+                if (!file.getName().matches("r\\.-?\\d+\\.-?\\d+\\.mca")) continue;
+                Pair<Integer, Integer> coords = parseRegionCoords(file.getName());
+                if (coords == null || coords.x() >= minX && coords.x() <= maxX
+                        && coords.z() >= minZ && coords.z() <= maxZ) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -378,6 +849,7 @@ public class PurgeRegionsService {
                 // cache. Defer DB row removal to plugin shutdown when the
                 // cache is guaranteed clear.
                 pendingDeletions.add(islandID);
+                pendingFiles.put(islandID, scanDimensions(scan));
                 islandsDeferred++;
                 plugin.log("Island ID " + islandID
                         + " region files deleted \u2014 DB row deferred to shutdown");
@@ -433,6 +905,16 @@ public class PurgeRegionsService {
             // DELETED was already fired at soft-delete time; PURGED signals that
             // the DB row is now physically removed.
             Optional<Island> opt = plugin.getIslands().getIslandById(islandID);
+            if (opt.isEmpty() || !opt.get().isDeletable() || opt.get().isOwned()
+                    || opt.get().isSpawn() || opt.get().isPurgeProtected()) {
+                flushed.add(islandID);
+                continue;
+            }
+            List<File> dimensions = pendingFiles.get(islandID);
+            if (dimensions == null || hasResidualFiles(opt.get(), dimensions)) {
+                plugin.logWarning("Deferred island row retained: residual files could not be ruled out for " + islandID);
+                continue;
+            }
             if (plugin.getIslands().deleteIslandId(islandID)) {
                 plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
                 count++;
@@ -444,6 +926,7 @@ public class PurgeRegionsService {
             }
         }
         pendingDeletions.removeAll(flushed);
+        flushed.forEach(pendingFiles::remove);
         plugin.log("Flushed " + count + " island(s) from cache and database");
     }
 
@@ -645,6 +1128,21 @@ public class PurgeRegionsService {
             }
         }
         return count;
+    }
+
+    private List<File> scanDimensions(PurgeScanResult scan) {
+        List<File> dimensions = new ArrayList<>();
+        File base = scan.world().getWorldFolder();
+        dimensions.add(base);
+        if (scan.isNether()) {
+            World nether = plugin.getIWM().getNetherWorld(scan.world());
+            dimensions.add(nether == null ? resolveNetherFallback(base) : resolveDataFolder(nether));
+        }
+        if (scan.isEnd()) {
+            World end = plugin.getIWM().getEndWorld(scan.world());
+            dimensions.add(end == null ? resolveEndFallback(base) : resolveDataFolder(end));
+        }
+        return dimensions;
     }
 
     /** Await only from an async task; failed eviction must prevent region-file deletion. */
@@ -1305,6 +1803,15 @@ public class PurgeRegionsService {
             plugin.logError("Failed to read region file timestamps: " + regionFile.getAbsolutePath()
                     + " " + e.getMessage());
             return 0L;
+        }
+    }
+
+    private long strictRegionTimestamp(File file) throws IOException {
+        try (RandomAccessFile input = new RandomAccessFile(file, "r")) {
+            input.seek(4096);
+            long latest = 0;
+            for (int i = 0; i < 1024; i++) latest = Math.max(latest, Integer.toUnsignedLong(input.readInt()));
+            return latest * 1000L;
         }
     }
 }

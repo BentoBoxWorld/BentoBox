@@ -86,10 +86,15 @@ public class HeadGetter {
      * @since 1.14.1
      */
     public static void getHead(PanelItem panelItem, HeadRequester requester) {
+        String playerName = panelItem.getPlayerHeadName();
+        if (playerName == null || playerName.length() > 16) {
+            return;
+        }
+
         // Freshen cache
         // If memory is an issue we sacrifice performance?
 
-        HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
+        HeadCache cache = cachedHeads.get(playerName);
 
         // Get value from config. Multiply value to 60 000 as internally it uses
         // milliseconds.
@@ -113,7 +118,7 @@ public class HeadGetter {
         // lookup. This also avoids the async callback racing a GUI that has since been
         // redrawn. The player list may only be read from the primary thread.
         if (Bukkit.isPrimaryThread()) {
-            HeadCache live = getFromOnlinePlayer(panelItem.getPlayerHeadName());
+            HeadCache live = getFromOnlinePlayer(playerName);
 
             if (live != null) {
                 cachedHeads.put(live.getUserName(), live);
@@ -124,8 +129,8 @@ public class HeadGetter {
         }
 
         // Queue for the async resolver
-        headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
-        names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
+        headRequesters.computeIfAbsent(playerName, k -> new HashSet<>()).add(requester);
+        names.add(new Pair<>(playerName, panelItem));
     }
 
     /**

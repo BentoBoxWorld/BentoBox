@@ -65,6 +65,51 @@ public class NewIsland {
     private boolean creationGuardHeld;
     private boolean leaveCleanupStarted;
     private boolean leaveCleanupCompleted;
+    private final boolean transactional;
+    private final java.util.function.Function<Island, CompletableFuture<Void>> allocated;
+    private PreparationAccessGuard preparationAccess;
+
+    /** Operation-local barrier, including addon warps that do not use IslandsManager's home methods. */
+    static final class PreparationAccessGuard implements org.bukkit.event.Listener {
+        private final Location center;
+        private final int range;
+
+        PreparationAccessGuard(Location center, int range) {
+            this.center = center.clone();
+            this.range = range;
+        }
+
+        boolean blocks(Location destination) {
+            return destination != null && Util.sameWorld(center.getWorld(), destination.getWorld())
+                    && destination.getBlockX() >= center.getBlockX() - range
+                    && destination.getBlockX() < center.getBlockX() + range
+                    && destination.getBlockZ() >= center.getBlockZ() - range
+                    && destination.getBlockZ() < center.getBlockZ() + range;
+        }
+
+        @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST, ignoreCancelled = true)
+        public void teleport(org.bukkit.event.player.PlayerTeleportEvent event) {
+            if (blocks(event.getTo())) event.setCancelled(true);
+        }
+
+        @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST, ignoreCancelled = true)
+        public void move(org.bukkit.event.player.PlayerMoveEvent event) {
+            if (blocks(event.getTo())) event.setCancelled(true);
+        }
+    }
+
+    private void protectPreparation(Location center) {
+        if ((!TaskScheduler.isFolia() && !transactional) || preparationAccess != null) return;
+        preparationAccess = new PreparationAccessGuard(center, plugin.getIWM().getIslandDistance(center.getWorld()));
+        Bukkit.getPluginManager().registerEvents(preparationAccess, plugin);
+    }
+
+    private void releasePreparation() {
+        if (preparationAccess != null) {
+            org.bukkit.event.HandlerList.unregisterAll(preparationAccess);
+            preparationAccess = null;
+        }
+    }
 
     private NewIslandLocationStrategy locationStrategy;
 
@@ -85,6 +130,8 @@ public class NewIsland {
         this.addon = builder.addon2;
         this.locationStrategy = builder.locationStrategy2;
         this.beforeTeleport = builder.beforeTeleport2;
+        this.transactional = builder.transactional2;
+        this.allocated = builder.allocated2;
 
         // Use default location strategy if none provided
         if (this.locationStrategy == null) {
@@ -97,7 +144,23 @@ public class NewIsland {
             // Event was cancelled, abort creation
             return;
         }
-        newIsland(builder.oldIsland2);
+        if (!transactional) {
+            newIsland(builder.oldIsland2);
+        } else {
+            try {
+                newIsland(builder.oldIsland2);
+            } catch (Throwable error) {
+                if (island == null) releasePreparation();
+                completion = (island == null ? CompletableFuture.<Void>completedFuture(null) : discardUnfinishedIsland())
+                        .handle((ignored, cleanupError) -> {
+                            if (cleanupError != null) {
+                                error.addSuppressed(cleanupError);
+                                throw new java.util.concurrent.CompletionException(error);
+                            }
+                            throw new RolledBackException(error);
+                        });
+            }
+        }
     }
 
     /**
@@ -132,6 +195,17 @@ public class NewIsland {
         private Supplier<CompletableFuture<Void>> beforeTeleport2 = () -> CompletableFuture.completedFuture(null);
         private java.util.function.Function<Island, CompletableFuture<Void>> afterBuild2 =
                 island -> CompletableFuture.completedFuture(null);
+        private boolean transactional2;
+        private java.util.function.Function<Island, CompletableFuture<Void>> allocated2 =
+                island -> CompletableFuture.completedFuture(null);
+
+        public Builder allocated(java.util.function.Function<Island, CompletableFuture<Void>> action) {
+            allocated2 = java.util.Objects.requireNonNull(action);
+            return this;
+        }
+
+        /** Uses the observable prepare/commit pipeline on ordinary servers as well as Folia. */
+        public Builder transactional() { transactional2 = true; return this; }
 
         /**
          * Sets the old island to be replaced.
@@ -243,16 +317,19 @@ public class NewIsland {
 
         /** Selects terrain on its owning regions, then creates the island on the player's thread. */
         public CompletableFuture<Island> buildAsync() {
-            if (!TaskScheduler.isFolia()) {
+            if (!TaskScheduler.isFolia() && !transactional2) {
                 try {
                     return CompletableFuture.completedFuture(build());
                 } catch (IOException error) {
                     return CompletableFuture.failedFuture(error);
                 }
             }
-            if (user2 == null) return CompletableFuture.failedFuture(new IOException("Insufficient parameters. Must have a user!"));
+            if (user2 == null) return CompletableFuture.failedFuture(new RolledBackException(
+                    new IOException("Insufficient parameters. Must have a user!")));
             if (!CREATING.add(user2.getUniqueId())) {
-                return CompletableFuture.failedFuture(new IllegalStateException("Island creation is already in progress"));
+                // Nothing was allocated: a caller that already debited must be able to refund safely.
+                return CompletableFuture.failedFuture(new RolledBackException(
+                        new IllegalStateException("Island creation is already in progress")));
             }
             try {
                 return selectAndBuildAsync().thenCompose(island -> island == null
@@ -261,7 +338,7 @@ public class NewIsland {
                         .whenComplete((island, error) -> CREATING.remove(user2.getUniqueId()));
             } catch (Throwable error) {
                 CREATING.remove(user2.getUniqueId());
-                return CompletableFuture.failedFuture(error);
+                return CompletableFuture.failedFuture(new RolledBackException(error));
             }
         }
 
@@ -269,9 +346,15 @@ public class NewIsland {
             var plugin = BentoBox.getInstance();
             var reserved = plugin.getIslands().getIsland(world2, user2);
             var strategy = locationStrategy2 == null ? new DefaultNewIslandLocationStrategy() : locationStrategy2;
-            CompletableFuture<Location> selected = reserved != null && reserved.isReserved()
-                    ? CompletableFuture.completedFuture(reserved.getCenter())
-                    : strategy.getNextLocationAsync(world2, user2);
+            CompletableFuture<Location> selected;
+            try {
+                selected = reserved != null && reserved.isReserved()
+                        ? CompletableFuture.completedFuture(reserved.getCenter())
+                        : strategy.getNextLocationAsync(world2, user2);
+            } catch (Throwable error) {
+                return CompletableFuture.failedFuture(new RolledBackException(error));
+            }
+            selected = selected.exceptionally(error -> { throw new RolledBackException(error); });
             return selected.thenCompose(location -> {
                 CompletableFuture<Island> result = new CompletableFuture<>();
                 locationStrategy2 = world -> location;
@@ -285,7 +368,7 @@ public class NewIsland {
                     } catch (Throwable error) {
                         result.completeExceptionally(error);
                     }
-                }).exceptionally(error -> { result.completeExceptionally(error); return null; });
+                }).exceptionally(error -> { result.completeExceptionally(new RolledBackException(error)); return null; });
                 return result;
             });
         }
@@ -305,7 +388,7 @@ public class NewIsland {
             next = this.makeNextIsland();
         }
         // Clean up user data before moving to new island
-        if (!TaskScheduler.isFolia()) cleanUpUser();
+        if (!TaskScheduler.isFolia() && !transactional) cleanUpUser();
         setProtectionRange();
         // Fire event for plugins/addons to react or cancel
         IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(reason).island(island)
@@ -333,12 +416,13 @@ public class NewIsland {
         island.log(new LogEntry.Builder(LogType.JOINED).data(user.getUniqueId().toString(), "owner").build());
         IslandsManager.updateIsland(island);
         // Set the player's primary island
-        if (!TaskScheduler.isFolia()) plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
+        if (!TaskScheduler.isFolia() && !transactional) plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
         // Run post-creation tasks after creating the island
-        if (TaskScheduler.isFolia()) {
-            CompletableFuture<Void> pasted = noPaste ? CompletableFuture.completedFuture(null)
-                    : plugin.getBlueprintsManager().pasteTerrainAsync(addon, island, name, true);
-            completion = pasted.thenCompose(ignored -> {
+        if (TaskScheduler.isFolia() || transactional) {
+            CompletableFuture<Void> pasted = allocated.apply(island).thenCompose(ignored -> noPaste
+                    ? CompletableFuture.completedFuture(null)
+                    : plugin.getBlueprintsManager().pasteTerrainAsync(addon, island, name, true));
+            completion = pasted.thenCompose(ignored -> initializeLevelCount(plugin, island)).thenRun(this::releasePreparation).thenCompose(ignored -> {
                 CompletableFuture<Void> prepared = new CompletableFuture<>();
                 TaskScheduler.userFuture(plugin, user, () -> {
                     // Leave commands and economy hooks cannot in general be rolled back.
@@ -365,7 +449,8 @@ public class NewIsland {
                     TaskScheduler.userFuture(plugin, user, () -> {
                         user.getPlayer().setVelocity(new Vector(0, 0, 0));
                         user.getPlayer().setFallDistance(0F);
-                        plugin.getIslands().homeTeleportAsync(island, user, true).whenComplete((done, error) -> {
+                        // This overload returns Void; rejected/unsafe teleports complete exceptionally upstream.
+                        plugin.getIslands().homeTeleportAsync(island, user, true).whenComplete((ignoredTeleport, error) -> {
                             if (error != null) teleported.completeExceptionally(error);
                             else teleported.complete(null);
                         });
@@ -389,6 +474,7 @@ public class NewIsland {
                 if (leaveCleanupStarted) return CompletableFuture.failedFuture(error);
                 return discardUnfinishedIsland().handle((ignored, cleanupError) -> {
                     if (cleanupError != null) error.addSuppressed(cleanupError);
+                    if (cleanupError == null) throw new RolledBackException(error);
                     throw new java.util.concurrent.CompletionException(error);
                 });
             });
@@ -455,6 +541,31 @@ public class NewIsland {
         }
     }
 
+    /** Only emitted after the replacement was safely discarded, before player state was committed. */
+    public static final class RolledBackException extends java.util.concurrent.CompletionException {
+        public RolledBackException(Throwable cause) { super(cause); }
+    }
+
+    /** The initial baseline must be durable before cleanup or any player can edit the pasted island. */
+    static CompletableFuture<Void> initializeLevelCount(BentoBox plugin, Island island) {
+        var level = plugin.getAddonsManager().getAddonByName("Level").filter(addon -> addon.isEnabled());
+        if (level.isEmpty()) return CompletableFuture.completedFuture(null);
+        try {
+            Object addon = level.get();
+            Class<?> type = Class.forName(addon.getClass().getName(), true, addon.getClass().getClassLoader());
+            // Reflect only the addon facade: manager signatures reference optional addons such as Visit.
+            Object result = type.getMethod("initializeIslandCountAsync", Island.class).invoke(addon, island);
+            if (!(result instanceof CompletableFuture<?> future)) {
+                return CompletableFuture.failedFuture(new IllegalStateException("Level initialization returned no future"));
+            }
+            return future.thenApply(ignored -> null);
+        } catch (java.lang.reflect.InvocationTargetException error) {
+            return CompletableFuture.failedFuture(error.getCause());
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError error) {
+            return CompletableFuture.failedFuture(new IllegalStateException("Could not initialize Level before island delivery", error));
+        }
+    }
+
     private void setProtectionRange() {
         // Set protection range based on user's permission, if different from default
         island.setProtectionRange(user.getPermissionValue(
@@ -468,6 +579,7 @@ public class NewIsland {
         if (!newlyAllocated) {
             unfinished.setReserved(true);
             IslandsManager.updateIsland(unfinished);
+            releasePreparation();
             CREATING.remove(user.getUniqueId());
             return CompletableFuture.completedFuture(null);
         }
@@ -476,6 +588,7 @@ public class NewIsland {
             if (unfinished.isOwned()) {
                 throw new IllegalStateException("Unfinished island deletion was cancelled: " + unfinished.getUniqueId());
             }
+            releasePreparation();
             CREATING.remove(user.getUniqueId());
         });
     }
@@ -497,8 +610,10 @@ public class NewIsland {
             throw new IOException("commands.island.create.cannot-create-island");
         }
         // Add island to grid
+        protectPreparation(next);
         island = plugin.getIslands().createIsland(next, user.getUniqueId());
         if (island == null) {
+            releasePreparation();
             if (plugin.getIWM().getAddon(world).map(GameModeAddon::isEnforceEqualRanges).orElse(true)) {
                 plugin.logError("Failed to make island! Island could not be added to the grid.");
             }
@@ -520,6 +635,7 @@ public class NewIsland {
             island = plugin.getIslands().getIsland(world, user);
             if (island != null && island.isReserved()) {
                 Location l = island.getCenter();
+                protectPreparation(l);
                 // Clear the reservation
                 island.setReserved(false);
                 return l;

@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import java.io.IOException;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -30,6 +32,8 @@ import java.util.UUID;
 import com.google.common.collect.ImmutableSet;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +46,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.managers.PurgeRegionsService.FilterStats;
 import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -599,6 +604,8 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(del1.getMaxProtectedX()).thenReturn(100);
         when(del1.getMinProtectedZ()).thenReturn(0);
         when(del1.getMaxProtectedZ()).thenReturn(100);
+        when(del1.getMaxX()).thenReturn(100);
+        when(del1.getMaxZ()).thenReturn(100);
         when(im.getIslandById("del1")).thenReturn(Optional.of(del1));
         when(im.deleteIslandId("del1")).thenReturn(true);
 
@@ -609,6 +616,9 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(del2.getMaxProtectedX()).thenReturn(612);
         when(del2.getMinProtectedZ()).thenReturn(0);
         when(del2.getMaxProtectedZ()).thenReturn(100);
+        when(del2.getMinX()).thenReturn(512);
+        when(del2.getMaxX()).thenReturn(612);
+        when(del2.getMaxZ()).thenReturn(100);
         when(im.getIslandById("del2")).thenReturn(Optional.of(del2));
         when(im.deleteIslandId("del2")).thenReturn(true);
 
@@ -639,7 +649,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     @Test
     void testFlushPendingDeletionsRetainsFailedDatabaseDeleteForRetry() throws IOException {
         Island del = mock(Island.class);
+        when(del.isDeletable()).thenReturn(true);
         when(del.getUniqueId()).thenReturn("del");
+        when(del.getMaxX()).thenReturn(100);
+        when(del.getMaxZ()).thenReturn(100);
         when(im.getIslandById("del")).thenReturn(Optional.of(del));
         when(im.deleteIslandId("del")).thenReturn(false);
 
@@ -653,11 +666,28 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         service.flushPendingDeletions();
 
         assertTrue(service.getPendingDeletions().contains("del"));
+        verify(im).deleteIslandId("del");
         verify(islandCache, never()).deleteIslandFromCache(anyString());
     }
 
     @Test
+    void restoredIslandIsNotFlushedFromDatabase() throws IOException {
+        Island del = mock(Island.class);
+        when(del.isDeletable()).thenReturn(true);
+        when(im.getIslandById("restored")).thenReturn(Optional.of(del));
+        Files.createDirectories(tempDir.resolve("region"));
+        Files.write(tempDir.resolve("region/r.0.0.mca"), new byte[0]);
+        service.delete(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("restored")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of()));
+        when(del.isDeletable()).thenReturn(false);
+        service.flushPendingDeletions();
+        verify(im, never()).deleteIslandId("restored");
+        assertTrue(service.getPendingDeletions().isEmpty());
+    }
+
+    @Test
     void testDeferredPurgeRecoversFilesBeforeDatabaseCleanup() throws IOException {
+        prepareDeferredWorld();
         when(plugin.getDataFolder()).thenReturn(tempDir.toFile());
         service = new PurgeRegionsService(plugin);
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));
@@ -667,12 +697,23 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Path entities = Files.write(entitiesDir.resolve("r.2.-1.mca"), new byte[0]);
         Path poi = Files.write(poiDir.resolve("r.2.-1.mca"), new byte[0]);
         Island deferred = mock(Island.class);
+        when(deferred.isDeletable()).thenReturn(true);
+        when(deferred.getMinX()).thenReturn(924);
+        when(deferred.getMaxX()).thenReturn(1124);
+        when(deferred.getMinZ()).thenReturn(-612);
+        when(deferred.getMaxZ()).thenReturn(-412);
         when(im.getIslandById("recovered")).thenReturn(Optional.of(deferred));
         when(im.deleteIslandId("recovered")).thenReturn(true);
 
         PurgeScanResult scan = new PurgeScanResult(world, 0,
                 Map.of(new Pair<>(2, -1), Set.of("recovered")), false, false,
                 new FilterStats(0, 0, 0, 0), Set.of());
+        plugin.getSettings().setDatabaseType(DatabaseType.JSON);
+        Path islandDir = Files.createDirectories(tempDir.resolve("database/Island"));
+        Files.writeString(islandDir.resolve("recovered.json"), """
+                {"uniqueId":"recovered","world":"test-world","center":["test-world",1024,80,-512],
+                 "range":100,"maxEverProtectionRange":100,"deletable":true,"spawn":false,"purgeProtected":false}
+                """.replace("test-world", tempDir.getFileName().toString()));
         try (var scheduler = org.mockito.Mockito.mockStatic(TaskScheduler.class,
                 org.mockito.Mockito.CALLS_REAL_METHODS)) {
             scheduler.when(TaskScheduler::isFolia).thenReturn(true);
@@ -689,6 +730,392 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         recovered.flushPendingDeletions();
         verify(im).deleteIslandId("recovered");
         assertTrue(recovered.getPendingDeletions().isEmpty());
+    }
+
+    @Test
+    void restoredIslandBlocksDeferredPhysicalDeletion() throws IOException {
+        prepareDeferredWorld();
+        when(plugin.getDataFolder()).thenReturn(tempDir.toFile());
+        plugin.getSettings().setDatabaseType(DatabaseType.JSON);
+        service = new PurgeRegionsService(plugin);
+        Path region = Files.createDirectories(tempDir.resolve("region")).resolve("r.2.-1.mca");
+        Files.write(region, new byte[] { 1 });
+        Path table = Files.createDirectories(tempDir.resolve("database/Island"));
+        Files.writeString(table.resolve("restored.json"), """
+                {"uniqueId":"restored","world":"test-world","center":["test-world",1024,80,-512],
+                 "range":100,"maxEverProtectionRange":100,"deletable":false,"spawn":false,"purgeProtected":false}
+                """.replace("test-world", tempDir.getFileName().toString()));
+        service.defer(new PurgeScanResult(world, 0, Map.of(new Pair<>(2, -1), Set.of("restored")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of()));
+        new PurgeRegionsService(plugin).completeRecoveredDeletions();
+        assertTrue(Files.exists(region));
+        verify(im, never()).deleteIslandId("restored");
+    }
+
+    private void prepareDeferredWorld() throws IOException {
+        UUID uid = UUID.randomUUID();
+        when(world.getUID()).thenReturn(uid);
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        mockedBukkit.when(Bukkit::getWorldContainer).thenReturn(tempDir.getParent().toFile());
+        when(world.getName()).thenReturn(tempDir.getFileName().toString());
+        mockedBukkit.when(Bukkit::getWorlds).thenReturn(List.of());
+        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(tempDir.resolve("uid.dat").toFile()))) {
+            output.writeLong(uid.getMostSignificantBits());
+            output.writeLong(uid.getLeastSignificantBits());
+        }
+    }
+
+    private Path deferredFixture(int days, boolean deletable) throws IOException {
+        prepareDeferredWorld();
+        when(plugin.getDataFolder()).thenReturn(tempDir.toFile());
+        plugin.getSettings().setDatabaseType(DatabaseType.JSON);
+        service = new PurgeRegionsService(plugin);
+        Path region = Files.createDirectories(tempDir.resolve("region")).resolve("r.0.0.mca");
+        Files.write(region, new byte[8192]);
+        Files.setLastModifiedTime(region, java.nio.file.attribute.FileTime.fromMillis(1));
+        Path table = Files.createDirectories(tempDir.resolve("database/Island"));
+        UUID owner = UUID.randomUUID();
+        Files.writeString(table.resolve("del.json"), """
+                {"uniqueId":"del","world":"WORLD","center":["WORLD",100,80,100],
+                 "range":50,"deletable":DELETABLE,"spawn":false,"purgeProtected":false,
+                 "owner":OWNER,"members":{}}
+                """.replace("WORLD", world.getName()).replace("DELETABLE", Boolean.toString(deletable))
+                .replace("OWNER", deletable ? "null" : "\"" + owner + "\""));
+        Files.createDirectories(tempDir.resolve("database/Players"));
+        Files.writeString(tempDir.resolve("database/Players/" + owner + ".json"),
+                "{\"uniqueId\":\"" + owner + "\",\"lastLogin\":1}");
+        org.bukkit.OfflinePlayer offline = mock(org.bukkit.OfflinePlayer.class);
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(owner)).thenReturn(offline);
+        assertTrue(service.defer(new PurgeScanResult(world, days, Map.of(new Pair<>(0, 0), Set.of("del")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of())));
+        return region;
+    }
+
+    @Test
+    void deferredAgePurgeStillAcceptsInactiveOwnedIsland() throws IOException {
+        Path region = deferredFixture(30, false);
+        new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+    }
+
+    @Test
+    void newlyOverlappingIslandBlocksDeferredPurge() throws IOException {
+        Path region = deferredFixture(0, true);
+        Files.writeString(tempDir.resolve("database/Island/new.json"), Files.readString(
+                tempDir.resolve("database/Island/del.json")).replace("\"del\"", "\"new\""));
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+        assertFalse(YamlConfiguration.loadConfiguration(tempDir.resolve("database/deferred-purge.yml").toFile())
+                .getMapList("purges").isEmpty());
+    }
+
+    @Test
+    void corruptedDatabaseRowBlocksDeferredPurge() throws IOException {
+        Path region = deferredFixture(0, true);
+        Files.writeString(tempDir.resolve("database/Island/broken.json"), "{");
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void loadedWorldBlocksDeferredPurge() throws IOException {
+        Path region = deferredFixture(0, true);
+        mockedBukkit.when(Bukkit::getWorlds).thenReturn(List.of(world));
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void changedWorldIdentityBlocksDeferredPurge() throws IOException {
+        Path region = deferredFixture(0, true);
+        Files.write(tempDir.resolve("uid.dat"), new byte[16]);
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void oldManifestIsRetainedWithoutPhysicalDeletion() throws IOException {
+        Path region = deferredFixture(0, true);
+        Path manifest = tempDir.resolve("database/deferred-purge.yml");
+        Files.writeString(manifest, Files.readString(manifest).replace("version: 2", "version: 1"));
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+        assertEquals(1, YamlConfiguration.loadConfiguration(manifest.toFile()).getMapList("purges").size());
+    }
+
+    @Test
+    void malformedManifestIsNotOverwrittenOnStartupOrDefer() throws IOException {
+        Path region = deferredFixture(0, true);
+        Path manifest = tempDir.resolve("database/deferred-purge.yml");
+        String broken = "purges: [\n";
+        Files.writeString(manifest, broken);
+        service = new PurgeRegionsService(plugin);
+        assertFalse(service.defer(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("del")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of())));
+        assertTrue(Files.exists(region));
+        assertEquals(broken, Files.readString(manifest));
+    }
+
+    @Test
+    void freshSidecarBlocksDeferredAgePurge() throws IOException {
+        Path region = deferredFixture(30, false);
+        Files.write(Files.createDirectories(tempDir.resolve("entities")).resolve("r.0.0.mca"), new byte[8192]);
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void deferredAgePurgeWithoutLoadedAddonManagerChecksDescriptors() throws IOException {
+        Path region = deferredFixture(30, false);
+        when(plugin.getAddonsManager()).thenReturn(null);
+        Path jar = Files.createDirectories(tempDir.resolve("addons")).resolve("renamed-addon.jar");
+        try (var output = new java.util.jar.JarOutputStream(Files.newOutputStream(jar))) {
+            output.putNextEntry(new java.util.jar.JarEntry("addon.yml"));
+            output.write("name: Level\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            output.closeEntry();
+        }
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void deferredAgePurgeWithoutLevelWorksBeforeAddonManagerLoads() throws IOException {
+        Path region = deferredFixture(30, false);
+        when(plugin.getAddonsManager()).thenReturn(null);
+        new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+    }
+
+    private Path deferredLevelFixture(String record) throws IOException {
+        Path region = deferredFixture(30, false);
+        when(plugin.getAddonsManager()).thenReturn(null);
+        plugin.getSettings().setIslandPurgeLevel(100);
+        Path jar = Files.createDirectories(tempDir.resolve("addons")).resolve("renamed-level.jar");
+        try (var output = new java.util.jar.JarOutputStream(Files.newOutputStream(jar))) {
+            output.putNextEntry(new java.util.jar.JarEntry("addon.yml"));
+            output.write("name: Level\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            output.closeEntry();
+        }
+        if (record != null) Files.writeString(Files.createDirectories(tempDir.resolve("database/IslandLevels"))
+                .resolve("del.json"), record);
+        return region;
+    }
+
+    @Test
+    void deferredLevelBelowThresholdAllowsAgePurgeUsingCurrentNotMaximumLevel() throws IOException {
+        Path region = deferredLevelFixture("""
+                {"uniqueId":"del","level":99,"initialCount":500,"maxLevel":9999,
+                 "pendingInitialCountOwner":null,"totalPoints":999999,"mdCount":{},"uwCount":{}}
+                """);
+        new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+            "{\"uniqueId\":\"del\",\"level\":100,\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":101,\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":0}",
+            "{\"uniqueId\":\"del\",\"level\":0,\"initialCount\":null}",
+            "{\"uniqueId\":\"del\",\"initialCount\":0}",
+            "{\"uniqueId\":\"other\",\"level\":0,\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":0,\"initialCount\":0,\"pendingInitialCountOwner\":\"owner\"}",
+            "{\"uniqueId\":\"del\",\"level\":0,\"initialCount\":0,\"unknownProtection\":true}",
+            "{\"uniqueId\":\"del\",\"level\":0,\"initialCount\":0,\"maxLevel\":null}",
+            "{\"uniqueId\":\"del\",\"level\":\"0\",\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":0.5,\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":9223372036854775808,\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":0,\"level\":200,\"initialCount\":0}",
+            "{\"uniqueId\":\"del\",\"level\":0,\"initialCount\":0} trailing",
+            "{"
+    })
+    void unsafeDeferredLevelRecordRetainsFilesAndManifest(String record) throws IOException {
+        Path region = deferredLevelFixture(record);
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+        assertEquals(1, YamlConfiguration.loadConfiguration(tempDir.resolve("database/deferred-purge.yml").toFile())
+                .getMapList("purges").size());
+    }
+
+    @Test
+    void missingDeferredLevelRecordDoesNotAssumeZero() throws IOException {
+        Path region = deferredLevelFixture(null);
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void deferredLevelUsesSignedLongWithoutNarrowingToInt() throws IOException {
+        Path region = deferredLevelFixture("{\"uniqueId\":\"del\",\"level\":-2147483649,\"initialCount\":0}");
+        plugin.getSettings().setIslandPurgeLevel(Integer.MIN_VALUE);
+        new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+    }
+
+    @Test
+    void validLevelRecordDoesNotBypassUnknownAddonDescriptor() throws IOException {
+        Path region = deferredLevelFixture("{\"uniqueId\":\"del\",\"level\":0,\"initialCount\":0}");
+        try (var output = new java.util.jar.JarOutputStream(Files.newOutputStream(tempDir.resolve("addons/unknown.jar")))) {
+            output.putNextEntry(new java.util.jar.JarEntry("addon.yml"));
+            output.write("version: 1\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            output.closeEntry();
+        }
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    @Test
+    void unsupportedDatabaseRetainsManifestAndFiles() throws IOException {
+        Path region = deferredFixture(0, true);
+        plugin.getSettings().setDatabaseType(DatabaseType.SQLITE);
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+        assertEquals(1, YamlConfiguration.loadConfiguration(tempDir.resolve("database/deferred-purge.yml").toFile())
+                .getMapList("purges").size());
+    }
+
+    @Test
+    void recoveredIslandWithResidualSidecarKeepsDatabaseRow() throws IOException {
+        Path region = deferredFixture(0, true);
+        Files.write(Files.createDirectories(tempDir.resolve("poi")).resolve("r.1.0.mca"), new byte[0]);
+        Island island = mock(Island.class);
+        when(island.isDeletable()).thenReturn(true);
+        when(island.getMinX()).thenReturn(0);
+        when(island.getMaxX()).thenReturn(1024);
+        when(island.getMaxZ()).thenReturn(100);
+        when(im.getIslandById("del")).thenReturn(Optional.of(island));
+        PurgeRegionsService recovered = new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+        recovered.completeRecoveredDeletions();
+        recovered.flushPendingDeletions();
+        verify(im, never()).deleteIslandId("del");
+    }
+
+    @Test
+    void deferredPurgeUsesRecordedNestedNetherAndEndPaths() throws IOException {
+        Path region = deferredFixture(0, true);
+        World nether = mock(World.class), end = mock(World.class);
+        UUID uid = world.getUID();
+        when(nether.getWorldFolder()).thenReturn(tempDir.toFile());
+        when(end.getWorldFolder()).thenReturn(tempDir.toFile());
+        when(nether.getUID()).thenReturn(uid);
+        when(end.getUID()).thenReturn(uid);
+        when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(end.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        when(iwm.getEndWorld(world)).thenReturn(end);
+        Path netherFile = Files.write(Files.createDirectories(tempDir.resolve("DIM-1/region"))
+                .resolve("r.0.0.mca"), new byte[0]);
+        Path endFile = Files.write(Files.createDirectories(tempDir.resolve("DIM1/poi"))
+                .resolve("r.0.0.mca"), new byte[0]);
+        Files.delete(tempDir.resolve("database/deferred-purge.yml"));
+        assertTrue(service.defer(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("del")),
+                true, true, new FilterStats(0, 0, 0, 0), Set.of())));
+        new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+        assertFalse(Files.exists(netherFile));
+        assertFalse(Files.exists(endFile));
+    }
+
+    @Test
+    void deferredPurgeRecoversFromPaperDimensionLayoutWithoutUidDat() throws IOException {
+        Path folder = preparePaperDimensionWorld(UUID.randomUUID());
+        Path region = Files.write(Files.createDirectories(folder.resolve("region")).resolve("r.0.0.mca"),
+                new byte[8192]);
+        assertTrue(service.defer(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("del")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of())));
+        new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region));
+    }
+
+    @Test
+    void paperMetadataUuidMismatchBlocksDeferredPurge() throws IOException {
+        Path folder = preparePaperDimensionWorld(UUID.randomUUID());
+        Path region = Files.write(Files.createDirectories(folder.resolve("region")).resolve("r.0.0.mca"),
+                new byte[8192]);
+        assertTrue(service.defer(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("del")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of())));
+        writePaperMetadata(folder, UUID.randomUUID());
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+    }
+
+    /** Paper 26.1.1+ stores worlds as dimensions and uses metadata.dat instead of uid.dat. */
+    private Path preparePaperDimensionWorld(UUID uid) throws IOException {
+        Path folder = Files.createDirectories(tempDir.resolve("world/dimensions/minecraft/sky"));
+        when(world.getUID()).thenReturn(uid);
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        mockedBukkit.when(Bukkit::getWorldContainer).thenReturn(tempDir.toFile());
+        mockedBukkit.when(Bukkit::getWorlds).thenReturn(List.of());
+        when(world.getWorldFolder()).thenReturn(folder.toFile());
+        when(world.getName()).thenReturn("sky");
+        writePaperMetadata(folder, uid);
+        when(plugin.getDataFolder()).thenReturn(tempDir.toFile());
+        plugin.getSettings().setDatabaseType(DatabaseType.JSON);
+        service = new PurgeRegionsService(plugin);
+        Path table = Files.createDirectories(tempDir.resolve("database/Island"));
+        Files.writeString(table.resolve("del.json"), """
+                {"uniqueId":"del","world":"sky","center":["sky",100,80,100],
+                 "range":50,"deletable":true,"spawn":false,"purgeProtected":false}
+                """);
+        return folder;
+    }
+
+    private void writePaperMetadata(Path folder, UUID uid) throws IOException {
+        Path file = Files.createDirectories(folder.resolve("data/paper")).resolve("metadata.dat");
+        try (DataOutputStream output = new DataOutputStream(
+                new java.util.zip.GZIPOutputStream(Files.newOutputStream(file)))) {
+            output.writeByte(10);
+            output.writeUTF("");
+            output.writeByte(3);
+            output.writeUTF("DataVersion");
+            output.writeInt(1);
+            output.writeByte(10);
+            output.writeUTF("data");
+            output.writeByte(11);
+            output.writeUTF("uuid");
+            output.writeInt(4);
+            output.writeInt((int) (uid.getMostSignificantBits() >> 32));
+            output.writeInt((int) uid.getMostSignificantBits());
+            output.writeInt((int) (uid.getLeastSignificantBits() >> 32));
+            output.writeInt((int) uid.getLeastSignificantBits());
+            output.writeByte(0);
+            output.writeByte(0);
+        }
+    }
+
+    @Test
+    void arbitraryWorldPathInManifestCannotRedirectDeletion() throws IOException {
+        Path region = deferredFixture(0, true);
+        Path other = Files.createDirectory(tempDir.resolve("other"));
+        Path victim = Files.write(Files.createDirectories(other.resolve("region")).resolve("r.0.0.mca"), new byte[0]);
+        Path manifest = tempDir.resolve("database/deferred-purge.yml");
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(manifest.toFile());
+        Map<String, Object> entry = new HashMap<>();
+        yaml.getMapList("purges").getFirst().forEach((key, value) -> entry.put(String.valueOf(key), value));
+        entry.put("world", other.toFile().getCanonicalPath());
+        yaml.set("purges", List.of(entry));
+        yaml.save(manifest.toFile());
+        new PurgeRegionsService(plugin);
+        assertTrue(Files.exists(region));
+        assertTrue(Files.exists(victim));
+    }
+
+    @Test
+    void flushRetainsIslandWithRegionRewrittenAfterDeletion() throws IOException {
+        Island island = mock(Island.class);
+        when(island.isDeletable()).thenReturn(true);
+        when(island.getMinX()).thenReturn(0);
+        when(island.getMaxX()).thenReturn(1024);
+        when(island.getMinZ()).thenReturn(0);
+        when(island.getMaxZ()).thenReturn(100);
+        when(im.getIslandById("del")).thenReturn(Optional.of(island));
+        service.delete(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("del")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of()));
+        Files.write(Files.createDirectories(tempDir.resolve("poi")).resolve("r.1.0.mca"), new byte[0]);
+        service.flushPendingDeletions();
+        verify(im, never()).deleteIslandId("del");
+        assertTrue(service.getPendingDeletions().contains("del"));
     }
 
     /**

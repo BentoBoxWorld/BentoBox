@@ -15,12 +15,34 @@ Paperclip server. Enable `function.fakeplayer.enable` in
 `lophine_config/lophine_global_config.toml`; allow at least four bots.
 Use a loopback-only listening address. Accept the Minecraft EULA yourself.
 
-The source plugin descriptor does not yet advertise Folia support. For this isolated
-probe only, append `folia-supported: true` to `plugin.yml` inside the copied BentoBox
-jar, not to the source descriptor. This is a test opt-in, not a compatibility claim.
+The built plugin already declares `folia-supported: true`; do not rewrite the copied
+descriptor. The declaration is not a full compatibility certification.
 
 Run twice with the same disposable worlds and plugin data. Require
-`FOLIA_PROBE_PASSED` and a normal exit on both runs. On the second run also require
+`FOLIA_PROBE_PASSED` and a normal exit on both runs.
+
+Additional repair-specific modes (each requires a separate server start):
+
+- `-Dprobe.teamChallengesOnly=true`: `TEAM_CHALLENGES_PROBE_PASSED`; two new
+  remote-region team members, pooled/per-member costs, concurrent deduplication,
+  statistics and per-member item/XP rewards. The owner submits overlapping requests
+  on its fresh island; its teammate contributes from fresh terrain 8192 blocks away.
+  Five consecutive bidirectional region checks must pass before testing starts.
+- `-Dprobe.blueprintPaymentOnly=true -Dprobe.paymentBundle=harder_island`:
+  `BLUEPRINT_PAYMENT_PROBE_PASSED`; real Vault debit/refund and unresolved receipt
+  handling. Requires multiple bundles, a positive selected cost, economy and reset
+  charges enabled, and money-on-join reset disabled. Restores no config itself;
+  prepare/back up temporary fixtures externally. Leaves its dedicated player,
+  islands and intentional unresolved receipt for inspection.
+- `-Dprobe.portalDecisionOnly=true`: `PORTAL_DECISION_PROBE_PASSED`; real native
+  portal entry with late synthetic/native cancellation, same-world target redirect,
+  pre-event radius fields and missing Nether island paste. Requires Nether islands,
+  linked portals and missing-island creation enabled, own generator disabled.
+  Does not prove cross-world redirects or actual radius search boundary behavior.
+
+Neither mode is a crash/blackout guarantee. Compile success is not runtime success.
+
+On the second full run require
 `PLAYER_RESTART_PERSISTENCE_PASSED` and `RESTART_PERSISTENCE_PASSED`.
 Lophine's bot-saving shutdown prompt may require its `stop force` command.
 
@@ -31,10 +53,11 @@ Lophine's bot-saving shutdown prompt may require its `stop force` command.
 - Fresh Overworld, Nether and End terrain, biomes and configured Nether roof.
 - Custom-generator chunk regeneration, with unsupported vanilla stages rejected
   before modifying existing terrain.
-- Configure `stress-players` (2–16 owners, each with one visitor) and `stress-resets`
-  (1–100 sequential resets per owner). Owners run concurrently in distant regions;
-  reset and total workload durations are logged in milliseconds. Ensure the bot
-  limit is at least twice `stress-players`. Defaults are two owners and one reset.
+- Configure `stress-players` (2–35 owners, each with one visitor) and `stress-resets`
+  (1–100 sequential resets per owner). At most five owners plus five visitors run
+  concurrently; larger counts are sequential batches, not simultaneous users.
+  Reset and workload durations are logged in milliseconds. Allow at least ten bots
+  for a full batch. Defaults are two owners and one reset.
 - Bots create islands, teleport, check visitor block-break protection and reset.
 - Database/world-marker persistence and player-island records after restart.
 - Global world save and rejection of eviction of a plugin-ticket-pinned chunk.
@@ -49,7 +72,12 @@ The pinned-chunk probe verifies eviction rejection only, not
 successful physical file deletion. Vanilla terrain/populator regeneration is
 explicitly unsupported rather than risking terrain loss.
 
-## Latest local validation (not release approval)
+## Historical local validation (not current release approval)
+
+The following staged results predate the October 19 final audit and subsequent
+fixes. Current evidence and limitations are recorded in `最终审查与压力测试报告.md`
+and the later repair report; historical counts and concurrency claims below must
+not be presented as the current build's results.
 
 - Lophine 26.3 build 864, BSkyBlock 1.20.0, Java 25: 8 owners and 8 visitors,
   20 resets per owner, 160 completed resets. Workload including cancellation
@@ -57,7 +85,7 @@ explicitly unsupported rather than risking terrain loss.
   3.058–5.112 seconds (mean 3.787 seconds).
   These are application completion times, not TPS/MSPT or client latency.
 - Latest full unit suite: 3733 tests, 0 failures/errors, 13 skipped.
-- Release jar contains no probe/JUnit/Mockito classes and does not advertise Folia support.
+- That historical release jar contained no probe/JUnit/Mockito classes and did not advertise Folia support.
 - Still unresolved: failures after leave cleanup starts can have irreversible
   inventory/economy/command side effects; charging after disconnect needs a
   complete transaction review.

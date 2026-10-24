@@ -19,6 +19,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,7 +50,10 @@ import com.google.common.collect.ImmutableSet;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.TaskScheduler;
 
@@ -352,6 +356,25 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         assertNull(event.getTo());
     }
 
+    @Test
+    void testEndBlueprintSpawnOverridesPortalHeightWithoutMutatingSpawn() {
+        World end = mock(World.class);
+        when(end.getEnvironment()).thenReturn(Environment.THE_END);
+        when(end.getMaxHeight()).thenReturn(256);
+        Location from = new Location(world, 796, 73, 1599);
+        Location spawn = new Location(end, 799.5, 86, 1599.5, 315, 30);
+        var island = mock(world.bentobox.bentobox.database.objects.Island.class);
+        when(im.getProtectedIslandAt(from)).thenReturn(Optional.of(island));
+        when(island.getSpawnPoint(Environment.THE_END)).thenReturn(spawn);
+
+        assertEquals(spawn, ptl.calculateLocation(from, world, end, Environment.THE_END, true));
+        Location result = ptl.calculateLocation(from, world, end, Environment.THE_END, true);
+        result.setY(20);
+        assertEquals(86, spawn.getY());
+        EntityTeleportListener entities = new EntityTeleportListener(plugin);
+        assertEquals(spawn, entities.calculateLocation(from, world, end, Environment.THE_END, true));
+    }
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener#portalProcess(org.bukkit.event.player.PlayerPortalEvent, org.bukkit.World.Environment)}.
      */
@@ -361,19 +384,24 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         when(plugin.getIWM().inWorld(world)).thenReturn(true);
         PlayerPortalEvent e = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.END_PORTAL, 0, false,
                 0);
-        ptl.onPlayerPortalEvent(e);
-        // Verify player velocity and fall distance were reset
+        org.mockito.Mockito.doAnswer(call -> {
+            ptl.onPlayerPortalEvent(call.getArgument(0));
+            verify(mockPlayer, never()).setVelocity(any(Vector.class));
+            return null;
+        }).when(pim).callEvent(e);
+        AbstractTeleportListener.dispatchPortal(e, false);
+        // Velocity is only changed after all event listeners have returned.
         verify(mockPlayer, times(1)).setVelocity(new Vector(0, 0, 0));
         verify(mockPlayer, times(1)).setFallDistance(0);
     }
 
     /**
      * Verifies that {@link AbstractTeleportListener#createEndPlatform(Location)} lays a 5x5
-     * obsidian floor and clears 5x5x3 of air above it when the destination is in The End.
+     * obsidian floor when the destination is void in The End.
      * Regression test for AOneBlock issue #433.
      */
     @Test
-    void testCreateEndPlatformBuildsFloorAndClearsAirInEnd() {
+    void testCreateEndPlatformBuildsFloorInVoidOfEnd() {
         World endWorld = mock(World.class);
         when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
         Location dest = mock(Location.class);
@@ -382,25 +410,39 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         when(dest.getBlockY()).thenReturn(70);
         when(dest.getBlockZ()).thenReturn(-30);
 
-        Block obsidianSlot = mock(Block.class);
-        when(obsidianSlot.getType()).thenReturn(Material.AIR);
-        Block airSlot = mock(Block.class);
-        when(airSlot.isEmpty()).thenReturn(false);
-        when(airSlot.getType()).thenReturn(Material.STONE);
-
-        // Floor row at y = 69 (baseY - 1) - mock with non-obsidian to force setType.
-        when(endWorld.getBlockAt(anyInt(), eq(69), anyInt())).thenReturn(obsidianSlot);
-        // Player-occupied space at y = 70..72 - mock with non-empty so setType is called.
-        when(endWorld.getBlockAt(anyInt(), eq(70), anyInt())).thenReturn(airSlot);
-        when(endWorld.getBlockAt(anyInt(), eq(71), anyInt())).thenReturn(airSlot);
-        when(endWorld.getBlockAt(anyInt(), eq(72), anyInt())).thenReturn(airSlot);
+        Block voidSlot = mock(Block.class);
+        when(voidSlot.isEmpty()).thenReturn(true);
+        when(endWorld.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(voidSlot);
 
         ptl.createEndPlatform(dest);
 
-        // 5x5 = 25 obsidian blocks placed.
-        verify(obsidianSlot, times(25)).setType(Material.OBSIDIAN, false);
-        // 5x5x3 = 75 air blocks cleared.
-        verify(airSlot, times(75)).setType(Material.AIR, false);
+        // 5x5 = 25 obsidian blocks placed, and nothing is cleared above.
+        verify(voidSlot, times(25)).setType(Material.OBSIDIAN, false);
+        verify(voidSlot, never()).setType(Material.AIR, false);
+    }
+
+    /**
+     * A player may already have built at the arrival coordinates. The platform must not
+     * overwrite those blocks: that would delete builds and container contents.
+     */
+    @Test
+    void testCreateEndPlatformDoesNotOverwriteExistingBlocks() {
+        World endWorld = mock(World.class);
+        when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
+        Location dest = mock(Location.class);
+        when(dest.getWorld()).thenReturn(endWorld);
+        when(dest.getBlockX()).thenReturn(50);
+        when(dest.getBlockY()).thenReturn(70);
+        when(dest.getBlockZ()).thenReturn(-30);
+
+        Block builtSlot = mock(Block.class);
+        when(builtSlot.isEmpty()).thenReturn(false);
+        when(builtSlot.getType()).thenReturn(Material.CHEST);
+        when(endWorld.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(builtSlot);
+
+        ptl.createEndPlatform(dest);
+
+        verify(builtSlot, never()).setType(any(Material.class), eq(false));
     }
 
     /**
@@ -417,6 +459,58 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         ptl.createEndPlatform(dest);
 
         verify(normalWorld, times(0)).getBlockAt(anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    void realPaperPortalLeavesTeleportContinuationToServer() {
+        when(iwm.inWorld(world)).thenReturn(true);
+        PlayerPortalEvent event = new PlayerPortalEvent(mockPlayer, location, location, TeleportCause.NETHER_PORTAL);
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(false);
+            ptl.onPlayerPortalEvent(event);
+            assertFalse(event.isCancelled());
+            verify(mockPlayer, never()).teleportAsync(any(Location.class));
+            tasks.verify(() -> TaskScheduler.entity(any(), any(), any()), never());
+        }
+    }
+
+    @Test
+    void foliaEndPlatformWaitsForFinalDecisionAndUsesRedirectedTarget() {
+        when(iwm.inWorld(world)).thenReturn(true);
+        World end = mock(World.class);
+        when(end.getEnvironment()).thenReturn(Environment.THE_END);
+        when(iwm.getEndWorld(world)).thenReturn(end);
+        PlayerTeleportListener listener = org.mockito.Mockito.spy(ptl);
+        org.mockito.Mockito.doReturn(true).when(listener).isMakePortals(world, Environment.THE_END);
+        Location initial = new Location(end, 1000, 70, 1000);
+        Location redirected = new Location(end, 2000, 80, 2000);
+        org.mockito.Mockito.doReturn(initial).when(listener).calculateLocation(
+                any(Location.class), any(World.class), any(World.class), eq(Environment.THE_END), eq(true));
+        org.mockito.Mockito.doReturn(new java.util.concurrent.CompletableFuture<Void>())
+                .when(listener).createEndPlatformAsync(any(Location.class));
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            PlayerPortalEvent cancelled = new PlayerPortalEvent(mockPlayer, location, initial, TeleportCause.END_PORTAL);
+            org.mockito.Mockito.doAnswer(call -> {
+                listener.onPlayerPortalEvent(cancelled);
+                verify(listener, never()).createEndPlatformAsync(any(Location.class));
+                cancelled.setCancelled(true);
+                return null;
+            }).when(pim).callEvent(cancelled);
+            AbstractTeleportListener.dispatchPortal(cancelled, false);
+            verify(listener, never()).createEndPlatformAsync(any(Location.class));
+            assertFalse(listener.getInTeleport().contains(mockPlayer.getUniqueId()));
+
+            PlayerPortalEvent accepted = new PlayerPortalEvent(mockPlayer, location, initial, TeleportCause.END_PORTAL);
+            org.mockito.Mockito.doAnswer(call -> {
+                listener.onPlayerPortalEvent(accepted);
+                verify(listener, never()).createEndPlatformAsync(any(Location.class));
+                accepted.setTo(redirected);
+                return null;
+            }).when(pim).callEvent(accepted);
+            AbstractTeleportListener.dispatchPortal(accepted, false);
+            verify(listener).createEndPlatformAsync(redirected);
+        }
     }
 
     @Test
@@ -876,6 +970,74 @@ class PlayerTeleportListenerTest extends CommonTestSetup {
         // Bed spawn honored - location unchanged and no rerouting attempted
         assertSame(location, event.getRespawnLocation());
         verify(im, never()).getSafeRespawnLocation(any(), any());
+    }
+
+    @Test
+    void testPasteOnceRunsOnePastePerIslandDimension() {
+        Island pasteIsland = mock(Island.class);
+        when(pasteIsland.getUniqueId()).thenReturn("paste-once-island");
+        var paste = new java.util.concurrent.CompletableFuture<Void>();
+        var calls = new java.util.concurrent.atomic.AtomicInteger();
+        java.util.function.Supplier<java.util.concurrent.CompletableFuture<Void>> action = () -> {
+            calls.incrementAndGet();
+            return paste;
+        };
+
+        var first = ptl.pasteOnce(pasteIsland, Environment.NETHER, action);
+        var second = ptl.pasteOnce(pasteIsland, Environment.NETHER, action);
+        assertSame(first, second);
+        assertEquals(1, calls.get());
+
+        paste.complete(null);
+        // A finished paste is not cached, so a later portal trip may paste again.
+        ptl.pasteOnce(pasteIsland, Environment.NETHER, action);
+        assertEquals(2, calls.get());
+    }
+
+    /**
+     * On Paper the server continues the transfer unless the event is cancelled. A missing
+     * Nether island therefore has to be pasted first, exactly like the Folia path.
+     */
+    @Test
+    void testPaperPastesMissingNetherIslandBeforeTransfer() {
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(Environment.NETHER);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        when(plugin.getIWM().inWorld(world)).thenReturn(true);
+        when(ptl.isAllowedInConfig(world, Environment.NETHER)).thenReturn(true);
+        when(ptl.isAllowedOnServer(Environment.NETHER)).thenReturn(true);
+        when(ptl.isIslandWorld(world, Environment.NETHER)).thenReturn(true);
+        when(ptl.isPastingMissingIslands(world)).thenReturn(true);
+
+        Island target = mock(Island.class);
+        when(target.getWorld()).thenReturn(world);
+        when(target.hasNetherIsland()).thenReturn(false);
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(target));
+
+        BlueprintsManager bpm = mock(BlueprintsManager.class);
+        when(plugin.getBlueprintsManager()).thenReturn(bpm);
+        GameModeAddon addon = mock(GameModeAddon.class);
+        WorldSettings addonSettings = mock(WorldSettings.class);
+        when(addonSettings.isMakeNetherPortals()).thenReturn(false);
+        when(addon.getWorldSettings()).thenReturn(addonSettings);
+        when(iwm.getAddon(world)).thenReturn(Optional.of(addon));
+        BlueprintBundle bundle = mock(BlueprintBundle.class);
+        when(bpm.getDefaultBlueprintBundle(addon)).thenReturn(bundle);
+        when(bundle.getBlueprint(Environment.NETHER)).thenReturn("nether-island");
+        when(bpm.getBlueprints(addon)).thenReturn(Map.of("nether-island", mock(Blueprint.class)));
+
+        PlayerTeleportListener listener = org.mockito.Mockito.spy(ptl);
+        // The paste itself is covered elsewhere; a pending future keeps the transfer waiting.
+        org.mockito.Mockito.doReturn(new java.util.concurrent.CompletableFuture<Void>())
+                .when(listener).pasteOnce(any(), any(), any());
+
+        Location from = new Location(world, 10, 80, 10);
+        PlayerPortalEvent event = new PlayerPortalEvent(mockPlayer, from, from,
+                TeleportCause.NETHER_PORTAL, 0, false, 0);
+        listener.onPlayerPortalEvent(event);
+
+        assertTrue(event.isCancelled());
+        verify(listener).pasteOnce(eq(target), eq(Environment.NETHER), any());
     }
 
 }

@@ -180,9 +180,11 @@ public class HousekeepingManager {
         inProgress = true;
         TaskScheduler.async(plugin, () -> {
             try {
-                // Save worlds once per cycle — both sweeps see a consistent
-                // on-disk snapshot.
-                if (!saveAllWorlds()) {
+                // Folia cannot delete region files online, so a deleted-only
+                // cycle only writes the deferred manifest. Saving every world
+                // there protects nothing; keep the save for real deletes and
+                // for the age sweep, which reads on-disk region timestamps.
+                if ((!TaskScheduler.isFolia() || runAge) && !saveAllWorlds()) {
                     return;
                 }
                 if (runAge) {

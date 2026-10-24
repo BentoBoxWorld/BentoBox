@@ -1,11 +1,14 @@
 package world.bentobox.bentobox.managers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +31,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.MockedStatic;
 import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -35,6 +40,8 @@ import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.managers.PurgeRegionsService.FilterStats;
 import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
+import world.bentobox.bentobox.util.Pair;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Tests for {@link HousekeepingManager}.
@@ -322,8 +329,149 @@ class HousekeepingManagerTest extends CommonTestSetup {
     }
 
     // ------------------------------------------------------------------
+    // World save gating
+    // ------------------------------------------------------------------
+
+    /**
+     * Folia cannot delete region files online: {@code scanDeleted} works from
+     * the in-memory island cache and {@code delete} only writes the deferred
+     * manifest. A deleted-only cycle therefore has nothing to protect, so the
+     * all-world save must not run — while the scan and defer must.
+     */
+    @Test
+    void testFoliaDeletedOnlySkipsWorldSaveButStillDefers() throws Exception {
+        PurgeScanResult scan = oneRegionScan(0);
+        when(purgeService.scanDeleted(world)).thenReturn(scan);
+        when(purgeService.defer(scan)).thenReturn(true);
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        try (MockedStatic<TaskScheduler> ts = foliaInline()) {
+            invokeRunNow(hm, false, true);
+            ts.verify(() -> TaskScheduler.global(any(), any()), never());
+        }
+
+        verify(plugin, never()).log(SAVE_STARTED);
+        verify(purgeService, times(1)).scanDeleted(world);
+        verify(purgeService, times(1)).defer(scan);
+        verify(purgeService, never()).delete(any());
+    }
+
+    /**
+     * A manifest that could not be written is a failure, not a successful
+     * cycle: the deleted timestamp must stay untouched and no state is saved.
+     */
+    @Test
+    void testFoliaDeferFailureDoesNotAdvanceDeletedTimestamp() throws Exception {
+        PurgeScanResult scan = oneRegionScan(0);
+        when(purgeService.scanDeleted(world)).thenReturn(scan);
+        when(purgeService.defer(scan)).thenReturn(false);
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        try (MockedStatic<TaskScheduler> ts = foliaInline()) {
+            invokeRunNow(hm, false, true);
+        }
+
+        verify(purgeService, times(1)).defer(scan);
+        assertEquals(0L, hm.getLastDeletedRunMillis(), "refused manifest must not look like success");
+        assertFalse(stateFile.exists(), "no success state should be persisted");
+        verify(plugin).logWarning(
+                "Housekeeping deleted sweep: deferred; last-run timestamp was not advanced");
+    }
+
+    /**
+     * The age sweep reads on-disk region timestamps, so Folia still needs the
+     * all-world save before it runs.
+     */
+    @Test
+    void testFoliaAgeCycleStillSavesWorlds() throws Exception {
+        settings.setHousekeepingRegionAgeDays(30);
+        PurgeScanResult scan = oneRegionScan(30);
+        when(purgeService.scan(world, 30)).thenReturn(scan);
+        when(purgeService.defer(scan)).thenReturn(true);
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        try (MockedStatic<TaskScheduler> ts = foliaInline()) {
+            invokeRunNow(hm, true, false);
+        }
+
+        verify(plugin).log(SAVE_STARTED);
+        verify(plugin).log("Housekeeping: world save complete");
+        verify(purgeService, times(1)).scan(world, 30);
+        verify(purgeService, times(1)).defer(scan);
+    }
+
+    /**
+     * Non-Folia deleted sweeps really delete region files, so the save must
+     * still happen — and it must happen before the delete.
+     */
+    @Test
+    void testPaperDeletedOnlyStillSavesWorldsBeforeDelete() throws Exception {
+        PurgeScanResult scan = oneRegionScan(0);
+        when(purgeService.scanDeleted(world)).thenReturn(scan);
+        when(purgeService.delete(scan)).thenReturn(true);
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        invokeRunNow(hm, false, true);
+
+        var order = inOrder(plugin, purgeService);
+        order.verify(plugin).log(SAVE_STARTED);
+        order.verify(purgeService).delete(scan);
+        verify(purgeService, never()).defer(any());
+    }
+
+    /**
+     * A failed save aborts the cycle before any destructive scan or delete,
+     * and the in-progress guard is released.
+     */
+    @Test
+    void testSaveFailureAbortsDeletedCycle() throws Exception {
+        mockedBukkit.when(Bukkit::getWorlds).thenThrow(new IllegalStateException("save exploded"));
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        invokeRunNow(hm, false, true);
+
+        verify(plugin).log(SAVE_STARTED);
+        verify(purgeService, never()).scanDeleted(any());
+        verify(purgeService, never()).delete(any());
+        assertEquals(0L, hm.getLastDeletedRunMillis());
+        assertFalse(hm.isInProgress(), "inProgress must be reset after the aborted cycle");
+    }
+
+    // ------------------------------------------------------------------
     // helpers
     // ------------------------------------------------------------------
+
+    private static final String SAVE_STARTED = "Housekeeping: saving all worlds before purge...";
+
+    /** One deletable region; enough for the manager to treat the scan as non-empty. */
+    private PurgeScanResult oneRegionScan(int days) {
+        return new PurgeScanResult(world, days,
+                Map.of(new Pair<>(0, 0), Set.of("island-1")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of());
+    }
+
+    /** Folia mode with both scheduler hops executed inline on the test thread. */
+    private static MockedStatic<TaskScheduler> foliaInline() {
+        MockedStatic<TaskScheduler> ts = mockStatic(TaskScheduler.class);
+        ts.when(TaskScheduler::isFolia).thenReturn(true);
+        ts.when(() -> TaskScheduler.async(any(), any(Runnable.class))).thenAnswer(invocation -> {
+            invocation.getArgument(1, Runnable.class).run();
+            return null;
+        });
+        ts.when(() -> TaskScheduler.global(any(), any(Runnable.class))).thenAnswer(invocation -> {
+            invocation.getArgument(1, Runnable.class).run();
+            return null;
+        });
+        return ts;
+    }
+
+    /** Reflective access to the private two-flag {@code runNow} overload. */
+    private static void invokeRunNow(HousekeepingManager hm, boolean runAge, boolean runDeleted)
+            throws Exception {
+        var m = HousekeepingManager.class.getDeclaredMethod("runNow", boolean.class, boolean.class);
+        m.setAccessible(true);
+        m.invoke(hm, runAge, runDeleted);
+    }
 
     private static PurgeScanResult emptyScan(int days) {
         return new PurgeScanResult(mock(World.class), days, Collections.emptyMap(),

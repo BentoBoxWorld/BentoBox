@@ -45,7 +45,12 @@ public class ExpiringMap<K, V> implements Map<K, V> {
             throw new NullPointerException("TimeUnit cannot be null.");
         }
         this.map = new ConcurrentHashMap<>();
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        this.scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread thread = new Thread(runnable, "BentoBox-ExpiringMap");
+            // A daemon thread must not keep the JVM alive after the plugin is disabled.
+            thread.setDaemon(true);
+            return thread;
+        });
         this.expirationTime = timeUnit.toMillis(expirationTime);
     }
 
@@ -65,7 +70,7 @@ public class ExpiringMap<K, V> implements Map<K, V> {
             throw new NullPointerException("Key and Value cannot be null.");
         }
         V oldValue = map.put(key, value);
-        scheduleRemoval(key);
+        scheduleRemoval(key, value);
         return oldValue;
     }
 
@@ -245,18 +250,23 @@ public class ExpiringMap<K, V> implements Map<K, V> {
         }
         return map.computeIfAbsent(key, k -> {
             V value = mappingFunction.apply(k);
-            scheduleRemoval(k);
+            if (value != null) {
+                scheduleRemoval(k, value);
+            }
             return value;
         });
     }
 
     /**
      * Schedules the removal of the specified key from this map after the expiration time.
+     * Removal only happens while the key still maps to {@code value}, so refreshing an entry
+     * cannot be undone by the older task.
      *
      * @param key key whose mapping is to be removed from the map after the expiration time
+     * @param value value that was stored for the key
      */
-    private void scheduleRemoval(final K key) {
-        scheduler.schedule(() -> map.remove(key), expirationTime, TimeUnit.MILLISECONDS);
+    private void scheduleRemoval(final K key, final V value) {
+        scheduler.schedule(() -> map.remove(key, value), expirationTime, TimeUnit.MILLISECONDS);
     }
 
     /**

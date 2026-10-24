@@ -117,4 +117,36 @@ class ExpiringSetTest {
     void testEmptySetHashCode() {
         assertEquals(new HashSet<>().hashCode(), set.hashCode());
     }
+
+    @Test
+    void expiredEntryDisappearsWithoutScheduler() throws InterruptedException {
+        try (var shortLived = new ExpiringSet<String>(10, TimeUnit.MILLISECONDS)) {
+            shortLived.add("a");
+            Thread.sleep(40);
+            assertFalse(shortLived.contains("a"));
+            assertEquals(0, shortLived.size());
+        }
+    }
+
+    @Test
+    void closeClearsAndRejectsNewEntries() {
+        set.add("a");
+        set.close();
+        assertEquals(0, set.size());
+        org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.RejectedExecutionException.class,
+                () -> set.add("b"));
+    }
+
+    @Test
+    void iteratorRemovalAndBulkOperationsRetainSetSemantics() {
+        set.addAll(java.util.List.of("a", "b", "c"));
+        var iterator = set.iterator();
+        String removed = iterator.next();
+        iterator.remove();
+        assertFalse(set.contains(removed));
+        set.retainAll(Set.of("a"));
+        assertEquals(set.contains("a") ? Set.of("a") : Set.of(), set);
+        set.clear();
+        assertEquals(0, set.size());
+    }
 }

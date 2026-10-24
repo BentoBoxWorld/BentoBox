@@ -2,10 +2,10 @@ package world.bentobox.bentobox.listeners;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
@@ -29,7 +29,9 @@ import world.bentobox.bentobox.util.Util;
 
 public class PanelListenerManager implements Listener {
 
-    private static final Map<UUID, Panel> openPanels = new HashMap<>();
+    // Folia fires inventory events on each player's region thread; a lost entry here means clicks
+    // are no longer cancelled and items can be taken out of the panel.
+    private static final Map<UUID, Panel> openPanels = new ConcurrentHashMap<>();
 
     /**
      * Actions that, when performed on a slot of the player's own inventory, only move items
@@ -53,14 +55,14 @@ public class PanelListenerManager implements Listener {
         InventoryView view = event.getView();
 
         // Open the inventory panel that this player has open (they can only ever have one)
-        if (openPanels.containsKey(user.getUniqueId()) &&
-                openPanels.get(user.getUniqueId()).getInventory().equals(event.getInventory())) {
+        Panel openPanel = openPanels.get(user.getUniqueId());
+        if (openPanel != null && openPanel.getInventory().equals(event.getInventory())) {
             // Cancel the event. If they don't want it to be cancelled then the click handler(s) should
             // uncancel it. If gui was from our environment, then cancel event anyway.
             event.setCancelled(true);
 
             // Get the panel itself
-            Panel panel = openPanels.get(user.getUniqueId());
+            Panel panel = openPanel;
 
             // Let the player use their own inventory while the panel is open, unless the panel
             // reads clicks there (e.g. "click an item in your inventory" icon pickers).
@@ -152,9 +154,10 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (openPanels.containsKey(event.getPlayer().getUniqueId())) {
+        Panel panel = openPanels.get(event.getPlayer().getUniqueId());
+        if (panel != null) {
             // Run any close inventory methods
-            openPanels.get(event.getPlayer().getUniqueId()).getListener().ifPresent(l -> l.onInventoryClose(event));
+            panel.getListener().ifPresent(l -> l.onInventoryClose(event));
             openPanels.remove(event.getPlayer().getUniqueId());
         }
     }

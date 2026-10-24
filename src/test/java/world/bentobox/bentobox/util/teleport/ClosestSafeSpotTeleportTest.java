@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,8 +41,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.util.Pair;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.Builder;
 
@@ -316,6 +319,27 @@ class ClosestSafeSpotTeleportTest extends CommonTestSetup {
     @Test
     void testCheckLocation_safeButPortal_startsScan() {
         when(im.isSafeLocation(location)).thenReturn(true);
+        teleport = buildTeleport(true);
+        teleport.checkLocation();
+
+        verify(sch).runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong());
+    }
+
+    @Test
+    void testCheckLocation_safeEndPortal_skipsNetherPortalScan() {
+        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(im.isSafeLocation(location)).thenReturn(true);
+        teleport = buildTeleport(true);
+        teleport.checkLocation();
+
+        verify(sch).runTask(eq(plugin), any(Runnable.class));
+        verify(sch, never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
+    }
+
+    @Test
+    void testCheckLocation_unsafeEndPortal_keepsSafetyScan() {
+        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(im.isSafeLocation(location)).thenReturn(false);
         teleport = buildTeleport(true);
         teleport.checkLocation();
 
@@ -785,6 +809,46 @@ class ClosestSafeSpotTeleportTest extends CommonTestSetup {
         teleport.finishTask();
 
         assertFalse(result.join());
+    }
+
+    /**
+     * A retired entity has no owner thread, so the server drops scheduled work. The teleport
+     * future must be completed here instead of waiting forever.
+     */
+    @Test
+    void testFinishTask_retiredEntity_completesFalse() throws Exception {
+        when(im.isSafeLocation(location)).thenReturn(false);
+        Builder b = ClosestSafeSpotTeleport.builder(plugin).entity(mockPlayer).location(location);
+        ClosestSafeSpotTeleport t = b.build();
+        setField(t, "task", task);
+        setField(t, "blockQueue", new PriorityQueue<>());
+        setField(t, "cancelIfFail", true);
+        when(mockPlayer.getScheduler()).thenReturn(mock(EntityScheduler.class));
+
+        try (var scheduler = mockStatic(TaskScheduler.class, org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            t.finishTask();
+        }
+
+        assertFalse(b.getResult().join());
+    }
+
+    /**
+     * A finished search releases the {@code checking} guard, so the instance does not keep
+     * reporting itself as still running after the timer was cancelled.
+     */
+    @Test
+    void testFinishTask_releasesCheckingGuard() throws Exception {
+        when(im.isSafeLocation(location)).thenReturn(false);
+        teleport = buildTeleport(false);
+        teleport.checkLocation();
+
+        setField(teleport, "cancelIfFail", true);
+        setField(teleport, "blockQueue", new PriorityQueue<>());
+
+        teleport.finishTask();
+
+        assertFalse(((AtomicBoolean) getField(teleport, "checking")).get());
     }
 
     // -----------------------------------------------------------------------

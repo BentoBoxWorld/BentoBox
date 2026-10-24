@@ -1,0 +1,6 @@
+name: IslandWarpRealVerify
+version: '1.0'
+main: verification.RealPlayerCheck
+api-version: '26.3'
+folia-supported: true
+depend: [IslandWarp, fakeplayer, Skyllia, Vault, CMI]

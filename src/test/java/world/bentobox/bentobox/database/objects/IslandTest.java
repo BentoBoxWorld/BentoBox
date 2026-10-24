@@ -40,6 +40,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 class IslandTest extends CommonTestSetup {
 
@@ -85,6 +86,48 @@ class IslandTest extends CommonTestSetup {
     }
 
     // ======================== Constructors ========================
+
+    @Test
+    void dimensionCheckLoadsChunkBeforeReadingOnOwningRegion() {
+        World nether = mock(World.class);
+        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(world)).thenReturn(true);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        Location target = new Location(nether, 0, 64, 0);
+        var loaded = new java.util.concurrent.CompletableFuture<org.bukkit.Chunk>();
+        mockedUtil.when(() -> Util.getChunkAtAsync(target)).thenReturn(loaded);
+        try (var scheduler = org.mockito.Mockito.mockStatic(TaskScheduler.class)) {
+            Runnable[] region = {null};
+            scheduler.when(() -> TaskScheduler.regionFuture(
+                    org.mockito.ArgumentMatchers.eq(plugin), org.mockito.ArgumentMatchers.eq(target), any(Runnable.class)))
+                    .thenAnswer(call -> {
+                        region[0] = call.getArgument(2);
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
+                    });
+            var result = island.hasNetherIslandAsync();
+            assertFalse(result.isDone());
+            org.mockito.Mockito.verify(nether, org.mockito.Mockito.never()).getBlockAt(any(Location.class));
+            loaded.complete(mock(org.bukkit.Chunk.class));
+            assertFalse(result.isDone());
+            var block = mock(org.bukkit.block.Block.class);
+            when(nether.getBlockAt(target)).thenReturn(block);
+            when(block.getType()).thenReturn(Material.STONE);
+            region[0].run();
+            assertTrue(result.join());
+        }
+    }
+
+    @Test
+    void dimensionCheckPropagatesChunkFailureAndHandlesMissingWorld() {
+        assertFalse(island.hasEndIslandAsync().join());
+        World nether = mock(World.class);
+        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(world)).thenReturn(true);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        mockedUtil.when(() -> Util.getChunkAtAsync(any(Location.class)))
+                .thenReturn(java.util.concurrent.CompletableFuture.failedFuture(new IllegalStateException("load failed")));
+        assertThrows(java.util.concurrent.CompletionException.class, () -> island.hasNetherIslandAsync().join());
+    }
 
     @Test
     void testNoArgConstructor() {

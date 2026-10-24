@@ -1,0 +1,24 @@
+name: IslandWarp
+version: 1.0.0
+main: com.islandwarp.IslandWarpPlugin
+api-version: '1.20'
+folia-supported: true
+author: XingXing
+description: 玩家公共地标，适配 Folia 与 BentoBox/BSkyBlock
+softdepend: [PlaceholderAPI, Vault, CMI]
+depend: [BentoBox]
+commands:
+  islandwarp:
+    aliases: [iw, 地标]
+    description: 打开玩家地标导航
+    usage: /iw help
+permissions:
+  islandwarp.use:
+    default: true
+    description: 浏览、收藏与传送地标
+  islandwarp.create:
+    default: true
+    description: 在自己岛上创建与管理地标
+  islandwarp.admin:
+    default: op
+    description: 管理所有地标、重载、绕过创建数量和岛主限制

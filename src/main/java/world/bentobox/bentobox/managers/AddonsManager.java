@@ -51,6 +51,7 @@ import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritExceptio
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.objects.DataObject;
 import world.bentobox.bentobox.listeners.StructureListener;
 import world.bentobox.bentobox.util.Util;
@@ -719,6 +720,11 @@ public class AddonsManager {
             }
             new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build();
         }
+        // Stop the addon's database writers before its class loader goes away. The
+        // writer task holds the addon's data classes, so a handler left running
+        // keeps the class loader alive and can write stale data over the data of a
+        // new instance of the same addon.
+        stopAddonDatabases(addon);
         // Clear loaders
         if (loaders.containsKey(addon)) {
             Set<String> unmodifiableSet = Collections.unmodifiableSet(loaders.get(addon).getClasses());
@@ -737,6 +743,31 @@ public class AddonsManager {
         // Disable pladdons
         // Remove it from the addons list
         addons.remove(addon);
+    }
+
+    /**
+     * Stops the database writers that belong to the given addon.
+     * <p>
+     * An addon's data objects are defined by its own class loader, so the
+     * handlers that store them can be found by that loader. A pladdon is a
+     * Bukkit plugin and its classes come from the plugin class loader.
+     *
+     * @param addon the addon that is being disabled
+     */
+    private void stopAddonDatabases(@NonNull Addon addon) {
+        ClassLoader owner = null;
+        AddonClassLoader loader = loaders.get(addon);
+        if (loader != null) {
+            owner = loader;
+        } else {
+            Plugin pladdon = pladdons.get(addon);
+            if (pladdon != null) {
+                owner = pladdon.getClass().getClassLoader();
+            }
+        }
+        if (owner != null) {
+            AbstractDatabaseHandler.stopHandlers(owner);
+        }
     }
 
     /*

@@ -44,13 +44,15 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
     private final java.util.Set<java.util.UUID> cancelPreclear = java.util.concurrent.ConcurrentHashMap.newKeySet();
     private volatile CompletableFuture<Void> portalResult;
     private volatile org.bukkit.entity.Player portalBot;
+    private final Map<java.util.UUID, CompletableFuture<org.bukkit.entity.Entity>> nativeArrivals =
+            new java.util.concurrent.ConcurrentHashMap<>();
 
     @EventHandler(priority = org.bukkit.event.EventPriority.LOWEST)
     public void cancelRequestedReset(world.bentobox.bentobox.api.events.island.IslandResetEvent event) {
         if (cancelResets.remove(event.getPlayerUUID())) event.setCancelled(true);
     }
 
-    @EventHandler(priority = org.bukkit.event.EventPriority.LOWEST)
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
     public void cancelRequestedPreclear(world.bentobox.bentobox.api.events.island.IslandPreclearEvent event) {
         if (cancelPreclear.remove(event.getPlayerUUID())) event.setCancelled(true);
     }
@@ -66,12 +68,65 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
      * intercepted at all and which ones slip through.
      */
     private void registerLuminolDiagnostics() {
+        try {
+            Class<?> type = Class.forName("me.earthme.luminol.api.entity.PostEntityPortalEvent");
+            var getter = type.getMethod("getTeleportedEntity");
+            @SuppressWarnings("unchecked")
+            Class<? extends org.bukkit.event.Event> eventType = (Class<? extends org.bukkit.event.Event>) type;
+            Bukkit.getPluginManager().registerEvent(eventType, this, org.bukkit.event.EventPriority.MONITOR,
+                    (listener, event) -> {
+                        try {
+                            var entity = (org.bukkit.entity.Entity) getter.invoke(event);
+                            var future = nativeArrivals.remove(entity.getUniqueId());
+                            if (future != null) future.complete(entity);
+                        } catch (ReflectiveOperationException error) {
+                            throw new org.bukkit.event.EventException(error);
+                        }
+                    }, this);
+        } catch (ReflectiveOperationException error) {
+            getLogger().warning("Native portal arrival event unavailable: " + error);
+        }
         registerLuminolDiagnostic("me.earthme.luminol.api.entity.PreEntityPortalEvent",
                 new String[] { "getEntity", "getPortalPos", "getDestination" }, "LUMINOL_PRE_PORTAL");
+        try {
+            Class<?> type = Class.forName("me.earthme.luminol.api.entity.PreEntityPortalEvent");
+            var getEntity = type.getMethod("getEntity");
+            var getDestination = type.getMethod("getDestination");
+            @SuppressWarnings("unchecked")
+            Class<? extends org.bukkit.event.Event> eventType = (Class<? extends org.bukkit.event.Event>) type;
+            Bukkit.getPluginManager().registerEvent(eventType, this, org.bukkit.event.EventPriority.MONITOR,
+                    (listener, event) -> {
+                        try {
+                            if (!getEntity.invoke(event).equals(portalBot)) return;
+                            getLogger().info("NATIVE_PLAYER_FINAL_TARGET: " + getDestination.invoke(event)
+                                    + " cancelled=" + ((org.bukkit.event.Cancellable) event).isCancelled());
+                        } catch (ReflectiveOperationException error) {
+                            throw new org.bukkit.event.EventException(error);
+                        }
+                    }, this);
+        } catch (ReflectiveOperationException error) {
+            getLogger().warning("Final portal diagnostic unavailable: " + error);
+        }
         registerLuminolDiagnostic("me.earthme.luminol.api.entity.EntityTeleportAsyncEvent",
                 new String[] { "getEntity", "getTeleportCause", "getDestination" }, "LUMINOL_TELEPORT_ASYNC");
         registerLuminolDiagnostic("me.earthme.luminol.api.entity.PostEntityPortalEvent",
                 new String[] { "getTeleportedEntity" }, "LUMINOL_POST_PORTAL");
+    }
+
+    @EventHandler(priority = org.bukkit.event.EventPriority.MONITOR, ignoreCancelled = false)
+    public void nativeEntityPortalDiagnostic(org.bukkit.event.entity.EntityPortalEvent event) {
+        if (!nativeArrivals.containsKey(event.getEntity().getUniqueId())) return;
+        getLogger().info("ENTITY_ISLAND_ROUTE: from=" + event.getFrom() + " to=" + event.getTo()
+                + " cancelled=" + event.isCancelled());
+    }
+
+    @EventHandler(priority = org.bukkit.event.EventPriority.MONITOR, ignoreCancelled = false)
+    public void endEnterDiagnostic(org.bukkit.event.entity.EntityPortalEnterEvent event) {
+        if (!Boolean.getBoolean("probe.endNativeOnly")) return;
+        var started = endEnterTimes.get(event.getEntity().getUniqueId());
+        if (started != null) started.compareAndSet(0, System.nanoTime());
+        getLogger().info("END_ENTER: " + event.getEntity().getType() + " " + event.getLocation()
+                + " cancelled=" + event.isCancelled());
     }
 
     private void registerLuminolDiagnostic(String className, String[] getters, String label) {
@@ -196,6 +251,39 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
 
     @EventHandler
     public void ready(BentoBoxReadyEvent event) {
+        if (Boolean.getBoolean("probe.botStressOnly")) { BotStressProbe.run(this); return; }
+        if (Boolean.getBoolean("probe.botStressRetiredOnly")) { BotStressProbe.runRetiredOnly(this); return; }
+        if (Boolean.getBoolean("probe.portalDecisionOnly")) { PortalDecisionProbe.run(this); return; }
+        if (Boolean.getBoolean("probe.blueprintPaymentOnly")) { BlueprintPaymentProbe.run(this); return; }
+        if (Boolean.getBoolean("probe.teamChallengesOnly")) { TeamChallengeProbe.run(this); return; }
+        if (Boolean.getBoolean("probe.endNativeOnly")) {
+            World world = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world"));
+            World end = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world_the_end"));
+            testEndTransfer(world, end, org.bukkit.entity.EntityType.SHEEP)
+                    .thenCompose(unused -> testEndTransfer(world, end, org.bukkit.entity.EntityType.ITEM))
+                    .thenCompose(unused -> testEndTransfer(end, world, org.bukkit.entity.EntityType.SHEEP))
+                    .thenCompose(unused -> testEndTransfer(end, world, org.bukkit.entity.EntityType.ITEM))
+                    .thenCompose(unused -> testEndTransfer(world, end, org.bukkit.entity.EntityType.PLAYER))
+                    .thenCompose(unused -> testEndTransfer(end, world, org.bukkit.entity.EntityType.PLAYER))
+                    .orTimeout(300, TimeUnit.SECONDS).whenComplete((unused, error) -> {
+                        if (error != null) getLogger().log(Level.SEVERE, "END_NATIVE_PROBE_FAILED", error);
+                        else getLogger().info("END_NATIVE_PROBE_PASSED: player, sheep, item both directions and platform");
+                    });
+            return;
+        }
+        if (Boolean.getBoolean("probe.nativePortalOnly")) {
+            var world = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world"));
+            var nether = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world_nether"));
+            testNativePortal(world, nether, org.bukkit.entity.EntityType.SHEEP, 8448)
+                    .thenCompose(unused -> testNativePortal(world, nether, org.bukkit.entity.EntityType.ITEM, 8480))
+                    .thenCompose(unused -> testNativePortal(nether, world, org.bukkit.entity.EntityType.SHEEP, 1088))
+                    .thenCompose(unused -> testNativePlayerPortal(world, nether))
+                    .whenComplete((unused, error) -> {
+                        if (error != null) getLogger().log(Level.SEVERE, "NATIVE_PORTAL_PROBE_FAILED", error);
+                        else getLogger().info("NATIVE_PORTAL_PROBE_PASSED: sheep, item, nether return, player");
+                    });
+            return;
+        }
             if (Boolean.getBoolean("probe.endReturnOnly")) {
             testEndReturnPortal().orTimeout(120, TimeUnit.SECONDS).whenComplete((ignored, error) -> {
                 if (error != null) {
@@ -322,6 +410,194 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                         new Location(world, 8193.5, 91, 8192.5), nether, "nether"));
     }
 
+    private CompletableFuture<Void> testNativePortal(World from, World expected,
+            org.bukkit.entity.EntityType type, int coordinate) {
+        coordinate = 2000000 + java.util.concurrent.ThreadLocalRandom.current().nextInt(20000) * 400;
+        Location frame = new Location(from, coordinate, 90, coordinate);
+        Location destinationFrame = frame.clone();
+        destinationFrame.setWorld(expected);
+        World overworld = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world"));
+        Location islandCenter = frame.clone();
+        islandCenter.setWorld(overworld);
+        Island island = Objects.requireNonNull(BentoBox.getInstance().getIslands()
+                .createIsland(islandCenter, java.util.UUID.randomUUID()), "Entity portal test island rejected");
+        island.setSpawnPoint(expected.getEnvironment(), destinationFrame.clone().add(1.5, 1, 0.5));
+        CompletableFuture<org.bukkit.entity.Entity> arrived = new CompletableFuture<>();
+        return Util.getChunkAtAsync(from, coordinate >> 4, coordinate >> 4, true)
+                .thenCompose(unused -> Util.getChunkAtAsync(destinationFrame))
+                .thenCompose(unused -> TaskScheduler.regionFuture(this, destinationFrame,
+                        () -> {
+                            if (Boolean.getBoolean("probe.nativeLink")) buildPortalTargetPlatform(destinationFrame);
+                            else buildNetherFrame(expected, destinationFrame);
+                        }))
+                .thenCompose(unused -> spawnFakePlayerPlugin("Tick" + java.util.UUID.randomUUID().toString().substring(0, 8),
+                        expected, destinationFrame.clone().add(1.5, 1, -2)))
+                .thenCompose(unused -> spawnFakePlayerPlugin("Tick" + java.util.UUID.randomUUID().toString().substring(0, 8),
+                        from, frame.clone().add(1.5, 1, -2)))
+                .thenCompose(unused -> TaskScheduler.regionFuture(this, frame, () -> {
+                    buildNetherFrame(from, frame);
+                    Location spawn = frame.clone().add(1.5, 1, 0.5);
+                    org.bukkit.entity.Entity entity;
+                    if (type == org.bukkit.entity.EntityType.ITEM) {
+                        entity = from.dropItem(spawn, new org.bukkit.inventory.ItemStack(Material.COBBLESTONE));
+                        entity.setVelocity(new Vector());
+                    } else {
+                        entity = from.spawnEntity(spawn, type);
+                        if (entity instanceof org.bukkit.entity.Mob mob) mob.setAI(false);
+                    }
+                    nativeArrivals.put(entity.getUniqueId(), arrived);
+                    java.util.UUID entityId = entity.getUniqueId();
+                    Bukkit.getRegionScheduler().runAtFixedRate(this, destinationFrame, task -> {
+                        if (arrived.isDone()) { task.cancel(); return; }
+                        for (org.bukkit.entity.Entity candidate : expected.getNearbyEntities(destinationFrame, 10, 10, 10)) {
+                            if (candidate.getUniqueId().equals(entityId)) {
+                                nativeArrivals.remove(entityId);
+                                arrived.complete(candidate);
+                                task.cancel();
+                                return;
+                            }
+                        }
+                    }, 20, 20);
+                    entity.getScheduler().runAtFixedRate(this, task -> {
+                        if (arrived.isDone()) { task.cancel(); return; }
+                        if (!entity.getWorld().equals(from)) {
+                            nativeArrivals.remove(entity.getUniqueId());
+                            arrived.complete(entity);
+                            task.cancel();
+                            return;
+                        }
+                        getLogger().info("NATIVE_PORTAL_WAIT: " + entity.getLocation()
+                                + " block=" + entity.getLocation().getBlock().getType());
+                    }, null, 20, 100);
+                    getLogger().info("NATIVE_PORTAL_SPAWN: " + type + " from=" + from.getName()
+                            + " source=" + frame + " nativeTarget=" + destinationFrame
+                            + " island=" + island.getUniqueId());
+                })).thenCompose(unused -> arrived.orTimeout(60, TimeUnit.SECONDS))
+                .thenCompose(entity -> {
+                    CompletableFuture<Void> checked = new CompletableFuture<>();
+                    entity.getScheduler().execute(this, () -> {
+                        try {
+                            require(entity.getWorld().equals(expected), "Native " + type + " arrived in "
+                                    + entity.getWorld().getName() + ", expected " + expected.getName());
+                            require(island.inIslandSpace(entity.getLocation()), "Entity reached wrong island: " + entity.getLocation());
+                            require(entity.getLocation().distanceSquared(destinationFrame.clone().add(1.5, 1, 0.5)) < 4096,
+                                    "Entity too far from target portal: " + entity.getLocation());
+                            if (Boolean.getBoolean("probe.nativeLink")) {
+                                require(entity.getLocation().getBlock().getType() == Material.NETHER_PORTAL,
+                                        "Native arrival is not inside a generated portal: " + entity.getLocation());
+                                getLogger().info("NATIVE_PORTAL_CREATED_PASSED: " + type + " " + entity.getLocation());
+                            }
+                            require(entity.isValid() && !entity.isDead(), "Entity lost after portal transfer");
+                            if (entity instanceof org.bukkit.entity.Item item) {
+                                require(item.getItemStack().getType() == Material.COBBLESTONE
+                                        && item.getItemStack().getAmount() == 1, "Portal changed item stack");
+                            }
+                            getLogger().info("NATIVE_PORTAL_ARRIVAL_PASSED: " + type + " -> " + expected.getName()
+                                    + " same island at=" + entity.getLocation());
+                            entity.remove();
+                            checked.complete(null);
+                        } catch (Throwable error) {
+                            checked.completeExceptionally(error);
+                        }
+                    }, () -> checked.completeExceptionally(new IllegalStateException("Entity retired")), 1);
+                    return checked.orTimeout(10, TimeUnit.SECONDS);
+                });
+    }
+
+    private CompletableFuture<Void> testNativePlayerPortal(World from, World expected) {
+        int coordinate = 10000000 + java.util.concurrent.ThreadLocalRandom.current().nextInt(20000) * 400;
+        Location frame = new Location(from, coordinate, 90, coordinate);
+        java.util.concurrent.atomic.AtomicReference<Island> ownedIsland = new java.util.concurrent.atomic.AtomicReference<>();
+        Location target = frame.clone();
+        target.setWorld(expected);
+        portalResult = new CompletableFuture<>();
+        return Util.getChunkAtAsync(from, coordinate >> 4, coordinate >> 4, true)
+                .thenCompose(unused -> TaskScheduler.regionFuture(this, frame, () -> buildNetherFrame(from, frame)))
+                .thenCompose(unused -> Util.getChunkAtAsync(target))
+                .thenCompose(unused -> TaskScheduler.regionFuture(this, target, () -> {
+                    if (Boolean.getBoolean("probe.nativeLink")) buildPortalTargetPlatform(target);
+                }))
+                .thenCompose(unused -> spawnFakePlayerPlugin("Port" + java.util.UUID.randomUUID().toString().substring(0, 8),
+                        from, frame.clone().add(1.5, 1, -2)))
+                .thenCompose(bot -> {
+                    portalBot = bot;
+                    Island island = Objects.requireNonNull(BentoBox.getInstance().getIslands()
+                            .createIsland(frame, bot.getUniqueId()), "Player portal test island rejected");
+                    ownedIsland.set(island);
+                    require(island.inIslandSpace(frame), "Portal fixture is outside owned island");
+                    bot.getScheduler().runAtFixedRate(this, task -> {
+                        if (portalResult.isDone()) { task.cancel(); return; }
+                        if (bot.getWorld().equals(expected)) {
+                            portalResult.complete(null);
+                            task.cancel();
+                            return;
+                        }
+                        getLogger().info("NATIVE_PLAYER_WAIT: world=" + bot.getWorld().getName()
+                                + " valid=" + bot.isValid() + " online=" + bot.isOnline());
+                    }, null, 20, 100);
+                    return TaskScheduler.userFuture(this, User.getInstance(bot), () ->
+                            bot.teleportAsync(frame.clone().add(1.5, 1, 0.5)));
+                }).thenCompose(unused -> portalResult.orTimeout(60, TimeUnit.SECONDS))
+                .thenCompose(unused -> TaskScheduler.userFuture(this, User.getInstance(portalBot), () -> {
+                    require(portalBot.getWorld().equals(expected), "Player reached " + portalBot.getWorld().getName());
+                    require(ownedIsland.get().inIslandSpace(portalBot.getLocation()),
+                            "Player reached wrong island: " + portalBot.getLocation());
+                    require(ownedIsland.get().getOwner().equals(portalBot.getUniqueId()), "Test island owner mismatch");
+                    if (Boolean.getBoolean("probe.nativeLink")) {
+                        require(portalBot.getLocation().getBlock().getType() == Material.NETHER_PORTAL,
+                                "Player did not arrive in generated portal");
+                        getLogger().info("NATIVE_PLAYER_PORTAL_CREATED_PASSED: " + portalBot.getLocation());
+                    }
+                    getLogger().info("NATIVE_PORTAL_PLAYER_PASSED: owned island in " + expected.getName()
+                            + " at=" + portalBot.getLocation());
+                })).thenCompose(unused -> {
+                    portalResult = new CompletableFuture<>();
+                    Location returnFrame = Boolean.getBoolean("probe.nativeLink")
+                            ? portalBot.getLocation().clone().add(-1.5, -1, -0.5) : frame.clone();
+                    returnFrame.setWorld(expected);
+                    return TaskScheduler.regionFuture(this, returnFrame, () -> {
+                        if (!Boolean.getBoolean("probe.nativeLink")) buildNetherFrame(expected, returnFrame);
+                    })
+                            .thenCompose(ignored -> TaskScheduler.userFuture(this, User.getInstance(portalBot), () -> {
+                                portalBot.setPortalCooldown(0);
+                                portalBot.getScheduler().runAtFixedRate(this, task -> {
+                                    if (portalResult.isDone()) { task.cancel(); return; }
+                                    if (portalBot.getWorld().equals(from)) {
+                                        portalResult.complete(null);
+                                        task.cancel();
+                                    }
+                                }, null, 20, 20);
+                                portalBot.teleportAsync(returnFrame.clone().add(1.5, 1, 0.5));
+                            })).thenCompose(ignored -> portalResult.orTimeout(60, TimeUnit.SECONDS))
+                            .thenCompose(ignored -> TaskScheduler.userFuture(this, User.getInstance(portalBot), () -> {
+                                require(portalBot.getWorld().equals(from), "Player return world mismatch");
+                                require(ownedIsland.get().inIslandSpace(portalBot.getLocation()),
+                                        "Player returned outside owned island: " + portalBot.getLocation());
+                                if (Boolean.getBoolean("probe.nativeLink")) {
+                                    require(portalBot.getLocation().distanceSquared(frame.clone().add(1.5, 1, 0.5)) < 4,
+                                            "Native return did not reuse original portal");
+                                    getLogger().info("NATIVE_EXISTING_PORTAL_REUSED_PASSED: " + portalBot.getLocation());
+                                }
+                                getLogger().info("PLAYER_OWNED_ISLAND_RETURN_PASSED: " + portalBot.getLocation());
+                            }));
+                });
+    }
+
+    private void buildPortalTargetPlatform(Location center) {
+        World world = center.getWorld();
+        for (int x = 0; x <= 5; x++) {
+            for (int z = 0; z <= 5; z++) {
+                world.getBlockAt(center.getBlockX() + x, center.getBlockY(), center.getBlockZ() + z)
+                        .setType(Material.OBSIDIAN, false);
+                for (int y = 1; y <= 6; y++) {
+                    world.getBlockAt(center.getBlockX() + x, center.getBlockY() + y, center.getBlockZ() + z)
+                            .setType(Material.AIR, false);
+                }
+            }
+        }
+        getLogger().info("NATIVE_TARGET_WITHOUT_PORTAL: " + center);
+    }
+
     private CompletableFuture<Void> testEndPortal() {
         var world = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world"));
         var end = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world_the_end"));
@@ -338,6 +614,122 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         }).thenCompose(unused -> spawnAndWatchPortalBot("End", world,
                 new Location(world, platform.getBlockX() + 0.5, platform.getBlockY(), platform.getBlockZ() + 0.5),
                 end, "end"));
+    }
+
+    private final Map<java.util.UUID, java.util.concurrent.atomic.AtomicLong> endEnterTimes =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    private CompletableFuture<Void> testEndTransfer(World from, World to, org.bukkit.entity.EntityType type) {
+        int coordinate = 20000000 + java.util.concurrent.ThreadLocalRandom.current().nextInt(10000) * 400;
+        Location entrance = new Location(from, coordinate + 8, 91, coordinate + 8);
+        Location target = new Location(to, coordinate + 8, 91, coordinate + 8);
+        World overworld = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world"));
+        Location center = new Location(overworld, coordinate, 90, coordinate);
+        CompletableFuture<org.bukkit.entity.Entity> arrived = new CompletableFuture<>();
+        java.util.concurrent.atomic.AtomicReference<Island> islandRef = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicReference<java.util.UUID> id = new java.util.concurrent.atomic.AtomicReference<>();
+        return Util.getChunkAtAsync(entrance).thenCompose(unused -> Util.getChunkAtAsync(target))
+                .thenCompose(unused -> TaskScheduler.regionFuture(this, target, () -> {
+                    buildPortalTargetPlatform(target.clone().add(4, -1, 4));
+                    if (to.getEnvironment() == World.Environment.THE_END) {
+                        for (int x = -3; x <= 3; x++) for (int z = -3; z <= 3; z++)
+                            for (int y = -2; y <= 3; y++) target.clone().add(x, y, z).getBlock().setType(Material.AIR, false);
+                    } else buildPortalTargetPlatform(target.clone().add(0, -1, 0));
+                }))
+                .thenCompose(unused -> TaskScheduler.regionFuture(this, entrance,
+                        () -> buildPortalTargetPlatform(entrance.clone().add(0, -1, 0))))
+                .thenCompose(unused -> spawnFakePlayerPlugin("Tick" + java.util.UUID.randomUUID().toString().substring(0, 8),
+                        to, target.clone().add(5, 0, 5)))
+                .thenCompose(unused -> spawnFakePlayerPlugin("Port" + java.util.UUID.randomUUID().toString().substring(0, 8),
+                        from, entrance.clone().add(4, 0, 4)))
+                .thenCompose(bot -> {
+                    Island island = Objects.requireNonNull(BentoBox.getInstance().getIslands()
+                            .createIsland(center, bot.getUniqueId()), "End test island rejected");
+                    islandRef.set(island);
+                    island.setSpawnPoint(World.Environment.NORMAL, new Location(overworld, coordinate + 10.5, 91, coordinate + 10.5));
+                    CompletableFuture<?> prepared = CompletableFuture.completedFuture(null);
+                    if (Boolean.getBoolean("probe.endBlueprint") && to.getEnvironment() == World.Environment.THE_END) {
+                        var plugin = BentoBox.getInstance();
+                        var addon = plugin.getIWM().getAddon(overworld).orElseThrow();
+                        var blueprint = Objects.requireNonNull(plugin.getBlueprintsManager().getBlueprints(addon).get("end-island"));
+                        prepared = new world.bentobox.bentobox.blueprints.BlueprintPaster(plugin, blueprint, to, island)
+                                .paste().thenAccept(success -> require(Boolean.TRUE.equals(success), "End blueprint paste failed"));
+                    }
+                    return prepared.thenCompose(ignored -> TaskScheduler.regionFuture(this, entrance, () -> {
+                        entrance.clone().add(0, -1, 0).getBlock().setType(Material.OBSIDIAN, false);
+                        entrance.getBlock().setType(Material.END_PORTAL, false);
+                        org.bukkit.entity.Entity entity;
+                        if (type == org.bukkit.entity.EntityType.PLAYER) entity = bot;
+                        else if (type == org.bukkit.entity.EntityType.ITEM) {
+                            entity = from.spawn(entrance.clone().add(.5, 1, .5), org.bukkit.entity.Item.class,
+                                    item -> item.setItemStack(new org.bukkit.inventory.ItemStack(Material.COBBLESTONE)));
+                            entity.setVelocity(new Vector(0, -.2, 0));
+                        } else {
+                            entity = from.spawnEntity(entrance.clone().add(.5, .1, .5), type);
+                            ((org.bukkit.entity.Mob) entity).setAI(false);
+                        }
+                        id.set(entity.getUniqueId());
+                        endEnterTimes.put(entity.getUniqueId(), new java.util.concurrent.atomic.AtomicLong());
+                        entity.setPortalCooldown(0);
+                        nativeArrivals.put(entity.getUniqueId(), arrived);
+                        Bukkit.getRegionScheduler().runAtFixedRate(this, target, task -> {
+                            if (arrived.isDone()) { task.cancel(); return; }
+                             for (var candidate : to.getNearbyEntities(target, 20, 20, 20)) {
+                                 if (candidate.getUniqueId().equals(id.get())) {
+                                     var start = endEnterTimes.get(id.get());
+                                     if (start != null && start.get() != 0) getLogger().info("END_TRANSFER_LATENCY: "
+                                             + type + " from=" + from.getName() + " to=" + to.getName()
+                                             + " enter_to_observed_ms=" + (System.nanoTime() - start.get()) / 1_000_000
+                                             + " observer_period_ticks=10");
+                                     arrived.complete(candidate); task.cancel(); return;
+                                }
+                            }
+                        }, 1, 10);
+                        entity.getScheduler().runDelayed(this, task -> getLogger().info("END_SOURCE_STATE: "
+                                + entity.getType() + " " + entity.getLocation() + " valid=" + entity.isValid()
+                                + " cooldown=" + entity.getPortalCooldown()),
+                                () -> getLogger().info("END_SOURCE_RETIRED: " + type), 20);
+                        if (entity == bot) {
+                            TaskScheduler.entity(this, bot, () -> {
+                                bot.setPortalCooldown(0);
+                                bot.teleportAsync(entrance.clone().add(.5, .1, .5));
+                            });
+                        }
+                        getLogger().info("END_TRANSFER_SPAWN: " + type + " " + entrance);
+                    }));
+                }).thenCompose(unused -> arrived.orTimeout(60, TimeUnit.SECONDS))
+                .thenCompose(entity -> {
+                    CompletableFuture<Location> checked = new CompletableFuture<>();
+                    entity.getScheduler().execute(this, () -> {
+                        try {
+                            require(entity.isValid() && !entity.isDead(), "End transfer lost entity");
+                            require(entity.getWorld().equals(to), "End transfer wrong world");
+                            require(islandRef.get().inIslandSpace(entity.getLocation()), "End transfer wrong island");
+                            if (entity instanceof org.bukkit.entity.Item item)
+                                require(item.getItemStack().getType() == Material.COBBLESTONE
+                                        && item.getItemStack().getAmount() == 1, "End transfer changed item");
+                            checked.complete(entity.getLocation());
+                        } catch (Throwable error) { checked.completeExceptionally(error); }
+                    }, () -> checked.completeExceptionally(new IllegalStateException("End entity retired")), 1);
+                    return checked.orTimeout(10, TimeUnit.SECONDS);
+                }).thenCompose(location -> TaskScheduler.regionFuture(this, location, () -> {
+                    if (to.getEnvironment() == World.Environment.THE_END) {
+                        if (Boolean.getBoolean("probe.endBlueprint")) {
+                            Location spawn = Objects.requireNonNull(islandRef.get().getSpawnPoint(World.Environment.THE_END));
+                            require(location.distanceSquared(spawn) < 9, "Arrival missed blueprint spawn: " + location);
+                            require(location.clone().add(0, -1, 0).getBlock().getType() != Material.OBSIDIAN,
+                                    "Platform overwrote blueprint spawn floor");
+                            getLogger().info("END_BLUEPRINT_SPAWN_PASSED: " + type + " spawn=" + spawn + " actual=" + location);
+                        } else {
+                            for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++)
+                                require(location.clone().add(x, -1, z).getBlock().getType() == Material.OBSIDIAN,
+                                        "End arrival platform missing at " + location);
+                        }
+                    }
+                    getLogger().info("END_TRANSFER_PASSED: " + type + " " + from.getName() + " -> " + location);
+                })).whenComplete((unused, error) -> {
+                    if (id.get() != null) endEnterTimes.remove(id.get());
+                });
     }
 
     /**
@@ -580,29 +972,32 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
     private CompletableFuture<org.bukkit.entity.Player> spawnFakePlayerPlugin(String name, World world,
             Location location) {
         CompletableFuture<org.bukkit.entity.Player> result = new CompletableFuture<>();
-        String command = "fp spawn " + name;
+        String command = "fpp spawn --name " + name + " --location " + location.getX() + " "
+                + location.getY() + " " + location.getZ() + " " + world.getName();
         TaskScheduler.global(this, () -> {
             if (!Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)) {
                 result.completeExceptionally(new IllegalStateException("fakeplayer spawn command rejected"));
                 return;
             }
-            TaskScheduler.globalLater(this, () -> {
+            Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> {
+                if (result.isDone()) { task.cancel(); return; }
                 org.bukkit.entity.Player player = Bukkit.getPlayerExact(name);
                 if (player == null) {
-                    result.completeExceptionally(new IllegalStateException("fakeplayer did not spawn"));
                     return;
                 }
-                player.teleportAsync(location).whenComplete((success, error) -> {
+                task.cancel();
+                // Wait for the fake-player plugin's placement to finish before probe setup.
+                TaskScheduler.globalLater(this, () -> player.teleportAsync(location).whenComplete((success, error) -> {
                     if (error != null || !Boolean.TRUE.equals(success)) {
                         result.completeExceptionally(error == null
                                 ? new IllegalStateException("fakeplayer teleport rejected") : error);
                     } else {
                         result.complete(player);
                     }
-                });
-            }, 20);
+                }), 60);
+            }, 20, 20);
         });
-        return result;
+        return result.orTimeout(30, TimeUnit.SECONDS);
     }
 
     private CompletableFuture<org.bukkit.entity.Player> spawnBotWithRetry(String name, Location location, int attempts) {
@@ -1296,6 +1691,53 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         });
     }
 
+    private CompletableFuture<Void> despawnFakePlayerVerified(org.bukkit.entity.Player bot) {
+        var listenerRef = new java.util.concurrent.atomic.AtomicReference<Object>();
+        var fieldRef = new java.util.concurrent.atomic.AtomicReference<java.lang.reflect.Field>();
+        return TaskScheduler.userFuture(this, User.getInstance(bot), () -> {
+            try {
+                require(bot.isOnline(), "Fixture absent before native removal request");
+                Object handle = bot.getClass().getMethod("getHandle").invoke(bot);
+                Object listener = handle.getClass().getField("connection").get(handle);
+                java.lang.reflect.Field field = null;
+                for (Class<?> type = listener.getClass(); type != null && field == null; type = type.getSuperclass()) {
+                    try { field = type.getDeclaredField("carpetPlayerRemoval"); }
+                    catch (NoSuchFieldException ignored) { /* Core superclass owns the receipt. */ }
+                }
+                require(field != null, "Core native removal receipt missing");
+                field.setAccessible(true);
+                listenerRef.set(listener);
+                fieldRef.set(field);
+            } catch (ReflectiveOperationException error) { throw new IllegalStateException(error); }
+        }).thenCompose(unused -> {
+            var removal = new CompletableFuture<Void>();
+            var attached = new java.util.concurrent.atomic.AtomicBoolean();
+            var poll = TaskScheduler.globalTimer(this, () -> {
+                if (removal.isDone()) return;
+                try {
+                    Object value = fieldRef.get().get(listenerRef.get());
+                    if (value instanceof CompletableFuture<?> receipt && attached.compareAndSet(false, true)) {
+                        receipt.whenComplete((done, error) -> {
+                            if (error == null) removal.complete(null);
+                            else removal.completeExceptionally(error);
+                        });
+                    }
+                } catch (Throwable error) { removal.completeExceptionally(error); }
+            }, 1, 2);
+            TaskScheduler.global(this, () -> {
+                try {
+                    require(Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "fpp despawn " + bot.getName()),
+                            "Fakeplayer despawn command rejected");
+                } catch (Throwable error) { removal.completeExceptionally(error); }
+            });
+            return removal.orTimeout(60, TimeUnit.SECONDS).whenComplete((done, error) -> poll.cancel());
+        }).thenCompose(unused -> TaskScheduler.globalFuture(this, () -> {
+            require(!bot.isOnline() && Bukkit.getPlayer(bot.getUniqueId()) == null,
+                    "Native removal completed but fixture remains online");
+            getLogger().info("PORTAL_DECISION_NATIVE_REMOVAL_PASSED: player=" + bot.getUniqueId());
+        }));
+    }
+
     private CompletableFuture<Void> despawnBot(org.bukkit.entity.Player bot) {
         CompletableFuture<Void> result = new CompletableFuture<>();
         if (!bot.isOnline()) {
@@ -1325,13 +1767,58 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         return reset.thenRun(() -> {
             var island = Objects.requireNonNull(previous.get());
             require(island.isDeletable(), "Old island was not marked for deletion after reset");
+            verifyInitialCountBeforeDelivery(player);
             createdIslands.remove(island.getUniqueId());
             getLogger().info("PLAYER_RESET_PASSED: " + island.getUniqueId()
                     + " elapsed_ms=" + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started));
         });
     }
 
+    private void verifyInitialCountBeforeDelivery(org.bukkit.entity.Player player) {
+        try {
+            Object level = BentoBox.getInstance().getAddonsManager().getAddonByName("Level").orElseThrow();
+            Object settings = levelGetter(level, "getSettings", "world.bentobox.level.config.ConfigSettings");
+            if (!Boolean.TRUE.equals(settings.getClass().getMethod("isZeroNewIslandLevels").invoke(settings))) return;
+            var island = Objects.requireNonNull(BentoBox.getInstance().getIslands()
+                    .getIsland(Bukkit.getWorld("bskyblock_world"), player.getUniqueId()));
+            require(Boolean.TRUE.equals(level.getClass().getMethod("isInitialIslandCountReady", Island.class).invoke(level, island)),
+                    "Player received island with unresolved initial count");
+            getLogger().info("LEVEL_INITIAL_COUNT_BEFORE_DELIVERY_PASSED: " + island.getUniqueId());
+        } catch (ReflectiveOperationException error) { throw new IllegalStateException(error); }
+    }
+
     private CompletableFuture<Void> testCancelledPlayerReset(org.bukkit.entity.Player player, boolean preclear) {
+        if (preclear) return fundCancellationBank(player).thenCompose(ignored -> verifyCancelledPlayerReset(player, true));
+        return verifyCancelledPlayerReset(player, false);
+    }
+
+    private CompletableFuture<Void> fundCancellationBank(org.bukkit.entity.Player player) {
+        var result = new CompletableFuture<Void>();
+        TaskScheduler.userFuture(this, User.getInstance(player), () -> {
+            try {
+                Object bank = BentoBox.getInstance().getAddonsManager().getAddonByName("Bank").orElseThrow();
+                Object manager = levelGetter(bank, "getBankManager", "world.bentobox.bank.BankManager");
+                var loader = bank.getClass().getClassLoader();
+                Class<?> money = Class.forName("world.bentobox.bank.data.Money", true, loader);
+                Class<?> tx = Class.forName("world.bentobox.bank.data.TxType", true, loader);
+                var island = BentoBox.getInstance().getIslands().getIsland(player.getWorld(), player.getUniqueId());
+                Object amount = money.getConstructor(double.class).newInstance(70.0);
+                Object give = java.lang.Enum.valueOf(tx.asSubclass(Enum.class), "GIVE");
+                var paid = (CompletableFuture<?>) manager.getClass().getMethod("set", User.class,
+                        String.class, money, money, tx).invoke(manager, User.getInstance(player),
+                                island.getUniqueId(), amount, amount, give);
+                paid.whenComplete((response, error) -> {
+                    if (error != null) result.completeExceptionally(error);
+                    else if (!"SUCCESS".equals(String.valueOf(response))) result.completeExceptionally(
+                            new IllegalStateException("Could not fund cancellation account: " + response));
+                    else result.complete(null);
+                });
+            } catch (Throwable error) { result.completeExceptionally(error); }
+        }).exceptionally(error -> { result.completeExceptionally(error); return null; });
+        return result;
+    }
+
+    private CompletableFuture<Void> verifyCancelledPlayerReset(org.bukkit.entity.Player player, boolean preclear) {
         CompletableFuture<Void> result = new CompletableFuture<>();
         TaskScheduler.userFuture(this, User.getInstance(player), () -> {
             var plugin = BentoBox.getInstance();
@@ -1359,6 +1846,14 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                         require(members.equals(island.getMembers()), "Cancellation removed old team members");
                         require(islands == plugin.getIslands().getIslands(world, player.getUniqueId()).size(), "Cancellation left an owned draft island");
                         require(resets == plugin.getPlayers().getPlayer(player.getUniqueId()).getResets(world), "Cancellation consumed reset allowance");
+                        if (preclear) {
+                            Object bank = plugin.getAddonsManager().getAddonByName("Bank").orElseThrow();
+                            Object manager = levelGetter(bank, "getBankManager", "world.bentobox.bank.BankManager");
+                            Object balance = manager.getClass().getMethod("getBalance", Island.class).invoke(manager, island);
+                            require(((Number) balance.getClass().getMethod("getValue").invoke(balance)).doubleValue() == 70.0,
+                                    "Late preclear cancellation deleted Bank balance");
+                            getLogger().info("BANK_LATE_PRECLEAR_CANCEL_PASSED: " + island.getUniqueId());
+                        }
                         var marker = player.getInventory().getItem(35);
                         require(marker != null && marker.getType() == Material.DIAMOND && marker.getAmount() == 7,
                                 "Cancellation cleared player inventory");

@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 public class BlockEndDragon implements Listener {
 
@@ -38,13 +39,24 @@ public class BlockEndDragon implements Listener {
     private void testLocation(Location location) {
         World w = location.getWorld();
         if (w == null || !plugin.getIWM().isIslandEnd(w)
-                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w)
-                || w.getBlockAt(0, w.getMaxHeight() - 1, 0).getType().equals(Material.END_PORTAL)) {
+                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w)) {
             return;
         }
-
-        // Setting a End Portal at the top will trick dragon legacy check.
-        w.getBlockAt(0, w.getMaxHeight() - 1, 0).setType(Material.END_PORTAL, false);
+        Location marker = new Location(w, 0, w.getMaxHeight() - 1, 0);
+        Runnable placeMarker = () -> {
+            Block block = w.getBlockAt(0, w.getMaxHeight() - 1, 0);
+            if (Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w) && block.getType() != Material.END_PORTAL) {
+                // Setting an End Portal at the top tricks the dragon legacy check.
+                block.setType(Material.END_PORTAL, false);
+            }
+        };
+        if (TaskScheduler.isFolia()) {
+            // The player may be in a different region from the world's dragon marker.
+            TaskScheduler.regionFuture(plugin, marker, placeMarker)
+                    .exceptionally(error -> { plugin.logStacktrace(error); return null; });
+        } else {
+            placeMarker.run();
+        }
     }
 
     /**

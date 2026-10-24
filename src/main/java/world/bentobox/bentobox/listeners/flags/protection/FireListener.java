@@ -69,10 +69,7 @@ public class FireListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent e) {
-        // Check if this is a portal lighting - that is allowed any time
-        if (!e.getBlock().getType().equals(Material.OBSIDIAN)) {
-            checkFire(e, e.getBlock().getLocation(), Flags.FIRE_IGNITE);
-        }
+        checkFire(e, e.getBlock().getLocation(), Flags.FIRE_IGNITE);
     }
 
     /**

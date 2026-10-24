@@ -128,10 +128,10 @@ public class SafeSpotTeleport {
         Util.getChunkSnapshotAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())
         .whenCompleteAsync((snapshot, e) -> {
             if (e != null) {
-                task.cancel();
+                stopTimer();
                 result.completeExceptionally(e);
             } else if (snapshot != null && scanChunk(snapshot)) {
-                task.cancel();
+                stopTimer();
             } else {
                 checking.set(false);
             }
@@ -139,17 +139,27 @@ public class SafeSpotTeleport {
         return true;
     }
 
+    /**
+     * Ends the scan: cancels the timer and clears the in-flight guard, so the
+     * instance never reports itself as still scanning after it has finished.
+     */
+    private void stopTimer() {
+        task.cancel();
+        checking.set(false);
+    }
+
     void tidyUp(Entity entity, String failureMessage) {
         // Still Async!
         // Nothing left to check and still not canceled
-        task.cancel();
+        stopTimer();
         // Check portal
         if (portal && bestSpot != null) {
             // Portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
         } else if (entity instanceof Player player) {
-            // Return to main thread and teleport the player
-            TaskScheduler.entity(plugin, entity, () -> {
+            // Return to main thread and teleport the player. A disconnected player must still
+            // complete the future, otherwise the creation guard and payment stay locked.
+            TaskScheduler.entityOrRetired(plugin, entity, () -> {
                 // Failed, no safe spot
                 if (!failureMessage.isEmpty()) {
                     User.getInstance(entity).notify(failureMessage);
@@ -172,7 +182,7 @@ public class SafeSpotTeleport {
                     TaskScheduler.entity(plugin, entity, failRunnable);
                 }
                 result.complete(false);
-            });
+            }, () -> result.complete(false));
         } else {
             if (failRunnable != null) {
                 TaskScheduler.entity(plugin, entity, failRunnable);
@@ -284,15 +294,16 @@ public class SafeSpotTeleport {
      * Teleports entity to the safe spot
      */
     void teleportEntity(@NonNull final Location loc) {
-        task.cancel();
-        // Return to main thread and teleport the player
-        TaskScheduler.entity(plugin, entity, () -> {
+        stopTimer();
+        // Return to main thread and teleport the player. A disconnected player must still
+        // complete the future, otherwise the caller waits forever.
+        TaskScheduler.entityOrRetired(plugin, entity, () -> {
             if (!portal && entity instanceof Player && (homeNumber > 0 || !homeName.isEmpty())) {
                 // Set home if so marked
                 plugin.getIslands().setHomeLocation(User.getInstance(entity), loc, homeName);
             }
             completeTeleport(loc);
-        });
+        }, () -> result.complete(false));
     }
 
     private void completeTeleport(Location destination) {

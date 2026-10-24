@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,6 +31,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * @author tastybento
@@ -136,6 +138,27 @@ class BlockEndDragonTest extends CommonTestSetup {
         PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, component);
         bed.onPlayerJoinWorld(event);
         verify(block).setType(Material.END_PORTAL, false);
+    }
+
+    @Test
+    void testFoliaMarkerReadsOnlyOnTargetRegion() {
+        java.util.concurrent.atomic.AtomicReference<Runnable> work = new java.util.concurrent.atomic.AtomicReference<>();
+        try (var scheduler = mockStatic(TaskScheduler.class)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            scheduler.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                org.bukkit.Location target = call.getArgument(1);
+                org.junit.jupiter.api.Assertions.assertEquals(0, target.getBlockX());
+                org.junit.jupiter.api.Assertions.assertEquals(255, target.getBlockY());
+                org.junit.jupiter.api.Assertions.assertEquals(0, target.getBlockZ());
+                work.set(call.getArgument(2));
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            bed.onPlayerJoinWorld(new PlayerJoinEvent(mockPlayer, Component.empty()));
+            verify(world, never()).getBlockAt(anyInt(), anyInt(), anyInt());
+            org.junit.jupiter.api.Assertions.assertNotNull(work.get());
+            work.get().run();
+            verify(block).setType(Material.END_PORTAL, false);
+        }
     }
 
     /**

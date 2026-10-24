@@ -10,6 +10,7 @@ package world.bentobox.bentobox.listeners.teleports;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Location;
@@ -34,6 +35,7 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport;
@@ -107,7 +109,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                             false,
                             0);
 
-                    Bukkit.getPluginManager().callEvent(en);
+                    dispatchPortal(en, false);
                 }
             }, 40);
             return;
@@ -126,7 +128,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                             false,
                             0);
 
-            Bukkit.getPluginManager().callEvent(en);
+            dispatchPortal(en, false);
         }
     }
 
@@ -237,6 +239,19 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerPortalEvent(PlayerPortalEvent event) {
+        if (TaskScheduler.isFolia() && event.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL
+                && event.getFrom().getWorld().getEnvironment() == World.Environment.THE_END) {
+            World overWorld = Util.getWorld(event.getFrom().getWorld());
+            if (overWorld != null && plugin.getIWM().inWorld(overWorld)) {
+                if (!isAllowedInConfig(overWorld, World.Environment.THE_END)
+                        || !isAllowedOnServer(World.Environment.THE_END)) {
+                    event.setCancelled(true);
+                    return;
+                }
+                handleFromStandardNetherOrEnd(event, overWorld, World.Environment.THE_END);
+                return;
+            }
+        }
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL
                 && event.getFrom().getWorld() != null
                 && event.getFrom().getWorld().getEnvironment() == World.Environment.NORMAL) {
@@ -278,6 +293,13 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
      * @param portalPos   the portal block the player entered
      * @param environment the dimension the player is sent to
      */
+    PlayerPortalEvent prepareNativeFoliaPortal(Player player, Location portalPos, Location destination) {
+        PlayerPortalEvent event = new PlayerPortalEvent(player, portalPos, destination,
+                PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
+        dispatchPortal(event, true);
+        return event;
+    }
+
     void handleFoliaPortal(Player player, Location portalPos, World.Environment environment) {
         PlayerPortalEvent event = new PlayerPortalEvent(player,
                 portalPos,
@@ -289,7 +311,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                 false,
                 0);
 
-        Bukkit.getPluginManager().callEvent(event);
+        dispatchPortal(event, false);
     }
 
     // ---------------------------------------------------------------------
@@ -322,13 +344,13 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         {
             // World is disabled in bukkit. Event is not triggered, but cancel by chance.
             event.setCancelled(true);
+            return;
         }
         if (this.inTeleport.contains(event.getPlayer().getUniqueId()))
         {
             // Player is already in teleportation.
             return;
         }
-        this.inTeleport.add(event.getPlayer().getUniqueId());
 
         if (fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
         {
@@ -349,6 +371,8 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
 
         // Set whether portals should be created or not
         event.setCanCreatePortal(this.isMakePortals(overWorld, environment));
+        // Blueprint spawns already have terrain; regenerating a platform would overwrite the island.
+        if (getEndIslandSpawn(event.getFrom(), toWorld).isPresent()) event.setCanCreatePortal(false);
         // Default 16 is will always end up placing portal as close to X/8 coordinate as possible.
         // In most situations, 2 block value should be enough... I hope.
         event.setCreationRadius(2);
@@ -361,54 +385,70 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         this.getIsland(event.getTo()).ifPresent(island ->
             event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
-        // Vanilla always builds the end arrival platform at the fixed END_SPAWN_POINT,
-        // not at the redirected destination, so the player would fall into the void.
-        // Build the platform manually at the actual destination.
-        if (event.getCanCreatePortal()
-                && event.getTo() != null
-                && World.Environment.THE_END.equals(event.getTo().getWorld().getEnvironment()))
-        {
-            if (!TaskScheduler.isFolia()) this.createEndPlatform(event.getTo());
-        }
-
-        // Check if there is an island there or not
-        if (this.isPastingMissingIslands(overWorld) &&
-                this.isAllowedInConfig(overWorld, environment) &&
-                this.isIslandWorld(overWorld, environment) &&
-                this.getNetherEndWorld(overWorld, environment) != null &&
-                this.getIsland(event.getTo()).
-                filter(island -> !this.hasPartnerIsland(island, environment)).
-                map(island -> {
-                    event.setCancelled(true);
-                    this.pasteNewIsland(event.getPlayer(), event.getTo(), island, environment);
-                    return true;
-                }).
-                orElse(false))
-        {
-            // If there is no island, then processor already created island. Nothing to do more.
+        boolean synthetic = isSyntheticPortal();
+        // Real Bukkit events retain the server's continuation; never launch a second async transfer.
+        if (!synthetic && !TaskScheduler.isFolia()) {
+            // A missing dimension island must be pasted before the native transfer, so take the
+            // trip over: cancel the event and teleport once the blueprint is in place.
+            if (this.tryPasteMissingIsland(event, overWorld, environment)) return;
+            if (environment != World.Environment.THE_END) return;
+            afterPortal(event, event.getPlayer(), () -> {
+                if (event.getCanCreatePortal() && event.getTo() != null && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END
+                        && getEndIslandSpawn(event.getFrom(), event.getTo().getWorld()).isEmpty()) createEndPlatform(event.getTo());
+            });
             return;
         }
+        afterPortal(event, event.getPlayer(), () -> finishPortal(event, overWorld, environment));
+    }
+
+    private void finishPortal(PlayerPortalEvent event, World overWorld, World.Environment environment) {
+        if (event.isCancelled() || event.getTo() == null) return;
+        this.inTeleport.add(event.getPlayer().getUniqueId());
+        // Check if there is an island there or not
+        Island island = this.getIsland(event.getTo()).orElse(null);
+        if (island != null && this.isPastingMissingIslands(overWorld) &&
+                this.isAllowedInConfig(overWorld, environment) &&
+                this.isIslandWorld(overWorld, environment) &&
+                this.getNetherEndWorld(overWorld, environment) != null)
+        {
+            Location destination = event.getTo().clone();
+            hasPartnerIsland(island, environment).thenAccept(exists ->
+                    TaskScheduler.entity(plugin, event.getPlayer(), () -> {
+                        if (event.isCancelled()) return;
+                        if (!exists) {
+                            pasteNewIsland(event.getPlayer(), destination, island, environment);
+                        } else if (World.Environment.NETHER == environment) {
+                            // Vanilla reuses or creates the paired portal and puts the player in
+                            // it, so follow the same order before handing over to the teleport.
+                            this.ensureNetherPortal(destination, portalAxis(event.getFrom()))
+                                    .thenAccept(portal -> {
+                                        if (portal != null) {
+                                            event.setTo(portal);
+                                        }
+                                        completePortal(event);
+                                    });
+                        } else {
+                            completePortal(event);
+                        }
+                    })).exceptionally(error -> { plugin.logStacktrace(error); return null; });
+            return;
+        }
+        completePortal(event);
+    }
+
+    private void completePortal(PlayerPortalEvent event) {
+        if (event.isCancelled() || event.getTo() == null) return;
         if (TaskScheduler.isFolia() && !event.isCancelled() && event.getCanCreatePortal()
-                && event.getTo() != null && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
-            event.setCancelled(true);
+                && getEndIslandSpawn(event.getFrom(), event.getTo().getWorld()).isEmpty()
+                && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
             Location destination = event.getTo().clone();
             this.createEndPlatformAsync(destination)
                     .thenCompose(ignored -> Util.teleportAsync(event.getPlayer(), destination))
                     .exceptionally(error -> { plugin.logStacktrace(error); return false; });
             return;
         }
-        if (!event.isCancelled() && event.getCanCreatePortal())
-        {
-            if (!TaskScheduler.isFolia())
-            {
-                // Let the server teleport
-                return;
-            }
-            // Folia: the native transfer is already cancelled (see FoliaPortalBridge) and the
-            // server can no longer build the destination portal, so fall through to the manual
-            // safe spot search below.
-        }
-        if (World.Environment.THE_END.equals(environment))
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL
+                || event.getCause() == PlayerTeleportEvent.TeleportCause.END_GATEWAY)
         {
             // Prevent death from hitting the ground while calculating location.
             event.getPlayer().setVelocity(new Vector(0,0,0));
@@ -423,7 +463,8 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
 
         // If there is a portal to go to already, then the player will go there
         TaskScheduler.entity(this.plugin, event.getPlayer(), () -> {
-            if (!event.getPlayer().getWorld().equals(toWorld))
+            if (!event.isCancelled() && event.getTo() != null
+                    && !event.getPlayer().getWorld().equals(event.getTo().getWorld()))
             {
                 // Else manually teleport entity
                 ClosestSafeSpotTeleport.builder(this.plugin).
@@ -434,6 +475,8 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                     // Reset velocity just in case.
                     event.getPlayer().setVelocity(new Vector(0,0,0));
                     event.getPlayer().setFallDistance(0);
+                    // Vanilla cooldown, otherwise arriving inside the portal bounces the player back.
+                    event.getPlayer().setPortalCooldown(300);
                 }).
                 build();
             }
@@ -475,15 +518,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             event.setTo(spawnPoint);
             this.teleportToStandardNetherOrEnd(event);
         }
-        else
-        {
-            // Teleport to standard nether or end
-            ClosestSafeSpotTeleport.builder(this.plugin).
-            entity(event.getPlayer()).
-            location(spawnPoint).
-            portal().
-            build();
-        }
+        else event.setCancelled(true);
     }
 
 
@@ -499,13 +534,14 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         {
             return;
         }
-        Location destination = event.getTo().clone();
-        TaskScheduler.entity(this.plugin, event.getPlayer(), () ->
+        afterPortal(event, event.getPlayer(), () -> {
+            if (event.isCancelled() || event.getTo() == null) return;
                 ClosestSafeSpotTeleport.builder(this.plugin).
                 entity(event.getPlayer()).
-                location(destination).
+                location(event.getTo().clone()).
                 portal().
-                build());
+                build();
+        });
     }
 
 
@@ -557,12 +593,6 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             // Custom portal handling.
             event.setCancelled(true);
 
-            // Teleport to standard nether or end
-            ClosestSafeSpotTeleport.builder(this.plugin).
-            entity(event.getPlayer()).
-            location(event.getTo()).
-            portal().
-            build();
         }
         else
         {
@@ -579,38 +609,77 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
      * @param island - the island
      * @param environment - NETHER or THE_END
      */
+    java.util.concurrent.CompletableFuture<Void> pasteMissingIsland(Location to, Island island,
+            World.Environment environment) {
+        var addon = plugin.getIWM().getAddon(island.getWorld()).orElseThrow();
+        BlueprintBundle bundle = plugin.getBlueprintsManager().getDefaultBlueprintBundle(addon);
+        Blueprint blueprint = bundle == null ? null : plugin.getBlueprintsManager().getBlueprints(addon)
+                .get(bundle.getBlueprint(environment));
+        if (blueprint == null) return java.util.concurrent.CompletableFuture.failedFuture(
+                new IllegalStateException("Missing default " + environment + " island blueprint"));
+        return new BlueprintPaster(plugin, blueprint, to.getWorld(), island).paste().thenApply(state -> null);
+    }
+
+    /**
+     * Pastes a missing dimension island before the server's own transfer would land the player
+     * in an ungenerated dimension. Mirrors the Folia/synthetic path for real Bukkit events.
+     *
+     * @return true if this method took over the transfer
+     */
+    private boolean tryPasteMissingIsland(PlayerPortalEvent event, World overWorld, World.Environment environment) {
+        if (event.getTo() == null || !this.isPastingMissingIslands(overWorld)
+                || !this.isAllowedInConfig(overWorld, environment)
+                || !this.isIslandWorld(overWorld, environment)
+                || this.getNetherEndWorld(overWorld, environment) == null) return false;
+        Island island = this.getIsland(event.getTo()).orElse(null);
+        if (island == null || this.hasPartnerIslandSync(island, environment)) return false;
+        event.setCancelled(true);
+        this.inTeleport.add(event.getPlayer().getUniqueId());
+        this.pasteNewIsland(event.getPlayer(), event.getTo().clone(), island, environment);
+        return true;
+    }
+
     private void pasteNewIsland(Player player,
             Location to,
             Island island,
             World.Environment environment)
     {
         // Paste then teleport player
-        this.plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon ->
-        {
-            // Get the default bundle's nether or end blueprint
-            BlueprintBundle blueprintBundle = plugin.getBlueprintsManager().getDefaultBlueprintBundle(addon);
-
-            if (blueprintBundle != null)
-            {
-                Blueprint bluePrint = this.plugin.getBlueprintsManager().getBlueprints(addon).
-                        get(blueprintBundle.getBlueprint(environment));
-
-                if (bluePrint != null)
-                {
-                    new BlueprintPaster(this.plugin, bluePrint, to.getWorld(), island).
-                    paste().
-                    thenAccept(state -> ClosestSafeSpotTeleport.builder(this.plugin).
-                            entity(player).
-                            location(island.getSpawnPoint(environment) == null ? to : island.getSpawnPoint(environment)).
-                            portal().
-                            build());
-                }
-                else
-                {
-                    this.plugin.logError("Could not paste default island in nether or end. " +
-                            "Is there a nether-island or end-island blueprint?");
-                }
-            }
+        var addon = this.plugin.getIWM().getAddon(island.getWorld()).orElse(null);
+        // Get the default bundle's nether or end blueprint
+        BlueprintBundle blueprintBundle = addon == null ? null
+                : plugin.getBlueprintsManager().getDefaultBlueprintBundle(addon);
+        Blueprint bluePrint = blueprintBundle == null ? null
+                : this.plugin.getBlueprintsManager().getBlueprints(addon).get(blueprintBundle.getBlueprint(environment));
+        if (bluePrint == null) {
+            // Nothing will be pasted, so release the player instead of cancelling silently.
+            this.plugin.logError("Could not paste default island in nether or end. " +
+                    "Is there a nether-island or end-island blueprint?");
+            this.inTeleport.remove(player.getUniqueId());
+            User.getInstance(player).sendMessage("general.errors.portal-paste-failed");
+            return;
+        }
+        // One paste per island dimension: a second member entering at the same time
+        // waits for this paste instead of pasting the same island again.
+        Location spawn = island.getSpawnPoint(environment) == null ? to : island.getSpawnPoint(environment);
+        this.pasteOnce(island, environment, () -> new BlueprintPaster(this.plugin, bluePrint,
+                to.getWorld(), island).paste().thenApply(state -> null)).
+        thenCompose(ignored -> World.Environment.NETHER == environment
+                ? this.ensureNetherPortal(spawn, Axis.X)
+                : java.util.concurrent.CompletableFuture.<Location>completedFuture(null)).
+        thenAccept(portal -> ClosestSafeSpotTeleport.builder(this.plugin).
+                entity(player).
+                location(portal == null ? spawn : portal).
+                portal().
+                successRunnable(() -> player.setPortalCooldown(300)).
+                build()).
+        exceptionally(error -> {
+            // A failed paste used to leave the player in the portal with the
+            // in-teleport guard set and no island: clear it and say why.
+            this.plugin.logStacktrace(error);
+            this.inTeleport.remove(player.getUniqueId());
+            User.getInstance(player).sendMessage("general.errors.portal-paste-failed");
+            return null;
         });
     }
 }

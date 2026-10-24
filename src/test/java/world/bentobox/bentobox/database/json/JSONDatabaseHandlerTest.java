@@ -15,6 +15,7 @@ import org.mockito.MockedStatic;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.DataObject;
 import world.bentobox.bentobox.util.TaskScheduler;
@@ -96,5 +97,22 @@ class JSONDatabaseHandlerTest {
         handler.flush();
         assertTrue(saved.join());
         assertEquals("old", handler.loadObject("test").value);
+    }
+
+    /**
+     * An addon that is disabled must not leave its database writer running. The
+     * pending write is flushed and the writer is stopped, so the writer task no
+     * longer keeps the addon's class loader alive.
+     */
+    @Test
+    void stopHandlersFlushesAndStopsTheWriterOfThatClassLoader() throws Exception {
+        Record record = new Record();
+        record.value = "flushed";
+        handler.saveObject(record);
+        // Queued writes are not on disk yet.
+        assertFalse(Files.exists(directory.resolve("database/Record/test.json")));
+        AbstractDatabaseHandler.stopHandlers(getClass().getClassLoader());
+        assertTrue(Files.exists(directory.resolve("database/Record/test.json")));
+        assertEquals("flushed", handler.loadObject("test").value);
     }
 }

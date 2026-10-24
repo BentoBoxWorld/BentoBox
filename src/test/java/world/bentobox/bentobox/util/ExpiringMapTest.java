@@ -3,6 +3,7 @@ package world.bentobox.bentobox.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -140,6 +141,23 @@ class ExpiringMapTest {
         hashMap.put("b", 2);
 
         assertEquals(hashMap.hashCode(), map.hashCode());
+    }
+
+    @Test
+    void testPutRefreshKeepsNewValueUntilItsOwnExpiry() throws Exception {
+        ExpiringMap<String, Integer> shortLived = new ExpiringMap<>(300, TimeUnit.MILLISECONDS);
+        try {
+            shortLived.put("a", 1);
+            Thread.sleep(150);
+            shortLived.put("a", 2);
+            // The first scheduled removal fires in here; it must not delete the refreshed value.
+            Thread.sleep(250);
+            assertEquals(2, shortLived.get("a"));
+            Thread.sleep(250);
+            assertNull(shortLived.get("a"));
+        } finally {
+            shortLived.shutdown();
+        }
     }
 
     @Test

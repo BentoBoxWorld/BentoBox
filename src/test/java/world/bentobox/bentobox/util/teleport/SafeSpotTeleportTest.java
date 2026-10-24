@@ -12,9 +12,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
@@ -399,5 +401,39 @@ class SafeSpotTeleportTest extends CommonTestSetup {
                 .location(location)
                 .build();
         assertNotNull(sst);
+    }
+
+    /**
+     * A finished scan must not keep reporting itself as still in flight: the
+     * {@code checking} guard is cleared together with the cancelled timer.
+     */
+    @Test
+    void testTidyUp_releasesCheckingGuard() throws Exception {
+        Entity entity = mock(Entity.class);
+        SafeSpotTeleport sst = new SafeSpotTeleport.Builder(plugin)
+                .entity(entity)
+                .location(location)
+                .build();
+
+        BukkitTask task = mock(BukkitTask.class);
+        setField(sst, "task", task);
+        setField(sst, "checking", new AtomicBoolean(true));
+
+        sst.tidyUp(entity, "");
+
+        assertFalse(((AtomicBoolean) getField(sst, "checking")).get());
+        verify(task).cancel();
+    }
+
+    private static void setField(Object target, String name, Object value) throws Exception {
+        Field field = target.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(target, value);
+    }
+
+    private static Object getField(Object target, String name) throws Exception {
+        Field field = target.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+        return field.get(target);
     }
 }

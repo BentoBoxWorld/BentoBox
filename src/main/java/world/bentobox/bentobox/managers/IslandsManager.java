@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -109,8 +108,9 @@ public class IslandsManager {
         // This list should always be empty unless database deletion failed
         // In that case a purge utility may be required in the future
         deletedIslands = new ArrayList<>();
-        // Mid-teleport players going home
-        goingHome = new HashSet<>();
+        // Mid-teleport players going home. Mutated from teleport callbacks that may run on
+        // region or async threads, and a lost removal blocks /island go until restart.
+        goingHome = ConcurrentHashMap.newKeySet();
         // Set handler in Island
 
         // Listen for Island Updates
@@ -316,7 +316,7 @@ public class IslandsManager {
             handler.saveObjectAsync(island);
             // Fire the deletion event immediately so listeners (hooks, maps, etc.)
             // can update now that the island is orphaned.
-            IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
+            IslandEvent.builder().island(island).deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
         }
     }
 
@@ -363,7 +363,10 @@ public class IslandsManager {
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         islandCache.deleteIslandFromCache(island);
         handler.deleteObject(island);
-        IslandEvent.builder().deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
+        // The island must be on the event: addons clean up their per-island data
+        // from it, and IslandBaseEvent#getIsland is null for a deleted island.
+        IslandEvent.builder().island(island).deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED)
+                .build();
     }
 
     /**

@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * This command sets spawn point for island at admin location for island on which admin is located.
@@ -46,15 +47,25 @@ public class AdminSetSpawnPointCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         Optional<Island> optionalIsland = this.getIslands().getIslandAt(user.getLocation());
 
-        if (optionalIsland.isPresent()
-                && (optionalIsland.get().hasNetherIsland()
-                        || !World.Environment.NETHER.equals(user.getLocation().getWorld().getEnvironment()))
-                && (optionalIsland.get().hasEndIsland()
-                        || !World.Environment.THE_END.equals(user.getLocation().getWorld().getEnvironment()))) {
-            // Everything's fine, we can set the location as spawn point for island :)
-            this.askConfirmation(user, user.getTranslation("commands.admin.setspawnpoint.confirmation"),
-                    () -> this.setSpawnPoint(user, optionalIsland.get()));
-
+        if (optionalIsland.isPresent()) {
+            Island island = optionalIsland.get();
+            var location = user.getLocation().clone();
+            var exists = switch (location.getWorld().getEnvironment()) {
+                case NETHER -> island.hasNetherIslandAsync();
+                case THE_END -> island.hasEndIslandAsync();
+                default -> java.util.concurrent.CompletableFuture.completedFuture(true);
+            };
+            exists.thenCompose(found -> TaskScheduler.userFuture(getPlugin(), user, () -> {
+                if (!found || !location.equals(user.getLocation())) {
+                    user.sendMessage("commands.admin.setspawnpoint.no-island-here");
+                    return;
+                }
+                this.askConfirmation(user, user.getTranslation("commands.admin.setspawnpoint.confirmation"),
+                    () -> {
+                        if (location.equals(user.getLocation()) && !island.isDeleted()) setSpawnPoint(user, island);
+                        else user.sendMessage("commands.admin.setspawnpoint.no-island-here");
+                    });
+            })).exceptionally(error -> { getPlugin().logStacktrace(error); return null; });
             return true;
         } else {
             user.sendMessage("commands.admin.setspawnpoint.no-island-here");

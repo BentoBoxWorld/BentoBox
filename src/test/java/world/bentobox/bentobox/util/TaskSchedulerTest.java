@@ -69,4 +69,52 @@ class TaskSchedulerTest extends CommonTestSetup {
             assertThrows(CompletionException.class, future::join);
         }
     }
+
+    @Test
+    void retiredEntityRunsFallbackInsteadOfDroppingTheTask() {
+        when(mockPlayer.getScheduler()).thenReturn(mock(EntityScheduler.class));
+        var retired = new java.util.concurrent.atomic.AtomicBoolean();
+        try (var scheduler = mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            TaskScheduler.entityOrRetired(plugin, mockPlayer,
+                    () -> { throw new AssertionError("Retired entity must not run the action"); },
+                    () -> retired.set(true));
+            assertTrue(retired.get());
+        }
+    }
+
+    @Test
+    void liveEntityRunsTheActionNotTheFallback() {
+        var entityScheduler = mock(EntityScheduler.class);
+        when(mockPlayer.getScheduler()).thenReturn(entityScheduler);
+        when(entityScheduler.execute(any(), any(), any(), anyLong())).thenAnswer(invocation -> {
+            ((Runnable) invocation.getArgument(1)).run();
+            return true;
+        });
+        var ran = new java.util.concurrent.atomic.AtomicBoolean();
+        try (var scheduler = mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            TaskScheduler.entityOrRetired(plugin, mockPlayer, () -> ran.set(true),
+                    () -> { throw new AssertionError("Live entity must not run the fallback"); });
+            assertTrue(ran.get());
+        }
+    }
+
+    @Test
+    void failingActionRunsTheFallbackSoWaitersAreReleased() {
+        var entityScheduler = mock(EntityScheduler.class);
+        when(mockPlayer.getScheduler()).thenReturn(entityScheduler);
+        when(entityScheduler.execute(any(), any(), any(), anyLong())).thenAnswer(invocation -> {
+            ((Runnable) invocation.getArgument(1)).run();
+            return true;
+        });
+        var retired = new java.util.concurrent.atomic.AtomicBoolean();
+        try (var scheduler = mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            scheduler.when(TaskScheduler::isFolia).thenReturn(true);
+            TaskScheduler.entityOrRetired(plugin, mockPlayer,
+                    () -> { throw new IllegalStateException("teleport failed"); },
+                    () -> retired.set(true));
+            assertTrue(retired.get());
+        }
+    }
 }

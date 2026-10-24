@@ -209,13 +209,13 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         {
             // World is disabled in bukkit. Event is not triggered, but cancel just in case.
             event.setCancelled(true);
+            return;
         }
         if (this.inTeleport.contains(event.getEntity().getUniqueId()))
         {
             // Entity is already in teleportation.
             return;
         }
-        this.inTeleport.add(event.getEntity().getUniqueId());
 
         if (fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
         {
@@ -248,49 +248,48 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         this.getIsland(event.getTo()).ifPresent(island ->
             event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
-        // Vanilla always builds the end arrival platform at the fixed END_SPAWN_POINT,
-        // not at the redirected destination, so the entity would fall into the void.
-        // Build the platform manually at the actual destination.
-        if (this.isMakePortals(overWorld, environment)
-                && event.getTo() != null
-                && World.Environment.THE_END.equals(event.getTo().getWorld().getEnvironment()))
-        {
-            if (!TaskScheduler.isFolia()) this.createEndPlatform(event.getTo());
-        }
-
-        // Check if there is an island there or not
-        if (this.isPastingMissingIslands(overWorld) &&
-            this.isAllowedInConfig(overWorld, environment) &&
-            this.isIslandWorld(overWorld, environment) &&
-            this.getNetherEndWorld(overWorld, environment) != null &&
-            this.getIsland(event.getTo()).
-                filter(island -> !this.hasPartnerIsland(island, environment)).
-                map(island -> {
-                    event.setCancelled(true);
-                    return true;
-                }).
-                orElse(false))
-        {
-            // If there is no island, then processor already entity cannot be teleported before player
-            // visit that dimension.
+        if (!isSyntheticPortal() && !TaskScheduler.isFolia()) {
+            // An entity cannot paste the missing island itself, and the native transfer would
+            // drop it into an ungenerated dimension, so keep the pre-Folia behaviour: cancel.
+            if (this.isPastingMissingIslands(overWorld) &&
+                this.isAllowedInConfig(overWorld, environment) &&
+                this.isIslandWorld(overWorld, environment) &&
+                this.getNetherEndWorld(overWorld, environment) != null &&
+                this.getIsland(event.getTo()).filter(island -> !hasPartnerIslandSync(island, environment)).isPresent())
+            {
+                event.setCancelled(true);
+                return;
+            }
+            if (environment != World.Environment.THE_END) return;
+            afterPortal(event, event.getEntity(), () -> {
+                if (event.getTo() != null && isMakePortals(overWorld, environment)
+                        && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END
+                        && getEndIslandSpawn(event.getFrom(), event.getTo().getWorld()).isEmpty()) createEndPlatform(event.getTo());
+            });
             return;
         }
-        
-        if (TaskScheduler.isFolia() && !event.isCancelled() && this.isMakePortals(overWorld, environment)
-                && event.getTo() != null && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
-            event.setCancelled(true);
+        afterPortal(event, event.getEntity(), () -> finishPortal(event, overWorld, environment));
+    }
+
+    private void finishPortal(EntityPortalEvent event, World overWorld, World.Environment environment) {
+        if (event.isCancelled() || event.getTo() == null) return;
+        this.inTeleport.add(event.getEntity().getUniqueId());
+        // An entity cannot generate a missing island, so there is nothing to wait for.
+        completePortal(event, overWorld, environment);
+    }
+
+    private void completePortal(EntityPortalEvent event, World overWorld, World.Environment environment) {
+        if (event.isCancelled() || event.getTo() == null) return;
+        if (TaskScheduler.isFolia() && this.isMakePortals(overWorld, environment)
+                && event.getTo().getWorld().getEnvironment() == World.Environment.THE_END
+                && getEndIslandSpawn(event.getFrom(), event.getTo().getWorld()).isEmpty()) {
             Location destination = event.getTo().clone();
             this.createEndPlatformAsync(destination)
                     .thenCompose(ignored -> Util.teleportAsync(event.getEntity(), destination))
-                    .exceptionally(error -> { plugin.logStacktrace(error); return false; });
+                    .thenRun(() -> event.getEntity().setPortalCooldown(300))
+                    .exceptionally(error -> { plugin.logStacktrace(error); return null; });
             return;
         }
-        if (!event.isCancelled())
-        {
-            // Let the server teleport
-            return;
-        }
-
         if (environment.equals(World.Environment.THE_END))
         {
             // Prevent death from hitting the ground while calculating location.
@@ -306,7 +305,8 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
 
         // If there is a portal to go to already, then the player will go there
         TaskScheduler.entity(this.plugin, event.getEntity(), () -> {
-            if (!event.getEntity().getWorld().equals(toWorld))
+            if (!event.isCancelled() && event.getTo() != null
+                    && !event.getEntity().getWorld().equals(event.getTo().getWorld()))
             {
                 // Else manually teleport entity
                 ClosestSafeSpotTeleport.builder(this.plugin).
@@ -317,6 +317,9 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
                         // Reset velocity just in case.
                         event.getEntity().setVelocity(new Vector(0,0,0));
                         event.getEntity().setFallDistance(0);
+                        // Vanilla cooldown, otherwise a mob arriving inside the paired portal
+                        // is sent back on the next portal tick and ping-pongs between worlds.
+                        event.getEntity().setPortalCooldown(300);
                     }).
                     build();
             }
@@ -355,15 +358,7 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
             // To Standard Nether or end
             event.setTo(spawnPoint);
         }
-        else
-        {
-            // Teleport to standard nether or end
-            ClosestSafeSpotTeleport.builder(this.plugin).
-                entity(event.getEntity()).
-                location(spawnPoint).
-                portal().
-                build();
-        }
+        else event.setCancelled(true);
     }
 
 
@@ -400,12 +395,6 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
             // Custom portal handling.
             event.setCancelled(true);
 
-            // Teleport to standard nether or end
-            ClosestSafeSpotTeleport.builder(this.plugin).
-                entity(event.getEntity()).
-                location(event.getTo()).
-                portal().
-                build();
         }
     }
 }

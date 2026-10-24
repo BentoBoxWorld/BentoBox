@@ -97,6 +97,16 @@ class HeadGetterTest extends CommonTestSetup {
         verify(requester, never()).setHead(any());
     }
 
+    @Test
+    void testGetHeadRejectsInvalidLongPlayerName() {
+        when(panelItem.getPlayerHeadName()).thenReturn("2ef51978-fe77-352e-a6d1-5211f9f93166");
+
+        HeadGetter.getHead(panelItem, requester);
+
+        verify(panelItem, never()).setHead(any());
+        verify(requester, never()).setHead(any());
+    }
+
     /**
      * Once the fast path has run, a second request for the same name is served from the
      * head cache.

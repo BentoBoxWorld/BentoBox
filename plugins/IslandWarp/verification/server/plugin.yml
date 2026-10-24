@@ -1,0 +1,6 @@
+name: IslandWarpVerify
+version: '1.0'
+main: verification.ServerCheck
+api-version: '26.3'
+folia-supported: true
+depend: [IslandWarp, Vault]

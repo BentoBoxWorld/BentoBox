@@ -57,6 +57,79 @@ class NewIslandTest extends CommonTestSetup {
 
     private static final String NAME = "name";
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void testPreparationAccessGuardPrecedesOwnerRegistrationAndWaitsForBaseline(boolean baselineSucceeds) {
+        var baseline = new java.util.concurrent.CompletableFuture<Void>();
+        when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(
+                java.util.concurrent.CompletableFuture.completedFuture(null));
+        when(bpm.completePasteAsync(addon, island, NAME)).thenReturn(
+                java.util.concurrent.CompletableFuture.completedFuture(null));
+        when(iwm.getIslandDistance(world)).thenReturn(100);
+        try (var creation = Mockito.mockStatic(NewIsland.class, Mockito.CALLS_REAL_METHODS);
+                var handlers = Mockito.mockStatic(org.bukkit.event.HandlerList.class);
+                var tasks = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            creation.when(() -> NewIsland.initializeLevelCount(plugin, island)).thenReturn(baseline);
+            var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.CREATE).buildAsync();
+            var access = org.mockito.ArgumentCaptor.forClass(org.bukkit.event.Listener.class);
+            var order = Mockito.inOrder(pim, im);
+            order.verify(pim).registerEvents(access.capture(), eq(plugin));
+            order.verify(im).createIsland(any(), eq(uuid));
+            org.junit.jupiter.api.Assertions.assertFalse(result.isDone());
+            handlers.verifyNoInteractions();
+            if (baselineSucceeds) baseline.complete(null);
+            else baseline.completeExceptionally(new IllegalStateException("baseline failed"));
+            handlers.verify(() -> org.bukkit.event.HandlerList.unregisterAll(access.getValue()));
+            if (!baselineSucceeds) {
+                org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
+                verify(im).deleteIsland(island, true, uuid);
+            }
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.EnumSource(value = Reason.class, names = {"CREATE", "RESET"})
+    void testRejectedTeleportDoesNotDeliverSettleOrDeleteRecoveryIslands(Reason reason) {
+        when(builder.build()).thenReturn(reason == Reason.RESET ? ire : ice);
+        when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(
+                java.util.concurrent.CompletableFuture.completedFuture(null));
+        when(bpm.completePasteAsync(addon, island, NAME)).thenReturn(
+                java.util.concurrent.CompletableFuture.completedFuture(null));
+        when(iwm.isTeleportPlayerToIslandUponIslandCreation(world)).thenReturn(true);
+        when(user.getPlayer()).thenReturn(mockPlayer);
+        // IslandsManager converts the underlying Boolean false into an exceptional Void future.
+        when(im.homeTeleportAsync(island, user, true)).thenReturn(
+                java.util.concurrent.CompletableFuture.failedFuture(new IllegalStateException("Home teleport was rejected")));
+        var settled = new java.util.concurrent.atomic.AtomicBoolean();
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            var creation = NewIsland.builder().player(user).addon(addon).name(NAME).reason(reason)
+                    .afterBuild(created -> {
+                        settled.set(true);
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
+                    });
+            if (reason == Reason.RESET) creation.oldIsland(oldIsland);
+            var result = creation.buildAsync();
+            org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
+            org.junit.jupiter.api.Assertions.assertFalse(settled.get());
+            verify(im, never()).deleteIsland(any(), anyBoolean(), any());
+            org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
+        }
+    }
+
     @Test
     void testBlueprintCommandCancellationAfterCommitDoesNotDeleteRecoveryIsland() {
         when(builder.build()).thenReturn(ire);
@@ -82,6 +155,7 @@ class NewIslandTest extends CommonTestSetup {
 
     @Test
     void testCommitVetoDiscardsDraftWithoutDeletingOldIsland() {
+        var settled = new java.util.concurrent.atomic.AtomicBoolean();
         when(builder.build()).thenReturn(ire);
         when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(
                 java.util.concurrent.CompletableFuture.completedFuture(null));
@@ -97,8 +171,13 @@ class NewIslandTest extends CommonTestSetup {
             });
             var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.RESET)
                     .oldIsland(oldIsland).beforeTeleport(() -> java.util.concurrent.CompletableFuture.failedFuture(
-                            new java.util.concurrent.CancellationException("preclear veto"))).buildAsync();
+                            new java.util.concurrent.CancellationException("preclear veto")))
+                    .afterBuild(created -> {
+                        settled.set(true);
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
+                    }).buildAsync();
             org.junit.jupiter.api.Assertions.assertNull(result.join());
+            org.junit.jupiter.api.Assertions.assertFalse(settled.get());
             verify(im).deleteIsland(island, true, uuid);
             verify(im, never()).deleteIsland(eq(oldIsland), anyBoolean(), any());
             verify(im, never()).setPrimaryIsland(any(), any());
@@ -295,6 +374,31 @@ class NewIslandTest extends CommonTestSetup {
     }
 
     @Test
+    void testTransactionalOrdinaryServerWaitsForPasteAndMarksSafeRollback() {
+        var paste = new java.util.concurrent.CompletableFuture<Void>();
+        when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(paste);
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(false);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.CREATE)
+                    .transactional().buildAsync();
+            org.junit.jupiter.api.Assertions.assertFalse(result.isDone());
+            paste.completeExceptionally(new IllegalStateException("paste failed"));
+            var failure = org.junit.jupiter.api.Assertions.assertThrows(java.util.concurrent.CompletionException.class, result::join);
+            org.junit.jupiter.api.Assertions.assertInstanceOf(NewIsland.RolledBackException.class, failure);
+            org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
+            verify(pm, never()).setDeaths(any(), any(), anyInt());
+        }
+    }
+
+    @Test
     void testAsyncSelectionRejectsDuplicateAndReleasesAfterFailure() {
         var pending = new java.util.concurrent.CompletableFuture<Location>();
         var strategy = mock(NewIslandLocationStrategy.class);
@@ -305,7 +409,12 @@ class NewIslandTest extends CommonTestSetup {
             var builder = NewIsland.builder().player(user).addon(addon).locationStrategy(strategy).reason(Reason.CREATE);
             var first = builder.buildAsync();
             org.junit.jupiter.api.Assertions.assertTrue(NewIsland.isCreating(user));
-            org.junit.jupiter.api.Assertions.assertTrue(builder.buildAsync().isCompletedExceptionally());
+            var duplicate = builder.buildAsync();
+            org.junit.jupiter.api.Assertions.assertTrue(duplicate.isCompletedExceptionally());
+            // A refusal before allocation must be a safe rollback: the caller already debited.
+            var refusal = org.junit.jupiter.api.Assertions.assertThrows(
+                    java.util.concurrent.CompletionException.class, duplicate::join);
+            org.junit.jupiter.api.Assertions.assertInstanceOf(NewIsland.RolledBackException.class, refusal);
             pending.completeExceptionally(new IllegalStateException("test selection failure"));
             org.junit.jupiter.api.Assertions.assertTrue(first.isCompletedExceptionally());
             org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
@@ -348,6 +457,8 @@ class NewIslandTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+        var addons = mock(world.bentobox.bentobox.managers.AddonsManager.class);
+        when(plugin.getAddonsManager()).thenReturn(addons);
         // Islands manager
         mockedIslandsManager = Mockito.mockStatic(IslandsManager.class);
         when(im.createIsland(any(), any())).thenReturn(island);

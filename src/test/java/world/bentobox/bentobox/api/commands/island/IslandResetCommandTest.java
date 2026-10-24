@@ -92,6 +92,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         try (var creation = Mockito.mockStatic(NewIsland.class);
                 var users = Mockito.mockStatic(User.class);
                 var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            BlueprintCostHelperTest.immediate(tasks);
             creation.when(NewIsland::builder).thenReturn(builder);
             users.when(() -> User.getInstance(uuid)).thenReturn(user);
             users.when(() -> User.getInstance(otherId)).thenReturn(other);
@@ -145,10 +146,9 @@ class IslandResetCommandTest extends CommonTestSetup {
         try (var creation = Mockito.mockStatic(NewIsland.class);
                 var costs = Mockito.mockStatic(BlueprintCostHelper.class)) {
             creation.when(NewIsland::builder).thenReturn(builder);
-            costs.when(() -> BlueprintCostHelper.checkCost(plugin, ic.getAddon(), user, "custom", false)).thenReturn(true);
             assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
             verify(pm, never()).addReset(any(), any());
-            costs.verify(() -> BlueprintCostHelper.checkCost(plugin, ic.getAddon(), user, "custom", true), never());
+            verify(builder, never()).build();
             verify(im, never()).deleteIsland(eq(island), anyBoolean(), any());
             verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
         }
@@ -163,6 +163,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.buildAsync()).thenReturn(pending);
         try (var creation = Mockito.mockStatic(NewIsland.class);
                 var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            BlueprintCostHelperTest.immediate(tasks);
             creation.when(NewIsland::builder).thenReturn(builder);
             tasks.when(TaskScheduler::isFolia).thenReturn(true);
             tasks.when(() -> TaskScheduler.global(any(), any())).thenAnswer(call -> {
@@ -176,8 +177,9 @@ class IslandResetCommandTest extends CommonTestSetup {
             else pending.complete(null);
             verify(pm, never()).addReset(any(), any());
             verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
-            if (failure) tasks.verify(() -> TaskScheduler.user(eq(plugin), eq(user), any()));
-            else tasks.verify(() -> TaskScheduler.user(any(), any(), any()), never());
+            tasks.verify(() -> TaskScheduler.user(eq(plugin), eq(user), any()), failure ? Mockito.times(1) : never());
+            if (failure) verify(plugin).logError(Mockito.contains("creation failed"));
+            else verify(plugin, never()).logError(anyString());
         }
     }
 
@@ -189,6 +191,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.buildAsync()).thenReturn(pending);
         try (var creation = Mockito.mockStatic(NewIsland.class);
                 var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            BlueprintCostHelperTest.immediate(tasks);
             creation.when(NewIsland::builder).thenReturn(builder);
             tasks.when(TaskScheduler::isFolia).thenReturn(true);
             tasks.when(() -> TaskScheduler.globalFuture(any(), any())).thenAnswer(call -> {
@@ -202,7 +205,7 @@ class IslandResetCommandTest extends CommonTestSetup {
             ((java.util.concurrent.CompletableFuture<?>) settlement.getValue().apply(island)).join();
             pending.complete(island);
             verify(pm).addReset(world, uuid);
-            tasks.verify(() -> TaskScheduler.globalFuture(eq(plugin), any()));
+            tasks.verify(() -> TaskScheduler.globalFuture(eq(plugin), any()), Mockito.atLeastOnce());
         }
     }
 
@@ -221,6 +224,7 @@ class IslandResetCommandTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+        when(plugin.getDataFolder()).thenReturn(java.nio.file.Files.createTempDirectory("blueprint-reset-test").toFile());
         Mockito.mockStatic(IslandsManager.class, Mockito.RETURNS_MOCKS);
 
         // Command manager
@@ -612,9 +616,18 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(vault.format(100.0)).thenReturn("$100.00");
         when(plugin.getVault()).thenReturn(Optional.of(vault));
 
-        assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
-        verify(user).sendMessage("commands.island.create.cannot-afford", "[cost]", "$100.00");
-        verify(user, never()).sendMessage("commands.island.create.creating-island");
+        var debit = mock(VaultHook.CapturedWithdrawal.class);
+        when(debit.providerIdentity()).thenReturn("provider");
+        when(debit.get()).thenReturn(new net.milkbowl.vault.economy.EconomyResponse(0, 0,
+                net.milkbowl.vault.economy.EconomyResponse.ResponseType.FAILURE, "insufficient balance"));
+        when(vault.captureRefundableWithdrawal(user, 100, world)).thenReturn(debit);
+        NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
+        try (var creation = Mockito.mockStatic(NewIsland.class); var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            creation.when(NewIsland::builder).thenReturn(builder);
+            BlueprintCostHelperTest.immediate(tasks);
+            assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(builder, never()).buildAsync();
+        }
     }
 
     /**
@@ -660,9 +673,23 @@ class IslandResetCommandTest extends CommonTestSetup {
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
-        assertEquals(paymentSucceeds, irc.execute(user, irc.getLabel(), List.of("custom")));
-        verify(user).sendMessage("commands.island.create.creating-island");
-        verify(vault).withdraw(user, 100.0);
+        var debit = mock(VaultHook.CapturedWithdrawal.class);
+        when(debit.providerIdentity()).thenReturn("provider");
+        when(debit.get()).thenReturn(new net.milkbowl.vault.economy.EconomyResponse(100, 0,
+                paymentSucceeds ? net.milkbowl.vault.economy.EconomyResponse.ResponseType.SUCCESS
+                        : net.milkbowl.vault.economy.EconomyResponse.ResponseType.FAILURE, "result"));
+        when(vault.captureRefundableWithdrawal(user, 100, world)).thenReturn(debit);
+        when(builder.transactional()).thenReturn(builder);
+        when(builder.allocated(any())).thenReturn(builder);
+        when(builder.beforeTeleport(any())).thenReturn(builder);
+        when(builder.afterBuild(any())).thenReturn(builder);
+        when(builder.buildAsync()).thenReturn(new java.util.concurrent.CompletableFuture<>());
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
+            BlueprintCostHelperTest.immediate(tasks);
+            assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+            verify(debit).get();
+            verify(builder, paymentSucceeds ? times(1) : never()).buildAsync();
+        }
     }
 
     /**
@@ -739,7 +766,7 @@ class IslandResetCommandTest extends CommonTestSetup {
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
-        assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+        assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
     }
 }

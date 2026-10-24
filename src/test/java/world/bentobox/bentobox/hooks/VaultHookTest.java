@@ -41,6 +41,34 @@ class VaultHookTest {
     }
 
     @Test
+    void refundableFallbackCreditsOnlyTheAccountActuallyDebitedOnce() {
+        var unsupported = new EconomyResponse(0, 0, ResponseType.NOT_IMPLEMENTED, "no worlds");
+        var success = new EconomyResponse(100, 0, ResponseType.SUCCESS, null);
+        when(economy.withdrawPlayer(account, "islands", 100)).thenReturn(unsupported);
+        when(economy.withdrawPlayer(account, 100)).thenReturn(success);
+        when(economy.depositPlayer(account, 100)).thenReturn(success);
+        var payment = hook.captureRefundableWithdrawal(user, 100, world);
+        assertSame(success, payment.get());
+        assertSame(success, payment.get());
+        assertSame(success, payment.refund());
+        assertSame(success, payment.refund());
+        verify(economy).withdrawPlayer(account, 100);
+        verify(economy).depositPlayer(account, 100);
+        verify(economy, never()).depositPlayer(account, "islands", 100);
+    }
+
+    @Test
+    void refundableUnknownDebitNeverRetriesOrRefunds() {
+        when(economy.withdrawPlayer(account, "islands", 100)).thenThrow(new IllegalStateException("unknown"));
+        var payment = hook.captureRefundableWithdrawal(user, 100, world);
+        assertThrows(java.util.concurrent.CompletionException.class, payment::get);
+        assertThrows(java.util.concurrent.CompletionException.class, payment::get);
+        assertThrows(java.util.concurrent.CompletionException.class, payment::refund);
+        verify(economy).withdrawPlayer(account, "islands", 100);
+        verify(economy, never()).depositPlayer(account, "islands", 100);
+    }
+
+    @Test
     void delayedWithdrawalKeepsOriginalAccountProviderAndWorld() throws Exception {
         var response = new EconomyResponse(100, 0, ResponseType.SUCCESS, null);
         when(economy.withdrawPlayer(account, "islands", 100)).thenReturn(response);

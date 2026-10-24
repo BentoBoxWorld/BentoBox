@@ -65,6 +65,7 @@ class PanelTest extends CommonTestSetup {
         items = Collections.emptyMap();
         when(user.getPlayer()).thenReturn(player);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        when(player.getUniqueId()).thenReturn(UUID.randomUUID());
 
         // Head getter
         mockedHeadGetter = Mockito.mockStatic(HeadGetter.class);

@@ -226,7 +226,10 @@ public class Panel implements HeadRequester, InventoryHolder {
     public void open(Player... players) {
         for (Player player : players) {
             player.openInventory(inventory);
-            PanelListenerManager.getOpenPanels().put(player.getUniqueId(), this);
+            // A null UUID cannot identify a player; the open-panel map rejects null keys.
+            if (player.getUniqueId() != null) {
+                PanelListenerManager.getOpenPanels().put(player.getUniqueId(), this);
+            }
         }
     }
 
@@ -237,7 +240,9 @@ public class Panel implements HeadRequester, InventoryHolder {
     public void open(User... users) {
         for (User u : users) {
             u.getPlayer().openInventory(inventory);
-            PanelListenerManager.getOpenPanels().put(u.getUniqueId(), this);
+            if (u.getUniqueId() != null) {
+                PanelListenerManager.getOpenPanels().put(u.getUniqueId(), this);
+            }
         }
     }
 

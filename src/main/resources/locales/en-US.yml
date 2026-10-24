@@ -51,6 +51,8 @@ general:
     must-be-positive-number: '<red>[number] is not a valid positive number.</red>'
     not-on-island: '<red>You are not on [prefix_island]!</red>'
     slow-down: '<red>Slow down. Click slower.</red>'
+    portal-paste-failed: '<red>Could not prepare the island in that dimension. Ask an admin to
+      check the server console.</red>'
   did-you-mean:
     suggestion: '<gray>Did you mean </gray><yellow>[command]</yellow><gray>? Click here
       or type </gray><green>yes</green><gray> to run it.</gray>[run_command: [command]][hover: Click to run [command]]'

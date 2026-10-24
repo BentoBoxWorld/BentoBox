@@ -1,0 +1,140 @@
+# 修改后执行 /iw reload：自动补全缺失配置，保留已有值。控制台可省略 /。
+# SQLite 数据保存在 plugins/IslandWarp/islandwarp.db，正常停服后备份整个目录。
+limits:
+  per-player: 5                      # 普通玩家最多创建 5 个；管理员绕过数量限制
+  per-island: 10                     # 单个岛屿最多创建 10 个传送点；0 表示不限制
+  name-length: 24                    # 去色后的名称长度，全服唯一，支持传统 & 颜色代码
+  description-length: 100            # 地标描述最大长度
+creation:
+  own-island-only: true              # 只允许岛主在自己岛内创建；管理员可绕过
+  blocked-worlds: []                 # 禁止创建的世界，例如 [world_nether]
+teleport:
+  safety-preview: true               # 付款前异步检查落点，传送时仍再次校验
+  delay-seconds: 3                   # 准备秒数；0 为下个 tick 传送，仍然检查权限/安全/门票
+  cooldown-seconds: 10               # 仅成功传送后进入冷却，失败与取消不计
+  countdown: true                    # 在快捷栏上方显示准备倒计时
+  cancel-on-move: true               # 位移超过 0.2 格取消；转头不取消
+  cancel-on-damage: true             # 受到有效伤害取消；被其他插件取消的伤害不计
+# 分类 ID 用于保存数据，投入使用后不要随意删除或更改 ID。
+# label 是界面名称；icon 是 Minecraft 英文物品 ID，也是该分类新建坐标的默认图标（不修改已有坐标）。
+categories:
+  building:
+    label: 建筑
+    icon: BRICKS
+  shop:
+    label: 商店
+    icon: EMERALD
+  farm:
+    label: 刷怪与农场
+    icon: WHEAT
+  redstone:
+    label: 红石
+    icon: REDSTONE
+  other:
+    label: 其他
+    icon: COMPASS
+gui:
+  payment-preview: true              # 付费传送确认页显示坐标、门票和评分
+  heads:
+    enabled: true                    # 使用原生自定义头颅，无需安装头颅库插件
+    # 支持 textures.minecraft.net 纹理哈希或完整 URL；空字符串使用普通物品。
+    # 未填写时使用内置纹理。修改后执行 /iw reload。
+    textures: {}                     # 可用键 previous,next,my-warps,create,delete
+  title: '&8岛屿地标 · 导航'          # 主导航标题，支持 & 颜色代码
+  accent: '&b'                       # 所有按钮的强调色，替换内置 &b
+  success-color: '&a'                # 开启、确认按钮文字颜色
+  danger-color: '&c'                 # 关闭、删除、错误按钮文字颜色
+  materials:                        # Minecraft 英文物品 ID；无效值自动使用默认材质
+    edit-name: NAME_TAG              # 名称：命名牌
+    edit-description: WRITABLE_BOOK  # 描述：书与笔
+    ticket-price: GOLD_NUGGET        # 票价：金粒，独立于门票开关
+    return-menu: OAK_DOOR            # 返回：橡木门，独立于翻页箭头
+    frame: BLACK_STAINED_GLASS_PANE  # 顶栏与底栏的边框
+    empty: OAK_SIGN                   # 空推荐位（首页实际使用告示牌）
+    'on': LIME_CONCRETE              # 开启状态/付款确认
+    'off': RED_CONCRETE              # 关闭状态/付款取消
+    favorite-on: NETHER_STAR         # 已收藏
+    favorite-off: GRAY_DYE           # 未收藏
+    ticket-on: EMERALD_BLOCK        # 门票收费开启
+    ticket-off: COAL_BLOCK          # 门票收费关闭
+    teleport: ENDER_PEARL           # 出发按钮
+    search: SPYGLASS                # 搜索
+    filter: HOPPER                  # 分类筛选
+    reset: MILK_BUCKET              # 重置筛选
+    create: EMERALD                 # 创建地标
+    pin: GOLD_BLOCK                 # 推荐位
+    delete: TNT                     # 删除
+  coordinate-lore:
+    - '&7世界 &f{world}'
+    - '&7坐标 &f{x} / {y} / {z}'
+    - '&8点击出发前会再次校验位置'
+economy:
+  enabled: true                     # 收费总开关；开启时收费依赖 Vault + CMI 等经济实现
+  creation-cost: 100.0               # 创建费用，失败退还，删除不退还
+  pin-cost: 1000.0                   # 购买或续费置顶位，期限由 featured.duration-days 控制
+  max-ticket: 10000.0                # 单次门票价格上限；玩家用 GUI 或 /iw ticket 设置
+  tax-percent: 5.0                   # 从门票中扣除的税；税款回收，岛主获得剩余部分
+featured:
+  reminder-hours: 24                 # 到期前提醒小时数；0 关闭，每个期限提醒一次，支持离线推送
+  renew-enabled: true                # 未到期置顶可续费，费用同 pin-cost，期限同 duration-days
+  slots: 7                           # 推荐位数量；首页显示全部 7 个置顶位
+  duration-days: 30                  # 玩家购买置顶的有效天数；0 表示永久
+ratings:
+  enabled: true                       # 是否开启 1–5 星评分
+  sort-by-rating: true                # 默认列表是否优先按评分排序
+  min-count: 0                        # 评分达到多少条后参与排序；0 表示立即参与
+comments:
+  edit-enabled: true                # 作者可编辑留言，共享冷却，保留回复并标记已编辑
+  reports-enabled: true              # 右键留言举报，管理员在 /iw admin 处理；保留举报原文
+  delete-enabled: true               # 右键留言二次确认删除；作者和坐标主人可删除
+  cooldown-seconds: 10               # 同一玩家留言/回复共享冷却；0 关闭，重启保留
+  unread-enabled: true               # 首页与坐标卡片显示未读，打开留言板标记已读
+  enabled: true                       # 是否开启玩家留言
+  notify-owner: true                  # 留言通知坐标主人；离线通知保存到数据库，下次上线推送
+  replies-enabled: true              # 坐标主人可以点击留言回复
+  notify-reply: true                  # 回复通知原留言人；离线时下次上线推送
+  max-length: 100                     # 单条留言最大字符数
+  max-per-warp: 50                    # 每个传送点最多留言数；0 表示不限制
+admin:
+  export-enabled: true               # /iw admin export 本地导出 ZIP：坐标、留言、回复、状态、活动、审计、收入及交易 CSV；含玩家隐私
+  panel-enabled: true                 # 是否允许管理员通过 /iw admin 打开管理面板
+  manage-player-warps: true           # 管理员是否可以编辑、隐藏、删除玩家传送点
+sounds:
+  # 管理员操作记录为安全日志，持续保存；界面展示最近 200 条。
+  enabled: true                     # 插件音效总开关，只播放给操作玩家
+  volume: 0.5                       # 音量 0 至 1
+  pitch: 1.0                        # 所有音效的音调，建议 0.5 至 2.0
+  teleport-preparing: true           # 传送准备期间每秒播放 countdown 音效；取消/失败/退出后停止
+  click: UI_BUTTON_CLICK            # 可用按钮点击
+  open: BLOCK_CHEST_OPEN            # 打开导航界面
+  page: ITEM_BOOK_PAGE_TURN         # 翻页
+  confirm: BLOCK_NOTE_BLOCK_PLING   # 确认付款
+  favorite-on: ENTITY_PLAYER_LEVELUP # 添加收藏
+  favorite-off: BLOCK_NOTE_BLOCK_HAT # 取消收藏
+  create: BLOCK_AMETHYST_BLOCK_CHIME # 创建地标成功
+  pin: BLOCK_BEACON_ACTIVATE        # 购买/设置精选位
+  ticket: ENTITY_VILLAGER_YES        # 门票设置或交易成功
+  countdown: BLOCK_NOTE_BLOCK_HAT   # 每秒倒计时提示
+  cancel: BLOCK_NOTE_BLOCK_BASS     # 传送取消
+  success: ENTITY_EXPERIENCE_ORB_PICKUP # 设置保存/购买成功
+  error: BLOCK_NOTE_BLOCK_BASS       # 操作失败
+  teleport: ENTITY_PLAYER_LEVELUP   # 仅传送成功到达后播放，与准备音效独立
+visits:
+  enabled: true                      # 成功传送记录访客，主人查看；此前访问不补录
+  recent-limit: 100                  # 每个坐标最近访客保留数量；每日计数独立保存
+recycle:
+  retention-days: 7                 # 删除后保留坐标及关联留言/评分等；0 永久删除，不恢复置顶或旧通知
+sharing:
+  enabled: true
+  cooldown-seconds: 30              # 每玩家分享冷却，公开坐标向在线玩家发送可点击详情卡片
+health:
+  enabled: true                     # 自动分批检测，不自动删除；关闭后仍可用 /iw check ID 手动复查
+  interval-seconds: 5               # 每隔此秒数检查一个坐标；完整一轮约为坐标数 × 间隔，最多一个并发
+  notify-owner: true                # 异常原因变化时持久通知主人；沿用通知屏蔽设置，恢复正常后可再次提醒
+notifications:
+  history-limit: 100                # 每玩家保留最近通知数量，1–1000；调小会在下次写入/打开时永久清理旧记录
+# 门票默认关闭、票价默认 0；开启后岛主自己访问免费，其他玩家按票价付款。
+# 税款直接回收，不额外向访客扣税；例如票价 100、税率 5%，访客付 100、岛主得 95。
+# 创建与置顶均二次确认，管理员命令 /iw admin pin 可免费安排推荐位。
+# 推荐位数量由 featured.slots 控制（1–7）；管理员设置永久位，玩家购买按 duration-days 计时，取消/删除不退费。
+# 配置缺少新增字段时使用上述默认值，不覆盖旧配置；可按模板补充后 /iw reload。

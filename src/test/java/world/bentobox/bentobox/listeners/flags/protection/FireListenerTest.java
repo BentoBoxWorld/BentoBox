@@ -265,22 +265,20 @@ class FireListenerTest extends CommonTestSetup {
 
         // Block on fire spread
 
-        Block block = mock(Block.class);
-        when(block.getLocation()).thenReturn(location);
-        when(block.getType()).thenReturn(Material.OBSIDIAN);
+        Block fireTarget = mock(Block.class);
+        when(fireTarget.getLocation()).thenReturn(location);
+        when(fireTarget.getType()).thenReturn(Material.AIR);
 
-        BlockIgniteEvent e = new BlockIgniteEvent(block, null, block);
+        BlockIgniteEvent e = new BlockIgniteEvent(fireTarget, null, (Block) null);
 
         // Fire listener - remember to set the plugin for testing!
         FireListener listener = new FireListener();
         listener.setPlugin(plugin);
 
-        // Obsidian is okay to ignite
+        // Fire is checked at the target location regardless of the ignite cause. The mocked
+        // island does not allow fire, so lighting must be cancelled even though the target is air.
         listener.onBlockIgnite(e);
-        assertFalse(e.isCancelled());
-
-        // Now set to something flammable
-        when(block.getType()).thenReturn(Material.OAK_PLANKS);
+        assertTrue(e.isCancelled());
 
         // Disallow fire
         when(island.isAllowed(any())).thenReturn(false);

@@ -1,0 +1,477 @@
+IslandWarp 代码审查（第二轮 + 第三轮复审，同一文件）
+======================================================================
+审查对象：本工作区当前源码快照（src 下 8 个文件在 2026-10-12 17:06 被重写过，本报告以重写后版本为准）
+审查时间：2026-10-12 17:35（第二轮）；2026-10-12 18:45（第三轮，见文末"七、第三轮复审"）
+★ 作者已在 17:49–18:37 修掉本文件大部分第二轮问题；请优先看文末"七、第三轮复审"的新发现，
+  其中 7.2-1 涉及金币（门票结算失败会长期挡住访客消费），建议优先处理。
+★ 2026-10-12 19:05：审查方已直接改在工作区，修掉 7.2-1/2/3/5/6/7 与 B12/B8 的注释项，
+  并用 mvn -o test 验证（BUILD SUCCESS + 11 组检查全过）。改动清单与哈希见文末"八"。
+  7.2-4 经实测撤回（误报）。
+审查方式：逐行静态阅读 + 与上一轮《IslandWarp代码审查汇总.txt》逐条对照。
+本轮没有编译、没有启动测试服、没有修改任何源码。
+标注约定：
+  【源码确认】= 顺着调用链读出来的结论，未运行
+  【需实测】  = 需要旧库/实服/假人才能确认
+======================================================================
+
+零、上一轮 7 项的修复确认（这些不用再修，只列出便于核对）
+
+1. ✅ 提交成功后刷新失败不再按"保存失败"退款
+   WarpStore.java:203-231 已拆成两段：事务失败 → completeExceptionally；提交后刷新失败 → 只置
+   cacheDirty/healthy=false + SEVERE 日志，仍然 complete(value)。requireCacheReady() 在创建、
+   收费、权限敏感路径快速失败；ReviewCheck 用代理 Connection 注入故障并断言"不回滚、不退款"。
+   残留问题见本次 A1。
+2. ✅ visits 变化导致传送被误判为"地标变更"
+   新增 Warp.sameSettings(other)（Warp.java:9-17，排除 visits，null 安全），
+   WarpTeleport.java:59/74、WarpMenu.java:207、WarpStore.java:621 全部改用它。
+3. ⚠️ 部分修复：纯查询/通知确认已用 submit(task,false) 跳过全量刷新（是对的方向），
+   但写路径仍是全量刷新，且健康扫描每 5 秒必写一次 → 见本次 A2。
+4. ✅ 冷却可通过重连绕过：已改为 quit 时保留未到期冷却并清理过期项
+   （WarpTeleport.java:18、134-137），ReviewCheck 覆盖。
+5. ✅ 检查程序已接入构建：pom.xml:13-23，testSourceDirectory=verification，antrun 在 test 阶段跑
+   10 组检查，-DskipTests 可跳过。
+6. ⚠️ 部分修复：ratings.min-stars/max-stars 已从模板删除，README 与根目录配置参考.yml 已同步并由
+   ConfigCheck 强制一致。残留：头颅材质键名注释、3 个未使用材质键、README 里不存在的"清除搜索" →
+   见本次 B8。
+7. ✅ WarpMenu.featuredPage 死代码已删除。
+
+======================================================================
+
+一、必须修复（涉及钱、升级路径、性能基线）
+
+A1.【计费静默丢失】退款/入账在"调度器拒绝执行任务"时既不执行、也不写人工处理日志
+位置：
+  - WarpEconomy.java:50-55  global()：Bukkit.getGlobalRegionScheduler().run(plugin, ...) 的返回值
+    （TaskWrapper）没有判断。插件正在停用（或调度器拒绝任务）时 run 返回 null、任务不会执行，
+    而这个 CompletableFuture 永远不会完成。
+  - WarpEconomy.java:66-71  退款分支只在 refundError != null 时写"需人工退款"日志；future 永不完成
+    时既没有日志、没有玩家提示，busy 锁也不会释放。
+  - WarpEconomy.java:87-90  settle() 中 credit 的回调同样只在失败时记日志；future 永不完成时，
+    门票收入既没入账、也不会写 income 记录、也没有任何日志。
+  - WarpTeleport.java:66-69  退款用的是 credit(...).exceptionally(...)，同样是"只有失败才有日志"。
+  - IslandWarpPlugin.java:43-47  onDisable 里 teleport.shutdown() 直接 pending.clear()，对"已扣款、
+    还没开始传送"的请求不做任何退款或记录。
+现象：停服/重载瞬间发生的付费操作，可能钱已扣、传送没发生、没有退款、日志里也没有"需人工处理"，
+      玩家投诉时无从查证。
+影响：低频但涉及金币，且事后无法补救。
+建议（最小改动）：
+  1) global() 里判断 null 返回值：
+       var task = Bukkit.getGlobalRegionScheduler().run(plugin, t -> { ... });
+       if (task == null) future.completeExceptionally(new IllegalStateException("插件正在停用，操作未执行"));
+  2) 给退款/入账加超时兜底，超时按"需人工处理"记录：
+       credit(id, cost).orTimeout(30, TimeUnit.SECONDS).whenComplete(...)
+  3) onDisable 遍历 pending 时，若有已扣款状态（建议 Pending 里加个 paid 标记），至少写一条
+     SEVERE 日志留下 UUID 与金额。
+验证：【源码确认】调用链完整；【需实测】真实停服瞬间的扣款行为。
+同理：WarpMenu.java:750-761（deliverNotices）在实体调度器返回 null 时不会执行也不执行 retired 回调，
+      delivering 集合里会残留该 UUID，该玩家本次会话收不到聊天通知，建议 quit 时也 remove。
+
+A2.【性能/扩展性】全量缓存刷新仍挂在热路径上：健康扫描每 5 秒一次、每次成功传送一次
+位置：
+  - WarpStore.java:129-198  refresh() = 约 14 条语句，其中 12 条是全表读取
+    （warps/favorites/pins/tickets/ratings ×2/comments/replies/unread/notification_settings/
+     warp_blocks/warp_status/warp_events），另外还顺手 UPDATE warps SET visible=0（读刷新里混写）。
+  - WarpStore.java:219-226  每个 submit 提交后如 refreshCache=true 就全量刷新。
+  - WarpStore.java:619-634  checked()（落点检测结果写入）走的是默认 refresh=true；
+    而 WarpHealth.java:14-24 的定时扫描按 health.interval-seconds（默认 5 秒）检查一个坐标 →
+    即"没人玩的时候也每 5 秒全量刷新一次"。
+  - WarpStore.java:540-550  visit()（每次传送成功调用）也是 refresh=true → 每次传送一次全量刷新。
+  - WarpStore.java:502-507  markRead()（每次打开留言板）refresh=true → 每次打开一次全量刷新。
+  - WarpStore.java:756-774  remindPins()（每 60 秒）同样 refresh=true。
+现状评估：数据量小时无感；岛服规模（几千地标、几万留言）时，refresh 的耗时 × 每分钟十几次，
+          会让单线程数据库队列出现可见积压，表现为"点按钮要等"。上一轮已指出方向，本轮只剩热路径。
+建议（任选，越小越好）：
+  1) 对"只影响单条记录"的写入改为增量发布快照，例如：
+       // checked()
+       Map<Long,Status> next = new HashMap<>(statuses); next.put(id, newStatus); statuses = Map.copyOf(next);
+       // visit()
+       Map<Long,Warp> next = new HashMap<>(warps);
+       Warp old = next.get(id); if (old != null) next.put(id, old.withVisits(old.visits()+1));
+       warps = Map.copyOf(next);
+     （需要给 Warp 加一个 withVisits 小方法；与现有"提交成功后才发布快照"的原则一致。）
+  2) 或把 refresh() 参数化成"只刷新受影响的表"，让 visit/checked/markRead 只刷新 warps/statuses/unread。
+  3) 或加合并刷新：置脏标记，最多每 N 毫秒最多刷一次。
+动手前建议先量一次：用接近正式服的数据量（例如 2000 地标 / 20000 留言）打印一次 refresh 的耗时，
+否则改完无法判断效果。
+验证：【源码确认】调用链与触发频率。
+
+A3.【配置语义】economy.enabled=false 时无法设置门票价格
+位置：WarpEconomy.java:15-20（cost() 在 economy.enabled=false 时直接 return 0）、WarpCommand.java:165。
+现象：关掉收费总开关后，`/iw ticket <id> price 50` 报"票价超出允许范围"——因为 max-ticket 被当成
+      "要收的金额"读取，而开关关闭时它恒为 0。
+影响：经济暂时关闭（维护中）时无法预置票价；重开后又忘了，运营上会踩。
+建议：max-ticket 作为"上限"独立读取，不要经过 cost()，例如
+      double max = plugin.getConfig().getDouble("economy.max-ticket", 10000);
+      if (!Double.isFinite(max) || max < 0) throw new IllegalArgumentException("经济配置金额无效");
+      if (price > max) throw ...
+顺带：economy.enabled=false 时，创建/购买推荐位仍会弹出"0.00 金币"的付款确认页
+      （WarpCommand.java:105、WarpMenu.java:783），可以直接跳过确认少点一次。
+验证：【源码确认】。
+
+A4.【升级路径】recycle_* 镜像表不跟随主表结构变化，旧库升级后删除/恢复会直接报 SQL 错
+位置：
+  - WarpStore.java:107  CREATE TABLE IF NOT EXISTS recycle_x AS SELECT *,0 AS trash_warp FROM x WHERE 0
+    （镜像表只在"该库第一次运行带回收站的版本"时定型）
+  - WarpStore.java:286-289  删除时 INSERT INTO recycle_x SELECT *,? FROM x WHERE ...（无列名列表）
+  - WarpStore.java:336-342  恢复时按主表 PRAGMA table_info 生成列名，再从镜像表取同名列
+问题：主表加列后（本项目已经发生过一次：WarpStore.java:101-103 给 comments 加了 edited），
+      旧库的 recycle_comments 仍是旧列数：
+      - 删除：SQLite 报 "table recycle_comments has 7 columns but 8 values were supplied"
+        → 整个 delete 事务失败（数据不丢，但该库的删除功能永久坏掉，玩家只能看到"操作失败"）。
+      - 恢复：报 "no such column: edited" → 旧回收记录也恢复不了。
+建议：构造 WarpStore 时对每个 RECYCLED 表做一次结构对齐：比较 PRAGMA table_info(主表) 与镜像表的
+      列集合，缺列就 ALTER TABLE recycle_x ADD COLUMN ...（保留旧回收数据）。
+      并补一条回归检查：手工造一个只有旧列的 recycle_comments，然后跑 delete/restore。
+验证：【源码确认】；【需实测】用旧版本生成的库跑一次 delete/restore。
+
+======================================================================
+
+二、建议修复（功能性小 Bug 与配置语义）
+
+B1. 坐标 lore 里的"世界"显示成世界 UUID
+    位置：WarpMenu.java:160-164（{world} 用的是 w.world()，而 Warp.world 是 UUID）；
+          配置示例在 config.yml:70-73（'&7世界 &f{world}'）。
+    现象：玩家看到"世界 3f8b0e2c-....-...."，不是 world / world_nether。
+    建议：Bukkit.getWorld(w.world()) 取名字，世界未加载时回退为"未加载"（顺便别把 UUID 露给玩家）。
+
+B2. admin.manage-player-warps 只在 GUI 生效，命令仍可绕过
+    位置：配置 config.yml:104；GUI 判断在 WarpMenu.java:402、411；
+          命令侧 WarpCommand.java:154(edit)、153(delete→WarpMenu.confirm:842)、155(ticket)、82(event)
+          都只判断 islandwarp.admin，不读这个开关。
+    影响：把它设为 false 的服主以为管理员不能再动玩家坐标，实际还能改/删/改票价/设活动。
+    建议：要么在 WarpStore 的写入口统一校验（更安全），要么在配置注释里写清"仅限制界面操作"。
+    附带：admin.panel-enabled=false 会把 /iw admin pin|freeze|unfreeze|export 一起禁掉
+          （WarpCommand.java:34-35 的判断在子命令分派之前），而注释只说"关闭管理面板"。确认是否有意。
+
+B3. find() 把"名称"和"ID"放在同一个流里按顺序匹配，数字名字可以遮挡别人的 ID 查找
+    位置：WarpCommand.java:175-178
+      .filter(w -> Long.toString(w.id()).equals(text) || WarpText.plain(w.name()).equalsIgnoreCase(...))
+    现象：任何人可以把自己的坐标命名为 "42"。此后 /iw tp|detail|edit|delete|ticket|event|favorite
+          42 命中的是"名字为 42 的坐标"还是"ID=42 的坐标"，取决于 store.all() 这个不可变 map 的遍历
+          顺序（未定义），也就是随机；ID=42 的坐标可能在自己的服里"打不开"。
+          另外管理员命令 /iw admin freeze 42 用的是 Long.parseLong（真 ID），与玩家命令行为不一致。
+    建议：先单独找 ID（Long.toString 匹配且命中唯一），命中就直接返回；否则再按名称找。
+    名称允许纯数字是否合理也可以顺带定一下（WarpText.name 目前允许）。
+
+B4. 永久置顶（expires=0）仍显示"续费置顶"按钮，点了一定报错
+    位置：WarpMenu.java:796（只要含有该地标的置顶位且 renew-enabled 就画按钮）、
+          WarpMenu.java:698-711（renew() 对 expiry<=now 直接抛"永久置顶无需续费"）。
+    影响：管理员置顶的坐标（永久）和 featured.duration-days=0 的服，玩家点续费必然失败，像坏按钮。
+    建议：按钮条件加上 plugin.store.pinExpiry(slot)>0。
+
+B5. featured.slots<7 时，首页仍固定画 7 个置顶位
+    位置：WarpMenu.java:281-285（for(i=0..6)，只有 i<featuredSlots() 才画真实卡片，否则画"空闲"）。
+    现象：slots=3 时，首页多出 4 个"置顶位 4-7 · 空闲"，但购买/管理员置顶都拒绝 >slots 的位置，
+          永远不会被填上。
+    建议：循环上限改为 featuredSlots()。
+    附带：已置顶但被隐藏/不可用的位也会显示成"空闲"，与"这里被占用"的事实不符，可考虑换文案。
+
+B6. ratings.enabled=false 时，列表仍按评分排序
+    位置：WarpMenu.java:259 只读了 ratings.sort-by-rating 与 ratings.min-count，没读 ratings.enabled。
+    影响：关掉评分后，历史评分仍长期影响排序（并且卡片上还在显示评分），与开关预期不符。
+    建议：排序条件里加上 ratings.enabled；或明确注释"关闭只隐藏评价入口，不影响排序"。
+
+B7. 玩家文本里的颜色代码会进入 GUI，theme() 还会覆盖玩家的颜色
+    位置：WarpMenu.java:110-114（theme 把 &b/&a/&c 一律替换成配置色）、
+          WarpMenu.java:104-106（名称与 lore 用 legacyAmpersand 渲染）、
+          WarpText.java:19-20（plain/normalize）、WarpStore.java:480-482（validateText 只查长度/空/换行）。
+    现象：留言、描述、坐标名里写 &l、&k、&o 会被当成格式代码渲染进图标名和描述，玩家可以用 &k
+          把 GUI 文案搅乱；反过来，玩家想用 &b/&a/&c 又会被人为改成强调色。
+    建议：展示玩家文本时统一用 PlainTextComponentSerializer 或先剥掉格式代码（只保留默认样式），
+          theme() 只作用于插件自己的文案。
+
+B8. 配置里有几个键实际不会被读到
+    位置：config.yml:51 clear-search、config.yml:68 edit、config.yml:69 back（全项目没有 material("clear-search")/
+          material("edit")/material("back") 的调用）；
+          config.yml:42 注释里列出的头颅键 browse/help/reset（代码只用 previous/next/my-warps/create/delete）。
+          README.md:14 还描述了"清除搜索保留分类、重置全部筛选清除关键词和分类"两个按钮，
+          当前界面只有一个"重置搜索"（WarpMenu.java:278）。
+    建议：删掉无用键（或补上实现），并修正 README/注释。
+
+B9. ConfigCheck 依赖工作目录 + 做字节级比较，容易误报或漏报
+    位置：verification/ConfigCheck.java:17-19（Path.of("src/main/resources/config.yml")、
+          Path.of("配置参考.yml")、Files.readAllBytes 全等比较）；pom.xml:15-23 的 antrun 用相对路径调用。
+    问题：1) `mvn -f D:\...\pom.xml test` 从别的目录执行时，相对路径找不到文件 → 检查直接失败；
+          2) 字节全等对换行符（CRLF/LF）、BOM、编码敏感，换一台机器或换编辑器就会误报；
+          3) 中文文件名在部分 CI/打包链路上不可靠。
+    建议：把 ${basedir} 通过 -D 传给检查程序，改成"解析后的 YAML 深度比较"，忽略换行与编码差异。
+
+B10. 落点支撑判定用 isSolid()，会拒绝地毯/雪层等合法落脚点
+    位置：WarpTeleport.java:98-105（floor.getType().isSolid()）。
+    现象：站在地毯、雪层、睡莲一类"可踩但不 solid"的方块上时，创建与传送都会被判"落点不安全"，
+          只能提示"请联系岛主更新位置"。
+    建议：若这是有意的保守策略，可在配置注释里说明；否则改为"有碰撞箱即可"，例如
+          !floor.isPassable() && !floor.isEmpty()（同时仍保留危险方块、边界、头顶空间的判定）。
+
+B11. shared / delivering 退出时不清理
+    位置：WarpMenu.java:886（quit 只清 inputs/views/filters）、WarpMenu.java:24、741。
+    影响：小内存泄漏；delivering 里残留的 UUID 会让该玩家本次会话收不到聊天通知（需重新登录）。
+    建议：quit 里一并 remove（shared.remove、delivering.remove）。
+    附带：分享冷却只存内存，重连即清零（传送冷却已改成重连保留），两者行为不一致，建议统一。
+
+B12. teleport.delay-seconds=0 实际仍会等 1 tick
+    位置：WarpTeleport.java:29（Math.max(1, seconds*20L)）；config.yml:13 写的是"0 为立即传送"。
+    现象：差异只有 50ms，玩家无感，但和文档描述不符。
+    建议：改成 Math.max(0, ...)，或把注释改成"0 为下个 tick 传送"。
+
+======================================================================
+
+三、长期数据增长（不用立刻改，但建议定保留策略）
+
+C1. daily_visits：每个坐标每天一行，永久保留（WarpStore.java:546），而界面只读最近 30 天
+    （WarpStore.java:737-744）。几千坐标 × 几年 = 几十万～上百万行。
+    建议：visit 或定时任务里删除 90 天前的行。
+C2. income：每次成功付费传送一行（WarpStore.java:361-368），无上限；界面分页列出全部。
+    建议：加保留期或按月聚合。
+C3. notices：只有 acknowledge 才删除（WarpStore.java:508-516）。玩家长期屏蔽聊天提醒时
+    notices 一直堆积（notices() 直接返回空但不清理），解除屏蔽后会一次性刷屏。
+    建议：给每个玩家保留上限，或屏蔽期间直接丢弃（历史仍保留在 notice_history，不影响通知中心）。
+
+======================================================================
+
+四、小问题 / 清理（可选，不影响功能）
+
+D1. 纯读操作也走了 setAutoCommit(false)+commit（WarpStore.java:203-210），可以直接跳过事务。
+D2. submit(task,false) 是维护陷阱：以后给"有缓存"的表加写操作时忘了刷新，缓存会静默不一致。
+    建议改名为 submitWrite/submitRead，或在写入分支断言 refreshCache。
+D3. WarpStore.close() 超时会抛 IllegalStateException 一路冒到 IslandWarpPlugin.onDisable
+    （WarpStore.java:582-589），停服日志里会出现插件报错。建议 catch 后只记日志。
+D4. WarpCommand 第一道门是 islandwarp.use（WarpCommand.java:12），把 use 设为 false 的服，
+    即使给了 islandwarp.admin 也无法使用任何指令（包括 /iw admin）。管理指令建议单独放行。
+D5. pom.xml:24 的 shade 没有 relocate sqlite-jdbc。DriverManager 是 JVM 共享的，若同服还有别的插件
+    打包了不同版本的 sqlite，存在"用错驱动版本"的隐患。建议加 relocation 或至少在 README 记录。
+D6. pom.xml:13 的 testSourceDirectory=verification 会覆盖默认的 src/test/java，以后加标准测试目录不生效。
+D7. WarpStore.java:213：读查询失败也会把 healthy 置为 false（/iw status 与 PAPI 显示"异常"）。
+    确认是否就是这个预期（可能想让任何 DB 异常都暴露）。
+D8. MenuLayout.slot 的参数校验不完整（MenuLayout.java:18 允许 firstRow=4，但 4 行内容区要求
+    firstRow + ceil(count/7) - 1 <= 4）。当前调用只有 firstRow=1/2 所以没炸，
+    但 firstRow=4、count=15 会算出 55-61 号槽位（超过 53，setItem 会越界）；count=8/9 会写进 46-53
+    的底栏导航区。LayoutCheck 只测了 firstRow=1/2，没覆盖这个组合。
+    建议：把校验改成 (firstRow - 1) * 9 + ... 整体不越过 43。
+D9. verification/ReviewCheck.java:24-32 用反射替换 db 字段并靠 SQL 文本前缀匹配来注入故障，
+    以后 SQL 一改就静默失效（假通过）。建议加一条"必须匹配到 N 次"的断言。
+D10. README.md:65 的"纯查询和通知确认跳过全量刷新"是准确的，但没提健康扫描/传送仍在全量刷新，
+     修完 A2 后建议同步这句。
+
+======================================================================
+
+五、未验证范围（沿用上一轮，本轮未重跑）
+
+- 真实 Skyllia 联动：岛屿范围、私有岛、成员、封禁、越界、跨区域传送。
+- 真实 Vault/CMI：扣款、退款、离线岛主入账、5% 税的两位小数取整。
+- 真人客户端：GUI 点击、聊天输入、自定义头颅材质、分享卡片点击、PAPI 在真实服的表现。
+- 停服瞬间的付费/退款收尾（见 A1）。
+- 多人负载与长期数据增长（见 A2/C 系列）——建议先按 A2 的建议量一次 refresh 耗时。
+- verification/server 下的假人辅助程序（ServerCheck/RealPlayerCheck/run_server.py）本轮未运行，
+  它们的状态以仓库里的日志为准。
+
+建议修复顺序：A1 → A4 → A2 → A3 → B1/B2 → B4/B5 → 其余 → C 系列定保留策略。
+
+======================================================================
+附：本轮审查快照（SHA256 前 12 位，采集于 2026-10-12 17:33）
+  IslandGuard.java       A7ACA67B17F7
+  IslandWarpPlugin.java  BC17860C37D0
+  MenuLayout.java        028A13210C29
+  SearchFilter.java      8B6A2694D9C5
+  Warp.java              EB05A504E7D2
+  WarpCommand.java       5005781095D5
+  WarpEconomy.java       418E6D29AA08
+  WarpExpansion.java     A70A5A7CEDC9
+  WarpHealth.java        CDECF69C52B8
+  WarpMenu.java          57905F93C86F
+  WarpStore.java         3B5D7C9C3A79
+  WarpTeleport.java      EFB1B4339C69
+  WarpText.java          9A029C582B2F
+======================================================================
+
+
+======================================================================
+七、第三轮复审（2026-10-12 18:45 快照）
+======================================================================
+背景：17:49–18:37 作者做了一轮大改（新增 payments 持久化流水、write(task,publish) 增量发布、
+recycle 镜像表补列、日统计 90 天清理、通知 100 条上限、playerText 转义、FixCheck 接入构建等）。
+本轮针对这版新代码复审：先确认已修，再列新发现。源码在 18:37 后可能还在变，哈希见 7.4。
+
+7.1 已确认修好（第二轮报告的项，不用再修）
+  - A1 退款/入账静默丢失 → 新增 payments 表 + PREPARED→EXECUTING→PAID→DONE/FAILED 状态机、
+    /iw admin payments 人工核对、启动时把未完成交易打进日志、shutdown 对"已扣款未传送"退款或写
+    SEVERE"停服待核对"、global() 判断调度器返回 null。基本闭环（残留见 7.2-1）。
+  - A2 全量刷新热路径 → checked/visit/markRead/remindPins 改为 write(task,publish) 只发布受影响的
+    缓存条目；refresh() 不再写库（expireData/expirePins 拆出）。
+  - A3 max-ticket 依赖 economy.enabled → 新增 limit()，WarpCommand 改用它，开关关闭也能设票价。
+  - A4 recycle 镜像表结构漂移 → 启动时按主表补列 + delete 用显式列名（残留见 7.2-4）。
+  - B1 {world} 显示世界 UUID → 改为世界名，未加载时显示"未加载"。
+  - B2 admin.manage-player-warps 只在 GUI 生效 → requireManage() 进入 event/ticket/edit/confirm 命令路径；
+    panel-enabled 也不再连带禁掉 /iw admin pin|freeze|export。
+  - B3 名称/ID 查找歧义 → find() 先精确匹配 ID，再匹配名称。
+  - B4 永久置顶仍显示"续费" → 按钮条件加 pinExpiry>0。
+  - B5 首页固定画 7 个置顶位 → 循环改为 featuredSlots()，并区分"空闲 / 暂不可见"。
+  - B6 ratings.enabled=false 仍按评分排序 → 排序与点击都判断 enabled。
+  - B7 玩家文本格式注入 → playerText() + U+E000 转义，玩家不能再覆盖主题色或注入 &k/&l（残留见 7.2-3）。
+  - B9 ConfigCheck 依赖 cwd / 字节比较 → 改用 project.basedir + YAML 语义比较。
+  - B10 落点支撑判定 → 改为 !floor.isPassable()（地毯/雪层可踩）。
+  - B11 shared/delivering 退出不清理 → quit 清理，实体调度器返回 null 时也清理。
+  - C1 daily_visits 无上限 → 保留 90 天；C3 notices → 每玩家保留 100 条（残留见 7.2-5）。
+  - D3 close() 异常冒到 onDisable → 已 try/catch；D4 admin 无 use 权限 → 命令入口放行 admin；
+    D8 MenuLayout 越界组合 → 加了 firstRow+(count-1)/7>4 校验；D9 FixCheck 已接入 pom。
+  - 另外：收入改分页 + COUNT/SUM 聚合（不再把全部行读进内存）；收藏可以移除已隐藏/不可见的收藏项。
+  仍未修（低优先级，可选）：B12 teleport.delay-seconds=0 实际仍是 1 tick
+  （WarpTeleport.java:30）；B8 的头颅纹理注释仍列了没有实现的 reset 键（config.yml:42）。
+
+7.2 本轮新发现
+
+【7.2-1 必须修 · 涉及钱】门票结算失败会让访客被"未完成交易"长期挡住
+  位置：WarpTeleport.java:87、WarpEconomy.java:110-119、WarpStore.java:422-424
+  现象：传送成功后调用
+        economy.settle(warp, price, payment).thenRun(() -> economy.finish(payment))
+        settle() 内部是 credit(岛主).whenComplete(...)，岛主入账失败时返回的 future 是异常完成，
+        thenRun 不会执行 → 访客那条 DEBIT 流水永远停在 PAID。
+        而 payment() 的新守卫是 "state NOT IN ('DONE','FAILED')" → 该玩家之后**所有**扣款操作
+        （创建、买推荐位、买门票）都被拒绝，提示"存在未完成交易，请联系管理员核对后再付款"。
+        岛主入账失败有 SEVERE 日志，但"访客被挡住"这件事没有任何告警，只能等玩家报障。
+  建议：-.thenRun(...) 改为 .whenComplete((v,e) -> economy.finish(payment))；或
+        -守卫只拦 PREPARED/EXECUTING（Vault 结果未知），PAID 表示"已扣款且业务已确认"，不该拦后续付款；
+        -受拦时的提示带上待核对流水 ID，玩家报障时管理员才知道查哪条。
+  验证：【源码确认】调用链；建议补一条"岛主入账失败后访客仍能再次购买"的回归检查。
+
+【7.2-2 建议修 · 数据增长 + 性能】payments 表没有索引、没有清理，导出还会全量带走
+  位置：WarpStore.java:120（建表）、422（守卫查询）、443（列表）、750（导出）
+  现象：守卫查询 WHERE player=? AND state NOT IN (...) 没有索引，每次扣款都全表扫描；
+        表只增不减（每笔 DEBIT/CREDIT 一行，一次付费传送=2 行），没有任何 DELETE，导出 ZIP 含它。
+  建议：CREATE INDEX IF NOT EXISTS payments_player ON payments(player,state)；
+        加保留策略（终态 DONE/FAILED 保留 N 天，未完成永不删），可在 config 里加一项。
+        income 已分页+有索引，但同样没有保留期，建议一起定。
+
+【7.2-3 建议修 · 显示一致性】playerText() 只用在部分页面，坐标名仍能注入格式代码
+  已用的地方：card/detail/comment/reply（WarpMenu.java:129/173/226/374/390/474/476）。
+  仍是裸文本的地方（同一行里的 w.name() / 文本字段）：
+    - 220 付费传送确认页标题行
+    - 423/424/425/441 管理地标页（标题、说明、当前名称）
+    - 469/471/485 留言板（标题与文案，**其他玩家可见**）
+    - 526/695 黑名单/访问记录标题
+    - 717 续费付款页标题
+    - 829/844/860 置顶页/分类页/删除确认
+    - 611 通知中心列表里的 row.name（**其他玩家可见**）
+    - 587 收入列表、567 回收站列表
+    - 156 statusLore 的管理员冻结原因、492/506/651/661 举报审查里的 report.text()
+  影响：坐标名里的 &k/&l 会进入这些标题与 lore（&k 仍可让整行乱码），主题色保护在这些位置失效。
+      不是安全漏洞，但和 playerText 的设计意图不一致。
+  建议：显示层统一走 playerText()，数据库保留原文；举报审查可另加一行"原文"。
+
+【7.2-4 已撤回（误报，见 8.7 的实测说明）】镜像表补列只对"有默认值"的列安全
+  位置：WarpStore.java:107-117
+  现象：ALTER TABLE recycle_x ADD COLUMN "c" <type> [DEFAULT <dflt>]
+        若将来给主表加一个 NOT NULL 且无默认值的列（本项目建表风格就是 NOT NULL 不带默认值），
+        SQLite 会直接报错；异常会冒出 WarpStore 构造函数 → onEnable 捕获后 disablePlugin，
+        插件起不来，只能手工改库。今天能过是因为 comments.edited 恰好有 DEFAULT 0。
+  建议：ADD COLUMN 时不带 NOT NULL（或统一补默认值），并逐列 try/catch 记日志；
+        也可在列集合不一致时直接重建镜像表（丢掉旧回收记录是可接受的代价）。
+
+【7.2-5 小】通知 100 条上限没覆盖所有写入路径
+  裁剪只在 enqueue()（留言/回复，WarpStore.java:504-505）；checked()（reply=3 检测异常）
+  和 remindPins()（reply=2 续费提醒）插通知时不裁剪 → 长期异常/续费提醒仍会超过 100 条。
+  建议抽成 pruneNotices(player) 在三处调用。
+
+【7.2-6 小】命令表面
+  - /iw admin payments 没进 tab 补全（WarpCommand.java:251 只列 pin/export/freeze/unfreeze/help），
+    DONE|FAILED confirm 也没有补全；
+  - /iw help 的管理员行（第 25/27 行）没提 payments（第 91 行的提示里有）；
+  - config.yml:42 头颅注释仍列 reset，代码里没有 headButton(...,"reset",...) 调用。
+
+【7.2-7 小】扣款失败文案
+  WarpTeleport.java:66 的"付款未完成；经济异常时请联系管理员核对交易记录"在"Vault 已扣款、
+  但状态保存失败"时会让玩家误以为没扣钱。建议区分两种文案并附流水 ID。
+
+7.3 未验证（沿用前两轮，本轮仍未实机跑）
+  真实 Skyllia 联动；真实 Vault/CMI 扣款/退款/离线岛主入账；真人客户端 GUI 与材质；
+  停服瞬间的收尾；多人负载与长期数据增长（建议先量一次 refresh 与 incomePage 的耗时）。
+  verification/server 下的假人辅助程序本轮未运行。
+
+7.4 本回复审快照（SHA256 前 12 位，采集于 2026-10-12 18:45）
+  IslandWarpPlugin.java  08B144B80DFC
+  IslandGuard.java       A7ACA67B17F7
+  MenuLayout.java        A8525206C0F6
+  SearchFilter.java      8B6A2694D9C5
+  Warp.java              1AA2940A7B43
+  WarpCommand.java       27983DA441E5
+  WarpEconomy.java       4EFE4EF90E96
+  WarpExpansion.java     A70A5A7CEDC9
+  WarpHealth.java        CDECF69C52B8
+  WarpMenu.java          3308A17254FE
+  WarpStore.java         ED830D850505
+  WarpTeleport.java      8A9E3FB36A76
+  WarpText.java          9A029C582B2F
+======================================================================
+
+
+======================================================================
+八、本机已落地的修复（2026-10-12 19:05，源码已被审查方改动）
+======================================================================
+说明：以下改动直接改在工作区源码里，改动前的哈希与"7.4 快照"完全一致（改前已复核）。
+验证方式：用作者自己的构建流程 `mvn -o test`，结果 BUILD SUCCESS，11 组检查全部 PASS
+（StoreCheck / FeatureCheck / ExtrasCheck / RecoveryCheck / StatusCheck / NoticeCheck /
+ EventSearchCheck / ConfigCheck / LayoutCheck / ReviewCheck / FixCheck）。
+本轮只做"必须修 + 低风险"，没有新增功能、没有改数据库结构（只加索引）、没有删任何数据。
+未做实机验证（无服务器）：下面 1) 的修复只做了编译与现有检查，实服回归建议由作者补一条。
+
+8.1 涉及钱的修复
+  1) WarpTeleport.java:87 —— 门票结算失败不再让访客被永久挡住
+     改前：economy.settle(...).thenRun(() -> economy.finish(payment))
+     改后：economy.settle(...).whenComplete((settled,settleError) -> economy.finish(payment))
+     理由：settle 在"岛主入账失败"时返回异常完成的 future，thenRun 不会执行，访客那条 DEBIT
+     流水会永远停在 PAID，被 payment() 守卫（state NOT IN ('DONE','FAILED')）判为未完成交易，
+     之后创建/买推荐位/买门票全部被拒。改成 whenComplete 后无论入账成功与否都会推进到 DONE；
+     岛主入账失败仍然保留原有的 SEVERE"需人工补发门票收入"日志。
+  2) WarpTeleport.java:66 —— 扣款失败文案改为
+     "付款未完成；若已扣款请让管理员用 /iw admin payments 核对，不要重复付款"
+     （原文案在"已扣款但状态保存失败"的情况下会让玩家以为没扣钱）。
+
+8.2 性能 / 数据
+  3) WarpStore.java:122 新增 CREATE INDEX IF NOT EXISTS payments_player ON payments(player,state)
+     → 每次扣款的"未完成交易"守卫不再全表扫描；旧库在下次启动自动补索引。
+  4) WarpStore.java:84 新增 CREATE INDEX IF NOT EXISTS notices_player ON notices(player,id DESC)
+     → 通知裁剪与读取不再全表扫描。
+  5) 通知 100 条上限抽成 pruneNotices(player)（WarpStore.java:517），并在 checked()（:726）
+     与 remindPins()（:875）也调用，检测异常/续费提醒不再突破上限。
+
+8.3 显示一致性
+  6) WarpMenu 中玩家文本统一走 playerText()，本轮补齐 20 处：
+     220（付费传送确认）、423/424/425/441（管理页）、469/471/485/492/506（留言板与删除确认）、
+     526（黑名单）、567（回收站）、587（收入）、611（通知中心）、651/661（举报列表与审查）、
+     695（访问记录）、717（续费）、829（置顶页）、844（分类页）、860（删除确认）。
+     其中 485 给聊天用的 input 文案改用 WarpText.plain()，避免 U+E000 哨兵字符出现在聊天里。
+     数据库里仍保留玩家原文，只是显示层转义。
+
+8.4 命令与文档
+  7) WarpCommand.java：/iw admin payments 加入 tab 补全，并补 DONE|FAILED、confirm 两级补全；
+     /iw help 的管理员行补上 payments。
+  8) 配置文件注释与实现对齐（src/main/resources/config.yml 与根目录 配置参考.yml 同步修改）：
+     teleport.delay-seconds 的"0 为立即传送"→"0 为下个 tick 传送"（代码仍是 Math.max(1,...)，
+     只改文档，未改行为）；gui.heads.textures 的可用键去掉没有实现的 reset。
+     改完两个配置文件字节完全一致（同一 SHA256），ConfigCheck 通过。
+
+8.5 刻意没改（留给作者决定）
+  - payments / income 的保留期：只加了索引，没有删历史数据（财务/审计数据不该由审查方决定删）。
+    建议做成配置项后再动。
+  - payment() 守卫仍然拦 PAID：修完 1) 后"永久卡死"已消除，保留拦截可防重复扣款；
+    若希望结算瞬间（几十毫秒）也能立刻再消费，可把守卫收窄为只拦 PREPARED/EXECUTING。
+  - 被拦时的提示仍不带流水 ID（改它要动 payment() 的报错文案，等作者确认口径）。
+  - 第二轮 D 系列（submit 命名、sqlite-jdbc relocate、src/test/java、healthy 粒度）与 README 文案：未动。
+
+8.6 改动后哈希（SHA256 前 12 位，采集于 2026-10-12 19:05）
+  WarpStore.java                 723CF7013EE5  （改前 ED830D850505）
+  WarpTeleport.java              81D4FF425104  （改前 8A9E3FB36A76）
+  WarpMenu.java                  31BD0EEBA288  （改前 3308A17254FE）
+  WarpCommand.java               D0C3503B4744  （改前 27983DA441E5）
+  src/main/resources/config.yml  49366A87448A  （改前 CACE039CEB19）
+  配置参考.yml                    49366A87448A  （与模板字节一致）
+  其余 9 个源文件未改动，哈希同 7.4。
+
+8.7 撤回 7.2-4（误报）
+  实测（sqlite-jdbc 3.49.1.0，PRAGMA table_info）：type 字段只包含类型名（TEXT/INTEGER…），
+  不包含 NOT NULL 约束，notnull 是独立字段。因此 WarpStore.java:114 生成的
+  `ALTER TABLE recycle_x ADD COLUMN "c" <type> [DEFAULT <dflt>]` 是"可空、无默认值"的列，
+  任何情况下都能添加成功，不会因为主表新增 NOT NULL 列而失败。
+  另外单独验证：即使写成 NOT NULL 无默认值，空表也能加成功。
+  → 该条不成立，作者不用处理；是我上一轮读 PRAGMA 语义时的误判，特此更正。
+======================================================================

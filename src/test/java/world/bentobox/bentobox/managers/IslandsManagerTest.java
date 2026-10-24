@@ -470,6 +470,10 @@ class IslandsManagerTest extends CommonTestSetup {
         islandsManager.deleteIsland(island, true, localOwner);
         assertNull(island.getOwner());
         verify(pim).callEvent(any(IslandDeleteEvent.class));
+        var deleted = org.mockito.ArgumentCaptor.forClass(
+                world.bentobox.bentobox.api.events.island.IslandDeletedEvent.class);
+        verify(pim).callEvent(deleted.capture());
+        assertEquals(island.getUniqueId(), deleted.getValue().getIsland().getUniqueId());
     }
 
     /**
@@ -490,6 +494,23 @@ class IslandsManagerTest extends CommonTestSetup {
         assertNull(island.getOwner());
         assertEquals(0, islandsManager.getNumberOfConcurrentIslands(localOwner, world));
         assertTrue(islandsManager.getIslands(world, localOwner).isEmpty());
+    }
+
+    /**
+     * A hard delete must publish the island on the DELETED event, exactly like the
+     * soft delete does. Addons clean up their per-island data (Bank accounts,
+     * Level records) from that island, and {@code IslandBaseEvent#getIsland()} is
+     * null when the island is not supplied.
+     */
+    @Test
+    void testHardDeleteIslandEventCarriesTheIsland() {
+        Island island = islandsManager.createIsland(location, UUID.randomUUID());
+        islandsManager.hardDeleteIsland(island);
+        var deleted = org.mockito.ArgumentCaptor.forClass(
+                world.bentobox.bentobox.api.events.island.IslandDeletedEvent.class);
+        verify(pim).callEvent(deleted.capture());
+        assertNotNull(deleted.getValue().getIsland());
+        assertEquals(island.getUniqueId(), deleted.getValue().getIsland().getUniqueId());
     }
 
     /**

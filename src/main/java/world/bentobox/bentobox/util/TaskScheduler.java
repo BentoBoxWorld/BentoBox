@@ -123,6 +123,32 @@ public final class TaskScheduler {
                 : Bukkit.getScheduler().runTask(plugin, action);
     }
 
+    /**
+     * Runs entity work, but a retired entity runs {@code retired} instead of dropping the task.
+     * Use when the caller completes a future from inside {@code action}: a discarded task would
+     * leave every waiter hanging forever (for example the island-creation guard).
+     */
+    public static void entityOrRetired(Plugin plugin, Entity entity, Runnable action, Runnable retired) {
+        // The action usually completes a future; a failure inside it must not leave waiters hanging.
+        Runnable guarded = () -> {
+            try {
+                action.run();
+            } catch (Throwable error) {
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, "Entity task failed", error);
+                retired.run();
+            }
+        };
+        try {
+            if (!isFolia()) {
+                Bukkit.getScheduler().runTask(plugin, guarded);
+                return;
+            }
+            if (!entity.getScheduler().execute(plugin, guarded, retired, 1)) retired.run();
+        } catch (Throwable error) {
+            retired.run();
+        }
+    }
+
     public static BukkitTask entityLater(Plugin plugin, Entity entity, Runnable action, long delay) {
         return isFolia() ? wrap(entity.getScheduler().runDelayed(plugin, task -> action.run(), null,
                 Math.max(1, delay)), true)

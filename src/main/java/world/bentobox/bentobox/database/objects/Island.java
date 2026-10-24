@@ -50,6 +50,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Stores all the info about an island Managed by IslandsManager Responsible for
@@ -1598,7 +1599,33 @@ public class Island implements DataObject, MetaDataAble {
      */
     private boolean hasDimensionIsland(Environment environment) {
         World dimWorld = this.getWorld(environment);
-        return dimWorld != null && (getCenter().toVector().toLocation(dimWorld).getBlock().getType() != Material.AIR);
+        if (dimWorld == null) return false;
+        Location center = getCenter().toVector().toLocation(dimWorld);
+        if (TaskScheduler.isFolia()
+                && !Bukkit.isOwnedByCurrentRegion(center)) {
+            throw new IllegalStateException("Use hasNetherIslandAsync/hasEndIslandAsync outside the destination region");
+        }
+        return center.getBlock().getType() != Material.AIR;
+    }
+
+    public java.util.concurrent.CompletableFuture<Boolean> hasNetherIslandAsync() {
+        return hasDimensionIslandAsync(Environment.NETHER);
+    }
+
+    public java.util.concurrent.CompletableFuture<Boolean> hasEndIslandAsync() {
+        return hasDimensionIslandAsync(Environment.THE_END);
+    }
+
+    private java.util.concurrent.CompletableFuture<Boolean> hasDimensionIslandAsync(Environment environment) {
+        World dimWorld = getWorld(environment);
+        if (dimWorld == null) return java.util.concurrent.CompletableFuture.completedFuture(false);
+        Location center = getCenter().toVector().toLocation(dimWorld);
+        var result = new java.util.concurrent.CompletableFuture<Boolean>();
+        Util.getChunkAtAsync(center).thenCompose(chunk ->
+                TaskScheduler.regionFuture(getPlugin(), center,
+                        () -> result.complete(center.getBlock().getType() != Material.AIR)))
+                .exceptionally(error -> { result.completeExceptionally(error); return null; });
+        return result;
     }
 
     /**

@@ -178,7 +178,9 @@ public class ClosestSafeSpotTeleport
      */
     void checkLocation()
     {
-        if (!this.portal && this.plugin.getIslandsManager().isSafeLocation(this.location))
+        // End destinations have no Nether portal to locate; keep the safe-location check.
+        if ((!this.portal || this.world.getEnvironment() == World.Environment.THE_END)
+                && this.plugin.getIslandsManager().isSafeLocation(this.location))
         {
             // If this is not a portal teleport, then go to the safe location immediately
             this.teleportEntity(this.location);
@@ -253,6 +255,8 @@ public class ClosestSafeSpotTeleport
                 .whenCompleteAsync((snapshot, e) -> {
             if (e != null) {
                 this.task.cancel();
+                // Search is over; release the in-flight guard instead of leaving it set.
+                this.checking.set(false);
                 this.result.completeExceptionally(e);
                 return;
             }
@@ -392,6 +396,8 @@ public class ClosestSafeSpotTeleport
         // Still Async!
         // Nothing left to check and still not canceled
         this.task.cancel();
+        // Search is over; release the in-flight guard instead of leaving it set.
+        this.checking.set(false);
 
         if (this.scanBlockQueue())
         {
@@ -406,7 +412,8 @@ public class ClosestSafeSpotTeleport
         else if (this.entity instanceof Player player)
         {
             // Return to main thread and teleport the player
-            TaskScheduler.entity(this.plugin, entity, () -> returnAndTeleport(player));
+            TaskScheduler.entityOrRetired(this.plugin, entity, () -> returnAndTeleport(player),
+                    () -> this.result.complete(false));
             return;
         }
         // We do not teleport entities if position failed.
@@ -435,7 +442,7 @@ public class ClosestSafeSpotTeleport
             this.asyncTeleport(highestBlock.getLocation().add(new Vector(0.5D, 0D, 0.5D)));
         }
         else {
-            TaskScheduler.entity(plugin, entity, () -> {
+            TaskScheduler.entityOrRetired(plugin, entity, () -> {
                 if (!this.plugin.getIWM().inWorld(this.entity.getLocation())) {
                     player.performCommand("spawn");
                     result.complete(false);
@@ -446,7 +453,7 @@ public class ClosestSafeSpotTeleport
                     default -> this.makeAndTeleport(Material.COBBLESTONE);
                     }
                 } else result.complete(false);
-            });
+            }, () -> result.complete(false));
         }
     }
 
@@ -496,7 +503,8 @@ public class ClosestSafeSpotTeleport
     void teleportEntity(final Location location)
     {
         // Return to main thread and teleport the player
-        TaskScheduler.entity(this.plugin, entity, () -> this.asyncTeleport(location));
+        TaskScheduler.entityOrRetired(this.plugin, entity, () -> this.asyncTeleport(location),
+                () -> this.result.complete(false));
     }
 
 
