@@ -231,7 +231,9 @@ public class ClosestSafeSpotTeleport
 
         this.checking.set(true);
 
-        if (!this.portal && !this.blockQueue.isEmpty() && this.blockQueue.peek().distance() < 5)
+        // End portals have no Nether portal to look for, so a close safe spot is already the answer.
+        if ((!this.portal || this.world.getEnvironment() == World.Environment.THE_END)
+                && !this.blockQueue.isEmpty() && this.blockQueue.peek().distance() < 5)
         {
             // Position is found? Well most likely (not in all situations) position in block queue is already
             // the best position. The only bad situations could happen if position is on chunk borders.

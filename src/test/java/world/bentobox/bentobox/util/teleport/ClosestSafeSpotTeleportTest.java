@@ -727,6 +727,29 @@ class ClosestSafeSpotTeleportTest extends CommonTestSetup {
         verify(task).cancel();
     }
 
+    /**
+     * Portal mode must not wait for the whole scan in the End, where there is no Nether
+     * portal to find: a close safe spot is already the answer.
+     */
+    @Test
+    void testGatherChunks_closePositionInQueue_endPortal_finishesEarly() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(im.isSafeLocation(location)).thenReturn(false);
+        teleport = buildTeleport(true);
+        teleport.checkLocation();
+
+        setField(teleport, "cancelIfFail", true);
+        PriorityQueue<ClosestSafeSpotTeleport.PositionData> queue = new PriorityQueue<>(
+                Comparator.comparingDouble(ClosestSafeSpotTeleport.PositionData::distance));
+        queue.add(new ClosestSafeSpotTeleport.PositionData(
+                new Vector(0, 64, 0), Material.STONE, Material.AIR, Material.AIR, 2.0));
+        setField(teleport, "blockQueue", queue);
+
+        teleport.gatherChunks();
+
+        verify(task).cancel();
+    }
+
     // -----------------------------------------------------------------------
     // finishTask() tests
     // -----------------------------------------------------------------------
