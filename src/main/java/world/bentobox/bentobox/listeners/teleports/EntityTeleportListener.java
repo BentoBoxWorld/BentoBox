@@ -274,7 +274,20 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
     private void finishPortal(EntityPortalEvent event, World overWorld, World.Environment environment) {
         if (event.isCancelled() || event.getTo() == null) return;
         this.inTeleport.add(event.getEntity().getUniqueId());
-        // An entity cannot generate a missing island, so there is nothing to wait for.
+        if (World.Environment.NETHER == environment && this.isMakePortals(overWorld, environment)) {
+            // Vanilla builds or reuses the paired portal on arrival. An entity cannot paste a
+            // missing island, so the portal is the only step it needs to share with players.
+            this.ensureNetherPortal(event.getTo().clone(), portalAxis(event.getFrom()))
+                    .whenComplete((portal, error) -> {
+                        if (error != null) {
+                            plugin.logStacktrace(error);
+                        } else if (portal != null && !event.isCancelled()) {
+                            event.setTo(portal);
+                        }
+                        completePortal(event, overWorld, environment);
+                    });
+            return;
+        }
         completePortal(event, overWorld, environment);
     }
 
