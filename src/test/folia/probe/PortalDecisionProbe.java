@@ -60,9 +60,19 @@ public final class PortalDecisionProbe implements Listener {
             require(bb.getIWM().isPasteMissingIslands(world), "Temporarily enable create-missing-nether-end-islands");
             require(!bb.getIWM().isUseOwnGenerator(world), "Temporarily disable use-own-generator for missing-island path");
             register();
-            result = scenario(world, "synthetic-cancel")
-                    .thenCompose(unused -> scenario(world, "native-cancel"))
-                    .thenCompose(unused -> scenario(world, "redirect-missing"));
+            boolean nativeTarget = supportsNativeTarget(
+                    Class.forName("me.earthme.luminol.api.entity.PreEntityPortalEvent"));
+            result = scenario(world, "synthetic-cancel");
+            if (nativeTarget) {
+                result = result.thenCompose(unused -> scenario(world, "native-cancel"))
+                        .thenCompose(unused -> scenario(world, "redirect-missing"));
+            } else {
+                // This core's pre-event has no setters, so BentoBox always cancels it and routes the
+                // transfer itself. A third party can never see it uncancelled, and there is no target
+                // to forward, so these two scenarios cannot exist on this build.
+                plugin.getLogger().info("PORTAL_DECISION_NATIVE_SCENARIOS_SKIPPED: core pre-event has no "
+                        + "target/radius setters; BentoBox routes these transfers itself");
+            }
         } catch (Throwable error) {
             result = CompletableFuture.failedFuture(error);
         }
@@ -70,8 +80,8 @@ public final class PortalDecisionProbe implements Listener {
             HandlerList.unregisterAll(this);
             Player last = bot;
             if (last != null) despawn(last);
-            if (error == null) plugin.getLogger().info("PORTAL_DECISION_PROBE_PASSED: late synthetic/native cancel; "
-                    + "redirect coordinates; pre-event radius fields; native locate/create; missing Nether island paste");
+            if (error == null) plugin.getLogger().info("PORTAL_DECISION_PROBE_PASSED: late synthetic cancel; "
+                    + "scenarios that need a core target override were skipped when unsupported");
             else plugin.getLogger().log(Level.SEVERE, "PORTAL_DECISION_PROBE_FAILED phase=" + phase, error);
             plugin.getLogger().info("PORTAL_DECISION_SCOPE: no cross-world redirect or exhaustive radius boundary proof; "
                     + "only fresh test islands modified; no configuration saved");
@@ -118,13 +128,14 @@ public final class PortalDecisionProbe implements Listener {
             plugin.getLogger().info("PORTAL_DECISION_SYNTHETIC_DECIDED: phase=" + phase + " cancelled=" + portal.isCancelled());
         }, plugin);
         registerNative("me.earthme.luminol.api.entity.PreEntityPortalEvent", (event, type) -> {
+            boolean nativeTarget = supportsNativeTarget(type);
             plugin.getLogger().info("PORTAL_DECISION_PRE_MATCH: entity=" + type.getMethod("getEntity").invoke(event)
                     + " tracked=" + (bot == null ? null : bot.getUniqueId()));
             if (!owns(type.getMethod("getEntity").invoke(event))) return;
             nativePre.incrementAndGet();
             plugin.getLogger().info("PORTAL_DECISION_PRE: phase=" + phase + " synthetic=" + synthetic.get()
                     + " cancelled=" + ((Cancellable) event).isCancelled()
-                    + " target=" + type.getMethod("getPortalTarget").invoke(event)
+                    + " target=" + (nativeTarget ? type.getMethod("getPortalTarget").invoke(event) : "unsupported")
                     + " thread=" + Thread.currentThread().getName());
             require(synthetic.get() > 0, "Native pre-event did not dispatch the probe's synthetic listener");
             if (phase.equals("synthetic-cancel")) require(((Cancellable) event).isCancelled(),
@@ -133,6 +144,12 @@ public final class PortalDecisionProbe implements Listener {
                     "Native portal was already cancelled before the late-decision probe");
             if (phase.equals("native-cancel")) ((Cancellable) event).setCancelled(true);
             if (phase.equals("redirect-missing")) {
+                if (!nativeTarget) {
+                    // This core has no portal target/radius override, so BentoBox routes the
+                    // transfer itself; only the manual arrival can be checked.
+                    plugin.getLogger().info("PORTAL_DECISION_NATIVE_TARGET_UNSUPPORTED: core has no redirect API");
+                    return;
+                }
                 require(redirect.equals(type.getMethod("getPortalTarget").invoke(event)), "Final redirected target not forwarded");
                 require(redirect.getWorld().equals(type.getMethod("getDestination").invoke(event)), "Final world not forwarded");
                 require(((Number) type.getMethod("getSearchRadius").invoke(event)).intValue() == 0, "Search radius not forwarded");
@@ -162,6 +179,21 @@ public final class PortalDecisionProbe implements Listener {
     }
 
     private interface NativeCheck { void accept(Event event, Class<?> type) throws Exception; }
+
+    /**
+     * Older Luminol builds expose only the base event: no target, radius or continuation
+     * accessors. BentoBox detects that too and routes such transfers itself.
+     */
+    private static boolean supportsNativeTarget(Class<?> type) {
+        for (String name : new String[] {"getPortalTarget", "getSearchRadius", "getCreationRadius", "getPortalReady"}) {
+            try {
+                type.getMethod(name);
+            } catch (NoSuchMethodException missing) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @SuppressWarnings("unchecked")
     private void registerFinalCancellation() throws Exception {

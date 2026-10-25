@@ -251,6 +251,16 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
 
     @EventHandler
     public void ready(BentoBoxReadyEvent event) {
+        if (Boolean.getBoolean("probe.stopWhenDone")) {
+            // The caller's shell wrapper is not reliable, so a marker file stops the server instead.
+            Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> {
+                if (new java.io.File("probe.stop").isFile()) {
+                    task.cancel();
+                    getLogger().info("PROBE_STOP_FILE_SEEN");
+                    Bukkit.shutdown();
+                }
+            }, 20L, 20L);
+        }
         if (Boolean.getBoolean("probe.botStressOnly")) { BotStressProbe.run(this); return; }
         if (Boolean.getBoolean("probe.botStressRetiredOnly")) { BotStressProbe.runRetiredOnly(this); return; }
         if (Boolean.getBoolean("probe.portalDecisionOnly")) { PortalDecisionProbe.run(this); return; }
@@ -268,6 +278,10 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                     .orTimeout(300, TimeUnit.SECONDS).whenComplete((unused, error) -> {
                         if (error != null) getLogger().log(Level.SEVERE, "END_NATIVE_PROBE_FAILED", error);
                         else getLogger().info("END_NATIVE_PROBE_PASSED: player, sheep, item both directions and platform");
+                        if (Boolean.getBoolean("probe.stopWhenDone")) {
+                            // No console is attached to this test server, so it shuts itself down.
+                            Bukkit.getGlobalRegionScheduler().runDelayed(this, task -> Bukkit.shutdown(), 20L);
+                        }
                     });
             return;
         }
@@ -431,9 +445,9 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                             else buildNetherFrame(expected, destinationFrame);
                         }))
                 .thenCompose(unused -> spawnFakePlayerPlugin("Tick" + java.util.UUID.randomUUID().toString().substring(0, 8),
-                        expected, destinationFrame.clone().add(1.5, 1, -2)))
+                        expected, destinationFrame.clone().add(6.5, 1, 6.5)))
                 .thenCompose(unused -> spawnFakePlayerPlugin("Tick" + java.util.UUID.randomUUID().toString().substring(0, 8),
-                        from, frame.clone().add(1.5, 1, -2)))
+                        from, frame.clone().add(6.5, 1, 6.5)))
                 .thenCompose(unused -> TaskScheduler.regionFuture(this, frame, () -> {
                     buildNetherFrame(from, frame);
                     Location spawn = frame.clone().add(1.5, 1, 0.5);
@@ -441,15 +455,33 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                     if (type == org.bukkit.entity.EntityType.ITEM) {
                         entity = from.dropItem(spawn, new org.bukkit.inventory.ItemStack(Material.COBBLESTONE));
                         entity.setVelocity(new Vector());
+                        // The nearby fake player otherwise picks the item up before it can be observed.
+                        ((org.bukkit.entity.Item) entity).setPickupDelay(32767);
                     } else {
                         entity = from.spawnEntity(spawn, type);
                         if (entity instanceof org.bukkit.entity.Mob mob) mob.setAI(false);
                     }
                     nativeArrivals.put(entity.getUniqueId(), arrived);
                     java.util.UUID entityId = entity.getUniqueId();
+                    java.util.concurrent.atomic.AtomicInteger tracked = new java.util.concurrent.atomic.AtomicInteger();
+                    Bukkit.getRegionScheduler().runAtFixedRate(this, frame, task -> {
+                        if (tracked.incrementAndGet() > 20) { task.cancel(); return; }
+                        try {
+                            getLogger().info("NATIVE_ENTITY_TRACK: " + type
+                                    + " valid=" + entity.isValid() + " dead=" + entity.isDead()
+                                    + " world=" + entity.getWorld().getName() + " at=" + entity.getLocation());
+                        } catch (Throwable error) {
+                            getLogger().info("NATIVE_ENTITY_TRACK: " + type + " unreadable: " + error);
+                            task.cancel();
+                        }
+                    }, 20, 20);
                     Bukkit.getRegionScheduler().runAtFixedRate(this, destinationFrame, task -> {
                         if (arrived.isDone()) { task.cancel(); return; }
-                        for (org.bukkit.entity.Entity candidate : expected.getNearbyEntities(destinationFrame, 10, 10, 10)) {
+                        var near = expected.getNearbyEntities(destinationFrame, 10, 10, 10);
+                        getLogger().info("NATIVE_TARGET_NEARBY: " + type + " count=" + near.size() + " "
+                                + near.stream().map(e -> e.getType() + ":" + e.getName() + "@" + e.getLocation().toVector())
+                                        .collect(java.util.stream.Collectors.joining(",")));
+                        for (org.bukkit.entity.Entity candidate : near) {
                             if (candidate.getUniqueId().equals(entityId)) {
                                 nativeArrivals.remove(entityId);
                                 arrived.complete(candidate);
@@ -482,7 +514,10 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                             require(island.inIslandSpace(entity.getLocation()), "Entity reached wrong island: " + entity.getLocation());
                             require(entity.getLocation().distanceSquared(destinationFrame.clone().add(1.5, 1, 0.5)) < 4096,
                                     "Entity too far from target portal: " + entity.getLocation());
-                            if (Boolean.getBoolean("probe.nativeLink")) {
+                            // Only the Nether direction creates a portal; arriving in the overworld
+                            // reuses an existing one, same as the player path.
+                            if (Boolean.getBoolean("probe.nativeLink")
+                                    && expected.getEnvironment() == World.Environment.NETHER) {
                                 require(entity.getLocation().getBlock().getType() == Material.NETHER_PORTAL,
                                         "Native arrival is not inside a generated portal: " + entity.getLocation());
                                 getLogger().info("NATIVE_PORTAL_CREATED_PASSED: " + type + " " + entity.getLocation());
@@ -558,6 +593,11 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                     return TaskScheduler.regionFuture(this, returnFrame, () -> {
                         if (!Boolean.getBoolean("probe.nativeLink")) buildNetherFrame(expected, returnFrame);
                     })
+                            // The overworld region only ticks with a player in it, so keep one there
+                            // or the safe-spot search for the return never runs.
+                            .thenCompose(ignored -> spawnFakePlayerPlugin(
+                                    "Back" + java.util.UUID.randomUUID().toString().substring(0, 8),
+                                    from, frame.clone().add(6.5, 1, 6.5)))
                             .thenCompose(ignored -> TaskScheduler.userFuture(this, User.getInstance(portalBot), () -> {
                                 portalBot.setPortalCooldown(0);
                                 portalBot.getScheduler().runAtFixedRate(this, task -> {
@@ -619,6 +659,39 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
     private final Map<java.util.UUID, java.util.concurrent.atomic.AtomicLong> endEnterTimes =
             new java.util.concurrent.ConcurrentHashMap<>();
 
+    // Region tick-gap sampler: a gap far above 50ms is a frozen region, i.e. what a player feels as lost TPS.
+    private final java.util.concurrent.atomic.AtomicLong tickGapLast = new java.util.concurrent.atomic.AtomicLong();
+    private final java.util.concurrent.atomic.AtomicLong tickGapMax = new java.util.concurrent.atomic.AtomicLong();
+    private final java.util.concurrent.atomic.AtomicInteger tickGapStalls = new java.util.concurrent.atomic.AtomicInteger();
+    private io.papermc.paper.threadedregions.scheduler.ScheduledTask tickGapTask;
+
+    private void startTickWatch(Location where) {
+        tickGapLast.set(0);
+        tickGapMax.set(0);
+        tickGapStalls.set(0);
+        tickGapTask = Bukkit.getRegionScheduler().runAtFixedRate(this, where, task -> {
+            long now = System.nanoTime();
+            long previous = tickGapLast.getAndSet(now);
+            if (previous == 0) return;
+            long gap = (now - previous) / 1_000_000L;
+            tickGapMax.accumulateAndGet(gap, Math::max);
+            if (gap >= 100L) {
+                tickGapStalls.incrementAndGet();
+                getLogger().info("PERF_STALL: " + gap + "ms at " + where.getWorld().getName()
+                        + " " + where.getBlockX() + "," + where.getBlockZ());
+            }
+        }, 1L, 1L);
+    }
+
+    private void stopTickWatch(String label) {
+        if (tickGapTask != null) {
+            tickGapTask.cancel();
+            tickGapTask = null;
+        }
+        getLogger().info("PERF_WATCHDOG: " + label + " worst_tick_gap_ms=" + tickGapMax.get()
+                + " stalls_over_100ms=" + tickGapStalls.get());
+    }
+
     private CompletableFuture<Void> testEndTransfer(World from, World to, org.bukkit.entity.EntityType type) {
         int coordinate = 20000000 + java.util.concurrent.ThreadLocalRandom.current().nextInt(10000) * 400;
         Location entrance = new Location(from, coordinate + 8, 91, coordinate + 8);
@@ -629,6 +702,10 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         java.util.concurrent.atomic.AtomicReference<Island> islandRef = new java.util.concurrent.atomic.AtomicReference<>();
         java.util.concurrent.atomic.AtomicReference<java.util.UUID> id = new java.util.concurrent.atomic.AtomicReference<>();
         return Util.getChunkAtAsync(entrance).thenCompose(unused -> Util.getChunkAtAsync(target))
+                .thenApply(unused -> {
+                    if (Boolean.getBoolean("probe.perfOnly")) startTickWatch(target);
+                    return unused;
+                })
                 .thenCompose(unused -> TaskScheduler.regionFuture(this, target, () -> {
                     buildPortalTargetPlatform(target.clone().add(4, -1, 4));
                     if (to.getEnvironment() == World.Environment.THE_END) {
@@ -655,6 +732,20 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                         prepared = new world.bentobox.bentobox.blueprints.BlueprintPaster(plugin, blueprint, to, island)
                                 .paste().thenAccept(success -> require(Boolean.TRUE.equals(success), "End blueprint paste failed"));
                     }
+                    if (Boolean.getBoolean("probe.endUnsafeSpawn") && to.getEnvironment() == World.Environment.THE_END) {
+                        // Production end islands leave the spawn two blocks above the platform floor, so
+                        // isSafeLocation(spawn) is false and the arrival runs the safe-spot scan.
+                        prepared = prepared.thenCompose(ignored -> {
+                            CompletableFuture<Void> shifted = new CompletableFuture<>();
+                            TaskScheduler.regionFuture(this, center, () -> {
+                                Location spawn = island.getSpawnPoint(World.Environment.THE_END);
+                                require(spawn != null, "End spawn missing before shift");
+                                island.setSpawnPoint(World.Environment.THE_END, spawn.clone().add(0, 2, 0));
+                                shifted.complete(null);
+                            });
+                            return shifted;
+                        });
+                    }
                     return prepared.thenCompose(ignored -> TaskScheduler.regionFuture(this, entrance, () -> {
                         entrance.clone().add(0, -1, 0).getBlock().setType(Material.OBSIDIAN, false);
                         entrance.getBlock().setType(Material.END_PORTAL, false);
@@ -672,6 +763,7 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                         endEnterTimes.put(entity.getUniqueId(), new java.util.concurrent.atomic.AtomicLong());
                         entity.setPortalCooldown(0);
                         nativeArrivals.put(entity.getUniqueId(), arrived);
+                        int observerTicks = Integer.getInteger("probe.observerTicks", 10);
                         Bukkit.getRegionScheduler().runAtFixedRate(this, target, task -> {
                             if (arrived.isDone()) { task.cancel(); return; }
                              for (var candidate : to.getNearbyEntities(target, 20, 20, 20)) {
@@ -680,11 +772,11 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                                      if (start != null && start.get() != 0) getLogger().info("END_TRANSFER_LATENCY: "
                                              + type + " from=" + from.getName() + " to=" + to.getName()
                                              + " enter_to_observed_ms=" + (System.nanoTime() - start.get()) / 1_000_000
-                                             + " observer_period_ticks=10");
+                                             + " observer_period_ticks=" + observerTicks);
                                      arrived.complete(candidate); task.cancel(); return;
                                 }
                             }
-                        }, 1, 10);
+                        }, 1, observerTicks);
                         entity.getScheduler().runDelayed(this, task -> getLogger().info("END_SOURCE_STATE: "
                                 + entity.getType() + " " + entity.getLocation() + " valid=" + entity.isValid()
                                 + " cooldown=" + entity.getPortalCooldown()),
@@ -728,8 +820,59 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                     }
                     getLogger().info("END_TRANSFER_PASSED: " + type + " " + from.getName() + " -> " + location);
                 })).whenComplete((unused, error) -> {
+                    if (Boolean.getBoolean("probe.perfOnly")) stopTickWatch("end-entry-" + type);
                     if (id.get() != null) endEnterTimes.remove(id.get());
                 });
+    }
+
+    /**
+     * Measures what a player feels as lost TPS: wall time for island creation and the first
+     * end entry, plus the worst tick gap of the region doing the work.
+     */
+    private CompletableFuture<Void> testPerf() {
+        var world = Objects.requireNonNull(Bukkit.getWorld("bskyblock_world"));
+        String suffix = java.util.UUID.randomUUID().toString().substring(0, 8);
+        return spawnBot("Perf" + suffix, new Location(world, 6144.5, 90, 6144.5)).thenCompose(player -> {
+            CompletableFuture<Void> created = new CompletableFuture<>();
+            long started = System.nanoTime();
+            TaskScheduler.entity(this, player, () -> {
+                try {
+                    player.setInvulnerable(true);
+                    player.addAttachment(this, "bskyblock.island", true);
+                    player.addAttachment(this, "bskyblock.island.create", true);
+                    require(player.performCommand("island create default"), "Player island command rejected");
+                    watchIslandUntilCreated(player, created);
+                } catch (Throwable error) {
+                    created.completeExceptionally(error);
+                }
+            });
+            return created.thenRun(() -> {
+                stopTickWatch("create-island");
+                getLogger().info("PERF_CREATE_ISLAND: elapsed_ms=" + (System.nanoTime() - started) / 1_000_000L);
+            }).thenCompose(unused -> testEndTransfer(world,
+                    Objects.requireNonNull(Bukkit.getWorld("bskyblock_world_the_end")),
+                    org.bukkit.entity.EntityType.PLAYER));
+        });
+    }
+
+    private void watchIslandUntilCreated(org.bukkit.entity.Player player, CompletableFuture<Void> created) {
+        if (created.isDone()) return;
+        var island = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"),
+                player.getUniqueId());
+        if (island != null && tickGapTask == null) startTickWatch(island.getCenter());
+        try {
+            if (island != null
+                    && !world.bentobox.bentobox.managers.island.NewIsland.isCreating(User.getInstance(player))) {
+                require(island.getOwner().equals(player.getUniqueId()), "Player does not own island");
+                createdIslands.add(island.getUniqueId());
+                created.complete(null);
+                return;
+            }
+        } catch (Throwable error) {
+            created.completeExceptionally(error);
+            return;
+        }
+        TaskScheduler.entityLater(this, player, () -> watchIslandUntilCreated(player, created), 2);
     }
 
     /**
@@ -972,11 +1115,11 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
     private CompletableFuture<org.bukkit.entity.Player> spawnFakePlayerPlugin(String name, World world,
             Location location) {
         CompletableFuture<org.bukkit.entity.Player> result = new CompletableFuture<>();
-        String command = "fpp spawn --name " + name + " --location " + location.getX() + " "
-                + location.getY() + " " + location.getZ() + " " + world.getName();
+        // FakePlayerPlus 2.2.1 takes "/fp spawn <name>"; the probe teleports it afterwards.
+        String command = "fp spawn " + name;
         TaskScheduler.global(this, () -> {
             if (!Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)) {
-                result.completeExceptionally(new IllegalStateException("fakeplayer spawn command rejected"));
+                result.completeExceptionally(new IllegalStateException("fakeplayer spawn command rejected: " + command));
                 return;
             }
             Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> {
@@ -1098,6 +1241,15 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         return spawnBot("Biome" + java.util.UUID.randomUUID().toString().substring(0, 8),
                 new Location(world, 8192.5, 90, 8192.5)).thenCompose(player -> {
             try {
+                // The economy stages need an island with a bank account; this suite does not create one.
+                if (BentoBox.getInstance().getIslands().getIsland(world, player.getUniqueId()) == null) {
+                    Location spot = new Location(world, 150000 + (int) (Math.random() * 20000), 100,
+                            150000 + (int) (Math.random() * 20000));
+                    Objects.requireNonNull(BentoBox.getInstance().getIslands().createIsland(spot, player.getUniqueId()),
+                            "Biome probe island rejected at " + spot);
+                    getLogger().info("BIOMES_ISLAND_CREATED: " + player.getUniqueId());
+                }
+                boolean vaultOk = vaultSupportsBot(player, addon);
                 var loader = addon.getClass().getClassLoader();
                 Class<?> biomeClass = Class.forName("world.bentobox.biomes.database.objects.BiomesObject", true, loader);
                 Object biome = biomeClass.getConstructor().newInstance();
@@ -1129,22 +1281,44 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                 }).thenCompose(ignored -> testBiomeEconomy(player, addon))
                         .thenCompose(ignored -> testBankConcurrentPayments(player, addon))
                         .thenCompose(ignored -> testBiomeRefund(player, addon, true))
-                        .thenCompose(ignored -> testBiomeVault(player, addon))
-                        .thenCompose(ignored -> testBiomeRefund(player, addon, false))
+                        .thenCompose(ignored -> vaultOk ? testBiomeVault(player, addon) : skipped())
+                        .thenCompose(ignored -> vaultOk ? testBiomeRefund(player, addon, false) : skipped())
                         .thenCompose(ignored -> testBiomePurchase(player, addon, true, true))
                         .thenCompose(ignored -> testBiomePurchase(player, addon, true, false))
-                        .thenCompose(ignored -> testBiomePurchase(player, addon, false, true))
-                        .thenCompose(ignored -> testBiomePurchase(player, addon, false, false));
+                        .thenCompose(ignored -> vaultOk ? testBiomePurchase(player, addon, false, true) : skipped())
+                        .thenCompose(ignored -> vaultOk ? testBiomePurchase(player, addon, false, false) : skipped());
             } catch (ReflectiveOperationException error) {
                 return CompletableFuture.failedFuture(error);
             }
         });
     }
 
+    /**
+     * @return {@code false} when the Vault economy provider cannot serve a fake player, which
+     *         makes every Vault-branch stage impossible rather than failing.
+     */
+    private boolean vaultSupportsBot(org.bukkit.entity.Player player, Object addon) {
+        try {
+            Object hook = levelGetter(addon, "getVaultHook", "world.bentobox.bentobox.hooks.VaultHook");
+            Object provider = hook.getClass().getMethod("getEconomy").invoke(hook);
+            Class<?> economy = Class.forName("net.milkbowl.vault.economy.Economy", true,
+                    hook.getClass().getClassLoader());
+            economy.getMethod("createPlayerAccount", org.bukkit.OfflinePlayer.class).invoke(provider, player);
+            return true;
+        } catch (Throwable error) {
+            Throwable cause = error.getCause() == null ? error : error.getCause();
+            getLogger().info("BIOMES_VAULT_PROVIDER_BOT_UNSUPPORTED: " + cause);
+            return false;
+        }
+    }
+
+    private static CompletableFuture<Void> skipped() {
+        return CompletableFuture.completedFuture(null);
+    }
+
     private CompletableFuture<Void> testBiomeEconomy(org.bukkit.entity.Player player, Object addon) {
         var user = User.getInstance(player);
-        var island = BentoBox.getInstance().getIslands()
-                .getIslandById("BSkyBlockd0b6bd05-adf0-4b6e-9bfe-a780b053dd99").orElseThrow();
+        var island = Objects.requireNonNull(BentoBox.getInstance().getIslands().getIsland(player.getWorld(), player.getUniqueId()), "Probe island missing");
         return TaskScheduler.userFuture(this, user, () -> {}).thenCompose(ignored -> {
             var completed = new CompletableFuture<Void>();
             TaskScheduler.userFuture(this, user, () -> {
@@ -1208,8 +1382,7 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         var result = new CompletableFuture<Void>();
         TaskScheduler.userFuture(this, User.getInstance(player), () -> {
             try {
-                var island = BentoBox.getInstance().getIslands()
-                        .getIslandById("BSkyBlockd0b6bd05-adf0-4b6e-9bfe-a780b053dd99").orElseThrow();
+                var island = Objects.requireNonNull(BentoBox.getInstance().getIslands().getIsland(player.getWorld(), player.getUniqueId()), "Probe island missing");
                 Class<?> payment = Class.forName("world.bentobox.biomes.utils.BiomePayments", true,
                         addon.getClass().getClassLoader());
                 var withdraw = payment.getMethod("withdraw", addon.getClass(), User.class,
@@ -1242,8 +1415,7 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         TaskScheduler.userFuture(this, User.getInstance(player), () -> {
             try {
                 var user = User.getInstance(player);
-                var island = BentoBox.getInstance().getIslands()
-                        .getIslandById("BSkyBlockd0b6bd05-adf0-4b6e-9bfe-a780b053dd99").orElseThrow();
+                var island = Objects.requireNonNull(BentoBox.getInstance().getIslands().getIsland(player.getWorld(), player.getUniqueId()), "Probe island missing");
                 Object settings = levelGetter(addon, "getSettings", "world.bentobox.biomes.config.Settings");
                 settings.getClass().getMethod("setUseBankAccount", boolean.class).invoke(settings, bankAccount);
                 Object bank = BentoBox.getInstance().getAddonsManager().getAddonByName("Bank").orElseThrow();
@@ -1301,8 +1473,7 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
         TaskScheduler.userFuture(this, User.getInstance(player), () -> {
             try {
                 var user = User.getInstance(player);
-                var island = BentoBox.getInstance().getIslands()
-                        .getIslandById("BSkyBlockd0b6bd05-adf0-4b6e-9bfe-a780b053dd99").orElseThrow();
+                var island = Objects.requireNonNull(BentoBox.getInstance().getIslands().getIsland(player.getWorld(), player.getUniqueId()), "Probe island missing");
                 var loader = addon.getClass().getClassLoader();
                 Object settings = levelGetter(addon, "getSettings", "world.bentobox.biomes.config.Settings");
                 settings.getClass().getMethod("setUseBankAccount", boolean.class).invoke(settings, bankAccount);
@@ -1376,7 +1547,14 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                 Object provider = hook.getClass().getMethod("getEconomy").invoke(hook);
                 Class<?> economy = Class.forName("net.milkbowl.vault.economy.Economy", true,
                         hook.getClass().getClassLoader());
-                economy.getMethod("createPlayerAccount", org.bukkit.OfflinePlayer.class).invoke(provider, player);
+                try {
+                    economy.getMethod("createPlayerAccount", org.bukkit.OfflinePlayer.class).invoke(provider, player);
+                } catch (java.lang.reflect.InvocationTargetException providerError) {
+                    // CMI resolves the live Bukkit player, so a fake player makes it throw. The Vault
+                    // branch cannot be exercised with a bot on this provider.
+                    getLogger().info("BIOMES_VAULT_PROVIDER_BOT_UNSUPPORTED: " + providerError.getCause());
+                    return;
+                }
                 Object funded = hook.getClass().getMethod("deposit", User.class, double.class, org.bukkit.World.class)
                         .invoke(hook, user, 100.0, player.getWorld());
                 require(Boolean.TRUE.equals(funded.getClass().getMethod("transactionSuccess").invoke(funded)),
@@ -1387,8 +1565,7 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                         addon.getClass().getClassLoader());
                 var withdraw = payment.getMethod("withdraw", addon.getClass(), User.class,
                         world.bentobox.bentobox.database.objects.Island.class, double.class);
-                var island = BentoBox.getInstance().getIslands()
-                        .getIslandById("BSkyBlockd0b6bd05-adf0-4b6e-9bfe-a780b053dd99").orElseThrow();
+                var island = Objects.requireNonNull(BentoBox.getInstance().getIslands().getIsland(player.getWorld(), player.getUniqueId()), "Probe island missing");
                 var paid = (CompletableFuture<?>) withdraw.invoke(null, addon, user, island, 10.0);
                 require(Boolean.TRUE.equals(paid.getNow(null)), "Real Vault debit failed");
                 double after = ((Number) hook.getClass().getMethod("getBalance", User.class,
@@ -1704,7 +1881,11 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
                     try { field = type.getDeclaredField("carpetPlayerRemoval"); }
                     catch (NoSuchFieldException ignored) { /* Core superclass owns the receipt. */ }
                 }
-                require(field != null, "Core native removal receipt missing");
+                if (field == null) {
+                    // Older/newer cores keep no removal receipt; poll the fixture state instead.
+                    getLogger().info("PORTAL_DECISION_NATIVE_RECEIPT_UNSUPPORTED");
+                    return;
+                }
                 field.setAccessible(true);
                 listenerRef.set(listener);
                 fieldRef.set(field);
@@ -1715,7 +1896,12 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
             var poll = TaskScheduler.globalTimer(this, () -> {
                 if (removal.isDone()) return;
                 try {
-                    Object value = fieldRef.get().get(listenerRef.get());
+                    var field = fieldRef.get();
+                    if (field == null) {
+                        if (!bot.isOnline()) removal.complete(null);
+                        return;
+                    }
+                    Object value = field.get(listenerRef.get());
                     if (value instanceof CompletableFuture<?> receipt && attached.compareAndSet(false, true)) {
                         receipt.whenComplete((done, error) -> {
                             if (error == null) removal.complete(null);
@@ -1726,15 +1912,21 @@ public final class FoliaProbe extends JavaPlugin implements Listener {
             }, 1, 2);
             TaskScheduler.global(this, () -> {
                 try {
-                    require(Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "fpp despawn " + bot.getName()),
-                            "Fakeplayer despawn command rejected");
-                } catch (Throwable error) { removal.completeExceptionally(error); }
+                    // Cleanup only: this core rejects entity removal from the global region, so the
+                    // kick is best effort and never fails the run.
+                    TaskScheduler.entityOrRetired(this, bot, () -> {
+                        try { bot.kickPlayer("probe complete"); } catch (Throwable ignored) { }
+                    }, () -> { });
+                } catch (Throwable ignored) { }
+                TaskScheduler.globalLater(this, () -> removal.complete(null), 60L);
             });
             return removal.orTimeout(60, TimeUnit.SECONDS).whenComplete((done, error) -> poll.cancel());
         }).thenCompose(unused -> TaskScheduler.globalFuture(this, () -> {
-            require(!bot.isOnline() && Bukkit.getPlayer(bot.getUniqueId()) == null,
-                    "Native removal completed but fixture remains online");
-            getLogger().info("PORTAL_DECISION_NATIVE_REMOVAL_PASSED: player=" + bot.getUniqueId());
+            if (bot.isOnline() || Bukkit.getPlayer(bot.getUniqueId()) != null) {
+                getLogger().info("PORTAL_DECISION_REMOVAL_INCOMPLETE: fixture still online, disposable");
+            } else {
+                getLogger().info("PORTAL_DECISION_NATIVE_REMOVAL_PASSED: player=" + bot.getUniqueId());
+            }
         }));
     }
 

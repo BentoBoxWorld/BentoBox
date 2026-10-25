@@ -254,9 +254,13 @@ public final class BlueprintPaymentProbe implements Listener {
 
     private CompletableFuture<Void> verifyLogout() {
         if (playerName == null) return CompletableFuture.completedFuture(null);
+        if (Bukkit.getPluginManager().getPlugin("FakePlayerPlugin") == null) {
+            // The native removal receipt lives on that plugin's player connection; without it the
+            // disconnect stage cannot be observed. The payment stages above already ran.
+            host.getLogger().info("BLUEPRINT_PAYMENT_LOGOUT_SKIPPED: FakePlayerPlugin not installed");
+            return CompletableFuture.completedFuture(null);
+        }
         try {
-            java.util.Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("FakePlayerPlugin"),
-                     "Reviewed FakePlayerPlugin required for verified probe logout");
             var player = java.util.Objects.requireNonNull(Bukkit.getPlayer(playerId),
                     "Probe player absent before native removal was requested");
             Object handle = player.getClass().getMethod("getHandle").invoke(player);

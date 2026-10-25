@@ -753,16 +753,31 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         verifyNoInteractions(pim);
     }
 
+    /**
+     * Without a native destination setter the bridge has to cancel and route the entity
+     * itself; an entity gets the same island coordinates as a player.
+     */
     @Test
-    void testNonPlayerEntityIsIgnored() {
+    void testNonPlayerEntityUsesIslandRoutingWithoutNativeSetter() {
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
         Entity sheep = mock(Entity.class);
-        FakePortalEvent event = new FakePortalEvent(sheep, location, mock(World.class));
+        FakePortalEvent event = new FakePortalEvent(sheep, location, nether);
+        doAnswer(invocation -> {
+            EntityPortalEvent portal = invocation.getArgument(0);
+            assertEquals(sheep, portal.getEntity());
+            assertEquals(new Location(nether, location.getX(), location.getY(), location.getZ()), portal.getTo());
+            portal.setCancelled(true);
+            return null;
+        }).when(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
 
         FoliaPortalBridge.reroute(plugin, ptl, event, getEntity, getPortalPos, getDestination);
 
-        assertFalse(event.isCancelled());
-        verifyNoInteractions(pim);
+        assertTrue(event.isCancelled());
+        verify(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
+        verifyNoInteractions(sheep);
     }
 
     /**
