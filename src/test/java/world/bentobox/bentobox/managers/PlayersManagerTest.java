@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Assertions;
@@ -726,6 +727,23 @@ class PlayersManagerTest extends CommonTestSetup {
     void testGetPlayer() {
         Players localPlayer = pm.getPlayer(uuid);
         assertNotNull(localPlayer);
+    }
+
+    /**
+     * A player that is already in the database must be served from the load result without a
+     * second write. The Folia rewrite folded objectExists()+loadObject() into a single load;
+     * that must not turn a lookup into an insert.
+     */
+    @Test
+    void testGetPlayerKnownPlayerIsNotSavedAgain() throws Exception {
+        UUID known = UUID.randomUUID();
+        Players stored = new Players();
+        stored.setUniqueId(known.toString());
+        when(playerHandler.loadObject(known.toString())).thenReturn(stored);
+
+        assertSame(stored, pm.getPlayer(known));
+
+        verify(playerHandler, never()).saveObject(any());
     }
 
     /**

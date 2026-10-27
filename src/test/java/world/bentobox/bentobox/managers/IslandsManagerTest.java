@@ -955,9 +955,25 @@ class IslandsManagerTest extends CommonTestSetup {
     /**
      * Test method for
      * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
+     *
+     * <p>The dirty flag may only be cleared once the write actually succeeded. Clearing it when
+     * the save is merely started would drop every change made while the write was in flight.
      */
     @Test
-    void testSave() {
+    void testUpdateIslandKeepsIslandDirtyUntilTheSaveSucceeds() throws Exception {
+        CompletableFuture<Boolean> pending = new CompletableFuture<>();
+        when(h.saveObject(any())).thenReturn(pending);
+
+        Island real = islandsManager.createIsland(location, UUID.randomUUID());
+        assertNotNull(real);
+        real.markSaved();
+        real.clearChanged();
+
+        real.setChanged();
+        assertTrue(real.isChanged(), "an island must stay dirty while its save is still pending");
+
+        pending.complete(true);
+        assertFalse(real.isChanged(), "a successful save clears the dirty flag");
     }
 
     /**

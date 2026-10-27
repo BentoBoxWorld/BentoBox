@@ -118,4 +118,16 @@ class BlueprintSettlementTest {
         assertEquals(BlueprintSettlement.DebitResult.UNKNOWN, payment.debit());
         verify(withdrawal, never()).get();
     }
+
+    @Test void declinedWithdrawalIsNotRefundedAndDoesNotBlockTheNextPayment() throws Exception {
+        // Insufficient funds: Vault reports failure, no money moved.
+        when(withdrawal.get()).thenReturn(new EconomyResponse(0, 100, ResponseType.FAILURE, "insufficient funds"));
+        var payment = payment();
+
+        assertEquals(BlueprintSettlement.DebitResult.REJECTED, payment.debit());
+        assertFalse(payment.failed(true), "nothing was debited, so the caller must not be told it was refunded");
+        verify(withdrawal, never()).refund();
+        // A declined receipt is terminal: the player must be able to try again after topping up.
+        assertNotNull(payment());
+    }
 }

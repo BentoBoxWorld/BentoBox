@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -364,6 +365,30 @@ class IslandCacheTest extends CommonTestSetup {
         ic.addIsland(island);
         ic.setIslandById(island);
         assertEquals(island, ic.getIslandAt(location));
+    }
+
+    /**
+     * Test for {@link IslandCache#getIslandAt(Location)} when the island is only in the grid
+     * (added with {@code noCache}): the island must be loaded from the database instead of
+     * being reported as missing. This is the hot path used by every protection check.
+     */
+    @Test
+    void testGetIslandAtLoadsUncachedIsland() throws Exception {
+        ic.addIsland(island, true);
+
+        assertEquals(island, ic.getIslandAt(location));
+        verify(db).loadObject("uniqueId");
+    }
+
+    /**
+     * Test for {@link IslandCache#getIslandById(String)}: an island that is not cached is
+     * loaded once and then served from the cache, not re-read for every lookup.
+     */
+    @Test
+    void testGetIslandByIdLoadsOnlyOnce() throws Exception {
+        assertEquals(island, ic.getIslandById("uniqueId"));
+        assertEquals(island, ic.getIslandById("uniqueId"));
+        verify(db, times(1)).loadObject("uniqueId");
     }
 
     /**
