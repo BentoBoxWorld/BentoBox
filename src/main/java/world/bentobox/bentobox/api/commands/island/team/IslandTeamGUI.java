@@ -140,7 +140,7 @@ public class IslandTeamGUI {
 
     private PanelItem createInviteButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         if (island == null || !user.hasPermission(this.parent.getInviteCommand().getPermission())
-                || island.getRank(user) < island.getRankCommand(parent.getLabel() + " invite")) {
+                || island.getRank(user) < island.getRankCommand(parent.getInviteCommand().getUsage())) {
             return this.getBlankBorder();
         }
         PanelItemBuilder builder = new PanelItemBuilder();
@@ -407,7 +407,7 @@ public class IslandTeamGUI {
         int userRank = Objects.requireNonNull(is).getRank(user);
         // Add the tooltip for kicking
         if (user.hasPermission(parent.getKickCommand().getPermission())
-                && userRank >= is.getRankCommand(parent.getLabel() + " kick") && !user.equals(member)) {
+                && userRank >= is.getRankCommand(parent.getKickCommand().getUsage()) && !user.equals(member)) {
             actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("kick"))
                     .map(ar -> user.getTranslation(TIPS + ar.clickType().name() + NAME)
                             + " " + user.getTranslation(ar.tooltip()))
@@ -548,7 +548,7 @@ public class IslandTeamGUI {
     private void kickPlayer(User clickingUser, User target, int rank) {
         // Kick the player, or uncoop, or untrust
         if (clickingUser.hasPermission(parent.getKickCommand().getPermission()) && !target.equals(clickingUser)
-                && rank >= island.getRankCommand(parent.getLabel() + " kick")) {
+                && rank >= island.getRankCommand(parent.getKickCommand().getUsage())) {
             plugin.log("Kick: " + clickingUser.getName() + " kicked " + target.getName() + " from island at "
                     + island.getCenter());
             clickingUser.closeInventory();

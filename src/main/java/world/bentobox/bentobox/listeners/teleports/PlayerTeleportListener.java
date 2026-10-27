@@ -384,7 +384,14 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
 
         // Set the destination location
         // If portals cannot be created, then destination is the spawn point, otherwise it's the vector
-        event.setTo(this.calculateLocation(event.getFrom(), fromWorld, toWorld, environment, event.getCanCreatePortal()));
+        Location destination = this.calculateLocation(event.getFrom(), fromWorld, toWorld, environment,
+                event.getCanCreatePortal());
+        if (destination == null) {
+            // Destination world is not loaded: mirror EntityTeleportListener and leave the player be
+            event.setCancelled(true);
+            return;
+        }
+        event.setTo(destination);
 
         // Find the distance from edge of island's protection and set the search radius
         this.getIsland(event.getTo()).ifPresent(island ->

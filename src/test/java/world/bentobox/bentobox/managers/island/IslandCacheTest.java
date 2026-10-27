@@ -204,6 +204,17 @@ class IslandCacheTest extends CommonTestSetup {
     }
 
     /**
+     * Callers pass the world the player is standing in, which may be the nether or the end.
+     * {@link IslandCache#hasIsland(World, UUID)} must resolve that back to the island world.
+     */
+    @Test
+    void testHasIslandFromDimensionWorld() {
+        ic.addIsland(island);
+        World nether = mock(World.class);
+        assertTrue(ic.hasIsland(nether, owner));
+    }
+
+    /**
      * Test for {@link IslandCache#removePlayer(World, UUID)}
      */
     @Test

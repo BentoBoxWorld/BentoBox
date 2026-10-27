@@ -454,6 +454,11 @@ public class IslandCache {
      * @return true if player has an island and owns it
      */
     public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
+        // Callers pass the world the player is standing in, which may be the nether or the end
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return false;
+        }
         Set<String> ids;
         synchronized (this) {
             Set<String> cached = islandsByUUID.get(uuid);
@@ -463,7 +468,7 @@ public class IslandCache {
             ids = new HashSet<>(cached);
         }
         return ids.stream().map(this::getIslandById).filter(Objects::nonNull)
-                .filter(i -> world.equals(i.getWorld()))
+                .filter(i -> w.equals(i.getWorld()))
                 .anyMatch(i -> uuid.equals(i.getOwner()));
     }
 

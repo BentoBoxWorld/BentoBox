@@ -357,6 +357,32 @@ class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
     }
 
     /**
+     * A negative max team size means unlimited, so four existing members must not block the join.
+     * Regression: the limit was compared without checking for the negative/unlimited value.
+     */
+    @Test
+    void testAcceptTeamInviteNegativeMaxIsUnlimited() {
+        when(itc.getWorld()).thenReturn(world);
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island teamIsland = mock(Island.class);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(teamIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of(UUID.randomUUID(),
+                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(teamIsland));
+        // Unlimited
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(-1);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(Collections.emptyList());
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+
+        c.acceptTeamInvite(user, invite);
+
+        verify(im).setJoinTeam(any(Island.class), eq(uuid));
+    }
+
+    /**
      * Test that XP is reset when accepting a team invite and isDisallowTeamMemberIslands is false.
      * This ensures XP resets also work when players are allowed to keep their own islands in a team.
      */
