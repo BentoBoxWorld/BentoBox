@@ -18,7 +18,9 @@ import static org.mockito.Mockito.when;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -42,6 +44,7 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 class IslandCacheTest extends CommonTestSetup {
@@ -395,6 +398,56 @@ class IslandCacheTest extends CommonTestSetup {
         ic.addIsland(island);
         ic.setIslandById(island);
         ic.removePlayer(island, owner);
+    }
+
+    /**
+     * Test for {@link IslandCache#removePlayer(World, java.util.UUID)} when the player is the
+     * owner: the whole team loses the island, not just the owner's own index entry.
+     */
+    @Test
+    void testRemovePlayerOwnerDropsWholeTeamIndex() {
+        UUID member = UUID.randomUUID();
+        Map<UUID, Integer> members = new HashMap<>();
+        members.put(owner, RanksManager.OWNER_RANK);
+        members.put(member, RanksManager.MEMBER_RANK);
+        when(island.getMembers()).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(owner, member));
+        when(island.isOwned()).thenReturn(true);
+
+        ic.addIsland(island);
+        assertEquals(1, ic.getIslands(world, owner).size());
+        assertEquals(1, ic.getIslands(world, member).size());
+
+        Set<Island> removed = ic.removePlayer(world, owner);
+
+        assertTrue(removed.contains(island));
+        assertTrue(ic.getIslands(world, owner).isEmpty());
+        assertTrue(ic.getIslands(world, member).isEmpty(),
+                "the other members must not keep an index entry for an island that lost its owner");
+        assertFalse(ic.hasIsland(world, owner));
+    }
+
+    /**
+     * Test for {@link IslandCache#removePlayer(World, java.util.UUID)} for a plain team member:
+     * only that player is dropped, the owner keeps the island.
+     */
+    @Test
+    void testRemovePlayerMemberKeepsOwnerIndex() {
+        UUID member = UUID.randomUUID();
+        Map<UUID, Integer> members = new HashMap<>();
+        members.put(owner, RanksManager.OWNER_RANK);
+        members.put(member, RanksManager.MEMBER_RANK);
+        when(island.getMembers()).thenReturn(members);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(owner, member));
+        when(island.isOwned()).thenReturn(true);
+
+        ic.addIsland(island);
+
+        ic.removePlayer(world, member);
+
+        assertTrue(ic.getIslands(world, member).isEmpty());
+        assertEquals(1, ic.getIslands(world, owner).size(),
+                "leaving as a member must not remove the owner's island");
     }
 
     /**

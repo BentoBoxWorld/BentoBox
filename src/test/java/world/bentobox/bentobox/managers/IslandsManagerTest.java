@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -456,6 +457,34 @@ class IslandsManagerTest extends CommonTestSetup {
         islandsManager.deleteIsland(island, false, localOwner);
         assertNull(island.getOwner());
         verify(pim).callEvent(any(IslandDeleteEvent.class));
+    }
+
+    /**
+     * A listener that vetoes the DELETE event must leave the island completely untouched and
+     * report false. NewIsland relies on that answer to decide whether to orphan the old island,
+     * so a wrong answer here deletes the island the player never got a replacement for.
+     */
+    @Test
+    void testDeleteIslandVetoKeepsIslandIntact() {
+        UUID localOwner = UUID.randomUUID();
+        Island island = islandsManager.createIsland(location, localOwner);
+        assertNotNull(island);
+        UUID localMember = UUID.randomUUID();
+        island.setRank(localMember, RanksManager.MEMBER_RANK);
+
+        // From now on every fired event is cancelled, as a vetoing listener would do
+        doAnswer(inv -> {
+            org.bukkit.event.Event fired = inv.getArgument(0);
+            if (fired instanceof org.bukkit.event.Cancellable cancellable) {
+                cancellable.setCancelled(true);
+            }
+            return null;
+        }).when(pim).callEvent(any());
+
+        assertFalse(islandsManager.deleteIsland(island, true, localOwner));
+        assertEquals(localOwner, island.getOwner(), "a veto must not unset the owner");
+        assertFalse(island.getMembers().isEmpty(), "a veto must not clear the team");
+        assertFalse(island.isDeletable(), "a veto must not queue the island for the purge");
     }
 
     /**
