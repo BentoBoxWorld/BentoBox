@@ -8,14 +8,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.ChatInput;
 import world.bentobox.bentobox.util.Conversations;
 import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -111,9 +109,17 @@ public class IslandTeamInviteGUI {
         PanelItemBuilder pib = new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
                 .clickHandler((panel, user, clickType, clickSlot) -> {
                     user.closeInventory();
-                    Conversations.factory(BentoBox.getInstance(), false, false, 90)
-                            .withModality(false).withFirstPrompt(new InviteNamePrompt())
-                            .buildConversation(user.getPlayer()).begin();
+                    ChatInput.ask(user, user.getTranslation("commands.island.team.invite.gui.enter-name"), input -> {
+                        if (itic.canExecute(user, itic.getLabel(), List.of(input))
+                                && itic.execute(user, itic.getLabel(), List.of(input))) {
+                            return;
+                        }
+                        // Set the search item to what was entered
+                        searchName = input;
+                        // Return to the GUI but give a second for the error to show
+                        // TODO: return the failed input and display the options in the GUI.
+                        TaskScheduler.userLater(BentoBox.getInstance(), user, () -> build(user), 20L);
+                    });
                     return true;
                 });
         if (!this.searchName.isBlank()) {
@@ -271,29 +277,5 @@ public class IslandTeamInviteGUI {
         return new PanelItemBuilder()
                 .icon(Objects.requireNonNullElse(background.icon(), new ItemStack(Material.BARRIER)))
                 .name((Objects.requireNonNullElse(background.title(), ""))).build();
-    }
-
-    class InviteNamePrompt extends StringPrompt {
-
-        @Override
-        @NonNull
-        public String getPromptText(@NonNull ConversationContext context) {
-            return user.getTranslation("commands.island.team.invite.gui.enter-name");
-        }
-
-        @Override
-        public Prompt acceptInput(@NonNull ConversationContext context, String input) {
-            if (itic.canExecute(user, itic.getLabel(), List.of(input))
-                    && itic.execute(user, itic.getLabel(), List.of(input))) {
-                return Prompt.END_OF_CONVERSATION;
-            }
-            // Set the search item to what was entered
-            searchName = input;
-            // Return to the GUI but give a second for the error to show
-            // TODO: return the failed input and display the options in the GUI.
-            TaskScheduler.userLater(BentoBox.getInstance(), user, () -> build(user), 20L);
-            return Prompt.END_OF_CONVERSATION;
-        }
-
     }
 }

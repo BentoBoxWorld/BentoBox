@@ -4,13 +4,17 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.plugin.Plugin;
 
 /**
- * Builds chat conversations that can actually start on Folia.
+ * Builds chat conversations that can start on Folia.
  * <p>
  * {@link ConversationFactory#withTimeout(int)} adds an {@code InactivityConversationCanceller},
  * which calls {@code BukkitScheduler.scheduleSyncDelayedTask} when the conversation starts.
  * Folia's Bukkit scheduler throws {@link UnsupportedOperationException}, so on Folia the
- * timeout must be left unset. The conversation still ends as soon as the player types
- * anything, so it cannot get permanently stuck.
+ * timeout must be left unset.
+ * <p>
+ * Note that Lophine 26.3 rejects every chat message sent while a conversation is active
+ * ({@code ServerGamePacketListenerImpl.broadcastChatMessage} throws before the chat event), so a
+ * conversation started there can never receive input and leaves the player unable to chat until
+ * they relog. Do not open one on Folia: use {@link ChatInput} instead.
  */
 public final class Conversations {
 

@@ -14,6 +14,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.entity.Player;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
@@ -523,7 +524,27 @@ public class BlueprintManagementPanel {
                 .build();
     }
 
+    /**
+     * Chat conversations cannot receive input on Folia/Lophine: the server throws for every
+     * message sent while one is open, and the player loses chat until they relog. Refuse the
+     * prompt instead of trapping them.
+     *
+     * @return true if the prompt must not be started
+     */
+    private boolean chatInputUnavailable(Conversable whom) {
+        if (!TaskScheduler.isFolia()) {
+            return false;
+        }
+        if (whom instanceof Player player) {
+            User.getInstance(player).sendMessage("general.errors.chat-input-unavailable");
+        }
+        return true;
+    }
+
     public void askForName(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        if (chatInputUnavailable(whom)) {
+            return;
+        }
         Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
         .withFirstPrompt(new NamePrompt(addon, bb))
@@ -532,6 +553,9 @@ public class BlueprintManagementPanel {
     }
 
     public void askForBlueprintName(Conversable whom, GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
+        if (chatInputUnavailable(whom)) {
+            return;
+        }
         Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
         .withFirstPrompt(new NamePrompt(addon, bp, bb))
@@ -540,6 +564,9 @@ public class BlueprintManagementPanel {
     }
 
     public void askForDescription(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        if (chatInputUnavailable(whom)) {
+            return;
+        }
         Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
         .withFirstPrompt(new DescriptionPrompt(addon, bb))
@@ -570,6 +597,9 @@ public class BlueprintManagementPanel {
      * @param bb - blueprint bundle
      */
     public void askForCommands(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        if (chatInputUnavailable(whom)) {
+            return;
+        }
         Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
         .withFirstPrompt(new CommandsPrompt(addon, bb))

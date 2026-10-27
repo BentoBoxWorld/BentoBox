@@ -26,8 +26,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -35,6 +33,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.api.panels.Panel;
@@ -45,6 +46,8 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.util.ChatInput;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand;
 import world.bentobox.bentobox.api.commands.island.team.IslandTeamKickCommand;
 import world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand;
@@ -63,6 +66,7 @@ import world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerComman
 class IslandTeamInviteGUITest extends RanksManagerTestSetup {
 
     private static final int SLOT_PREVIOUS = 1;
+    private static final int SLOT_SEARCH = 4;
     private static final int SLOT_NEXT = 7;
     private static final int SLOT_FIRST_PROSPECT = 10;
     private static final int SLOT_BACK = 53;
@@ -230,10 +234,18 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
 
         gui.build(user);
 
-        // Trigger a failed invite attempt to set searchName = "al"
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
-        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
-        prompt.acceptInput(mock(ConversationContext.class), "al");
+        ArgumentCaptor<Runnable> tasks = ArgumentCaptor.forClass(Runnable.class);
+        try (MockedStatic<TaskScheduler> ignored = Mockito.mockStatic(TaskScheduler.class)) {
+            // The search button asks for a name in chat instead of opening a conversation
+            clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_SEARCH, ClickType.LEFT);
+            assertTrue(ChatInput.isWaiting(uuid));
+
+            when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
+            assertTrue(ChatInput.consume(plugin, user, "al"));
+
+            ignored.verify(() -> TaskScheduler.user(any(), any(), tasks.capture()), Mockito.atLeastOnce());
+            tasks.getAllValues().getLast().run();
+        }
 
         // Rebuild after search is set
         gui.build(user);
@@ -243,6 +255,14 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         // "alice" matches "al" → first slot has handler; "bob" does not → second slot is blank
         assertTrue(panel.getItems().get(SLOT_FIRST_PROSPECT).getClickHandler().isPresent());
         assertFalse(panel.getItems().get(SLOT_FIRST_PROSPECT + 1).getClickHandler().isPresent());
+    }
+
+    @Test
+    void testSearchButton_asksForNameInChat() {
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_SEARCH, ClickType.LEFT);
+        assertTrue(ChatInput.isWaiting(uuid), "search must ask for the name in chat");
+        ChatInput.cancel(user);
     }
 
     // -----------------------------------------------------------------------
@@ -462,56 +482,42 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     }
 
     // -----------------------------------------------------------------------
-    // InviteNamePrompt inner class
+    // Search input (chat, not a conversation)
     // -----------------------------------------------------------------------
 
     @Test
-    void testInviteNamePrompt_getPromptText_returnsTranslation() {
+    void testSearchInput_success_runsInviteWithoutRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
-        ConversationContext ctx = mock(ConversationContext.class);
-
-        assertEquals("commands.island.team.invite.gui.enter-name", prompt.getPromptText(ctx));
-    }
-
-    @Test
-    void testInviteNamePrompt_acceptInput_success_endsConversationWithoutRebuild() {
-        gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_SEARCH, ClickType.LEFT);
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
         when(itic.execute(eq(user), anyString(), anyList())).thenReturn(true);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "validPlayer");
+        try (MockedStatic<TaskScheduler> ts = Mockito.mockStatic(TaskScheduler.class)) {
+            ArgumentCaptor<Runnable> tasks = ArgumentCaptor.forClass(Runnable.class);
+            assertTrue(ChatInput.consume(plugin, user, "validPlayer"));
+            ts.verify(() -> TaskScheduler.user(any(), any(), tasks.capture()));
+            tasks.getValue().run();
+            ts.verify(() -> TaskScheduler.userLater(any(), any(), any(Runnable.class), anyLong()),
+                    never());
+        }
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(itic).canExecute(user, "invite", List.of("validPlayer"));
         verify(itic).execute(user, "invite", List.of("validPlayer"));
-        verify(sch, never()).runTaskLater(any(), any(Runnable.class), anyLong());
     }
 
     @Test
-    void testInviteNamePrompt_acceptInput_cannotExecute_schedulesRebuild() {
+    void testSearchInput_cannotExecute_schedulesRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_SEARCH, ClickType.LEFT);
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "unknownPlayer");
-
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
-        verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
-    }
-
-    @Test
-    void testInviteNamePrompt_acceptInput_executeFails_schedulesRebuild() {
-        gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
-        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
-        when(itic.execute(eq(user), anyString(), anyList())).thenReturn(false);
-
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "somePlayer");
-
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
-        verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
+        try (MockedStatic<TaskScheduler> ts = Mockito.mockStatic(TaskScheduler.class)) {
+            ArgumentCaptor<Runnable> tasks = ArgumentCaptor.forClass(Runnable.class);
+            assertTrue(ChatInput.consume(plugin, user, "unknownPlayer"));
+            ts.verify(() -> TaskScheduler.user(any(), any(), tasks.capture()));
+            tasks.getValue().run();
+            ts.verify(() -> TaskScheduler.userLater(any(), any(), any(Runnable.class), eq(20L)));
+        }
     }
 
     // -----------------------------------------------------------------------

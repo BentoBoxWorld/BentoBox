@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.conversations.ConversationFactory;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.commands.admin.conversations.NamePrompt;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Conversations;
-import world.bentobox.bentobox.util.TaskScheduler;
+import world.bentobox.bentobox.util.ChatInput;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -108,23 +105,30 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
     }
 
     /**
-     * Starts an interactive conversation to rename the home.
+     * Asks for the new home name in chat.
      * <p>
-     * Creates a conversation with:
-     * <ul>
-     *   <li>Modal dialog (blocks other chat)</li>
-     *   <li>No local echo of input</li>
-     *   <li>90-second timeout</li>
-     *   <li>Custom name prompt</li>
-     * </ul>
+     * Chat input is used instead of a Bukkit conversation: on Folia/Lophine a conversation
+     * swallows the player's chat entirely, so the name could never be entered.
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
         Island island = findIsland(user, args);
         if (island == null) return false;
-        Conversations.factory(BentoBox.getInstance(), true, false, 90)
-        .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args), getUsage()))
-        .buildConversation(user.getPlayer()).begin();
+        String oldName = String.join(" ", args);
+        ChatInput.ask(user, user.getTranslation("commands.island.renamehome.enter-new-name"), input -> {
+            if (!island.equals(getIslands().getIsland(island.getWorld(), user))) {
+                user.sendMessage("general.errors.no-island");
+                return;
+            }
+            int rank = island.getRank(user);
+            if (rank < island.getRankCommand(getUsage())) {
+                user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                        user.getTranslation(RanksManager.getInstance().getRank(rank)));
+                return;
+            }
+            user.sendMessage(island.renameHome(oldName, input) ? "general.success"
+                    : "commands.island.renamehome.already-exists");
+        });
         return true;
     }
 

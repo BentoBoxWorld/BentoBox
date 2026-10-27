@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
+import world.bentobox.bentobox.util.ChatInput;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
@@ -223,13 +223,17 @@ public class SettingsTab implements Tab, ClickHandler {
                         if (confirmation.isBlank()) {
                             confirmation = "confirm";
                         }
-                        Conversations.factory(BentoBox.getInstance(), true, false, 90)
-                                .withFirstPrompt(new ConfirmPrompt(user, plugin,
-                                        PROTECTION_PANEL + "reset-to-default.instructions",
-                                        confirmation, () -> {
-                                    island.setFlagsDefaults();
-                                    user.getPlayer().playSound(user.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
-                                })).buildConversation(user.getPlayer()).begin();
+                        final String expected = confirmation;
+                        ChatInput.ask(user, user.getTranslation(PROTECTION_PANEL + "reset-to-default.instructions"),
+                                input -> {
+                            if (!input.equals(expected)) {
+                                user.sendMessage("general.errors.command-cancelled");
+                                return;
+                            }
+                            user.sendMessage("general.success");
+                            island.setFlagsDefaults();
+                            user.getPlayer().playSound(user.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
+                        });
                         return true;
                     })
                     .build());

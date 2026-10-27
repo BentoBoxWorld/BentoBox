@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
+import world.bentobox.bentobox.util.ChatInput;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
@@ -617,20 +617,23 @@ public class SettingsPanel extends AbstractRefreshingPanel {
         if (confirmation.isBlank()) {
             confirmation = "confirm";
         }
-        Conversations.factory(BentoBox.getInstance(), true, false, 90)
-                .withFirstPrompt(new ConfirmPrompt(u, plugin, PROTECTION_PANEL + "reset-to-default.instructions",
-                        confirmation, () -> {
-                            Island target = island == null ? null
-                                    : plugin.getIslands().getIslandById(island.getUniqueId()).orElse(null);
-                            if (target == null) {
-                                // The island may have been deleted or replaced during the 90s confirmation
-                                u.sendMessage("general.errors.no-island");
-                                return;
-                            }
-                            target.setFlagsDefaults();
-                            u.getPlayer().playSound(u.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
-                        }))
-                .buildConversation(u.getPlayer()).begin();
+        final String expected = confirmation;
+        ChatInput.ask(u, u.getTranslation(PROTECTION_PANEL + "reset-to-default.instructions"), input -> {
+            if (!input.equals(expected)) {
+                u.sendMessage("general.errors.command-cancelled");
+                return;
+            }
+            u.sendMessage("general.success");
+            Island target = island == null ? null
+                    : plugin.getIslands().getIslandById(island.getUniqueId()).orElse(null);
+            if (target == null) {
+                // The island may have been deleted or replaced while the player was answering
+                u.sendMessage("general.errors.no-island");
+                return;
+            }
+            target.setFlagsDefaults();
+            u.getPlayer().playSound(u.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
+        });
     }
 
     /**
