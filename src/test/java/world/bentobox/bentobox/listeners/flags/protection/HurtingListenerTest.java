@@ -791,4 +791,32 @@ class HurtingListenerTest extends CommonTestSetup {
         verify(notifier, never()).notify(any(), any());
     }
 
+    /**
+     * Test method for {@link HurtingListener#onFireworkDamage(EntityDamageByEntityEvent)}.
+     * A firework damages several entities in one blast; each of those events must still be
+     * attributed to the shooter, not just the first one.
+     */
+    @Test
+    void testOnFireworkDamageChecksEveryTarget() {
+        HurtingListener hl = new HurtingListener();
+        Firework firework = mock(Firework.class);
+        when(firework.getEntityId()).thenReturn(102);
+        EntityShootBowEvent shoot = new EntityShootBowEvent(mockPlayer, null, null, firework, EquipmentSlot.HAND, 1F, false);
+        hl.onPlayerShootEvent(shoot);
+
+        Enderman second = mock(Enderman.class);
+        when(second.getLocation()).thenReturn(location);
+        when(second.getType()).thenReturn(EntityType.ENDERMAN);
+
+        EntityDamageByEntityEvent first = new EntityDamageByEntityEvent(firework, enderman,
+                DamageCause.ENTITY_EXPLOSION, null, 5);
+        hl.onFireworkDamage(first);
+        assertTrue(first.isCancelled());
+
+        EntityDamageByEntityEvent next = new EntityDamageByEntityEvent(firework, second,
+                DamageCause.ENTITY_EXPLOSION, null, 5);
+        hl.onFireworkDamage(next);
+        assertTrue(next.isCancelled(), "every entity hit by the same firework must still be checked");
+    }
+
 }

@@ -228,7 +228,9 @@ public class HurtingListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onFireworkDamage(final EntityDamageByEntityEvent e) {
         // Single lookup: two calls to a synchronized map can see different values on another region thread.
-        Entity shooter = firedFireworks.remove(e.getDamager());
+        // Keep the entry: one firework damages every entity in its blast and each of those events must
+        // still be attributed to the shooter. The map is weak, so it cleans itself up.
+        Entity shooter = firedFireworks.get(e.getDamager());
         if (e.getDamager() instanceof Firework && shooter instanceof Player player) {
             processDamage(e, player);
         }
