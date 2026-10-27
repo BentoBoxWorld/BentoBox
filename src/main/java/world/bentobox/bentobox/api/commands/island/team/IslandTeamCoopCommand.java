@@ -98,6 +98,10 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
+        if (island.isBanned(targetUUID)) {
+            user.sendMessage("commands.island.team.coop.banned", TextVariables.NAME, args.getFirst());
+            return false;
+        }
         // Check cooldown
         if (getSettings().getCoopCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
@@ -150,8 +154,9 @@ public class IslandTeamCoopCommand extends CompositeCommand {
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL,
                         getTopLabel());
             } else {
-                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() >= getIslands().getMaxMembers(island,
-                        RanksManager.COOP_RANK)) {
+                int maxCoops = getIslands().getMaxMembers(island, RanksManager.COOP_RANK);
+                if (maxCoops >= 0
+                        && island.getMemberSet(RanksManager.COOP_RANK, false).size() >= maxCoops) {
                     user.sendMessage("commands.island.team.coop.is-full");
                     return false;
                 }

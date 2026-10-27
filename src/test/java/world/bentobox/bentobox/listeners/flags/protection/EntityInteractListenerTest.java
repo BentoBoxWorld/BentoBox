@@ -111,6 +111,22 @@ class EntityInteractListenerTest extends CommonTestSetup {
     void testOnPlayerInteractEntityHorseNoInteraction() {
         clickedEntity = mock(Horse.class);
         when(clickedEntity.getLocation()).thenReturn(location);
+        // Empty hand: this test is about the RIDING flag, not NAME_TAG.
+        ItemStack air = mock(ItemStack.class);
+        when(air.getType()).thenReturn(Material.AIR);
+        when(inv.getItemInMainHand()).thenReturn(air);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
+        eil.onPlayerInteractEntity(e);
+        verify(notifier).notify(any(), eq("protection.protected"));
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testOnPlayerInteractEntityHorseNameTagChecksNameTagFlag() {
+        clickedEntity = mock(Horse.class);
+        when(clickedEntity.getLocation()).thenReturn(location);
+        when(island.isAllowed(any(User.class), eq(Flags.RIDING))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
         verify(notifier).notify(any(), eq("protection.protected"));

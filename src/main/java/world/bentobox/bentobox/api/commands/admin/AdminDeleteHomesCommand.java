@@ -48,8 +48,10 @@ public class AdminDeleteHomesCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
-        // Get island
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
+        // Get the island the target owns - not the one they happen to be standing on
+        Island island = getIslands().getIslands(getWorld(), targetUUID).stream()
+                .filter(i -> targetUUID.equals(i.getOwner()))
+                .findFirst().orElse(null);
         if (island == null) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;

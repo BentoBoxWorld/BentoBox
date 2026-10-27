@@ -117,6 +117,13 @@ public class AdminSetrankCommand extends CompositeCommand {
         int currentRank = island.getRank(targetUUID);
         String ownerName = getPlayers().getName(island.getOwner());
 
+        if (rankValue >= RanksManager.MEMBER_RANK
+                && island.getRank(targetUUID) < RanksManager.MEMBER_RANK
+                && !targetUUID.equals(island.getOwner())) {
+            // Keep IslandCache's UUID index in sync so /island team, leave and the concurrent
+            // island count see the new member immediately instead of after a restart.
+            getIslands().setJoinTeam(island, targetUUID);
+        }
         island.setRank(targetUUID, rankValue);
         IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(currentRank, rankValue).build();

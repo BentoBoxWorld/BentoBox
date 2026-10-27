@@ -376,7 +376,8 @@ public class BentoBox extends JavaPlugin implements Listener {
         if (housekeepingManager != null) {
             housekeepingManager.stop();
         }
-
+        // Every save and deferred deletion has run: only now is it safe to close the pools.
+        AbstractDatabaseHandler.stopAll();
     }
 
     /**

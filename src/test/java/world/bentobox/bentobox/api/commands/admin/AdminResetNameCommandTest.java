@@ -40,6 +40,8 @@ class AdminResetNameCommandTest extends CommonTestSetup {
         var otherLocation = new org.bukkit.Location(world, 1000, 64, 0);
         when(admin.getLocation()).thenReturn(firstLocation);
         when(other.getLocation()).thenReturn(otherLocation);
+        when(admin.isPlayer()).thenReturn(true);
+        when(other.isPlayer()).thenReturn(true);
         when(im.getIslandAt(firstLocation)).thenReturn(Optional.of(island));
         when(im.getIslandAt(otherLocation)).thenReturn(Optional.of(otherIsland));
         assertTrue(command.canExecute(admin, "resetname", List.of()));
@@ -51,6 +53,7 @@ class AdminResetNameCommandTest extends CommonTestSetup {
 
     @Test
     void executionRechecksIslandAfterValidation() {
+        when(admin.isPlayer()).thenReturn(true);
         when(im.getIslandAt(any())).thenReturn(Optional.of(island), Optional.empty());
         assertTrue(command.canExecute(admin, "resetname", List.of()));
         assertFalse(command.execute(admin, "resetname", List.of()));

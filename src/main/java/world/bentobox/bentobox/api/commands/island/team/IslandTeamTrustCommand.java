@@ -67,6 +67,10 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
         }
+        if (island.isBanned(targetUUID)) {
+            user.sendMessage("commands.island.team.trust.banned", TextVariables.NAME, args.getFirst());
+            return false;
+        }
         // Check cooldown
         if (getSettings().getTrustCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
@@ -107,7 +111,9 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             } else {
-                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() >= getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
+                if (getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK) >= 0
+                && island.getMemberSet(RanksManager.TRUSTED_RANK, false).size()
+                        >= getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
                     user.sendMessage("commands.island.team.trust.is-full");
                     return false;
                 }

@@ -151,10 +151,10 @@ public class DefaultPasteUtil {
                 bpBlock.getInventory().forEach(ih::setItem);
             }
         // Mob spawners
-            else if (bs instanceof CreatureSpawner spawner) {
+            else if (bs instanceof CreatureSpawner spawner && bpBlock.getCreatureSpawner() != null) {
                 setSpawner(spawner, bpBlock.getCreatureSpawner());
             }
-            else if (bs instanceof TrialSpawner ts) {
+            else if (bs instanceof TrialSpawner ts && bpBlock.getTrialSpawner() != null) {
                 TrialSpawnerConfiguration config = ts.getNormalConfiguration();
                 ts.setOminous(bpBlock.getTrialSpawner().configTrialSpawner(config));
                 if (!bs.update(true, false)) {

@@ -1,7 +1,11 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -27,13 +31,30 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
 
     protected static final String NONE_FOUND = "commands.admin.purge.none-found";
 
+    /** Console has no UUID, so it gets its own fixed key. */
+    private static final UUID CONSOLE_KEY = new UUID(0L, 0L);
+
     protected volatile boolean inPurge;
-    protected boolean toBeConfirmed;
-    protected User user;
-    protected PurgeScanResult lastScan;
+    /** A scan older than this must be re-run: the world may have changed since it was shown. */
+    private static final long SCAN_EXPIRY_MS = java.time.Duration.ofMinutes(10).toMillis();
+
+    private record PendingScan(PurgeScanResult scan, long createdAt) {
+    }
+
+    /**
+     * Scan results awaiting confirmation, keyed by the admin that ran the scan.
+     * Command instances are shared by every admin on the server, so a single
+     * field would let one admin confirm (and delete) another admin's scan.
+     */
+    private final Map<UUID, PendingScan> pendingScans = new ConcurrentHashMap<>();
 
     protected AbstractPurgeCommand(CompositeCommand parent, String label) {
         super(parent, label);
+    }
+
+    private static UUID keyOf(User user) {
+        UUID id = user.getUniqueId();
+        return id == null ? CONSOLE_KEY : id;
     }
 
     @Override
@@ -45,13 +66,40 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
         return true;
     }
 
+    /** @return true if this user has an unexpired scan waiting for confirmation */
+    protected final boolean hasPendingScan(User user) {
+        PendingScan pending = pendingScans.get(keyOf(user));
+        if (pending == null) {
+            return false;
+        }
+        if (System.currentTimeMillis() - pending.createdAt() > SCAN_EXPIRY_MS) {
+            pendingScans.remove(keyOf(user), pending);
+            return false;
+        }
+        return true;
+    }
+
+    /** Drops any scan this user has not confirmed yet. */
+    protected final void clearPendingScan(User user) {
+        pendingScans.remove(keyOf(user));
+    }
+
+    /** @return the unexpired scan for this user, removing it so it can only be confirmed once */
+    private PurgeScanResult takeScan(User user) {
+        PendingScan pending = pendingScans.remove(keyOf(user));
+        if (pending == null) {
+            return null;
+        }
+        return System.currentTimeMillis() - pending.createdAt() > SCAN_EXPIRY_MS ? null : pending.scan();
+    }
+
     /**
      * Saves all worlds, runs the scan on an async thread, stores the result
-     * in {@link #lastScan} and prompts for confirmation if non-empty.
+     * for this user and prompts for confirmation if non-empty.
      */
-    protected final void runScanAndPrompt(Supplier<PurgeScanResult> scanFn) {
+    protected final void runScanAndPrompt(User user, Supplier<PurgeScanResult> scanFn) {
         if (TaskScheduler.isFolia() && !Bukkit.isGlobalTickThread()) {
-            TaskScheduler.global(getPlugin(), () -> runScanAndPrompt(scanFn));
+            TaskScheduler.global(getPlugin(), () -> runScanAndPrompt(user, scanFn));
             return;
         }
         user.sendMessage("commands.admin.purge.scanning");
@@ -62,8 +110,11 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
         inPurge = true;
         TaskScheduler.async(getPlugin(), () -> {
             try {
-                lastScan = scanFn.get();
-                displayResultsAndPrompt(lastScan);
+                PurgeScanResult scan = scanFn.get();
+                if (scan != null && !scan.isEmpty()) {
+                    pendingScans.put(keyOf(user), new PendingScan(scan, System.currentTimeMillis()));
+                }
+                displayResultsAndPrompt(user, scan);
             } finally {
                 inPurge = false;
             }
@@ -74,18 +125,22 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
      * Confirm path: save worlds, run any pre-delete hook, then dispatch the
      * region-file deletion asynchronously.
      */
-    protected final boolean deleteEverything() {
+    protected final boolean deleteEverything(User user) {
         if (TaskScheduler.isFolia() && !Bukkit.isGlobalTickThread()) {
-            TaskScheduler.global(getPlugin(), this::deleteEverything);
+            // Take the scan now: a second /purge run before this lands would overwrite it,
+            // and the admin would then delete a scan they never saw the results of.
+            PurgeScanResult scan = takeScan(user);
+            TaskScheduler.global(getPlugin(), () -> deleteEverything(user, scan));
             return true;
         }
-        if (lastScan == null || lastScan.isEmpty()) {
+        return deleteEverything(user, takeScan(user));
+    }
+
+    private boolean deleteEverything(User user, PurgeScanResult scan) {
+        if (scan == null || scan.isEmpty()) {
             user.sendMessage(NONE_FOUND);
             return false;
         }
-        PurgeScanResult scan = lastScan;
-        lastScan = null;
-        toBeConfirmed = false;
         getPlugin().log(logPrefix() + ": saving all worlds before deleting region files...");
         Bukkit.getWorlds().forEach(World::save);
         inPurge = true;
@@ -97,17 +152,18 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
                 try {
                     ok = getPlugin().getPurgeRegionsService().delete(scan);
                 } finally {
+                    // Reset here, not on the user task: the admin may log out while the
+                    // deletion runs and Folia drops entity tasks for offline players.
+                    inPurge = false;
                     boolean deleteSucceeded = ok;
                     TaskScheduler.user(getPlugin(), user, () -> {
-                        try {
-                            if (deleteSucceeded) {
-                                user.sendMessage(successMessageKey());
-                            } else {
-                                getPlugin().log(logPrefix() + ": failed to delete one or more region files");
-                                user.sendMessage("commands.admin.purge.failed");
-                            }
-                        } finally {
-                            inPurge = false;
+                        if (deleteSucceeded) {
+                            // On Folia the delete is only registered and happens at the next start.
+                            user.sendMessage(TaskScheduler.isFolia()
+                                    ? "commands.admin.purge.deferred" : successMessageKey());
+                        } else {
+                            getPlugin().log(logPrefix() + ": failed to delete one or more region files");
+                            user.sendMessage("commands.admin.purge.failed");
                         }
                     });
                 }
@@ -119,7 +175,7 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
         }
     }
 
-    private void displayResultsAndPrompt(PurgeScanResult scan) {
+    private void displayResultsAndPrompt(User user, PurgeScanResult scan) {
         Set<Island> uniqueIslands = scan.deletableRegions().values().stream()
                 .flatMap(Set::stream)
                 .map(getPlugin().getIslands()::getIslandById)
@@ -134,8 +190,7 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
             TaskScheduler.user(getPlugin(), user, () -> {
                 user.sendMessage("commands.admin.purge.purgable-islands",
                         TextVariables.NUMBER, String.valueOf(uniqueIslands.size()));
-                sendConfirmPrompt();
-                toBeConfirmed = true;
+                sendConfirmPrompt(user);
             });
         }
     }
@@ -147,7 +202,7 @@ abstract class AbstractPurgeCommand extends CompositeCommand {
     protected abstract String successMessageKey();
 
     /** Send any subclass-specific confirmation prompt(s). Runs on the main thread. */
-    protected abstract void sendConfirmPrompt();
+    protected abstract void sendConfirmPrompt(User user);
 
     /** Hook invoked on the main thread immediately before the async delete. Default: no-op. */
     protected void beforeDelete(PurgeScanResult scan) {

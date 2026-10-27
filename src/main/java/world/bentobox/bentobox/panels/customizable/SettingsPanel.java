@@ -36,6 +36,8 @@ import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.ItemParser;
+import world.bentobox.bentobox.util.Conversations;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -615,11 +617,17 @@ public class SettingsPanel extends AbstractRefreshingPanel {
         if (confirmation.isBlank()) {
             confirmation = "confirm";
         }
-        new ConversationFactory(BentoBox.getInstance()).withModality(true).withLocalEcho(false)
-                .withTimeout(90)
+        Conversations.factory(BentoBox.getInstance(), true, false, 90)
                 .withFirstPrompt(new ConfirmPrompt(u, plugin, PROTECTION_PANEL + "reset-to-default.instructions",
                         confirmation, () -> {
-                            Objects.requireNonNull(island).setFlagsDefaults();
+                            Island target = island == null ? null
+                                    : plugin.getIslands().getIslandById(island.getUniqueId()).orElse(null);
+                            if (target == null) {
+                                // The island may have been deleted or replaced during the 90s confirmation
+                                u.sendMessage("general.errors.no-island");
+                                return;
+                            }
+                            target.setFlagsDefaults();
                             u.getPlayer().playSound(u.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
                         }))
                 .buildConversation(u.getPlayer()).begin();

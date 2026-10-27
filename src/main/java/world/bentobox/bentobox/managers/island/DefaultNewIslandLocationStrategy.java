@@ -188,8 +188,9 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
             plugin.logError("Known islands: " + result.getOrDefault(Result.ISLAND_FOUND, 0) + " max unlimited.");
             return null;
         }
-        // A free spot was found. Save it as the last location for the next search.
-        plugin.getIslands().setLast(last);
+        // A free spot was found. Advance past it before returning: island creation happens a few
+        // ticks later, and another player must not be offered the same still-unregistered spot.
+        plugin.getIslands().setLast(nextGridLocation(last.clone()));
         return last;
     }
 

@@ -53,6 +53,9 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      */
     private static final Map<UUID, DelayedCommand> toBeMonitored = new ConcurrentHashMap<>();
 
+    /** One listener is enough: every command instance shares the same static map. */
+    private static boolean listenerRegistered;
+
     /**
      * Monitors player movement and cancels delayed commands if the player moves.
      * Only checks x,y,z coordinates, not head rotation.
@@ -76,8 +79,11 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      */
     private void moved(UUID uuid) {
         // Player moved
-        toBeMonitored.get(uuid).task().cancel();
-        toBeMonitored.remove(uuid);
+        DelayedCommand delayed = toBeMonitored.remove(uuid);
+        if (delayed == null) {
+            return; // already handled by another listener or the quit handler
+        }
+        delayed.task().cancel();
         // Player has another outstanding confirmation request that will now be cancelled
         User.getInstance(uuid).notify("commands.delay.moved-so-command-cancelled");
     }
@@ -112,6 +118,21 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
     }
 
     /**
+     * Registers the move/teleport/quit listeners once for the whole class. The monitored map is
+     * static, so one listener is enough - every go/spawn/warp command instance used to add its own
+     * copy of the same {@link PlayerMoveEvent} handler.
+     *
+     * @param command the instance to register as listener
+     */
+    private static void registerOnce(DelayedTeleportCommand command) {
+        if (listenerRegistered) {
+            return;
+        }
+        listenerRegistered = true;
+        Bukkit.getPluginManager().registerEvents(command, command.getPlugin());
+    }
+
+    /**
      * Top level command
      * @param addon - addon creating the command
      * @param label - string for this command
@@ -119,7 +140,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      */
     protected DelayedTeleportCommand(Addon addon, String label, String... aliases) {
         super(addon, label, aliases);
-        Bukkit.getPluginManager().registerEvents(this, getPlugin());
+        registerOnce(this);
     }
 
     /**
@@ -130,7 +151,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      */
     protected DelayedTeleportCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
         super(addon, parent, label, aliases);
-        Bukkit.getPluginManager().registerEvents(this, getPlugin());
+        registerOnce(this);
     }
 
     /**
@@ -141,7 +162,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      */
     protected DelayedTeleportCommand(CompositeCommand parent, String label, String... aliases) {
         super(parent, label, aliases);
-        Bukkit.getPluginManager().registerEvents(this, getPlugin());
+        registerOnce(this);
     }
 
     /**

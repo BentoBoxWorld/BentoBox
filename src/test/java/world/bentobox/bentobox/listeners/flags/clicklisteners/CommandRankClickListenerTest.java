@@ -266,7 +266,7 @@ class CommandRankClickListenerTest extends RanksManagerTestSetup {
     @Test
     void testGetPanelItem() {
         assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
-        PanelItem pi = crcl.getPanelItem("test", user, world);
+        PanelItem pi = crcl.getPanelItem("test", user, world, island);
         assertEquals(Material.MAP, pi.getItem().getType());
         assertTrue(pi.getClickHandler().isPresent());
         assertEquals("protection.panel.flag-item.name-layout", pi.getName());

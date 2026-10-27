@@ -66,34 +66,35 @@ public class IslandCache {
      * Used by MultiLib to update database based on another server's operation.
      * @param newIsland island
      */
-    public synchronized void updateMultiLibIsland(@NonNull Island newIsland) {
-        // Get the old island
+    public void updateMultiLibIsland(@NonNull Island newIsland) {
+        // The database load must not run under the cache lock.
         Island oldIsland = getIslandById(newIsland.getUniqueId());
         Set<UUID> newMembers = newIsland.getMembers().keySet();
-        if (oldIsland != null) {
-            Set<UUID> oldMembers = oldIsland.getMembers().keySet();
-            // Remove any members who are not in the new island
-            for (UUID oldMember : oldMembers) {
-                if (!newMembers.contains(oldMember)) {
-                    // Member has been removed - remove island
-                    islandsByUUID.computeIfAbsent(oldMember, k -> new HashSet<>()).remove(oldIsland.getUniqueId());
+        synchronized (this) {
+            if (oldIsland != null) {
+                Set<UUID> oldMembers = oldIsland.getMembers().keySet();
+                // Remove any members who are not in the new island
+                for (UUID oldMember : oldMembers) {
+                    if (!newMembers.contains(oldMember)) {
+                        // Member has been removed - remove island
+                        islandsByUUID.computeIfAbsent(oldMember, k -> new HashSet<>()).remove(oldIsland.getUniqueId());
+                    }
                 }
             }
-        }
-        // Update the members with the new island object
-        for (UUID newMember : newMembers) {
-            Set<String> set = islandsByUUID.computeIfAbsent(newMember, k -> new HashSet<>());
-            if (oldIsland != null) {
-                set.remove(oldIsland.getUniqueId());
+            // Update the members with the new island object
+            for (UUID newMember : newMembers) {
+                Set<String> set = islandsByUUID.computeIfAbsent(newMember, k -> new HashSet<>());
+                if (oldIsland != null) {
+                    set.remove(oldIsland.getUniqueId());
+                }
+                set.add(newIsland.getUniqueId());
+                islandsByUUID.put(newMember, set);
             }
-            set.add(newIsland.getUniqueId());
-            islandsByUUID.put(newMember, set);
-        }
 
-        if (setIslandById(newIsland) == null) {
-            BentoBox.getInstance().logError("islandsById failed to update");
+            if (setIslandById(newIsland) == null) {
+                BentoBox.getInstance().logError("islandsById failed to update");
+            }
         }
-
     }
 
     /**
@@ -118,6 +119,8 @@ public class IslandCache {
         if (island.getCenter() == null || island.getWorld() == null) {
             return false;
         }
+        // Islands from the database still hold Gson's plain maps/lists.
+        island.normaliseCollections();
         if (addToGrid(island)) {
             // Insert a null into the map as a placeholder for cache
             islandsById.put(island.getUniqueId().intern(), noCache ? null : island);
@@ -172,11 +175,15 @@ public class IslandCache {
     }
 
     private void removeFromIslandsByUUID(Island island) {
+        removeIdFromIslandsByUUID(island.getUniqueId());
+    }
+
+    private void removeIdFromIslandsByUUID(String uniqueId) {
         Iterator<Map.Entry<UUID, Set<String>>> iterator = islandsByUUID.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<UUID, Set<String>> entry = iterator.next();
             Set<String> set = entry.getValue();
-            set.removeIf(island.getUniqueId()::equals);
+            set.removeIf(uniqueId::equals);
             if (set.isEmpty()) {
                 // Removes the overall entry if there is nothing left in the set
                 iterator.remove();
@@ -189,9 +196,22 @@ public class IslandCache {
      * 
      * @param uniqueId - island unique ID
      */
-    public synchronized void deleteIslandFromCache(@NonNull String uniqueId) {
-        if (islandsById.containsKey(uniqueId)) {
-            deleteIslandFromCache(getIslandById(uniqueId));
+    public void deleteIslandFromCache(@NonNull String uniqueId) {
+        Island island;
+        synchronized (this) {
+            island = islandsById.get(uniqueId);
+        }
+        if (island != null) {
+            deleteIslandFromCache(island);
+            return;
+        }
+        // The island is not cached (it expired, or the DB row is already gone). The UUID
+        // index can still point at the ID, so drop it without touching the database.
+        synchronized (this) {
+            removeIdFromIslandsByUUID(uniqueId);
+            // The row is gone, so its grid reservation would otherwise linger until restart and
+            // make the whole region permanently un-purgeable.
+            grids.values().forEach(grid -> grid.removeById(uniqueId));
         }
     }
 
@@ -223,7 +243,7 @@ public class IslandCache {
      * @return island or null if none
      */
     @Nullable
-    public synchronized Island getIsland(@NonNull World world, @NonNull UUID uuid) {
+    public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
         List<Island> islands = getIslands(world, uuid);
         if (islands.isEmpty()) {
             return null;
@@ -235,7 +255,9 @@ public class IslandCache {
         }
         // If there is no primary set, then set one - it doesn't matter which.
         Island result = islands.getFirst();
-        result.setPrimary(uuid);
+        synchronized (this) {
+            result.setPrimary(uuid);
+        }
         return result;
     }
 
@@ -246,12 +268,20 @@ public class IslandCache {
      * @param uuid  player's UUID
      * @return list of island or empty list if none sorted from oldest to youngest
      */
-    public synchronized List<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
+    public List<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
         if (w == null) {
             return new ArrayList<>();
         }
-        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().map(this::getIslandById)
+        Set<String> ids;
+        synchronized (this) {
+            Set<String> cached = islandsByUUID.get(uuid);
+            if (cached == null || cached.isEmpty()) {
+                return new ArrayList<>();
+            }
+            ids = new HashSet<>(cached);
+        }
+        return ids.stream().map(this::getIslandById)
                 .filter(Objects::nonNull).filter(island -> w.equals(island.getWorld()))
                 .sorted(Comparator.comparingLong(Island::getCreatedDate))
                 .toList();
@@ -263,16 +293,22 @@ public class IslandCache {
      * @param uuid   UUID of user
      * @param island island to make primary
      */
-    public synchronized void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
+    public void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
         if (island.getPrimaries().contains(uuid)) {
             return;
         }
-        for (Island is : getIslands(island.getWorld(), uuid)) {
-            if (is.getPrimaries().contains(uuid)) {
-                is.removePrimary(uuid);
-            }
-            if (is.equals(island)) {
-                is.setPrimary(uuid);
+        // getIslands takes the cache lock only for its snapshot and loads islands outside it.
+        List<Island> islands = getIslands(island.getWorld(), uuid);
+        // Apply the primary changes atomically: two concurrent callers must not leave the
+        // player with two primary islands.
+        synchronized (this) {
+            for (Island is : islands) {
+                if (is.getPrimaries().contains(uuid)) {
+                    is.removePrimary(uuid);
+                }
+                if (is.equals(island)) {
+                    is.setPrimary(uuid);
+                }
             }
         }
     }
@@ -285,12 +321,15 @@ public class IslandCache {
      * @param location the location
      * @return true if there is an island there
      */
-    public synchronized boolean isIslandAt(@NonNull Location location) {
+    public boolean isIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
         if (w == null) {
             return false;
         }
-        IslandGrid grid = grids.get(w);
+        IslandGrid grid;
+        synchronized (this) {
+            grid = grids.get(w);
+        }
         return grid != null && grid.isIslandAt(location.getBlockX(), location.getBlockZ());
     }
 
@@ -302,13 +341,22 @@ public class IslandCache {
      * @return Island object
      */
     @Nullable
-    public synchronized Island getIslandAt(@NonNull Location location) {
+    public Island getIslandAt(@NonNull Location location) {
         World w = Util.getWorld(location.getWorld());
         if (w == null) {
             return null;
         }
-        IslandGrid grid = grids.get(w);
-        return grid == null ? null : grid.getIslandAt(location.getBlockX(), location.getBlockZ());
+        IslandGrid grid;
+        synchronized (this) {
+            grid = grids.get(w);
+        }
+        if (grid == null) {
+            return null;
+        }
+        String id = grid.getIslandStringAt(location.getBlockX(), location.getBlockZ());
+        // Load outside the cache lock: this is the hottest path in the plugin and the
+        // database read would otherwise block every region thread.
+        return id == null ? null : getIslandById(id);
     }
 
     /**
@@ -319,10 +367,15 @@ public class IslandCache {
      * @return unmodifiable collection containing every island.
      */
     @NonNull
-    public synchronized Collection<Island> getIslands() {
+    public Collection<Island> getIslands() {
+        // Snapshot the ids so the blocking loads below run without holding the cache lock.
+        List<String> ids;
+        synchronized (this) {
+            ids = new ArrayList<>(islandsById.keySet());
+        }
         List<Island> result = new ArrayList<>();
-        for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
-            Island island = entry.getValue() != null ? entry.getValue() : loadIsland(entry.getKey());
+        for (String id : ids) {
+            Island island = getIslandById(id, false);
             if (island != null) {
                 result.add(island);
             }
@@ -340,7 +393,13 @@ public class IslandCache {
      */
     @Nullable
     public Island loadIsland(String uniqueId) {
-        return handler.objectExists(uniqueId) ? handler.loadObject(uniqueId) : null;
+        Island island = handler.objectExists(uniqueId) ? handler.loadObject(uniqueId) : null;
+        if (island != null) {
+            // Gson hands back plain maps/lists; make them safe for concurrent region-thread use.
+            island.normaliseCollections();
+            island.markSaved();
+        }
+        return island;
     }
 
     /**
@@ -365,14 +424,18 @@ public class IslandCache {
      * @since 1.7.0
      */
     @NonNull
-    public synchronized Collection<Island> getIslands(@NonNull World world) {
+    public Collection<Island> getIslands(@NonNull World world) {
         World overworld = Util.getWorld(world);
         if (overworld == null) {
             return Collections.emptyList();
         }
 
+        List<Entry<String, Island>> snapshot;
+        synchronized (this) {
+            snapshot = new ArrayList<>(islandsById.entrySet());
+        }
         List<Island> result = new ArrayList<>();
-        for (Entry<@NonNull String, @NonNull Island> entry : islandsById.entrySet()) {
+        for (Entry<@NonNull String, @NonNull Island> entry : snapshot) {
             Island island = entry.getValue() != null ? entry.getValue() : loadIsland(entry.getKey());
             if (island != null && overworld.equals(island.getWorld())) {
                 result.add(island);
@@ -390,52 +453,83 @@ public class IslandCache {
      * @param uuid  the player
      * @return true if player has an island and owns it
      */
-    public synchronized boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
-        if (!islandsByUUID.containsKey(uuid)) {
-            return false;
+    public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
+        Set<String> ids;
+        synchronized (this) {
+            Set<String> cached = islandsByUUID.get(uuid);
+            if (cached == null || cached.isEmpty()) {
+                return false;
+            }
+            ids = new HashSet<>(cached);
         }
-        return this.islandsByUUID.get(uuid).stream().map(this::getIslandById).filter(Objects::nonNull)
+        return ids.stream().map(this::getIslandById).filter(Objects::nonNull)
                 .filter(i -> world.equals(i.getWorld()))
                 .anyMatch(i -> uuid.equals(i.getOwner()));
     }
 
     /**
-     * Removes a player from the cache. If the player has an island, the island
-     * owner is removed and membership cleared.
-     * 
+     * Removes a player from the cache only: clears the membership (or ownership) and the
+     * per-UUID index entries. It deliberately does <b>not</b> run the leave-player resets
+     * (inventory, ender chest, pets, economy) or fire a {@code TeamEvent} - callers that need
+     * those must use {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer}
+     * and the event API themselves.
+     *
      * @param world world
      * @param uuid  player's UUID
      * @return set of islands player had or empty if none
      */
-    public synchronized Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
+    public Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
         World resolvedWorld = Util.getWorld(world);
-        Set<String> playerIslandIds = islandsByUUID.get(uuid);
-        Set<Island> removedIslands = new HashSet<>();
-
-        if (resolvedWorld == null || playerIslandIds == null) {
-            return Collections.emptySet(); // Return empty set if no islands map exists for the world
+        if (resolvedWorld == null) {
+            return Collections.emptySet();
+        }
+        Set<String> ids;
+        synchronized (this) {
+            Set<String> playerIslandIds = islandsByUUID.get(uuid);
+            if (playerIslandIds == null || playerIslandIds.isEmpty()) {
+                return Collections.emptySet();
+            }
+            ids = new HashSet<>(playerIslandIds);
         }
 
-        // Iterate over the player's island IDs and process each associated island
-        Iterator<String> iterator = playerIslandIds.iterator();
-        while (iterator.hasNext()) {
-            Island island = this.getIslandById(iterator.next());
-            if (island != null && resolvedWorld.equals(island.getWorld())) {
-                removedIslands.add(island);
-
+        Set<Island> removedIslands = new HashSet<>();
+        for (String id : ids) {
+            // Load outside the lock: this can be a blocking database call.
+            Island island = getIslandById(id);
+            if (island == null || !resolvedWorld.equals(island.getWorld())) {
+                continue;
+            }
+            removedIslands.add(island);
+            synchronized (this) {
                 if (uuid.equals(island.getOwner())) {
-                    // Player is the owner, so clear the whole island and clear the ownership
+                    // Player is the owner, so clear the whole island and clear the ownership.
+                    // Every other member loses their index entry too, not just the owner.
+                    for (UUID memberId : island.getMembers().keySet()) {
+                        if (memberId.equals(uuid)) {
+                            continue;
+                        }
+                        Set<String> memberIslands = islandsByUUID.get(memberId);
+                        if (memberIslands != null) {
+                            memberIslands.remove(id);
+                            if (memberIslands.isEmpty()) {
+                                islandsByUUID.remove(memberId);
+                            }
+                        }
+                    }
                     island.getMembers().clear();
                     island.setOwner(null);
                 } else {
                     island.removeMember(uuid);
                 }
-
-                // Remove this island from the set of islands associated with this player
-                iterator.remove();
+                Set<String> current = islandsByUUID.get(uuid);
+                if (current != null) {
+                    current.remove(id);
+                    if (current.isEmpty()) {
+                        islandsByUUID.remove(uuid);
+                    }
+                }
             }
         }
-
         return removedIslands;
     }
 
@@ -449,6 +543,9 @@ public class IslandCache {
         Set<String> islandSet = islandsByUUID.get(uuid);
         if (islandSet != null) {
             islandSet.remove(island.getUniqueId());
+            if (islandSet.isEmpty()) {
+                islandsByUUID.remove(uuid);
+            }
         }
         island.removeMember(uuid);
         island.removePrimary(uuid);
@@ -483,14 +580,8 @@ public class IslandCache {
      * @param newOwnerUUID new owner
      */
     public synchronized void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
-        UUID oldOwnerUUID = island.getOwner();
-        if (oldOwnerUUID != null && !oldOwnerUUID.equals(newOwnerUUID)) {
-            Set<String> oldIslands = islandsByUUID.get(oldOwnerUUID);
-            if (oldIslands != null) {
-                oldIslands.remove(island.getUniqueId());
-                if (oldIslands.isEmpty()) islandsByUUID.remove(oldOwnerUUID);
-            }
-        }
+        // The previous owner is demoted to a member, not removed, so their index entry stays:
+        // dropping it here would disagree with the index rebuilt on startup.
         island.setOwner(newOwnerUUID);
         if (newOwnerUUID != null) {
             islandsByUUID.computeIfAbsent(newOwnerUUID, k -> new HashSet<>()).add(island.getUniqueId());
@@ -521,14 +612,24 @@ public class IslandCache {
      * @since 2.4.0
      */
     @Nullable
-    public synchronized Island getIslandById(@NonNull String uniqueId, boolean cache) {
-        Island island = islandsById.get(uniqueId);
-        if (island != null) {
+    public Island getIslandById(@NonNull String uniqueId, boolean cache) {
+        // The database load must not run under the cache lock: it is a blocking call and every
+        // region thread would queue behind it.
+        synchronized (this) {
+            Island cached = islandsById.get(uniqueId);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        Island island = loadIsland(uniqueId);
+        if (island == null || !cache) {
             return island;
         }
-
-        island = loadIsland(uniqueId);
-        if (cache && island != null) {
+        synchronized (this) {
+            Island cached = islandsById.get(uniqueId);
+            if (cached != null) {
+                return cached;
+            }
             islandsById.put(uniqueId, island);
         }
         return island;
@@ -550,6 +651,7 @@ public class IslandCache {
      * @return the previous value associated with island, or null if this is a new entry
      */
     synchronized Island setIslandById(Island island) {
+        island.normaliseCollections();
         return islandsById.put(island.getUniqueId().intern(), island);
     }
 
@@ -592,8 +694,13 @@ public class IslandCache {
      * @param uniqueId player's UUID
      * @return list of islands
      */
-    public synchronized @NonNull List<Island> getIslands(UUID uniqueId) {
-        return islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()).stream().map(this::getIslandById)
+    public @NonNull List<Island> getIslands(UUID uniqueId) {
+        // Snapshot the ids under the lock; the database loads below must run outside it.
+        Set<String> ids;
+        synchronized (this) {
+            ids = new HashSet<>(islandsByUUID.getOrDefault(uniqueId, Collections.emptySet()));
+        }
+        return ids.stream().map(this::getIslandById)
                 .filter(Objects::nonNull) // Filter out null values
                 .toList();
     }

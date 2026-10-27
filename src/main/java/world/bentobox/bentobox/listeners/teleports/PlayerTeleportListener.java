@@ -253,6 +253,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             }
         }
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL
+                && TaskScheduler.isFolia()
                 && event.getFrom().getWorld() != null
                 && event.getFrom().getWorld().getEnvironment() == World.Environment.NORMAL) {
             World overWorld = Util.getWorld(event.getFrom().getWorld());
@@ -271,7 +272,11 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         }
         switch (event.getCause()) {
         case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
-        case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
+        case END_PORTAL -> this.portalProcess(event, World.Environment.THE_END);
+        // End gateways move the player within the End (outer islands). Let the server resolve
+        // them: treating THE_END -> THE_END as an exit would send the player to the overworld.
+        case END_GATEWAY -> { // Do nothing, server handles the gateway
+        }
         default -> { // Do nothing, ignore
 
         }
@@ -417,12 +422,14 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                         if (event.isCancelled()) return;
                         if (!exists) {
                             pasteNewIsland(event.getPlayer(), destination, island, environment);
-                        } else if (World.Environment.NETHER == environment) {
+                        } else if (World.Environment.NETHER == environment && this.isMakePortals(overWorld, environment)) {
                             // Vanilla reuses or creates the paired portal and puts the player in
                             // it, so follow the same order before handing over to the teleport.
                             this.ensureNetherPortal(destination, portalAxis(event.getFrom()))
-                                    .thenAccept(portal -> {
-                                        if (portal != null) {
+                                    .whenComplete((portal, error) -> {
+                                        if (error != null) {
+                                            plugin.logStacktrace(error);
+                                        } else if (portal != null && !event.isCancelled()) {
                                             event.setTo(portal);
                                         }
                                         completePortal(event);
@@ -540,6 +547,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                 entity(event.getPlayer()).
                 location(event.getTo().clone()).
                 portal().
+                successRunnable(() -> event.getPlayer().setPortalCooldown(300)).
                 build();
         });
     }

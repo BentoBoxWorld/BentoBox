@@ -75,7 +75,15 @@ public class AdminGetrankCommand extends CompositeCommand {
                 return null;
             }
 
-            return getIslands().getIsland(getWorld(), ownerUUID);
+            // The island the owner owns that the target is actually a member of. getIsland() would
+            // return whichever island the owner happens to be standing on.
+            List<Island> owned = getIslands().getIslands(getWorld(), ownerUUID).stream()
+                    .filter(i -> ownerUUID.equals(i.getOwner())).toList();
+            if (owned.isEmpty()) {
+                return getIslands().getIsland(getWorld(), ownerUUID);
+            }
+            return owned.stream().filter(i -> i.getMemberSet().contains(targetUUID)).findFirst()
+                    .orElse(owned.getFirst());
         }
     }
 

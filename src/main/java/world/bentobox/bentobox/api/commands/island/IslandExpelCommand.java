@@ -91,14 +91,6 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        // Check rank to use command
-        Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
-        if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
-                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
-            return false;
-        }
         // Get target player
         UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
@@ -110,20 +102,28 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage("commands.island.expel.cannot-expel-yourself");
             return false;
         }
-        // Or team member
-        if (island.inTeam(targetUUID)) {
-            user.sendMessage("commands.island.expel.cannot-expel-member");
-            return false;
-        }
         // Cannot expel offline players or invisible players
         User target = User.getInstance(targetUUID);
         if (!target.isOnline() || !user.getPlayer().canSee(Bukkit.getPlayer(targetUUID))) {
             user.sendMessage("general.errors.offline-player");
             return false;
         }
-        // Not on island
-        if (!getIslands().locationIsOnIsland(user.getPlayer(), target.getLocation())) {
+        // The island to act on is the one the target is standing on, not the issuer's own island.
+        Island island = getIslands().getIslandAt(target.getLocation()).orElse(null);
+        if (island == null) {
             user.sendMessage("commands.island.expel.not-on-island");
+            return false;
+        }
+        // Check rank on that island: owning island A while only being COOP on island B must not
+        // allow expelling B's visitors.
+        int rank = island.getRank(user);
+        if (rank <= RanksManager.VISITOR_RANK || rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
+            return false;
+        }
+        if (island.inTeam(targetUUID)) {
+            user.sendMessage("commands.island.expel.cannot-expel-member");
             return false;
         }
         // Cannot ban ops
@@ -159,8 +159,12 @@ public class IslandExpelCommand extends CompositeCommand {
         UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) return false;
         User target = User.getInstance(targetUUID);
-        // Finished error checking - expel player
-        Island island = getIslands().getIsland(getWorld(), user);
+        // Finished error checking - expel player from the island they are actually standing on
+        Island island = getIslands().getIslandAt(target.getLocation()).orElse(null);
+        if (island == null) {
+            user.sendMessage("commands.island.expel.not-on-island");
+            return false;
+        }
         // Fire event
         IslandBaseEvent expelEvent = IslandEvent.builder().island(island).involvedPlayer(target.getUniqueId())
                 .admin(false).reason(IslandEvent.Reason.EXPEL).build();

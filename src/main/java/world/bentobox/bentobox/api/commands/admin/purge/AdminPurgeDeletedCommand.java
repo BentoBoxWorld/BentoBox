@@ -42,12 +42,11 @@ public class AdminPurgeDeletedCommand extends AbstractPurgeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        this.user = user;
-        if (!args.isEmpty() && args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed) {
-            return deleteEverything();
+        if (!args.isEmpty() && args.getFirst().equalsIgnoreCase("confirm") && hasPendingScan(user)) {
+            return deleteEverything(user);
         }
-        toBeConfirmed = false;
-        runScanAndPrompt(() -> getPlugin().getPurgeRegionsService().scanDeleted(getWorld()));
+        clearPendingScan(user);
+        runScanAndPrompt(user, () -> getPlugin().getPurgeRegionsService().scanDeleted(getWorld()));
         return true;
     }
 
@@ -62,7 +61,7 @@ public class AdminPurgeDeletedCommand extends AbstractPurgeCommand {
     }
 
     @Override
-    protected void sendConfirmPrompt() {
+    protected void sendConfirmPrompt(User user) {
         user.sendMessage("commands.admin.purge.deleted.confirm", TextVariables.LABEL, this.getLabel());
     }
 

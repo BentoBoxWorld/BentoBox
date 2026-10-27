@@ -122,6 +122,29 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     }
 
     /**
+     * An unowned island must be blocked without asking the Level add-on about a null owner.
+     */
+    @Test
+    void testUnownedIslandIsBlockedWithoutAskingLevel() {
+        org.mockito.Mockito.clearInvocations(addonsManager);
+        Island unowned = mock(Island.class);
+        when(unowned.isOwned()).thenReturn(false);
+
+        assertTrue(service.cannotDeleteIsland(unowned, 30));
+        verify(addonsManager, never()).getAddonByName(anyString());
+    }
+
+    /** A deletable island that is purge-protected must never have its region files reaped. */
+    @Test
+    void testProtectedDeletableIslandCannotBePurged() {
+        Island protectedIsland = mock(Island.class);
+        when(protectedIsland.isDeletable()).thenReturn(true);
+        when(protectedIsland.isPurgeProtected()).thenReturn(true);
+
+        assertTrue(service.cannotDeleteIsland(protectedIsland, 30));
+    }
+
+    /**
      * A world with no island grid returns an empty age-sweep result
      * rather than crashing.
      */
@@ -263,6 +286,43 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         PurgeScanResult result = service.scanDeleted(world);
         assertFalse(result.isEmpty(), "Ghost island (no DB row) must not block the reap");
         assertEquals(1, result.deletableRegions().size());
+    }
+
+    /**
+     * Regression: the deleted sweep once built its result through a private nested record whose
+     * class file the deployed jar could not load ({@code NoClassDefFoundError:
+     * PurgeRegionsService$DeleteSweepFilter}), killing the sweep on every run. The scan result must
+     * be a complete {@link PurgeScanResult} in its own right — nothing left to load afterwards —
+     * and a straddling island must still come back through it.
+     */
+    @Test
+    void testScanDeletedReturnsSelfContainedResult() {
+        Island deletable = mock(Island.class);
+        when(deletable.getUniqueId()).thenReturn("del");
+        when(deletable.isDeletable()).thenReturn(true);
+        when(deletable.getMinProtectedX()).thenReturn(0);
+        when(deletable.getMaxProtectedX()).thenReturn(100);
+        when(deletable.getMinProtectedZ()).thenReturn(0);
+        when(deletable.getMaxProtectedZ()).thenReturn(100);
+
+        Island blocker = mock(Island.class);
+        when(blocker.getUniqueId()).thenReturn("live");
+        when(blocker.isDeletable()).thenReturn(false);
+
+        when(islandCache.getIslands(world)).thenReturn(List.of(deletable, blocker));
+        IslandGrid grid = mock(IslandGrid.class);
+        when(grid.getIslandsInBounds(anyInt(), anyInt(), anyInt(), anyInt()))
+                .thenReturn(List.of(
+                        new IslandData("del", 0, 0, 100),
+                        new IslandData("live", 200, 200, 100)));
+        when(islandCache.getIslandGrid(world)).thenReturn(grid);
+        when(im.getIslandById("del")).thenReturn(Optional.of(deletable));
+        when(im.getIslandById("live")).thenReturn(Optional.of(blocker));
+
+        PurgeScanResult result = service.scanDeleted(world);
+        assertTrue(result.isEmpty());
+        assertEquals(Set.of("del"), result.straddlingIslandIds());
+        assertEquals(1, result.stats().regionsBlockedByProtection());
     }
 
     /**
@@ -444,6 +504,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(spans.getMaxProtectedX()).thenReturn(1000);
         when(spans.getMinProtectedZ()).thenReturn(0);
         when(spans.getMaxProtectedZ()).thenReturn(100);
+        when(spans.getMinX()).thenReturn(0);
+        when(spans.getMaxX()).thenReturn(1000);
+        when(spans.getMinZ()).thenReturn(0);
+        when(spans.getMaxZ()).thenReturn(100);
         when(im.getIslandById("spans")).thenReturn(Optional.of(spans));
 
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));
@@ -481,6 +545,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(tiny.getMaxProtectedX()).thenReturn(100);
         when(tiny.getMinProtectedZ()).thenReturn(0);
         when(tiny.getMaxProtectedZ()).thenReturn(100);
+        when(tiny.getMinX()).thenReturn(0);
+        when(tiny.getMaxX()).thenReturn(100);
+        when(tiny.getMinZ()).thenReturn(0);
+        when(tiny.getMaxZ()).thenReturn(100);
         when(im.getIslandById("tiny")).thenReturn(Optional.of(tiny));
         when(im.deleteIslandId("tiny")).thenReturn(true);
 
@@ -512,6 +580,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(tiny.getMaxProtectedX()).thenReturn(100);
         when(tiny.getMinProtectedZ()).thenReturn(0);
         when(tiny.getMaxProtectedZ()).thenReturn(100);
+        when(tiny.getMinX()).thenReturn(0);
+        when(tiny.getMaxX()).thenReturn(100);
+        when(tiny.getMinZ()).thenReturn(0);
+        when(tiny.getMaxZ()).thenReturn(100);
         when(im.getIslandById("tiny")).thenReturn(Optional.of(tiny));
         when(im.deleteIslandId("tiny")).thenReturn(true);
 
@@ -522,6 +594,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(spans.getMaxProtectedX()).thenReturn(1000);
         when(spans.getMinProtectedZ()).thenReturn(0);
         when(spans.getMaxProtectedZ()).thenReturn(100);
+        when(spans.getMinX()).thenReturn(0);
+        when(spans.getMaxX()).thenReturn(1000);
+        when(spans.getMinZ()).thenReturn(0);
+        when(spans.getMaxZ()).thenReturn(100);
         when(im.getIslandById("spans")).thenReturn(Optional.of(spans));
 
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));
@@ -604,8 +680,12 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(del1.getMaxProtectedX()).thenReturn(100);
         when(del1.getMinProtectedZ()).thenReturn(0);
         when(del1.getMaxProtectedZ()).thenReturn(100);
+        when(del1.getMinX()).thenReturn(0);
         when(del1.getMaxX()).thenReturn(100);
+        when(del1.getMinZ()).thenReturn(0);
         when(del1.getMaxZ()).thenReturn(100);
+        when(del1.getMaxProtectedX()).thenReturn(100);
+        when(del1.getMaxProtectedZ()).thenReturn(100);
         when(im.getIslandById("del1")).thenReturn(Optional.of(del1));
         when(im.deleteIslandId("del1")).thenReturn(true);
 
@@ -618,7 +698,11 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(del2.getMaxProtectedZ()).thenReturn(100);
         when(del2.getMinX()).thenReturn(512);
         when(del2.getMaxX()).thenReturn(612);
+        when(del2.getMinZ()).thenReturn(0);
         when(del2.getMaxZ()).thenReturn(100);
+        when(del2.getMinProtectedX()).thenReturn(512);
+        when(del2.getMaxProtectedX()).thenReturn(612);
+        when(del2.getMaxProtectedZ()).thenReturn(100);
         when(im.getIslandById("del2")).thenReturn(Optional.of(del2));
         when(im.deleteIslandId("del2")).thenReturn(true);
 
@@ -651,7 +735,11 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Island del = mock(Island.class);
         when(del.isDeletable()).thenReturn(true);
         when(del.getUniqueId()).thenReturn("del");
+        when(del.getMaxProtectedX()).thenReturn(100);
+        when(del.getMaxProtectedZ()).thenReturn(100);
+        when(del.getMinX()).thenReturn(0);
         when(del.getMaxX()).thenReturn(100);
+        when(del.getMinZ()).thenReturn(0);
         when(del.getMaxZ()).thenReturn(100);
         when(im.getIslandById("del")).thenReturn(Optional.of(del));
         when(im.deleteIslandId("del")).thenReturn(false);
@@ -698,6 +786,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Path poi = Files.write(poiDir.resolve("r.2.-1.mca"), new byte[0]);
         Island deferred = mock(Island.class);
         when(deferred.isDeletable()).thenReturn(true);
+        when(deferred.getMinProtectedX()).thenReturn(924);
+        when(deferred.getMaxProtectedX()).thenReturn(1124);
+        when(deferred.getMinProtectedZ()).thenReturn(-612);
+        when(deferred.getMaxProtectedZ()).thenReturn(-412);
         when(deferred.getMinX()).thenReturn(924);
         when(deferred.getMaxX()).thenReturn(1124);
         when(deferred.getMinZ()).thenReturn(-612);
@@ -965,6 +1057,35 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     }
 
     @Test
+    void straddlingRegionIsNotDeletedFromDisk() throws IOException {
+        Path foreign = deferredFixture(0, true);
+        // One island covering region 0:0 only; the straddling island is elsewhere on disk.
+        Path region = Files.write(tempDir.resolve("region/r.0.0.mca"), new byte[8192]);
+        Path shared = Files.write(tempDir.resolve("region/r.1.0.mca"), new byte[8192]);
+        Files.writeString(tempDir.resolve("database/Island/del.json"), """
+                {"uniqueId":"del","world":"WORLD","center":["WORLD",100,80,100],
+                 "range":50,"deletable":true,"spawn":false,"purgeProtected":false,
+                 "owner":null,"members":{}}
+                """.replace("WORLD", world.getName()));
+        Files.delete(tempDir.resolve("database/deferred-purge.yml"));
+        assertTrue(service.defer(new PurgeScanResult(world, 0,
+                Map.of(new Pair<>(0, 0), Set.of("del"), new Pair<>(1, 0), Set.of("del")),
+                false, false, new FilterStats(0, 0, 0, 0), Set.of("del"))));
+
+        Island island = mock(Island.class);
+        when(island.isDeletable()).thenReturn(true);
+        when(im.getIslandById("del")).thenReturn(Optional.of(island));
+        PurgeRegionsService recovered = new PurgeRegionsService(plugin);
+        assertFalse(Files.exists(region), "region holding only the deleted island must be reaped");
+        assertTrue(Files.exists(shared), "shared region must survive while the straddling island stays");
+        assertEquals(1, YamlConfiguration.loadConfiguration(tempDir.resolve("database/deferred-purge.yml").toFile())
+                .getMapList("purges").size(), "straddling island must stay queued for the next startup");
+        verify(im, never()).deleteIslandId("del");
+        recovered.completeRecoveredDeletions();
+        verify(im, never()).deleteIslandId("del");
+    }
+
+    @Test
     void unsupportedDatabaseRetainsManifestAndFiles() throws IOException {
         Path region = deferredFixture(0, true);
         plugin.getSettings().setDatabaseType(DatabaseType.SQLITE);
@@ -980,9 +1101,9 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         Files.write(Files.createDirectories(tempDir.resolve("poi")).resolve("r.1.0.mca"), new byte[0]);
         Island island = mock(Island.class);
         when(island.isDeletable()).thenReturn(true);
-        when(island.getMinX()).thenReturn(0);
-        when(island.getMaxX()).thenReturn(1024);
-        when(island.getMaxZ()).thenReturn(100);
+        when(island.getMinProtectedX()).thenReturn(0);
+        when(island.getMaxProtectedX()).thenReturn(1024);
+        when(island.getMaxProtectedZ()).thenReturn(100);
         when(im.getIslandById("del")).thenReturn(Optional.of(island));
         PurgeRegionsService recovered = new PurgeRegionsService(plugin);
         assertFalse(Files.exists(region));
@@ -1105,10 +1226,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
     void flushRetainsIslandWithRegionRewrittenAfterDeletion() throws IOException {
         Island island = mock(Island.class);
         when(island.isDeletable()).thenReturn(true);
-        when(island.getMinX()).thenReturn(0);
-        when(island.getMaxX()).thenReturn(1024);
-        when(island.getMinZ()).thenReturn(0);
-        when(island.getMaxZ()).thenReturn(100);
+        when(island.getMinProtectedX()).thenReturn(0);
+        when(island.getMaxProtectedX()).thenReturn(1024);
+        when(island.getMinProtectedZ()).thenReturn(0);
+        when(island.getMaxProtectedZ()).thenReturn(100);
         when(im.getIslandById("del")).thenReturn(Optional.of(island));
         service.delete(new PurgeScanResult(world, 0, Map.of(new Pair<>(0, 0), Set.of("del")),
                 false, false, new FilterStats(0, 0, 0, 0), Set.of()));
@@ -1238,6 +1359,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(tiny.getMaxProtectedX()).thenReturn(100);
         when(tiny.getMinProtectedZ()).thenReturn(0);
         when(tiny.getMaxProtectedZ()).thenReturn(100);
+        when(tiny.getMinX()).thenReturn(0);
+        when(tiny.getMaxX()).thenReturn(100);
+        when(tiny.getMinZ()).thenReturn(0);
+        when(tiny.getMaxZ()).thenReturn(100);
         when(im.getIslandById("tiny")).thenReturn(Optional.of(tiny));
         when(im.deleteIslandId("tiny")).thenReturn(true);
 
@@ -1282,6 +1407,10 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(tiny.getMaxProtectedX()).thenReturn(100);
         when(tiny.getMinProtectedZ()).thenReturn(0);
         when(tiny.getMaxProtectedZ()).thenReturn(100);
+        when(tiny.getMinX()).thenReturn(0);
+        when(tiny.getMaxX()).thenReturn(100);
+        when(tiny.getMinZ()).thenReturn(0);
+        when(tiny.getMaxZ()).thenReturn(100);
         when(im.getIslandById("tiny")).thenReturn(Optional.of(tiny));
         when(im.deleteIslandId("tiny")).thenReturn(true);
 

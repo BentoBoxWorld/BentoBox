@@ -65,6 +65,14 @@ public class AdminUndeleteCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         Island island = findIsland(user, args);
         if (island == null) return false;
+        // An island whose regions are already gone cannot be brought back: undelete would keep a
+        // database row pointing at nothing and hold its grid slot for ever
+        if (getPlugin().getPurgeRegionsService() != null
+                && getPlugin().getPurgeRegionsService().getPendingDeletions().contains(island.getUniqueId())) {
+            user.sendMessage("general.errors.error", TextVariables.DESCRIPTION,
+                    "Island data was already purged and cannot be restored");
+            return false;
+        }
         // Make sure the island is unowned
         island.setOwner(null);
         // Clear the pending-deletion status so the region purge skips it

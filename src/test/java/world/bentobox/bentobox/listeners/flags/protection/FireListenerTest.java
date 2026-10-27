@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
@@ -268,6 +269,11 @@ class FireListenerTest extends CommonTestSetup {
         Block fireTarget = mock(Block.class);
         when(fireTarget.getLocation()).thenReturn(location);
         when(fireTarget.getType()).thenReturn(Material.AIR);
+        Block below = mock(Block.class);
+        when(below.getType()).thenReturn(Material.AIR);
+        when(fireTarget.getRelative(BlockFace.DOWN)).thenReturn(below);
+        // Every direction is open air: not a portal frame, so the flag check applies.
+        when(fireTarget.getRelative(any(BlockFace.class), Mockito.anyInt())).thenReturn(below);
 
         BlockIgniteEvent e = new BlockIgniteEvent(fireTarget, null, (Block) null);
 
@@ -310,5 +316,75 @@ class FireListenerTest extends CommonTestSetup {
         Flags.FIRE_IGNITE.setDefaultSetting(true);
         listener.onBlockIgnite(e);
         assertFalse(e.isCancelled());
+    }
+
+    @Test
+    void testObsidianFloorIsNotAPortalFrame() {
+        // Fire on an obsidian floor must still be checked against FIRE_IGNITE.
+        assertFalse(FireListener.isPortalFrame(blockAt(Map.of("0,-1,0", Material.OBSIDIAN), 0, 0, 0)));
+    }
+
+    @Test
+    void testPortalFrameIsRecognised() {
+        Map<String, Material> grid = new HashMap<>();
+        grid.put("0,-1,0", Material.OBSIDIAN);
+        grid.put("1,-1,0", Material.OBSIDIAN);
+        for (int y = 0; y < 3; y++) {
+            grid.put("-1," + y + ",0", Material.OBSIDIAN);
+            grid.put("2," + y + ",0", Material.OBSIDIAN);
+        }
+        grid.put("0,3,0", Material.OBSIDIAN);
+        grid.put("1,3,0", Material.OBSIDIAN);
+        grid.put("-1,3,0", Material.OBSIDIAN);
+        grid.put("2,3,0", Material.OBSIDIAN);
+        assertTrue(FireListener.isPortalFrame(blockAt(grid, 0, 0, 0)));
+    }
+
+    @Test
+    void testTallPortalFrameIsRecognised() {
+        // Interior height can be up to 21, not just 3.
+        Map<String, Material> grid = new HashMap<>();
+        grid.put("0,-1,0", Material.OBSIDIAN);
+        grid.put("1,-1,0", Material.OBSIDIAN);
+        for (int y = 0; y < 4; y++) {
+            grid.put("-1," + y + ",0", Material.OBSIDIAN);
+            grid.put("2," + y + ",0", Material.OBSIDIAN);
+        }
+        grid.put("0,4,0", Material.OBSIDIAN);
+        grid.put("1,4,0", Material.OBSIDIAN);
+        grid.put("-1,4,0", Material.OBSIDIAN);
+        grid.put("2,4,0", Material.OBSIDIAN);
+        assertTrue(FireListener.isPortalFrame(blockAt(grid, 0, 0, 0)));
+    }
+
+    @Test
+    void testWidePortalFrameIsRecognised() {
+        // A portal can be up to 21 wide; the fire may sit in the middle column.
+        Map<String, Material> grid = new HashMap<>();
+        for (int x = -1; x <= 3; x++) {
+            grid.put(x + ",-1,0", Material.OBSIDIAN);
+            grid.put(x + ",3,0", Material.OBSIDIAN);
+        }
+        for (int y = 0; y < 3; y++) {
+            grid.put("-1," + y + ",0", Material.OBSIDIAN);
+            grid.put("3," + y + ",0", Material.OBSIDIAN);
+        }
+        assertTrue(FireListener.isPortalFrame(blockAt(grid, 1, 0, 0)));
+    }
+
+    /** Builds a mock block whose relatives are looked up in a material grid. */
+    private static Block blockAt(Map<String, Material> grid, int x, int y, int z) {
+        Block block = mock(Block.class);
+        when(block.getType()).thenAnswer(i -> grid.getOrDefault(x + "," + y + "," + z, Material.AIR));
+        when(block.getRelative(any(BlockFace.class))).thenAnswer(i -> {
+            BlockFace face = i.getArgument(0);
+            return blockAt(grid, x + face.getModX(), y + face.getModY(), z + face.getModZ());
+        });
+        when(block.getRelative(any(BlockFace.class), Mockito.anyInt())).thenAnswer(i -> {
+            BlockFace face = i.getArgument(0);
+            int n = i.getArgument(1);
+            return blockAt(grid, x + face.getModX() * n, y + face.getModY() * n, z + face.getModZ() * n);
+        });
+        return block;
     }
 }

@@ -142,7 +142,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * Inner map: Target ID → Expiration timestamp
      * Target ID can be null for non-targeted cooldowns
      */
-    private final Map<String, Map<String, Long>> cooldowns = new HashMap<>();
+    private final Map<String, Map<String, Long>> cooldowns = new java.util.concurrent.ConcurrentHashMap<>();
 
     /**
      * Top level command
@@ -553,7 +553,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public Map<String, CompositeCommand> getSubCommands(boolean ignoreHelp) {
         if (ignoreHelp && getSubCommand("help").isPresent()) {
-            Map<String, CompositeCommand> result = subCommands;
+            // Copy: the caller must not be able to remove the real help command from the tree.
+            Map<String, CompositeCommand> result = new HashMap<>(subCommands);
             result.remove("help");
             return result;
         }
@@ -902,8 +903,10 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @since 1.5.0
      */
     public void setCooldown(String uniqueId, String targetUUID, int timeInSeconds) {
-        cooldowns.computeIfAbsent(uniqueId, k -> new HashMap<>()).put(targetUUID,
-                System.currentTimeMillis() + timeInSeconds * 1000L);
+        // ConcurrentHashMap does not accept null keys; the empty string is the "no target" key,
+        // matching checkCooldown() below.
+        cooldowns.computeIfAbsent(uniqueId, k -> new java.util.concurrent.ConcurrentHashMap<>())
+                .put(targetUUID == null ? "" : targetUUID, System.currentTimeMillis() + timeInSeconds * 1000L);
     }
 
     /**
@@ -914,8 +917,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param timeInSeconds - time in seconds to cool down
      */
     public void setCooldown(UUID uniqueId, UUID targetUUID, int timeInSeconds) {
-        cooldowns.computeIfAbsent(uniqueId.toString(), k -> new HashMap<>()).put(
-                targetUUID == null ? null : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000L);
+        cooldowns.computeIfAbsent(uniqueId.toString(), k -> new java.util.concurrent.ConcurrentHashMap<>()).put(
+                targetUUID == null ? "" : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000L);
     }
 
     /**
@@ -937,7 +940,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if cool down in place, false if not
      */
     protected boolean checkCooldown(User user, UUID targetUUID) {
-        return checkCooldown(user, user.getUniqueId().toString(), targetUUID == null ? null : targetUUID.toString());
+        return checkCooldown(user, uuidKey(user), targetUUID == null ? null : targetUUID.toString());
     }
 
     /**
@@ -948,7 +951,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @since 1.5.0
      */
     protected boolean checkCooldown(User user) {
-        return checkCooldown(user, user.getUniqueId().toString(), null);
+        return checkCooldown(user, uuidKey(user), null);
+    }
+
+    /**
+     * Cooldown owner id. The console has no UUID, and {@code toString()} on a null id throws.
+     *
+     * @param user the user
+     * @return the user's UUID as a string, or an empty string for the console
+     */
+    private static String uuidKey(User user) {
+        return user.getUniqueId() == null ? "" : user.getUniqueId().toString();
     }
 
     /**
@@ -965,14 +978,16 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")) {
             return false;
         }
-        cooldowns.putIfAbsent(uniqueId, new HashMap<>());
-        if (cooldowns.get(uniqueId).getOrDefault(targetUUID, 0L) - System.currentTimeMillis() <= 0) {
+        // Same "no target" key as setCooldown(): ConcurrentHashMap rejects null.
+        String key = targetUUID == null ? "" : targetUUID;
+        cooldowns.putIfAbsent(uniqueId, new java.util.concurrent.ConcurrentHashMap<>());
+        if (cooldowns.get(uniqueId).getOrDefault(key, 0L) - System.currentTimeMillis() <= 0) {
             // Cool down is done
-            cooldowns.get(uniqueId).remove(targetUUID);
+            cooldowns.get(uniqueId).remove(key);
             return false;
         }
-        int timeToGo = (int) ((cooldowns.get(uniqueId).getOrDefault(targetUUID, 0L) - System.currentTimeMillis())
-                / 1000);
+        int timeToGo = (int) Math.ceil((cooldowns.get(uniqueId).getOrDefault(key, 0L) - System.currentTimeMillis())
+                / 1000.0);
         user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(timeToGo));
         return true;
     }

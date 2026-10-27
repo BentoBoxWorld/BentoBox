@@ -274,7 +274,8 @@ public class IslandsManager {
         if (islandCache.addIsland(island)) {
             // Save to database and notify other servers
             saveIsland(island).thenAccept(b -> {
-                if (b.equals(Boolean.TRUE)) {
+                if (Boolean.TRUE.equals(b)) {
+                    island.markSaved();
                     MultiLib.notify("bentobox-newIsland", island.getUniqueId());
                 }
             });
@@ -286,17 +287,23 @@ public class IslandsManager {
 
     /**
      * Deletes island.
-     * 
+     *
+     * <p>A cancelled DELETE event leaves the island untouched and returns {@code false}:
+     * callers that need the island gone (a reset must not leave two islands) have to call
+     * {@link #orphanIsland(Island)} themselves.
+     *
      * @param island         island to delete, not null
      * @param removeBlocks   whether the island blocks should be removed or not
      * @param involvedPlayer - player related to the island deletion, if any
+     * @return true if the island was soft-deleted, false if a listener vetoed it
      */
-    public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
+    public boolean deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer)
                 .reason(Reason.DELETE).build();
         if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
-            return;
+            plugin.logWarning("Island deletion was cancelled by a listener: " + island.getUniqueId());
+            return false;
         }
         // Set the owner of the island to no one.
         island.setOwner(null);
@@ -310,6 +317,9 @@ public class IslandsManager {
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);
+            // A soft-deleted island must not keep its team: re-registering it (AdminRegister)
+            // would otherwise hand the old members MEMBER access to the new owner's island.
+            island.getMembers().clear();
             // Mark island as deletable - physical cleanup is handled later by
             // the region-file purge (see PurgeRegionsService / HousekeepingManager).
             island.setDeletable(true);
@@ -318,6 +328,25 @@ public class IslandsManager {
             // can update now that the island is orphaned.
             IslandEvent.builder().island(island).deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
         }
+        return true;
+    }
+
+    /**
+     * Drops the ownership of an island that could not be deleted, keeping it as an unowned,
+     * deletable island. A listener that vetoes the delete therefore defers it to the purge
+     * rather than preventing it: the player must never keep two islands.
+     *
+     * @param island the island to orphan, not null
+     */
+    public void orphanIsland(@NonNull Island island) {
+        island.setOwner(null);
+        island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
+        // Same as deleteIsland: an orphan must not keep ghosts of the old team.
+        island.getMembers().clear();
+        islandCache.removeIslandFromUUIDIndex(island);
+        island.setDeletable(true);
+        handler.saveObjectAsync(island);
+        IslandEvent.builder().island(island).deletedIslandInfo(new IslandDeletion(island)).reason(Reason.DELETED).build();
     }
 
     /**
@@ -591,7 +620,12 @@ public class IslandsManager {
      * @since 2.4.0
      */
     public Optional<Island> loadIsland(String uniqueID) {
-        return Optional.ofNullable(handler.loadObject(uniqueID));
+        Island island = handler.loadObject(uniqueID);
+        if (island != null) {
+            island.normaliseCollections();
+            island.markSaved();
+        }
+        return Optional.ofNullable(island);
     }
 
     /**
@@ -1453,6 +1487,10 @@ public class IslandsManager {
     }
 
     private void loadIsland(Island island) throws IOException {
+        // Loaded from the database: normalise Gson's plain collections and remember that the
+        // row exists so later changes do not query the database on every save.
+        island.normaliseCollections();
+        island.markSaved();
         // Check island distance and if incorrect stop BentoBox
         if (hasDistanceMismatch(island)) {
             throw new IOException("Island distance mismatch!\n" + "World '" + island.getWorld().getName()
@@ -1702,8 +1740,9 @@ public class IslandsManager {
 
     public void shutdown() {
         plugin.log("Removing coops from islands...");
-        // Remove all coop associations
-        islandCache.getCachedIslands().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
+        // Remove all coop associations. removeRank calls setChanged(), so saveAll() below
+        // actually persists the removal instead of leaving it in memory only.
+        islandCache.getCachedIslands().forEach(i -> i.removeRank(RanksManager.COOP_RANK));
         plugin.log("Saving islands - this has to be done sync so it may take a while with a lot of islands...");
         saveAll();
         plugin.log("Islands saved.");
@@ -1767,7 +1806,7 @@ public class IslandsManager {
             target.sendMessage("commands.island.team.setowner.you-are-the-owner");
             // Permission checks for range changes only work when the target is online
             if (target.isOnline()
-                    && target.getEffectivePermissions().parallelStream().map(PermissionAttachmentInfo::getPermission)
+                    && target.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission)
                             .anyMatch(p -> p.startsWith(addon.getPermissionPrefix() + "island.range"))) {
                 // Check if new owner has a different range permission than the island size
                 int range = target.getPermissionValue(addon.getPermissionPrefix() + "island.range",
@@ -1854,8 +1893,12 @@ public class IslandsManager {
     }
 
     void clearRankSync(int rank, UUID uniqueId) {
-        islandCache.getCachedIslands().forEach(
-                i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
+        // Go through Island so setChanged() runs and the removal reaches the database.
+        islandCache.getCachedIslands().forEach(i -> {
+            if (i.getRank(uniqueId) == rank) {
+                i.removeMember(uniqueId);
+            }
+        });
     }
 
     /**
@@ -1865,9 +1908,22 @@ public class IslandsManager {
      */
     public static void updateIsland(Island island) {
         // When mocking, handler can be null so this null check avoids errors
-        if (handler != null && handler.objectExists(island.getUniqueId())) {
-            island.clearChanged();
-            saveIsland(island).thenAccept(b -> MultiLib.notify("bentobox-updateIsland", island.getUniqueId()));
+        if (handler != null && (island.isSaved() || handler.objectExists(island.getUniqueId()))) {
+            // Clear the dirty flag only once the write has succeeded: if serialization fails,
+            // the periodic save must still see the island as changed and try again.
+            long savedAt = island.getUpdatedDate();
+            saveIsland(island).thenAccept(saved -> {
+                if (Boolean.TRUE.equals(saved)) {
+                    island.markSaved();
+                    island.clearChanged(savedAt);
+                }
+                MultiLib.notify("bentobox-updateIsland", island.getUniqueId());
+            }).exceptionally(error -> {
+                // Keep the island dirty so the periodic save retries it.
+                BentoBox.getInstance().logError("Could not save island " + island.getUniqueId() + ": "
+                        + error.getMessage());
+                return null;
+            });
         }
     }
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.Bukkit;
@@ -34,11 +35,11 @@ public class Players implements DataObject, MetaDataAble {
     @Expose
     private String playerName;
     @Expose
-    private Map<String, Integer> resets = new HashMap<>();
+    private Map<String, Integer> resets = new ConcurrentHashMap<>();
     @Expose
     private String locale = "";
     @Expose
-    private Map<String, Integer> deaths = new HashMap<>();
+    private Map<String, Integer> deaths = new ConcurrentHashMap<>();
     @Expose
     private Long lastLogin;
 
@@ -47,7 +48,7 @@ public class Players implements DataObject, MetaDataAble {
      * @since 1.3.0
      */
     @Expose
-    private Set<String> pendingKicks = new HashSet<>();
+    private Set<String> pendingKicks = ConcurrentHashMap.newKeySet();
 
     /**
      * Stores the display mode of the Settings Panel.
@@ -81,6 +82,45 @@ public class Players implements DataObject, MetaDataAble {
         this.playerName = Bukkit.getOfflinePlayer(uniqueId).getName();
         if (this.playerName == null) {
             this.playerName = uniqueId.toString();
+        }
+    }
+
+    /**
+     * Replaces the collections Gson filled in on load with concurrent ones, so a region
+     * thread can add a death or a reset while the save thread is serializing.
+     */
+    public void normaliseCollections() {
+        if (!(resets instanceof ConcurrentMap)) {
+            Map<String, Integer> copy = new ConcurrentHashMap<>();
+            if (resets != null) {
+                resets.forEach((key, value) -> {
+                    if (key != null && value != null) {
+                        copy.put(key, value);
+                    }
+                });
+            }
+            resets = copy;
+        }
+        if (!(deaths instanceof ConcurrentMap)) {
+            Map<String, Integer> copy = new ConcurrentHashMap<>();
+            if (deaths != null) {
+                deaths.forEach((key, value) -> {
+                    if (key != null && value != null) {
+                        copy.put(key, value);
+                    }
+                });
+            }
+            deaths = copy;
+        }
+        if (!(pendingKicks instanceof ConcurrentHashMap.KeySetView)) {
+            Set<String> copy = ConcurrentHashMap.newKeySet();
+            if (pendingKicks != null) {
+                copy.addAll(pendingKicks);
+            }
+            pendingKicks = copy;
+        }
+        if (metaData != null && !(metaData instanceof ConcurrentMap)) {
+            metaData = MetaDataAble.toConcurrentMap(metaData);
         }
     }
 
@@ -124,6 +164,7 @@ public class Players implements DataObject, MetaDataAble {
      */
     public void setResets(Map<String, Integer> resets) {
         this.resets = resets;
+        normaliseCollections();
     }
 
     /**
@@ -213,6 +254,7 @@ public class Players implements DataObject, MetaDataAble {
      */
     public void setDeaths(Map<String, Integer> deaths) {
         this.deaths = deaths;
+        normaliseCollections();
     }
 
     /**
@@ -233,6 +275,7 @@ public class Players implements DataObject, MetaDataAble {
     public void setPendingKicks(Set<String> pendingKicks)
     {
         this.pendingKicks = pendingKicks;
+        normaliseCollections();
     }
 
     /**

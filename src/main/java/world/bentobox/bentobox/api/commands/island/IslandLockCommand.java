@@ -75,26 +75,33 @@ public class IslandLockCommand extends CompositeCommand {
         // Check the current lock state: locked when flag rank > VISITOR_RANK
         boolean isLocked = island.getFlag(Flags.LOCK) > RanksManager.VISITOR_RANK;
 
-        if (isLocked) {
-            // Unlock the island
-            island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
-            user.sendMessage("commands.island.lock.unlocked");
-        } else {
-            // Lock the island
-            island.setFlag(Flags.LOCK, RanksManager.MEMBER_RANK);
-            user.sendMessage("commands.island.lock.locked");
-            // Expel all non-member visitors from the island
-            expelVisitors(island);
-        }
+        // Apply the new state before firing the event: listeners read the LOCK flag to see what
+        // the island is being changed to. A veto rolls it back.
+        int oldRank = island.getFlag(Flags.LOCK);
+        int newRank = isLocked ? RanksManager.VISITOR_RANK : RanksManager.MEMBER_RANK;
+        island.setFlag(Flags.LOCK, newRank);
 
-        // Fire lock event
-        IslandEvent.builder()
+        var lockEvent = IslandEvent.builder()
                 .island(island)
                 .involvedPlayer(user.getUniqueId())
                 .reason(IslandEvent.Reason.LOCK)
                 .admin(false)
                 .location(user.getLocation())
                 .build();
+        if (lockEvent.isCancelled()) {
+            island.setFlag(Flags.LOCK, oldRank);
+            return false;
+        }
+
+        if (isLocked) {
+            // Unlock the island
+            user.sendMessage("commands.island.lock.unlocked");
+        } else {
+            // Lock the island
+            user.sendMessage("commands.island.lock.locked");
+            // Expel all non-member visitors from the island
+            expelVisitors(island);
+        }
 
         return true;
     }

@@ -20,6 +20,7 @@ public class AdminBlueprintOriginCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.blueprint.origin");
+        setOnlyPlayer(true);
         setParametersHelp("commands.admin.blueprint.origin.parameters");
         setDescription("commands.admin.blueprint.origin.description");
     }

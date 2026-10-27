@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -83,15 +84,20 @@ public class IslandRespawnListener extends FlagListener {
                 if (respawnLocation != null) {
                     e.setRespawnLocation(respawnLocation);
                 } else if (island != null) {
-                    // Final fallback: anchor the respawn at the island center so the player
-                    // does not appear at world spawn (0,0), then immediately schedule
-                    // SafeSpotTeleport to relocate them to the nearest truly safe spot.
-                    e.setRespawnLocation(island.getProtectionCenter());
+                    // No synchronous safe check (always the case on Folia). Prefer the player's own
+                    // stored respawn point (covers /spawnpoint), then the island home/spawn point,
+                    // then the protection center, and schedule a SafeSpotTeleport from there.
+                    Location stored = Flags.BED_ANCHOR_RESPAWN.isSetForWorld(w)
+                            ? storedSpawnOnOwnIsland(getPlugin(), e, w) : null;
+                    Location home = getIslands().getHomeLocation(w, e.getPlayer().getUniqueId());
+                    Location target = stored != null ? stored
+                            : home != null ? home : island.getProtectionCenter();
+                    e.setRespawnLocation(target);
                     Player player = e.getPlayer();
                     TaskScheduler.entity(getPlugin(), player, () ->
                             new SafeSpotTeleport.Builder(getPlugin())
                                     .entity(player)
-                                    .island(island)
+                                    .location(target)
                                     .cancelIfFail(true)
                                     .build()
                     );
@@ -123,6 +129,9 @@ public class IslandRespawnListener extends FlagListener {
             return false;
         }
         Location loc = e.getRespawnLocation();
+        if (loc == null || loc.getWorld() == null) {
+            return false;
+        }
         if (!w.equals(Util.getWorld(loc.getWorld()))) {
             return false; // bed/anchor is in a different game mode or a non-game world
         }
@@ -130,6 +139,34 @@ public class IslandRespawnListener extends FlagListener {
         return plugin.getIslands().getProtectedIslandAt(loc)
                 .map(i -> i.getMemberSet().contains(e.getPlayer().getUniqueId()))
                 .orElse(false);
+    }
+
+    /**
+     * The vanilla event only carries a bed/anchor spawn. A position set with
+     * {@code /spawnpoint} (or a bed whose block is currently obstructed) is still stored on
+     * the player, so read it directly and keep it when it is on their own island.
+     *
+     * @return the stored respawn location, or null if there is none or it is elsewhere
+     */
+    private static @Nullable Location storedSpawnOnOwnIsland(BentoBox plugin, PlayerRespawnEvent e, World w) {
+        Player player = e.getPlayer();
+        Location stored;
+        try {
+            stored = player.getRespawnLocation(false);
+        } catch (RuntimeException error) {
+            // Not supported by this server implementation.
+            return null;
+        }
+        if (stored == null || stored.getWorld() == null) {
+            return null;
+        }
+        if (!w.equals(Util.getWorld(stored.getWorld()))) {
+            return null;
+        }
+        return plugin.getIslands().getProtectedIslandAt(stored)
+                .filter(i -> i.getMemberSet().contains(player.getUniqueId()))
+                .map(i -> stored)
+                .orElse(null);
     }
 
 }

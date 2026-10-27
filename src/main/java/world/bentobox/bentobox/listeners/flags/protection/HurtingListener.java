@@ -97,15 +97,18 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if ((Util.isTamableEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_TAMED_ANIMALS))
-                || (Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
-                || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
-                || (e.getCaught() instanceof AbstractVillager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
+        // Pick one flag, in the same order as onEntityDamage: a tamed animal must not also be
+        // checked against HURT_ANIMALS.
+        Flag flag = Util.isTamableEntity(e.getCaught()) ? Flags.HURT_TAMED_ANIMALS
+                : Util.isPassiveEntity(e.getCaught()) ? Flags.HURT_ANIMALS
+                : e.getCaught() instanceof AbstractVillager ? Flags.HURT_VILLAGERS
+                : Util.isHostileEntity(e.getCaught()) ? Flags.HURT_MONSTERS : null;
+        if (flag != null && !checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), flag)) {
             e.getHook().remove();
         }
 
         // Handle Armor stands that can be pulled using a rod
-        if (e.getCaught() instanceof ArmorStand && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
+        if (e.getCaught() instanceof ArmorStand && !checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
             e.getHook().remove();
         }
     }
@@ -190,8 +193,9 @@ public class HurtingListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
-        if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
-            Player attacker = thrownPotions.get(e.getDamager().getEntityId());
+        // Area effect cloud damage has the cloud as damager and a MAGIC cause
+        Player attacker = thrownPotions.get(e.getDamager().getEntityId());
+        if (attacker != null) {
             processDamage(e, attacker);
         }
     }
@@ -223,8 +227,10 @@ public class HurtingListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onFireworkDamage(final EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Firework && firedFireworks.containsKey(e.getDamager())) {
-            processDamage(e, (Player)firedFireworks.get(e.getDamager()));
+        // Single lookup: two calls to a synchronized map can see different values on another region thread.
+        Entity shooter = firedFireworks.remove(e.getDamager());
+        if (e.getDamager() instanceof Firework && shooter instanceof Player player) {
+            processDamage(e, player);
         }
     }
 

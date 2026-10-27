@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -115,8 +116,9 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         .rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
         .build();
         targetIsland.setOwner(null);
-        // Remove all island members
-        targetIsland.getMemberSet().forEach(m -> getIslands().removePlayer(targetIsland, m));
+        // Remove all island members. Iterate over every rank, not getMemberSet(): coop and
+        // trusted players would keep a stale UUID index entry otherwise.
+        new HashSet<>(targetIsland.getMembers().keySet()).forEach(m -> getIslands().removePlayer(targetIsland, m));
         // Remove all island players that reference this island
         targetIsland.getMembers().clear();
         if (user.isPlayer()) {

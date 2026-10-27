@@ -467,8 +467,12 @@ class IslandsManagerTest extends CommonTestSetup {
         verify(pim, never()).callEvent(any());
         UUID localOwner = UUID.randomUUID();
         Island island = islandsManager.createIsland(location, localOwner);
+        UUID localMember = UUID.randomUUID();
+        island.setRank(localMember, RanksManager.MEMBER_RANK);
         islandsManager.deleteIsland(island, true, localOwner);
         assertNull(island.getOwner());
+        // Re-registering this island must not hand the old team MEMBER access.
+        assertTrue(island.getMembers().isEmpty());
         verify(pim).callEvent(any(IslandDeleteEvent.class));
         var deleted = org.mockito.ArgumentCaptor.forClass(
                 world.bentobox.bentobox.api.events.island.IslandDeletedEvent.class);
@@ -511,6 +515,27 @@ class IslandsManagerTest extends CommonTestSetup {
         verify(pim).callEvent(deleted.capture());
         assertNotNull(deleted.getValue().getIsland());
         assertEquals(island.getUniqueId(), deleted.getValue().getIsland().getUniqueId());
+    }
+
+    /**
+     * A vetoed delete must not leave the island owned: the reset that calls it would
+     * otherwise hand the player a second island. {@code orphanIsland} bypasses the
+     * event so the one-island-per-player invariant always holds.
+     */
+    @Test
+    void testOrphanIslandClearsOwnerAndIndex() {
+        UUID localOwner = UUID.randomUUID();
+        Island island = islandsManager.createIsland(location, localOwner);
+        island.setRank(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        assertEquals(1, islandsManager.getNumberOfConcurrentIslands(localOwner, world));
+
+        islandsManager.orphanIsland(island);
+
+        assertNull(island.getOwner());
+        assertTrue(island.getMembers().isEmpty());
+        assertTrue(island.isDeletable());
+        assertEquals(0, islandsManager.getNumberOfConcurrentIslands(localOwner, world));
+        assertTrue(islandsManager.getIslands(world, localOwner).isEmpty());
     }
 
     /**
@@ -947,7 +972,7 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testShutdown() {
         // Mock island cache
-        Island localIsland = mock(Island.class);
+        Island localIsland = new Island();
 
         Collection<Island> collection = new ArrayList<>();
         collection.add(localIsland);
@@ -955,7 +980,6 @@ class IslandsManagerTest extends CommonTestSetup {
 
         islandsManager.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
-        when(localIsland.getMembers()).thenReturn(members);
         // -- The user is the owner of the island --
         members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
         // Add some members
@@ -974,9 +998,10 @@ class IslandsManagerTest extends CommonTestSetup {
         members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
         members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
 
+        localIsland.setRanks(members);
         islandsManager.shutdown();
 
-        assertEquals(10, members.size());
+        assertEquals(10, localIsland.getMembers().size());
         verify(islandCache).clear();
     }
 
@@ -987,7 +1012,7 @@ class IslandsManagerTest extends CommonTestSetup {
     @Test
     void testClearRank() {
         // Mock island cache
-        Island localIsland = mock(Island.class);
+        Island localIsland = new Island();
 
         Collection<Island> collection = new ArrayList<>();
         collection.add(localIsland);
@@ -995,7 +1020,6 @@ class IslandsManagerTest extends CommonTestSetup {
 
         islandsManager.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
-        when(localIsland.getMembers()).thenReturn(members);
         // -- The user is the owner of the island --
         members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
         // Add some members
@@ -1016,11 +1040,12 @@ class IslandsManagerTest extends CommonTestSetup {
         // Add specific coop
         UUID coopUUID = UUID.randomUUID();
         members.put(coopUUID, RanksManager.COOP_RANK);
+        localIsland.setRanks(members);
         // Clear a random user
         islandsManager.clearRankSync(RanksManager.COOP_RANK, UUID.randomUUID());
-        assertEquals(14, members.size());
+        assertEquals(14, localIsland.getMembers().size());
         islandsManager.clearRankSync(RanksManager.COOP_RANK, coopUUID);
-        assertEquals(13, members.size());
+        assertEquals(13, localIsland.getMembers().size());
     }
 
     /**

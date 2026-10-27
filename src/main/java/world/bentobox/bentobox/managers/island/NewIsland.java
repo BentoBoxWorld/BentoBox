@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -20,8 +21,10 @@ import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.island.IslandResetEvent;
+import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.logs.LogEntry.LogType;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
@@ -65,6 +68,10 @@ public class NewIsland {
     private boolean creationGuardHeld;
     private boolean leaveCleanupStarted;
     private boolean leaveCleanupCompleted;
+    /** Guards the member cleanup: a failed tidyUp is retried, but on-leave commands must not run twice. */
+    private boolean oldIslandMembersCleaned;
+    /** The exit event and the creation guard are released once, even if tidyUp is retried. */
+    private boolean tidyUpDone;
     private final boolean transactional;
     private final java.util.function.Function<Island, CompletableFuture<Void>> allocated;
     private PreparationAccessGuard preparationAccess;
@@ -422,7 +429,10 @@ public class NewIsland {
             CompletableFuture<Void> pasted = allocated.apply(island).thenCompose(ignored -> noPaste
                     ? CompletableFuture.completedFuture(null)
                     : plugin.getBlueprintsManager().pasteTerrainAsync(addon, island, name, true));
-            completion = pasted.thenCompose(ignored -> initializeLevelCount(plugin, island)).thenRun(this::releasePreparation).thenCompose(ignored -> {
+            // Teleport before the Level scan: the scan can take minutes on large protection
+            // ranges and the player must not be left waiting in the void for it.
+            boolean[] delivered = {false};
+            completion = pasted.thenRun(this::releasePreparation).thenCompose(ignored -> {
                 CompletableFuture<Void> prepared = new CompletableFuture<>();
                 TaskScheduler.userFuture(plugin, user, () -> {
                     // Leave commands and economy hooks cannot in general be rolled back.
@@ -463,17 +473,51 @@ public class NewIsland {
                     user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
                     applyJoinResets(user);
                 });
-            }).thenCompose(ignored -> TaskScheduler.userFuture(plugin, user, () -> tidyUp(oldIsland)));
+            }).thenCompose(ignored -> {
+                // The island is now delivered; a failure from here must not strand the player.
+                delivered[0] = true;
+                return initializeLevelCount(plugin, island).handle((ignoredLevel, levelError) -> {
+                    if (levelError != null) {
+                        // The island is usable; the level add-on can still scan it later, so this
+                        // must not roll the reset back.
+                        plugin.logError("Could not start the initial level scan for " + island.getUniqueId()
+                                + ": " + levelError.getMessage());
+                    }
+                    return null;
+                });
+            }).thenCompose(ignored -> tidyUp(oldIsland));
             completion = completion.exceptionallyCompose(error -> {
                 Throwable cause = error instanceof java.util.concurrent.CompletionException && error.getCause() != null
                         ? error.getCause() : error;
+                // The teleport may have landed before the bookkeeping failed. Never delete the
+                // island the player is standing on.
+                if (!delivered[0] && island != null && user.isOnline() && island.onIsland(user.getLocation())) {
+                    delivered[0] = true;
+                }
                 if (leaveCleanupStarted && !leaveCleanupCompleted
                         && cause instanceof java.util.concurrent.CancellationException) {
                     return discardUnfinishedIsland().thenRun(() -> island = null);
                 }
-                if (leaveCleanupStarted) return CompletableFuture.failedFuture(error);
+                if (delivered[0]) {
+                    // The player already has the new island, so the reset must finish:
+                    // keeping the old island would give the player two islands. This is not a
+                    // creation failure, so the command must not tell them it was.
+                    plugin.logError("Island " + island.getUniqueId()
+                            + " was delivered but the reset did not finish cleanly: " + cause);
+                    return tidyUp(oldIsland).handle((ignoredCleanup, cleanupError) -> {
+                        if (cleanupError != null) {
+                            plugin.logError("Old island cleanup failed after a delivered reset: "
+                                    + cleanupError.getMessage());
+                        }
+                        return null;
+                    });
+                }
+                // The player never reached the new island. Deleting the old island now would
+                // leave them standing in the void, so drop the unfinished draft instead.
                 return discardUnfinishedIsland().handle((ignored, cleanupError) -> {
                     if (cleanupError != null) error.addSuppressed(cleanupError);
+                    // The draft is gone and the player never reached the new island. beforeCommit is
+                    // a no-op now, so refunding is safe even though the receipt is COMMITTING.
                     if (cleanupError == null) throw new RolledBackException(error);
                     throw new java.util.concurrent.CompletionException(error);
                 });
@@ -515,7 +559,13 @@ public class NewIsland {
                 user.getPlayer().setVelocity(new Vector(0, 0, 0));
                 user.getPlayer().setFallDistance(0F);
                 // Teleport player after island is built, then tidy up
-                plugin.getIslands().homeTeleportAsync(island, user, true).thenRun(() -> tidyUp(oldIsland));
+                // Teleport failure must not skip the cleanup: the old island would stay owned.
+                plugin.getIslands().homeTeleportAsync(island, user, true).whenComplete((ignored, error) -> {
+                    if (error != null) {
+                        plugin.logError("Could not teleport to the new island: " + error.getMessage());
+                    }
+                    tidyUp(oldIsland);
+                });
                 return;
             } else {
                 // Notify player they can teleport to their island
@@ -586,7 +636,9 @@ public class NewIsland {
         return TaskScheduler.regionFuture(plugin, unfinished.getCenter(), () -> {
             plugin.getIslands().deleteIsland(unfinished, true, user.getUniqueId());
             if (unfinished.isOwned()) {
-                throw new IllegalStateException("Unfinished island deletion was cancelled: " + unfinished.getUniqueId());
+                // A listener vetoed the delete. Leaving it owned would give the player two islands.
+                plugin.logError("Unfinished island deletion was cancelled, orphaning " + unfinished.getUniqueId());
+                plugin.getIslands().orphanIsland(unfinished);
             }
             releasePreparation();
             CREATING.remove(user.getUniqueId());
@@ -631,13 +683,16 @@ public class NewIsland {
      */
     private Location checkReservedIsland() {
         if (plugin.getIslands().hasIsland(world, user)) {
-            // Island exists, just needs pasting
-            island = plugin.getIslands().getIsland(world, user);
-            if (island != null && island.isReserved()) {
-                Location l = island.getCenter();
+            // Island exists, just needs pasting. Do not assign it to the field unless it really
+            // is reserved: if makeNextIsland() then throws, discardUnfinishedIsland() would mark
+            // the player's existing island reserved and a later /island reset could delete it.
+            Island existing = plugin.getIslands().getIsland(world, user);
+            if (existing != null && existing.isReserved()) {
+                island = existing;
+                Location l = existing.getCenter();
                 protectPreparation(l);
                 // Clear the reservation
-                island.setReserved(false);
+                existing.setReserved(false);
                 return l;
             }
         }
@@ -681,20 +736,88 @@ public class NewIsland {
     /**
      * Cleans up after island creation.
      * Deletes old island and fires exit event.
-     * 
+     *
+     * <p>Member cleanup runs here, not before the teleport, so a failed reset leaves the old
+     * island untouched instead of a ghost island with no members.
+     *
      * @param oldIsland the old island to delete
      */
-    private void tidyUp(Island oldIsland) {
-        // Delete old island if present
-        if (oldIsland != null) {
-            plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
+    private CompletableFuture<Void> tidyUp(Island oldIsland) {
+        if (oldIsland != null && oldIsland.getOwner() != null && !user.getUniqueId().equals(oldIsland.getOwner())) {
+            plugin.logError("Old island ownership changed during reset, not deleting " + oldIsland.getUniqueId());
+            // The normal release at the end of this method is never reached on this path, and
+            // without it the player is told they are already creating an island until a restart.
+            if (creationGuardHeld) {
+                CREATING.remove(user.getUniqueId());
+            }
+            // Nobody owns it now: mark it so the purge can reclaim the slot
+            oldIsland.setDeletable(true);
+            return CompletableFuture.completedFuture(null);
         }
+        CompletableFuture<Void> members = oldIsland == null || oldIslandMembersCleaned
+                ? CompletableFuture.completedFuture(null) : clearOldIslandMembers(oldIsland);
+        oldIslandMembersCleaned = true;
+        return members.handle((ignored, error) -> {
+            if (error != null) {
+                plugin.logError("Could not clean up the old island members: " + error.getMessage());
+            }
+            return null;
+        }).thenCompose(ignored -> TaskScheduler.regionFuture(plugin,
+                oldIsland == null ? island.getCenter() : oldIsland.getCenter(), () -> {
+            if (oldIsland != null) {
+                if (oldIsland.getOwner() != null) {
+                    // Remove every member even if they are offline: the island row must not keep ghosts.
+                    for (UUID memberId : oldIsland.getMemberSet()) {
+                        plugin.getIslands().removePlayer(oldIsland, memberId);
+                    }
+                    plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
+                    if (oldIsland.isOwned()) {
+                        // A listener vetoed the delete. The reset already delivered the new island, so
+                        // keeping this one owned would leave the player with two islands.
+                        plugin.logError("Old island was not deleted after reset, orphaning " + oldIsland.getUniqueId());
+                        plugin.getIslands().orphanIsland(oldIsland);
+                    }
+                } else if (!oldIsland.isDeletable()) {
+                    // Someone else removed the owner (admin delete, kick) but left the island in
+                    // the grid. It must still be marked for the purge, or it occupies its slot forever.
+                    plugin.getIslands().orphanIsland(oldIsland);
+                }
+            }
 
-        // Fire exit event for plugins/addons
-        IslandEvent.builder().involvedPlayer(user.getUniqueId())
-        .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED).island(island)
-        .location(island.getCenter()).oldIsland(oldIsland).build();
-        if (creationGuardHeld) CREATING.remove(user.getUniqueId());
+            if (!tidyUpDone) {
+                tidyUpDone = true;
+                try {
+                    // Fire exit event for plugins/addons
+                    IslandEvent.builder().involvedPlayer(user.getUniqueId())
+                            .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED).island(island)
+                            .location(island.getCenter()).oldIsland(oldIsland).build();
+                } finally {
+                    // A listener that throws must not lock this player out of creating islands.
+                    if (creationGuardHeld) CREATING.remove(user.getUniqueId());
+                }
+            }
+        }));
+    }
 
+    /** Removes every member from the old island and tells them they were kicked. */
+    private CompletableFuture<Void> clearOldIslandMembers(Island oldIsland) {
+        UUID ownerId = oldIsland.getOwner();
+        var tasks = oldIsland.getMemberSet().stream().map(memberId -> {
+            User member = User.getInstance(memberId);
+            // Notify and clean up separately: an offline member's user task fails
+            // ("Player disconnected"), but their data still has to be reset.
+            CompletableFuture<Void> notified = TaskScheduler.userFuture(plugin, member, () -> {
+                if (!memberId.equals(ownerId)) {
+                    member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE,
+                            addon.getDescription().getName());
+                }
+            }).exceptionally(error -> null);
+            return notified
+                    .thenCompose(ignored -> plugin.getPlayers().cleanLeavingPlayerAsync(world, member, false, oldIsland))
+                    .thenRun(() -> TeamEvent.builder().island(oldIsland).reason(TeamEvent.Reason.DELETE)
+                            .involvedPlayer(memberId).build())
+                    .exceptionally(error -> null);
+        }).toArray(CompletableFuture<?>[]::new);
+        return CompletableFuture.allOf(tasks);
     }
 }

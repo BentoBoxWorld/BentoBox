@@ -91,6 +91,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Get the invite
         TeamInvite invite = itc.getInvite(user.getUniqueId());
+        if (invite == null) {
+            // Expired or removed between canExecute and here
+            user.sendMessage(INVALID_INVITE);
+            return false;
+        }
         switch (invite.getType()) {
         case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
         case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
@@ -112,8 +117,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         User inviter = User.getInstance(invite.getInviter());
         Island island = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (island != null) {
-            if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island,
-                    RanksManager.TRUSTED_RANK)) {
+            if (island.isBanned(user.getUniqueId())) {
+                user.sendMessage("commands.island.team.ban.you-are-banned");
+                return;
+            }
+            int maxTrusted = getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK);
+            if (maxTrusted >= 0
+                    && island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() >= maxTrusted) {
                 user.sendMessage("commands.island.team.trust.is-full");
                 return;
             }
@@ -141,8 +151,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         User inviter = User.getInstance(invite.getInviter());
         Island island = getIslands().getIslandById(invite.getIslandID()).orElse(null);
         if (island != null) {
-            if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island,
-                    RanksManager.COOP_RANK)) {
+            if (island.isBanned(user.getUniqueId())) {
+                user.sendMessage("commands.island.team.ban.you-are-banned");
+                return;
+            }
+            int maxCoops = getIslands().getMaxMembers(island, RanksManager.COOP_RANK);
+            if (maxCoops >= 0
+                    && island.getMemberSet(RanksManager.COOP_RANK, false).size() >= maxCoops) {
                 user.sendMessage("commands.island.team.coop.is-full");
                 return;
             }
@@ -195,7 +210,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 // Remove money inventory etc. for leaving
                 cleanPlayer(user);
                 // Delete the old islands
-                islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
+                islands.forEach(island -> {
+                    if (!getIslands().deleteIsland(island, true, user.getUniqueId())) {
+                        // A listener vetoed the delete. The player already joined the team, so the
+                        // old island must not stay owned by them: orphan it for the purge.
+                        getIslands().orphanIsland(island);
+                    }
+                });
             } else {
                 // Apply on-join resets since the player is joining a team island
                 cleanJoiningPlayer(user);

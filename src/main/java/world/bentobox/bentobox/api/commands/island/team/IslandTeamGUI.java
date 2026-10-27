@@ -287,12 +287,10 @@ public class IslandTeamGUI {
             if (clickType.equals(ClickType.SHIFT_LEFT)
                     && user.hasPermission(parent.getAcceptCommand().getPermission())) {
                 plugin.log("Invite accepted: " + user.getName() + " accepted " + type);
-                // Accept
-                switch (type) {
-                case COOP -> parent.getAcceptCommand().acceptCoopInvite(user, invite);
-                case TRUST -> parent.getAcceptCommand().acceptTrustInvite(user, invite);
-                default -> parent.getAcceptCommand().acceptTeamInvite(user, invite);
-                }
+                // Go through the command so canExecute() and the accept confirmations run again:
+                // the panel bypassed teams-disabled, rank checks, the cancellable JOIN event and
+                // the "you will lose your island" prompt when team member islands are disallowed.
+                parent.getAcceptCommand().call(user, parent.getAcceptCommand().getLabel(), List.of());
                 user.closeInventory();
             }
             if (clickType.equals(ClickType.SHIFT_RIGHT)

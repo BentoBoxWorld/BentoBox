@@ -150,22 +150,83 @@ public class PurgeRegionsService {
     /** Completes database cleanup for files recovered at startup. Call after islands load. */
     public synchronized void completeRecoveredDeletions() {
         List<Island> aged = new ArrayList<>();
-        recoveredDeletions.forEach((id, recovery) -> plugin.getIslands().getIslandById(id).ifPresent(island -> {
+        Set<String> keepInManifest = new HashSet<>();
+        recoveredDeletions.forEach((id, recovery) -> {
+            Optional<Island> opt = plugin.getIslands().getIslandById(id);
+            if (opt.isEmpty()) {
+                return; // row already gone, manifest entry can be dropped
+            }
+            Island island = opt.get();
             if (hasResidualFiles(island, recovery.dimensions())) {
                 plugin.logWarning("Recovered island row retained: residual files could not be ruled out for " + id);
+                keepInManifest.add(id);
                 return;
             }
             if (recovery.days() == 0) {
-                if (island.isDeletable()) {
+                if (island.isDeletable() && !island.isPurgeProtected() && !island.isSpawn()) {
                     pendingFiles.put(id, recovery.dimensions());
                     pendingDeletions.add(id);
+                } else {
+                    // The files are gone but the row must stay: retrying forever would never change that.
+                    logOrphanedFiles(island);
                 }
-            } else if (!cannotDeleteIsland(island, recovery.days())) {
+            } else if (!cannotDeleteIsland(island, recovery.days()) || island.isDeletable()) {
                 aged.add(island);
             }
-        }));
+        });
         if (!aged.isEmpty()) finalizeIslands(aged);
         recoveredDeletions.clear();
+        // Only now that the rows have been processed is it safe to forget the manifest entry.
+        pruneRecoveredManifest(keepInManifest);
+    }
+
+    /** Rewrites deferred-purge.yml, keeping only ids that still have files on disk. */
+    private void pruneRecoveredManifest(Set<String> keep) {
+        if (!deferredFile.isFile()) {
+            return;
+        }
+        YamlConfiguration yaml = loadDeferred();
+        if (yaml == null) {
+            return;
+        }
+        List<Map<?, ?>> remaining = new ArrayList<>();
+        for (Map<?, ?> raw : yaml.getMapList("purges")) {
+            if (!(raw.get("islands") instanceof List<?> ids)) {
+                remaining.add(raw);
+                continue;
+            }
+            List<String> kept = ids.stream().map(String::valueOf).filter(keep::contains).toList();
+            Set<String> straddling = new HashSet<>();
+            if (raw.get("straddling") instanceof List<?> retained) {
+                retained.forEach(id -> straddling.add(String.valueOf(id)));
+            }
+            // A straddling island is never deleted from the manifest: its own blocks stay until its
+            // blocker is gone, and another startup is what finds the stray file again.
+            kept = new ArrayList<>(kept);
+            for (String id : straddling) {
+                if (!kept.contains(id)) kept.add(id);
+            }
+            if (kept.isEmpty()) {
+                continue;
+            }
+            Map<String, Object> copy = new HashMap<>();
+            raw.forEach((key, value) -> copy.put(String.valueOf(key), value));
+            copy.put("islands", kept);
+            remaining.add(copy);
+        }
+        yaml.set("purges", remaining);
+        saveDeferred(yaml);
+    }
+
+    private void logOrphanedFiles(Island island) {
+        plugin.logWarning("Purge: island " + island.getUniqueId() + " keeps its database row although "
+                + "the deferred purge already removed its regions");
+    }
+
+    /** True when {@code [x1,x2]x[z1,z2]} contains a 512-block region below (x2, z2), i.e. never for an empty box. */
+    private static boolean coversRegion(long x1, long x2, long z1, long z2, Pair<Integer, Integer> region) {
+        return x1 <= (long) region.x() * 512 + 511 && x2 > (long) region.x() * 512
+                && z1 <= (long) region.z() * 512 + 511 && z2 > (long) region.z() * 512;
     }
 
     private Map<String, Object> dimensionManifest(World world) throws IOException {
@@ -203,28 +264,34 @@ public class PurgeRegionsService {
                 plugin.logWarning("Deferred purge retained: current island/file state could not be verified for " + worldFolder);
                 continue;
             }
-            boolean ok = true;
             Object regionsValue = raw.get("regions");
-            if (regionsValue instanceof List<?> regions) {
-                for (Object value : regions) {
-                    String[] parts = String.valueOf(value).split(":", 2);
-                    if (parts.length != 2 || !parts[0].matches("-?\\d+") || !parts[1].matches("-?\\d+")) { ok = false; continue; }
-                    String name = "r." + parts[0] + "." + parts[1] + ".mca";
-                    for (File dimension : deferredDimensions(raw, worldFolder)) {
-                        ok &= deleteDimensionFiles(name, new DimFolders(new File(dimension, REGION),
-                                new File(dimension, ENTITIES), new File(dimension, POI)));
-                    }
+            if (!(regionsValue instanceof List<?> regions) || regions.isEmpty()) {
+                remaining.add(raw);
+                continue;
+            }
+            // Only a region that actually holds a file for one of this entry's islands is deletable here:
+            // a region flagged by a straddling island also carries the blocks of an island that must stay.
+            Set<Pair<Integer, Integer>> owned = ownedRegions(raw, worldFolder, regions);
+            boolean ok = true;
+            for (Object value : regions) {
+                String[] parts = String.valueOf(value).split(":", 2);
+                Pair<Integer, Integer> region = new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+                if (!owned.contains(region)) continue;
+                String name = "r." + parts[0] + "." + parts[1] + ".mca";
+                for (File dimension : deferredDimensions(raw, worldFolder)) {
+                    ok &= deleteDimensionFiles(name, new DimFolders(new File(dimension, REGION),
+                            new File(dimension, ENTITIES), new File(dimension, POI)));
                 }
             }
-            if (ok) {
-                Object islands = raw.get("islands");
-                if (islands instanceof List<?> ids) ids.stream()
-                        .filter(id -> !(raw.get("straddling") instanceof List<?> retained) || !retained.contains(id))
-                         .forEach(id -> recoveredDeletions.put(String.valueOf(id), new RecoveredDeletion(
-                                 ((Number) raw.get("days")).intValue(), deferredDimensions(raw, worldFolder))));
-            } else {
-                remaining.add(raw);
-            }
+            Object islands = raw.get("islands");
+            List<?> ids = islands instanceof List<?> list ? list : List.of();
+            ids.stream()
+                    .filter(id -> !(raw.get("straddling") instanceof List<?> retained) || !retained.contains(id))
+                     .forEach(id -> recoveredDeletions.put(String.valueOf(id), new RecoveredDeletion(
+                             ((Number) raw.get("days")).intValue(), deferredDimensions(raw, worldFolder))));
+            // Retained even when nothing was deleted (straddling-only entry): completeRecoveredDeletions()
+            // drops it once it has ruled out DB rows that are still in use, and retries only otherwise.
+            remaining.add(raw);
         }
         yaml.set("purges", remaining);
         saveDeferred(yaml);
@@ -233,6 +300,44 @@ public class PurgeRegionsService {
     private List<File> deferredDimensions(Map<?, ?> raw, File worldFolder) {
         return ((List<?>) raw.get("dimensions")).stream()
                 .map(entry -> new File((String) ((Map<?, ?>) entry).get("data"))).toList();
+    }
+
+    /** Regions holding blocks of this entry's islands: the only ones whose files may be deleted. */
+    private Set<Pair<Integer, Integer>> ownedRegions(Map<?, ?> raw, File worldFolder, List<?> regions) {
+        String worldName = (String) raw.get("world-name");
+        int range = 400;
+        Set<Pair<Integer, Integer>> owned = new HashSet<>();
+        List<String> ids = ((List<?>) raw.get("islands")).stream().map(String::valueOf).toList();
+        File table = new File(plugin.getDataFolder(), "database/Island");
+        File[] files = table.listFiles((dir, name) -> name.endsWith(".json"));
+        if (files == null) return owned;
+        try {
+            for (File file : files) {
+                JsonObject row = JsonParser.parseString(Files.readString(file.toPath())).getAsJsonObject();
+                String id = row.get("uniqueId").getAsString();
+                if (!ids.contains(id)) continue;
+                String rowWorld = row.get("world").getAsString();
+                if (!worldName.equals(rowWorld)
+                        && !(Boolean.TRUE.equals(raw.get("nether")) && (worldName + "_nether").equals(rowWorld))
+                        && !(Boolean.TRUE.equals(raw.get("end")) && (worldName + "_the_end").equals(rowWorld))) continue;
+                var center = row.getAsJsonArray("center");
+                if (row.has("range") && row.getAsJsonPrimitive("range").isNumber()) range = row.get("range").getAsInt();
+                int x = (int) Math.floor(center.get(1).getAsDouble()), z = (int) Math.floor(center.get(3).getAsDouble());
+                // BentoBox protects twice the base range, i.e. 800 blocks for the default 400.
+                long protect = 2L * range;
+                for (Object value : regions) {
+                    String[] parts = String.valueOf(value).split(":", -1);
+                    if (coversRegion(x - protect, x + protect, z - protect, z + protect,
+                            new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1])))) {
+                        owned.add(new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1])));
+                    }
+                }
+            }
+        } catch (IOException | RuntimeException error) {
+            plugin.logWarning("Deferred purge validation failed: " + error.getMessage());
+            return Set.of();
+        }
+        return owned;
     }
 
     /** Read persisted rows without Bukkit deserialization: worlds must still be unloaded. */
@@ -289,10 +394,7 @@ public class PurgeRegionsService {
                 if (range <= 0 || !Double.isFinite(center.get(1).getAsDouble())
                         || !Double.isFinite(center.get(3).getAsDouble())) return false;
                 boolean overlaps = coordinates.stream().anyMatch(region ->
-                        ((long) x - range) <= (long) region.x() * 512 + 511
-                        && ((long) x + range) > (long) region.x() * 512
-                        && ((long) z - range) <= (long) region.z() * 512 + 511
-                        && ((long) z + range) > (long) region.z() * 512);
+                        coversRegion((long) x - range, (long) x + range, (long) z - range, (long) z + range, region));
                 if (!overlaps) continue;
                 if (!ids.contains(id) || !eligibleDeferredIsland(row, days)) return false;
                 found.add(id);
@@ -672,10 +774,6 @@ public class PurgeRegionsService {
     /** Groups the three folder types (region, entities, poi) for one world dimension. */
     private record DimFolders(File region, File entities, File poi) {}
 
-    /** Return type for {@link #filterForDeletedSweep}: filter statistics plus the set of
-     *  deletable island IDs whose chunks lie in a region that was blocked by a live neighbour. */
-    private record DeleteSweepFilter(FilterStats stats, Set<String> straddlingIds) {}
-
     // ---------------------------------------------------------------
     // Public API
     // ---------------------------------------------------------------
@@ -734,14 +832,13 @@ public class PurgeRegionsService {
 
         Map<Pair<Integer, Integer>, Set<String>> deletableRegions =
                 mapIslandsToRegions(new ArrayList<>(candidateRegions), islandGrid);
-        DeleteSweepFilter filterResult = filterForDeletedSweep(deletableRegions);
+        PurgeScanResult filterResult = filterForDeletedSweep(world, deletableRegions, isNether, isEnd);
         logFilterStats(filterResult.stats());
-        if (!filterResult.straddlingIds().isEmpty()) {
-            plugin.log("Purge deleted-sweep: " + filterResult.straddlingIds().size()
+        if (!filterResult.straddlingIslandIds().isEmpty()) {
+            plugin.log("Purge deleted-sweep: " + filterResult.straddlingIslandIds().size()
                     + " island(s) straddle a blocked region — DB row(s) retained for next sweep");
         }
-        return new PurgeScanResult(world, 0, deletableRegions, isNether, isEnd,
-                filterResult.stats(), filterResult.straddlingIds());
+        return filterResult;
     }
 
     /**
@@ -803,21 +900,22 @@ public class PurgeRegionsService {
             return defer(scan);
         }
         plugin.log("Now deleting region files for world " + scan.world().getName());
-        boolean ok = deleteRegionFiles(scan);
-        if (!ok) {
-            plugin.logError("Not all region files could be deleted");
-            // A partial disk cleanup must never remove the island row or add it
-            // to the shutdown queue. Retaining the row keeps the next sweep
-            // able to find and retry the remaining region file.
-            return false;
+        Set<Pair<Integer, Integer>> failedRegions = deleteRegionFiles(scan);
+        if (!failedRegions.isEmpty()) {
+            plugin.logError("Not all region files could be deleted: " + failedRegions);
+            // Islands whose files could not all be removed keep their DB row so a later sweep can
+            // retry. Islands whose files are gone are still finalized below — otherwise their
+            // rows would be orphaned forever because no .mca is left to find them again.
         }
+
+        // Which regions belong to which island in this scan.
+        Map<String, Set<Pair<Integer, Integer>>> islandRegions = new HashMap<>();
+        scan.deletableRegions().forEach((coords, ids) -> ids.forEach(id ->
+                islandRegions.computeIfAbsent(id, k -> new HashSet<>()).add(coords)));
 
         // Collect unique island IDs across all reaped regions. An island
         // that spans multiple regions will only be considered once here.
-        Set<String> affectedIds = new HashSet<>();
-        for (Set<String> islandIDs : scan.deletableRegions().values()) {
-            affectedIds.addAll(islandIDs);
-        }
+        Set<String> affectedIds = new HashSet<>(islandRegions.keySet());
 
         // Phase 1 (calling thread, disk I/O): decide which islands are fully
         // reaped and delete their orphaned player data. No Bukkit events or
@@ -832,6 +930,15 @@ public class PurgeRegionsService {
                 continue;
             }
             Island island = opt.get();
+            Set<Pair<Integer, Integer>> islandRegionCoords = islandRegions.getOrDefault(islandID, Set.of());
+            if (!Collections.disjoint(islandRegionCoords, failedRegions)) {
+                // Part of this island's terrain is still on disk; removing the row now would
+                // orphan whatever blocks remain.
+                islandsDeferred++;
+                plugin.log("Island ID " + islandID
+                        + " retained because some of its region files could not be deleted");
+                continue;
+            }
 
             if (scan.days() == 0) {
                 if (scan.straddlingIslandIds().contains(islandID)) {
@@ -880,7 +987,7 @@ public class PurgeRegionsService {
                 + islandsRemoved + " island(s) removed, "
                 + islandsDeferred + " island(s) deferred"
                 + (scan.days() == 0 ? " (to shutdown)" : " (partial cleanup)"));
-        return ok;
+        return failedRegions.isEmpty();
     }
 
     /**
@@ -1022,10 +1129,13 @@ public class PurgeRegionsService {
      * protection ends exactly on a region boundary.
      */
     private List<Pair<Integer, Integer>> findResidualRegions(Island island, World overworld) {
-        int rxMin = island.getMinProtectedX() >> 9;
-        int rxMax = (island.getMaxProtectedX() - 1) >> 9;
-        int rzMin = island.getMinProtectedZ() >> 9;
-        int rzMax = (island.getMaxProtectedZ() - 1) >> 9;
+        // Use the whole island space, not the possibly-shrunk current protection box: that is
+        // what the deletion path reaped, so residual files outside the new protection would be
+        // missed and end up inside a reused island slot.
+        int rxMin = island.getMinX() >> 9;
+        int rxMax = (island.getMaxX() - 1) >> 9;
+        int rzMin = island.getMinZ() >> 9;
+        int rzMax = (island.getMaxZ() - 1) >> 9;
 
         File base = overworld.getWorldFolder();
         File overworldRegionDir = new File(base, REGION);
@@ -1323,8 +1433,8 @@ public class PurgeRegionsService {
      * cannot be reaped this sweep. Their DB rows must be retained so the next
      * sweep can retry once the blocking island is itself deleted.
      */
-    private DeleteSweepFilter filterForDeletedSweep(
-            Map<Pair<Integer, Integer>, Set<String>> deletableRegions) {
+    private PurgeScanResult filterForDeletedSweep(World world,
+            Map<Pair<Integer, Integer>, Set<String>> deletableRegions, boolean isNether, boolean isEnd) {
         int regionsBlockedByProtection = 0;
         Set<String> straddling = new HashSet<>();
         var iter = deletableRegions.entrySet().iterator();
@@ -1338,7 +1448,7 @@ public class PurgeRegionsService {
                     // Missing rows don't block — they're already gone.
                     continue;
                 }
-                if (!opt.get().isDeletable()) {
+                if (!opt.get().isDeletable() || opt.get().isPurgeProtected() || opt.get().isSpawn()) {
                     block = true;
                     break;
                 }
@@ -1356,7 +1466,8 @@ public class PurgeRegionsService {
                 regionsBlockedByProtection++;
             }
         }
-        return new DeleteSweepFilter(new FilterStats(0, 0, 0, regionsBlockedByProtection), straddling);
+        return new PurgeScanResult(world, 0, deletableRegions, isNether, isEnd,
+                new FilterStats(0, 0, 0, regionsBlockedByProtection), straddling);
     }
 
     private int[] evaluateRegionIslands(Set<String> islandIds, int days) {
@@ -1366,7 +1477,7 @@ public class PurgeRegionsService {
         for (String id : islandIds) {
             Optional<Island> opt = plugin.getIslands().getIslandById(id);
             if (opt.isEmpty()) {
-                shouldRemove = 1;
+                // Missing rows don't block — they're already gone. Matches the deleted sweep.
                 continue;
             }
             Island isl = opt.get();
@@ -1402,8 +1513,17 @@ public class PurgeRegionsService {
      * @return {@code true} if the island cannot be deleted
      */
     public boolean cannotDeleteIsland(Island island, int days) {
+        // Protection always wins, even for an island already flagged deletable: the purge must not
+        // delete region files that the row cleanup will refuse to follow up.
+        if (island.isPurgeProtected() || island.isSpawn()) {
+            return true;
+        }
         if (island.isDeletable()) {
             return false;
+        }
+        if (!island.isOwned()) {
+            // Unowned islands are never age-purged, and Level cannot be asked about a null owner.
+            return true;
         }
         long cutoffMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days);
         boolean recentLogin = island.getMemberSet().stream().anyMatch(uuid -> {
@@ -1419,10 +1539,14 @@ public class PurgeRegionsService {
         if (isLevelTooHigh(island)) {
             return true;
         }
-        return island.isPurgeProtected() || island.isSpawn() || !island.isOwned();
+        return island.isPurgeProtected() || island.isSpawn();
     }
 
     private boolean isLevelTooHigh(Island island) {
+        if (!island.isOwned()) {
+            // Never ask the Level add-on about an island without an owner.
+            return false;
+        }
         return plugin.getAddonsManager().getAddonByName("Level")
                 .map(l -> ((Level) l).getIslandLevel(island.getWorld(), island.getOwner())
                         >= plugin.getSettings().getIslandPurgeLevel())
@@ -1549,11 +1673,11 @@ public class PurgeRegionsService {
     // Delete
     // ---------------------------------------------------------------
 
-    private boolean deleteRegionFiles(PurgeScanResult scan) {
+    private Set<Pair<Integer, Integer>> deleteRegionFiles(PurgeScanResult scan) {
         int days = scan.days();
         if (days < 0) {
             plugin.logError("Days is somehow negative!");
-            return false;
+            return new HashSet<>(scan.deletableRegions().keySet());
         }
         // days == 0 is the "deleted sweep" sentinel — no age filter and no
         // freshness recheck. days > 0 is the age-based sweep.
@@ -1586,7 +1710,8 @@ public class PurgeRegionsService {
                 String name = "r." + coords.x() + "." + coords.z() + ".mca";
                 if (isAnyDimensionFresh(name, overworldRegion, netherRegion, endRegion, cutoffMillis,
                         scan.isNether(), scan.isEnd())) {
-                    return false;
+                    // Nothing was touched: report every region as failed so no island row is removed.
+                    return new HashSet<>(scan.deletableRegions().keySet());
                 }
             }
         }
@@ -1594,15 +1719,15 @@ public class PurgeRegionsService {
         DimFolders ow     = new DimFolders(overworldRegion, overworldEntities, overworldPoi);
         DimFolders nether = new DimFolders(netherRegion,    netherEntities,    netherPoi);
         DimFolders end    = new DimFolders(endRegion,       endEntities,       endPoi);
-        boolean allOk = true;
+        Set<Pair<Integer, Integer>> failed = new HashSet<>();
         for (Pair<Integer, Integer> coords : scan.deletableRegions().keySet()) {
             String name = "r." + coords.x() + "." + coords.z() + ".mca";
             if (!deleteOneRegion(name, ow, nether, end, scan.isNether(), scan.isEnd())) {
                 plugin.logError("Could not delete all the region/entity/poi files for some reason");
-                allOk = false;
+                failed.add(coords);
             }
         }
-        return allOk;
+        return failed;
     }
 
     private boolean deleteOneRegion(String name, DimFolders overworld, DimFolders nether, DimFolders end,

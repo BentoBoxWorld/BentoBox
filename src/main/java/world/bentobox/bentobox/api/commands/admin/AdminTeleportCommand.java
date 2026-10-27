@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,8 +29,13 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class AdminTeleportCommand extends CompositeCommand {
 
     private static final String NOT_SAFE = "general.errors.no-safe-location-found";
-    private @Nullable UUID targetUUID;
-    private Location warpSpot;
+
+    /**
+     * Resolved once per command run. This command object is shared by every player on
+     * the server, so nothing may be kept in instance fields between canExecute and execute.
+     */
+    private record TeleportTarget(UUID targetUUID, Location warpSpot) {
+    }
 
     /**
      * @param parent - parent command
@@ -52,25 +56,29 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    private @Nullable TeleportTarget resolveTarget(User user, List<String> args) {
         if (args.isEmpty()) {
             this.showHelp(this, user);
-            return false;
+            return null;
         }
         // Check for console or not
         if (!user.isPlayer()) {
             user.sendMessage("general.errors.use-in-game");
-            return false;
+            return null;
         }
         // Convert name to a UUID
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         // Check island exists
         if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
 
         World world = getWorld();
@@ -81,16 +89,16 @@ public class AdminTeleportCommand extends CompositeCommand {
         }
         if (world == null) {
             user.sendMessage(NOT_SAFE);
-            return false;
+            return null;
         }
         // Get default location if there are no arguments
-        warpSpot = getSpot(world);
+        Location warpSpot = getSpot(world, targetUUID);
         if (warpSpot == null) {
             user.sendMessage(NOT_SAFE);
-            return false;
+            return null;
         }
         if (args.size() == 1) {
-            return true;
+            return new TeleportTarget(targetUUID, warpSpot);
         }
 
         // They named the island to go to
@@ -102,7 +110,7 @@ public class AdminTeleportCommand extends CompositeCommand {
             user.sendMessage("commands.island.sethome.homes-are");
             names.keySet()
                     .forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
-            return false;
+            return null;
         } else if (names.size() > 1) {
             IslandInfo info = names.get(name);
             Island island = info.island();
@@ -110,12 +118,14 @@ public class AdminTeleportCommand extends CompositeCommand {
                     ? island.getSpawnPoint(world.getEnvironment())
                     : island.getProtectionCenter().toVector().toLocation(world);
         }
-        return true;
+        return new TeleportTarget(targetUUID, warpSpot);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Objects.requireNonNull(warpSpot);
+        TeleportTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Location warpSpot = target.warpSpot();
         // Otherwise, ask the admin to go to a safe spot
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                 + warpSpot.getBlockZ());
@@ -135,8 +145,7 @@ public class AdminTeleportCommand extends CompositeCommand {
         return true;
     }
 
-    private Location getSpot(World world) {
-        assert targetUUID != null;
+    private Location getSpot(World world, UUID targetUUID) {
         Island island = getIslands().getIsland(world, targetUUID);
         if (island == null) {
             return null;

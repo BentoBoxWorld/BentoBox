@@ -222,6 +222,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
     @Test
     void testCanExecuteLowRank() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        setUpTarget();
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
@@ -245,8 +246,8 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
     @Test
     void testCanExecuteTeamMember() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        UUID target = UUID.randomUUID();
-        when(pm.getUUID(anyString())).thenReturn(target);
+        Player t = setUpTarget();
+        UUID target = t.getUniqueId();
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(target));
         when(island.inTeam(target)).thenReturn(true);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
@@ -284,6 +285,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
     void testCanExecuteNotOnIsland() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         setUpTarget();
+        when(im.getIslandAt(any(Location.class))).thenReturn(java.util.Optional.empty());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.not-on-island");
     }
@@ -340,6 +342,7 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         when(t.getServer()).thenReturn(server);
         when(t.getWorld()).thenReturn(world);
         when(t.spigot()).thenReturn(spigot);
+        when(im.getIslandAt(any(Location.class))).thenReturn(java.util.Optional.of(island));
         User.getInstance(t);
         when(pm.getUUID(anyString())).thenReturn(target);
         when(mockPlayer.canSee(t)).thenReturn(true);

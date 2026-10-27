@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand.IslandInfo;
@@ -21,8 +23,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminResetHomeCommand extends CompositeCommand
 {
-    Map<String, IslandInfo> islands = new HashMap<>();
-
     /**
      * Default constructor.
      * @param command Parent command.
@@ -55,27 +55,43 @@ public class AdminResetHomeCommand extends CompositeCommand
     @Override
     public boolean canExecute(User user, String label, List<String> args)
     {
-        islands.clear();
-        if (args.isEmpty()) {
+        return resolveIslands(user, args) != null;
+    }
+
+
+    /**
+     * Works out which islands the command applies to. Resolved again by execute, because this
+     * command object is shared by every player on the server.
+     *
+     * @return the islands to act on, or null if the arguments are invalid
+     */
+    private @Nullable Map<String, IslandInfo> resolveIslands(User user, List<String> args)
+    {
+        if (args.isEmpty())
+        {
             this.showHelp(this, user);
-            return false;
+            return null;
         }
         // First arg must be a valid player name
         UUID targetUUID = getPlayers().getUUID(args.getFirst());
-        if (targetUUID == null) {
+        if (targetUUID == null)
+        {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
         // Get islands
-        islands = IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld());
-        if (islands.isEmpty()) {
+        Map<String, IslandInfo> islands = new HashMap<>(
+                IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld()));
+        if (islands.isEmpty())
+        {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
 
         // Second optional arg must be the name of the island
-        if (args.size() == 1) {
-            return true;
+        if (args.size() == 1)
+        {
+            return islands;
         }
 
         // A specific island is mentioned. Parse which one it is and remove the others
@@ -83,13 +99,14 @@ public class AdminResetHomeCommand extends CompositeCommand
 
         islands.keySet().removeIf(n -> !name.equalsIgnoreCase(n));
 
-        if (islands.isEmpty()) {
+        if (islands.isEmpty())
+        {
             // Failed name check - there are either
             user.sendMessage("commands.admin.maxhomes.errors.unknown-island", TextVariables.NAME, name);
-            return false;
+            return null;
         }
 
-        return true;
+        return islands;
     }
 
 
@@ -103,7 +120,9 @@ public class AdminResetHomeCommand extends CompositeCommand
     @Override
     public boolean execute(User user, String label, List<String> args)
     {
-        if (islands.isEmpty()) {
+        Map<String, IslandInfo> islands = resolveIslands(user, args);
+        if (islands == null)
+        {
             // Sanity check
             return false;
         }

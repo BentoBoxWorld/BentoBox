@@ -355,21 +355,19 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     @Test
     void testProspectLeftClick_canExecute_invitesPlayer() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
-        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
-        when(itic.execute(eq(user), anyString(), anyList())).thenReturn(true);
+        when(itic.call(eq(user), anyString(), anyList())).thenReturn(true);
 
         gui.build(user);
         clickProspect(ClickType.LEFT);
 
         verify(sch).runTask(eq(plugin), any(Runnable.class));
-        verify(itic).canExecute(user, "invite", List.of("target"));
-        verify(itic).execute(user, "invite", List.of("target"));
+        verify(itic).call(user, "invite", List.of("target"));
     }
 
     @Test
     void testProspectLeftClick_cannotExecute_doesNotCallExecute() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
-        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
+        when(itic.call(eq(user), anyString(), anyList())).thenReturn(false);
 
         gui.build(user);
         clickProspect(ClickType.LEFT);
@@ -380,29 +378,27 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     @Test
     void testProspectRightClick_canExecute_coopsPlayer() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
-        when(coopCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
-        when(coopCommand.execute(eq(user), anyString(), anyList())).thenReturn(true);
+        when(coopCommand.getLabel()).thenReturn("coop");
+        when(coopCommand.call(eq(user), anyString(), anyList())).thenReturn(true);
 
         gui.build(user);
         clickProspect(ClickType.RIGHT);
 
         verify(sch).runTask(eq(plugin), any(Runnable.class));
-        verify(coopCommand).canExecute(user, "invite", List.of("target"));
-        verify(coopCommand).execute(user, "invite", List.of("target"));
+        verify(coopCommand).call(user, "coop", List.of("target"));
     }
 
     @Test
     void testProspectShiftLeftClick_canExecute_trustsPlayer() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
-        when(trustCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
-        when(trustCommand.execute(eq(user), anyString(), anyList())).thenReturn(true);
+        when(trustCommand.getLabel()).thenReturn("trust");
+        when(trustCommand.call(eq(user), anyString(), anyList())).thenReturn(true);
 
         gui.build(user);
         clickProspect(ClickType.SHIFT_LEFT);
 
         verify(sch).runTask(eq(plugin), any(Runnable.class));
-        verify(trustCommand).canExecute(user, "invite", List.of("target"));
-        verify(trustCommand).execute(user, "invite", List.of("target"));
+        verify(trustCommand).call(user, "trust", List.of("target"));
     }
 
     @Test

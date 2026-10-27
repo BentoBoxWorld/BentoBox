@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -38,13 +39,20 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
 
     /** True while an async scan is running, to prevent overlapping runs. */
     volatile boolean inPurge;
-    /** True once a scan has found islands and is awaiting a {@code confirm}. */
-    boolean toBeConfirmed;
-    /** The bonus id the pending confirmation is for. */
-    @Nullable
-    String pendingId;
-    /** The unique ids of the islands the pending confirmation will purge. */
-    List<String> pendingIslandIds = List.of();
+
+    /** Console has no UUID, so it gets its own fixed key. */
+    private static final UUID CONSOLE_KEY = new UUID(0L, 0L);
+    /** A pending confirmation older than this must be re-scanned. */
+    private static final long EXPIRY_MS = java.time.Duration.ofMinutes(10).toMillis();
+
+    private record Pending(String id, List<String> islandIds, long createdAt) {
+    }
+
+    /**
+     * Pending purge per admin. Command instances are shared server-wide, so a single field
+     * would let one admin confirm (and purge) another admin's scan.
+     */
+    private final java.util.Map<UUID, Pending> pending = new java.util.concurrent.ConcurrentHashMap<>();
 
     /**
      * Admin command to remove a bonus range id from every island.
@@ -81,41 +89,53 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         String id = args.get(0);
         boolean confirm = args.size() == 2 && args.get(1).equalsIgnoreCase("confirm");
-        // Apply a pending purge if this is the matching confirmation
-        if (confirm && toBeConfirmed && id.equals(pendingId)) {
-            List<String> ids = pendingIslandIds;
-            toBeConfirmed = false;
-            pendingId = null;
-            pendingIslandIds = List.of();
-            applyPurge(user, id, ids);
-            return true;
+        // Apply this admin's own pending purge if this is the matching confirmation
+        if (confirm) {
+            Pending p = takePending(user);
+            if (p != null && id.equals(p.id())) {
+                applyPurge(user, id, p.islandIds());
+                return true;
+            }
         }
         // Otherwise (re)scan asynchronously and prompt for confirmation
         inPurge = true;
         getPlugin().getIslands().getIslandsASync().thenAccept(all -> {
             List<String> ids = findIslandIds(all, id);
+            // Reset here, not on the user task: the admin may log out and Folia drops
+            // entity tasks for offline players, which would leave inPurge stuck on.
+            inPurge = false;
             TaskScheduler.user(getPlugin(), user, () -> {
-                inPurge = false;
                 if (ids.isEmpty()) {
                     user.sendMessage("commands.admin.range.purgebonus.none", "[id]", id);
                     return;
                 }
-                pendingId = id;
-                pendingIslandIds = ids;
-                toBeConfirmed = true;
+                pending.put(keyOf(user), new Pending(id, ids, System.currentTimeMillis()));
                 user.sendMessage("commands.admin.range.purgebonus.warning", "[id]", id, TextVariables.NUMBER,
                         String.valueOf(ids.size()));
                 user.sendMessage("commands.admin.range.purgebonus.confirm");
             });
         }).exceptionally(ex -> {
             getPlugin().logStacktrace(ex);
-            TaskScheduler.user(getPlugin(), user, () -> {
-                inPurge = false;
-                user.sendMessage("commands.admin.range.purgebonus.failed");
-            });
+            inPurge = false;
+            TaskScheduler.user(getPlugin(), user,
+                    () -> user.sendMessage("commands.admin.range.purgebonus.failed"));
             return null;
         });
         return true;
+    }
+
+    private static UUID keyOf(User user) {
+        UUID id = user.getUniqueId();
+        return id == null ? CONSOLE_KEY : id;
+    }
+
+    /** @return this admin's unexpired pending purge, removing it so it can only be confirmed once */
+    private @Nullable Pending takePending(User user) {
+        Pending value = pending.remove(keyOf(user));
+        if (value == null) {
+            return null;
+        }
+        return System.currentTimeMillis() - value.createdAt() > EXPIRY_MS ? null : value;
     }
 
     /**

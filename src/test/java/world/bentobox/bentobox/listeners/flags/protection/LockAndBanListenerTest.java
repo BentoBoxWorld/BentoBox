@@ -253,6 +253,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Create vehicle and put two players in it.
         Vehicle vehicle = mock(Vehicle.class);
         Player player2 = mock(Player.class);
+        when(player2.getUniqueId()).thenReturn(UUID.randomUUID());
         List<Entity> passengers = new ArrayList<>();
         passengers.add(user.getPlayer());
         passengers.add(player2);
@@ -284,6 +285,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
         Vehicle vehicle = mock(Vehicle.class);
         Player player2 = mock(Player.class);
+        when(player2.getUniqueId()).thenReturn(UUID.randomUUID());
         when(player2.isOp()).thenReturn(false);
         when(player2.hasPermission(anyString())).thenReturn(false);
         List<Entity> passengers = new ArrayList<>();
@@ -357,6 +359,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Create vehicle and put two players in it. One is banned, the other is not
         Vehicle vehicle = mock(Vehicle.class);
         Player player2 = mock(Player.class);
+        when(player2.getUniqueId()).thenReturn(UUID.randomUUID());
         List<Entity> passengers = new ArrayList<>();
         passengers.add(mockPlayer);
         passengers.add(player2);
@@ -700,6 +703,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Give player an island
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         Player player2 = mock(Player.class);
+        when(player2.getUniqueId()).thenReturn(UUID.randomUUID());
         UUID uuid2 = UUID.randomUUID();
         when(player2.getUniqueId()).thenReturn(uuid2);
         when(player2.getWorld()).thenReturn(world);

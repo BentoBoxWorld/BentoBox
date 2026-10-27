@@ -63,7 +63,7 @@ public class CoarseDirtTillingListener extends FlagListener {
      * <a href="https://github.com/BentoBoxWorld/BentoBox/issues/613">...</a>
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreakingPodzol(BlockBreakEvent e) {
         if (!e.getPlayer().getGameMode().equals(GameMode.CREATIVE)
                 && e.getBlock().getType().equals(Material.PODZOL)

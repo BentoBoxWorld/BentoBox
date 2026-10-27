@@ -491,8 +491,9 @@ class AdminMaxHomesCommandTest extends CommonTestSetup {
     @Test
     void testExecuteWithEmptyIslands_ShouldReturnFalse() {
         // Arrange
-        instance.maxHomes = 5; // Set maxHomes to a valid number
-        instance.islands = new HashMap<>(); // Empty islands map
+        args.add("ValidPlayer");
+        args.add("5");
+        when(IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(new HashMap<>());
 
         // Act
         boolean result = instance.execute(user, label, args);
@@ -507,12 +508,12 @@ class AdminMaxHomesCommandTest extends CommonTestSetup {
     @Test
     void testExecuteWithMaxHomesLessThanOne_ShouldReturnFalse() {
         // Arrange
-        instance.maxHomes = 0; // Invalid maxHomes
+        args.add("ValidPlayer");
+        args.add("0"); // Invalid maxHomes
         Island island = mock(Island.class);
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("TestIsland", new IslandInfo(island, true));
-        when(IslandGoCommand.getNameIslandMap(user, world)).thenReturn(islandsMap);
-        instance.islands = islandsMap;
+        when(IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
 
         // Act
         boolean result = instance.execute(user, label, args);
@@ -527,12 +528,12 @@ class AdminMaxHomesCommandTest extends CommonTestSetup {
     @Test
     void testExecuteSuccessful_SingleIsland() {
         // Arrange
-        instance.maxHomes = 5;
+        args.add("ValidPlayer");
+        args.add("5");
         Island island = mock(Island.class);
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("TestIsland", new IslandInfo(island, true));
-        when(IslandGoCommand.getNameIslandMap(user, world)).thenReturn(islandsMap);
-        instance.islands = islandsMap;
+        when(IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
 
         // Act
         boolean result = instance.execute(user, label, args);
@@ -550,14 +551,14 @@ class AdminMaxHomesCommandTest extends CommonTestSetup {
     @Test
     void testExecuteSuccessful_MultipleIslands() {
         // Arrange
-        instance.maxHomes = 3;
+        args.add("ValidPlayer");
+        args.add("3");
         Island island1 = mock(Island.class);
         Island island2 = mock(Island.class);
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("IslandOne", new IslandInfo(island1, true));
         islandsMap.put("IslandTwo", new IslandInfo(island2, true));
-        when(IslandGoCommand.getNameIslandMap(user, world)).thenReturn(islandsMap);
-        instance.islands = islandsMap;
+        when(IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
 
         // Act
         boolean result = instance.execute(user, label, args);

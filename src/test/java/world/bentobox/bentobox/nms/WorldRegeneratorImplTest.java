@@ -82,4 +82,27 @@ class WorldRegeneratorImplTest extends CommonTestSetup {
             verify(chunk, never()).getBlock(anyInt(), anyInt(), anyInt());
         }
     }
+
+    @Test
+    void refusesGeneratorWithoutModernStages() {
+        Chunk chunk = mock(Chunk.class);
+        when(chunk.getWorld()).thenReturn(world);
+        var addons = mock(AddonsManager.class);
+        when(plugin.getAddonsManager()).thenReturn(addons);
+        when(addons.getDefaultWorldGenerator(any(), anyString())).thenReturn(new ChunkGenerator() {});
+        try (var scheduler = mockStatic(TaskScheduler.class)) {
+            scheduler.when(() -> TaskScheduler.regionFuture(eq(plugin), any(), any())).thenAnswer(call -> {
+                try {
+                    call.getArgument(2, Runnable.class).run();
+                    return CompletableFuture.completedFuture(null);
+                } catch (Throwable error) {
+                    return CompletableFuture.failedFuture(error);
+                }
+            });
+            assertInstanceOf(UnsupportedOperationException.class,
+                    assertThrows(CompletionException.class,
+                            () -> new WorldRegeneratorImpl().regenerateChunk(chunk).join()).getCause());
+            verify(chunk, never()).getBlock(anyInt(), anyInt(), anyInt());
+        }
+    }
 }

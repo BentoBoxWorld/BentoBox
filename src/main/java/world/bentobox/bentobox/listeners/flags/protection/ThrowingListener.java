@@ -23,12 +23,13 @@ public class ThrowingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerThrowPotion(ProjectileLaunchEvent e) {
-        if (e.getEntity().getShooter() instanceof Player player && (e.getEntity() instanceof ThrownPotion)) {
-            if (e.getEntity() instanceof ThrownPotion) {
-                checkIsland(e, player, e.getEntity().getLocation(), Flags.POTION_THROWING);
-            } else if (e.getEntity() instanceof ThrownExpBottle) {
-                checkIsland(e, player, e.getEntity().getLocation(), Flags.EXPERIENCE_BOTTLE_THROWING);
-            }
+        if (!(e.getEntity().getShooter() instanceof Player player)) {
+            return;
+        }
+        if (e.getEntity() instanceof ThrownPotion) {
+            checkIsland(e, player, e.getEntity().getLocation(), Flags.POTION_THROWING);
+        } else if (e.getEntity() instanceof ThrownExpBottle) {
+            checkIsland(e, player, e.getEntity().getLocation(), Flags.EXPERIENCE_BOTTLE_THROWING);
         }
     }
 }

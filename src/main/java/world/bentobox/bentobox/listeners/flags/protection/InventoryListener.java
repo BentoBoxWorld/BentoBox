@@ -87,7 +87,11 @@ public class InventoryListener extends FlagListener
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent e)
     {
-        Player player = (Player) e.getWhoClicked();
+        // Check the type first: getWhoClicked() is a HumanEntity, not necessarily a Player.
+        if (!(e.getWhoClicked() instanceof Player player))
+        {
+            return;
+        }
 
         // Special inventory types
         if (checkSpecificInventories(e, player, e.getInventory())) {
@@ -96,7 +100,7 @@ public class InventoryListener extends FlagListener
         // Inventory holders
         InventoryHolder inventoryHolder = e.getInventory().getHolder();
 
-        if (inventoryHolder == null || !(e.getWhoClicked() instanceof Player))
+        if (inventoryHolder == null)
         {
             return;
         }

@@ -272,7 +272,8 @@ class AdminResetHomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteWithEmptyIslands_ShouldReturnFalse() {
         // Arrange
-        instance.islands = new HashMap<>(); // Empty islands map
+        args.add("ValidPlayer");
+        mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(new HashMap<>());
 
         // Act
         boolean result = instance.execute(user, label, args);
@@ -288,10 +289,10 @@ class AdminResetHomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteSuccessful_SingleIsland() {
 
+        args.add("ValidPlayer");
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("TestIsland", new IslandInfo(island, false));
-        mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(user, world)).thenReturn(islandsMap);
-        instance.islands = islandsMap;
+        mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
         // Act
         boolean result = instance.execute(user, label, args);
 
@@ -307,13 +308,13 @@ class AdminResetHomeCommandTest extends CommonTestSetup {
     @Test
     void testExecuteSuccessful_MultipleIslands() {
         // Arrange
+        args.add("ValidPlayer");
         Island island1 = mock(Island.class);
         Island island2 = mock(Island.class);
         Map<String, IslandInfo> islandsMap = new HashMap<>();
         islandsMap.put("IslandOne", new IslandInfo(island1, false));
         islandsMap.put("IslandTwo", new IslandInfo(island2, false));
         mockedIslandGo.when(() -> IslandGoCommand.getNameIslandMap(any(), any())).thenReturn(islandsMap);
-        instance.islands = islandsMap;
 
         // Act
         boolean result = instance.execute(user, label, args);

@@ -21,8 +21,11 @@ import world.bentobox.bentobox.util.Util;
  */
 public abstract class AbstractAdminRangeCommand extends CompositeCommand {
 
-    protected @Nullable UUID targetUUID;
-    protected Island targetIsland;
+    /**
+     * The island a range command acts on, resolved from the command line.
+     * Command instances are shared by every admin, so this must not be kept in a field.
+     */
+    protected record RangeTarget(UUID playerUUID, Island island) { }
 
     protected AbstractAdminRangeCommand(CompositeCommand parent, String string) {
         super(parent, string);
@@ -30,51 +33,53 @@ public abstract class AbstractAdminRangeCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, @NonNull List<String> args) {
+        return resolveTarget(user, args) != null;
+    }
+
+    protected @Nullable RangeTarget resolveTarget(User user, @NonNull List<String> args) {
         if (args.size() <= 1) {
             showHelp(this, user);
-            return false;
+            return null;
         }
 
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
 
         if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
-            return false;
+            return null;
         }
         // Check if the player has more than one island
         Map<String, Island> islands = getIslandsXYZ(targetUUID);
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         } else if (args.size() == 2) {
             // If they only have one island, 2 args are fine
             if (islands.size() == 1) {
-                targetIsland = islands.values().iterator().next();
-                return true;
+                return new RangeTarget(targetUUID, islands.values().iterator().next());
             } else {
                 // They need to specify which island
                 user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
                 user.sendMessage("commands.admin.unregister.errors.specify-island-location");
-                return false;
+                return null;
             }
         } else if (args.size() != 3) {
             // No location
             user.sendMessage("commands.admin.unregister.errors.specify-island-location");
-            return false;
+            return null;
         } else if (!islands.containsKey(args.get(2))) {
             if (args.get(2).equalsIgnoreCase("help")) {
                 this.showHelp(this, user);
-                return false;
+                return null;
             }
             user.sendMessage("commands.admin.unregister.errors.unknown-island-location");
-            return false;
+            return null;
         }
-        targetIsland = islands.get(args.get(2));
-        return true;
+        return new RangeTarget(targetUUID, islands.get(args.get(2)));
     }
 
     protected Map<String, Island> getIslandsXYZ(UUID target) {

@@ -92,8 +92,13 @@ public abstract class FlagListener implements Listener {
 
     @NonNull
     private BentoBox plugin = BentoBox.getInstance();
+    /**
+     * Only kept for add-ons that call {@link #noGo(Event, Flag)} without a user. It is shared
+     * by every region thread, so it must never drive a permission decision: BentoBox's own
+     * checks pass the user explicitly.
+     */
     @Nullable
-    private User user = null;
+    private volatile User user = null;
 
     /**
      * @return the plugin
@@ -130,13 +135,21 @@ public abstract class FlagListener implements Listener {
      * @param flag - the flag that has been checked
      * @param silent - if true, message is not sent
      * @param string - translation reference
+     * @deprecated The target user is shared by every region thread. Use
+     *             {@link #checkIsland(Event, org.bukkit.entity.Player, org.bukkit.Location, Flag, boolean)}
+     *             so the message goes to the right player.
      */
+    @Deprecated(since = "3.23.4", forRemoval = false)
     public void noGo(@NonNull Event e, @NonNull Flag flag, boolean silent, String string) {
+        noGo(e, flag, silent, string, user);
+    }
+
+    private void noGo(@NonNull Event e, @NonNull Flag flag, boolean silent, String string, @Nullable User target) {
         if (e instanceof Cancellable cancellable) {
             cancellable.setCancelled(true);
         }
-        if (user != null && !silent) {
-            user.notify(string, TextVariables.DESCRIPTION, user.getTranslation(flag.getHintReference()));
+        if (target != null && !silent) {
+            target.notify(string, TextVariables.DESCRIPTION, target.getTranslation(flag.getHintReference()));
         }
     }
 
@@ -163,8 +176,10 @@ public abstract class FlagListener implements Listener {
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag, boolean silent) {
 
-        // Set user
-        user = player == null ? null : User.getInstance(player);
+        // Keep the user local: this listener is shared by every region thread, so a field
+        // would let one player's check use another player's permissions.
+        User user = player == null ? null : User.getInstance(player);
+        this.user = user; // legacy public noGo overloads only
         if (loc == null) {
             if (user != null && user.getLocation().getWorld() != null) {
                 report(user, e, user.getLocation(), flag, Why.NULL_LOCATION);
@@ -183,31 +198,31 @@ public abstract class FlagListener implements Listener {
 
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
-            return processSetting(flag, island, e, loc);
+            return processSetting(flag, island, e, loc, user);
         }
 
         // Protection flag
         // Check if the island is deleted - if so, then nothing is allowed by default
         if (isDeletedIsland(island)) {
             // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-            if (checkBypassEverywhere(e, loc, flag)) {
+            if (checkBypassEverywhere(e, loc, flag, user)) {
                 return true;
             }
             report(user, e, loc, flag, Why.ISLAND_DELETED);
-            noGo(e, flag, silent, WORLD_PROTECTED);
+            noGo(e, flag, silent, WORLD_PROTECTED, user);
             return false;
         }
 
         // Handle World Settings
         if (flag.getType().equals(Flag.Type.WORLD_SETTING)) {
-            return processWorldSetting(flag, loc, e, silent);
+            return processWorldSetting(flag, loc, e, silent, user);
         }
 
         // Check if the plugin is set in User (required for testing)
         User.setPlugin(plugin);
 
         if (island.isPresent()) {
-            return processBypass(flag, island.get(), e, loc, silent);
+            return processBypass(flag, island.get(), e, loc, silent, user);
         }
         // The player is in the world, but not on an island, so general world settings apply
         if (flag.isSetForWorld(loc.getWorld())) {
@@ -215,11 +230,11 @@ public abstract class FlagListener implements Listener {
             return true;
         }
         // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (checkBypassEverywhere(e, loc, flag)) {
+        if (checkBypassEverywhere(e, loc, flag, user)) {
             return true;
         }
         report(user, e, loc, flag, Why.NOT_ALLOWED_IN_WORLD);
-        noGo(e, flag, silent, WORLD_PROTECTED);
+        noGo(e, flag, silent, WORLD_PROTECTED, user);
         return false;
     }
 
@@ -228,8 +243,9 @@ public abstract class FlagListener implements Listener {
      * the deny path so the common allow path skips the permission lookups entirely.
      * @return true if the user may bypass protection everywhere
      */
-    private boolean checkBypassEverywhere(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag) {
-        if (hasBypassEverywhere(loc, flag)) {
+    private boolean checkBypassEverywhere(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag,
+            @Nullable User user) {
+        if (hasBypassEverywhere(loc, flag, user)) {
             report(user, e, loc, flag, user.isOp() ? Why.OP : Why.BYPASS_EVERYWHERE);
             return true;
         }
@@ -240,7 +256,10 @@ public abstract class FlagListener implements Listener {
         return island.isPresent() && (island.get().isDeleted() || island.get().isDeletable());
     }
 
-    private boolean hasBypassEverywhere(Location loc, Flag flag) {
+    private boolean hasBypassEverywhere(Location loc, Flag flag, @Nullable User user) {
+        if (user == null) {
+            return false;
+        }
         if (user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)) {
             return false;
         }
@@ -249,7 +268,8 @@ public abstract class FlagListener implements Listener {
                 || user.hasPermission(prefix + "mod.bypass." + flag.getID() + ".everywhere");
     }
 
-    private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc, boolean silent) {
+    private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc,
+            boolean silent, @Nullable User user) {
         // If it is not allowed on the island, "bypass island" moderators can do anything
         assert user != null;
         if (island.isAllowed(user, flag)) {
@@ -257,7 +277,7 @@ public abstract class FlagListener implements Listener {
             return true;
         }
         // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (checkBypassEverywhere(e, loc, flag)) {
+        if (checkBypassEverywhere(e, loc, flag, user)) {
             return true;
         }
         if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
@@ -266,25 +286,27 @@ public abstract class FlagListener implements Listener {
             return true;
         }
         report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
-        noGo(e, flag, silent, island.isSpawn() ? "protection.spawn-protected" : "protection.protected");
+        noGo(e, flag, silent, island.isSpawn() ? "protection.spawn-protected" : "protection.protected", user);
         return false;
     }
 
-    private boolean processWorldSetting(@NonNull Flag flag, @NonNull Location loc, @NonNull Event e, boolean silent) {
+    private boolean processWorldSetting(@NonNull Flag flag, @NonNull Location loc, @NonNull Event e, boolean silent,
+            @Nullable User user) {
         if (flag.isSetForWorld(loc.getWorld())) {
             report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
             return true;
         }
         // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (checkBypassEverywhere(e, loc, flag)) {
+        if (checkBypassEverywhere(e, loc, flag, user)) {
             return true;
         }
         report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
-        noGo(e, flag, silent, WORLD_PROTECTED);
+        noGo(e, flag, silent, WORLD_PROTECTED, user);
         return false;
     }
 
-    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @NonNull Location loc) {
+    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e,
+            @NonNull Location loc, @Nullable User user) {
         // If the island exists, return the setting, otherwise return the default setting for this flag
         if (island.isPresent()) {
             boolean allowed = island.get().isAllowed(flag);

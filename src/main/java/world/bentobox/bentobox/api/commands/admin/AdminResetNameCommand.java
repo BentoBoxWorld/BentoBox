@@ -69,6 +69,12 @@ public class AdminResetNameCommand extends CompositeCommand
         }
         else
         {
+            // Location-based lookup needs a player: the console has no location
+            if (!user.isPlayer())
+            {
+                user.sendMessage("general.errors.use-in-game");
+                return null;
+            }
             island = this.getIslandsManager().getIslandAt(user.getLocation()).orElse(null);
         }
 

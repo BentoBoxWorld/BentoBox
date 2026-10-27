@@ -265,7 +265,15 @@ public class ClosestSafeSpotTeleport
             if (snapshot != null)
             {
                 // Find best spot based on collected information chunks.
-                this.scanAndPopulateBlockQueue(snapshot);
+                try
+                {
+                    this.scanAndPopulateBlockQueue(snapshot);
+                }
+                catch (RuntimeException error)
+                {
+                    // Skip this chunk rather than leaving the guard set and stalling the search
+                    this.plugin.logStacktrace(error);
+                }
             }
 
             this.checking.set(false);
@@ -356,7 +364,8 @@ public class ClosestSafeSpotTeleport
             for (int z = 0; z < 16; z++)
             {
 
-                for (int y = Math.max(minY, startY - this.range); y < Math.min(maxY, startY + this.range); y++)
+                // Start above minY: the block below the feet is read as y - 1
+                for (int y = Math.max(minY + 1, startY - this.range); y < Math.min(maxY, startY + this.range); y++)
                 {
                     // Raw-coordinate bounds check first and only allocate a vector for
                     // positions actually inside the search area
@@ -368,8 +377,9 @@ public class ClosestSafeSpotTeleport
                         PositionData positionData = new PositionData(
                                 positionVector,
                                 chunkSnapshot.getBlockType(x, y - 1, z),
-                                y < maxY ? chunkSnapshot.getBlockType(x, y, z) : null,
-                                        y + 1 < maxY ? chunkSnapshot.getBlockType(x, y + 1, z) : null,
+                                y < maxY ? chunkSnapshot.getBlockType(x, y, z) : Material.AIR,
+                                // Above the build limit there is open air, not a block: never pass null.
+                                y + 1 < maxY ? chunkSnapshot.getBlockType(x, y + 1, z) : Material.AIR,
                                                 blockVector.distanceSquared(positionVector));
 
                         if (this.plugin.getIslandsManager().checkIfSafe(this.world,

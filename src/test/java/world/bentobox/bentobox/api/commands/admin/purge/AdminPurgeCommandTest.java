@@ -221,6 +221,24 @@ class AdminPurgeCommandTest extends CommonTestSetup {
     }
 
     @Test
+    void testConfirmOnlyUsesTheScanRunByThatAdmin() throws IOException {
+        wireEmptyGrid();
+        createRegionFile();
+
+        User otherAdmin = mock(User.class);
+        when(otherAdmin.getUniqueId()).thenReturn(UUID.randomUUID());
+
+        assertTrue(apc.execute(user, "purge", List.of("10")));
+        assertTrue(apc.execute(otherAdmin, "purge", List.of("10")));
+
+        // Confirming as the first admin must not consume the second admin's scan
+        assertTrue(apc.execute(user, "purge", List.of("confirm")));
+        assertTrue(apc.execute(otherAdmin, "purge", List.of("confirm")),
+                "The other admin's scan must still be pending");
+        verify(otherAdmin, never()).sendMessage("commands.admin.purge.days-one-or-more");
+    }
+
+    @Test
     void testExecuteRecentRegionFileExcluded() throws IOException {
         wireEmptyGrid();
         Path regionDir = Files.createDirectories(tempDir.resolve("region"));

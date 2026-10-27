@@ -33,6 +33,8 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Conversations;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -221,8 +223,7 @@ public class SettingsTab implements Tab, ClickHandler {
                         if (confirmation.isBlank()) {
                             confirmation = "confirm";
                         }
-                        new ConversationFactory(BentoBox.getInstance()).withModality(true).withLocalEcho(false)
-                                .withTimeout(90)
+                        Conversations.factory(BentoBox.getInstance(), true, false, 90)
                                 .withFirstPrompt(new ConfirmPrompt(user, plugin,
                                         PROTECTION_PANEL + "reset-to-default.instructions",
                                         confirmation, () -> {

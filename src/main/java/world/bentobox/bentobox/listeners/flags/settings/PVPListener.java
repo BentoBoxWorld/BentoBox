@@ -223,8 +223,9 @@ public class PVPListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLingeringPotionDamage(AreaEffectCloudApplyEvent e) {
-        if (thrownPotions.containsKey(e.getEntity().getEntityId())) {
-            User user = User.getInstance(thrownPotions.get(e.getEntity().getEntityId()));
+        UUID thrower = thrownPotions.get(e.getEntity().getEntityId());
+        if (thrower != null) {
+            User user = User.getInstance(thrower);
             // Run through affected entities and delete them if they are safe
             Flag flag = getFlag(e.getEntity().getWorld());
             e.getAffectedEntities().removeIf(le -> !le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, flag));

@@ -339,6 +339,21 @@ class AdminDeleteCommandTest extends CommonTestSetup {
     }
 
     @Test
+    void testDeletingAMemberDoesNotDeleteSomebodyElsesIsland() {
+        AdminDeleteCommand command = setupForDeletion();
+        // The target is only a member of this island, the owner is somebody else
+        when(island.getOwner()).thenReturn(uuid);
+
+        assertTrue(command.canExecute(user, "delete", List.of("tastybento")));
+        command.execute(user, "delete", List.of("tastybento"));
+        command.execute(user, "delete", List.of("tastybento"));
+
+        verify(im, never()).deleteIsland(any(Island.class), any(Boolean.class), any());
+        // They are just taken off the island
+        verify(im).removePlayer(world, notUUID);
+    }
+
+    @Test
     void testInterleavedValidationDoesNotDeleteAnotherPlayersIsland() {
         AdminDeleteCommand command = setupForDeletion();
         UUID other = UUID.randomUUID();
@@ -376,6 +391,7 @@ class AdminDeleteCommandTest extends CommonTestSetup {
 
     private AdminDeleteCommand setupForDeletion() {
         when(island.hasTeam()).thenReturn(false);
+        when(island.getOwner()).thenReturn(notUUID);
         when(island.getCenter()).thenReturn(location);
         when(island.getWorld()).thenReturn(world);
         when(im.inTeam(any(), any())).thenReturn(false);

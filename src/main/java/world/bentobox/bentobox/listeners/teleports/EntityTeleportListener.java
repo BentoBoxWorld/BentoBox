@@ -8,7 +8,6 @@ package world.bentobox.bentobox.listeners.teleports;
 
 
 import java.util.Objects;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import world.bentobox.bentobox.util.TaskScheduler;
@@ -120,7 +119,6 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
 
         Entity entity = event.getEntity();
         Material type = event.getLocation().getBlock().getType();
-        UUID uuid = entity.getUniqueId();
         if (entity.getPortalCooldown() > 0) {
             return;
         }
@@ -139,8 +137,6 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
             // Teleportation is disabled. Cancel processing.
             return;
         }
-        // Add original world for respawning.
-        this.teleportOrigin.put(uuid, fromWorld);
 
         // Entities are teleported instantly.
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL))
@@ -171,8 +167,12 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityExitPortal(EntityPortalExitEvent event)
     {
+        if (EntityType.PLAYER.equals(event.getEntity().getType()))
+        {
+            // Players are handled by PlayerTeleportListener, which owns their teleportOrigin
+            return;
+        }
         this.inTeleport.remove(event.getEntity().getUniqueId());
-        this.teleportOrigin.remove(event.getEntity().getUniqueId());
     }
 
 
@@ -216,6 +216,8 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
             // Entity is already in teleportation.
             return;
         }
+        // Block duplicate portal events for this entity before the async work starts
+        this.inTeleport.add(event.getEntity().getUniqueId());
 
         if (fromWorld.equals(overWorld) && !this.isIslandWorld(overWorld, environment))
         {
@@ -238,11 +240,18 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         
         // Set the destination location
         // If portals cannot be created, then destination is the spawn point, otherwise it's the vector
-        event.setTo(this.calculateLocation(event.getFrom(),
+        Location destination = this.calculateLocation(event.getFrom(),
             fromWorld,
             toWorld,
             environment,
-            this.isMakePortals(overWorld, environment)));
+            this.isMakePortals(overWorld, environment));
+        if (destination == null) {
+            // No destination world (e.g. nether or end world is missing)
+            this.inTeleport.remove(event.getEntity().getUniqueId());
+            event.setCancelled(true);
+            return;
+        }
+        event.setTo(destination);
 
         // Calculate search radius for portal
         this.getIsland(event.getTo()).ifPresent(island ->
@@ -257,6 +266,8 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
                 this.getNetherEndWorld(overWorld, environment) != null &&
                 this.getIsland(event.getTo()).filter(island -> !hasPartnerIslandSync(island, environment)).isPresent())
             {
+                // Cancelled portal events never fire the exit event that clears this mark.
+                this.inTeleport.remove(event.getEntity().getUniqueId());
                 event.setCancelled(true);
                 return;
             }
@@ -273,7 +284,6 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
 
     private void finishPortal(EntityPortalEvent event, World overWorld, World.Environment environment) {
         if (event.isCancelled() || event.getTo() == null) return;
-        this.inTeleport.add(event.getEntity().getUniqueId());
         if (World.Environment.NETHER == environment && this.isMakePortals(overWorld, environment)) {
             // Vanilla builds or reuses the paired portal on arrival. An entity cannot paste a
             // missing island, so the portal is the only step it needs to share with players.

@@ -391,19 +391,27 @@ class AdminRegisterCommandTest extends CommonTestSetup {
     }
 
     @Test
-    void failedReservationMarkerRetainsIslandAndReportsFailure() {
+    void failedReservationMarkerDropsTheUnannouncedIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         when(location.clone()).thenReturn(location);
         when(island.getUniqueId()).thenReturn("reservation");
+        when(island.isReserved()).thenReturn(true);
+        when(island.getOwner()).thenReturn(uuid);
         mockedUtil.when(() -> Util.getChunkAtAsync(location)).thenReturn(
                 java.util.concurrent.CompletableFuture.failedFuture(new IllegalStateException("chunk load failed")));
         try (var tasks = Mockito.mockStatic(TaskScheduler.class)) {
             tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.regionFuture(eq(plugin), any(), any(Runnable.class)))
+                    .thenAnswer(call -> {
+                        ((Runnable) call.getArgument(2)).run();
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
+                    });
             itl.reserve(user, uuid, location, "target");
             verify(island).setReserved(true);
             verify(block, never()).setType(any());
             verify(pim, never()).callEvent(any());
             verify(plugin).logError(Mockito.contains("reservation could not place its marker"));
+            verify(im).deleteIsland(island, true, uuid);
             tasks.verify(() -> TaskScheduler.user(eq(plugin), eq(user), any(Runnable.class)));
         }
     }

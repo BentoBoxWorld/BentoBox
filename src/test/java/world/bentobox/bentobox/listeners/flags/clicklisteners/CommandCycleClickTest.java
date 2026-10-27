@@ -114,7 +114,7 @@ class CommandCycleClickTest extends RanksManagerTestSetup {
         // CommandRankClickListener mock returns a PanelItem
         PanelItem panelItem = mock(PanelItem.class);
         when(panelItem.getItem()).thenReturn(mock(ItemStack.class));
-        when(commandRankClickListener.getPanelItem(anyString(), any(), any())).thenReturn(panelItem);
+        when(commandRankClickListener.getPanelItem(anyString(), any(), any(), any())).thenReturn(panelItem);
         // RanksManager
         when(rm.getRankUpValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(rm.getRankDownValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.COOP_RANK);

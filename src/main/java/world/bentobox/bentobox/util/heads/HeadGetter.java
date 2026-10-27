@@ -128,9 +128,17 @@ public class HeadGetter {
             }
         }
 
-        // Queue for the async resolver
-        headRequesters.computeIfAbsent(playerName, k -> new HashSet<>()).add(requester);
-        names.add(new Pair<>(playerName, panelItem));
+        // Queue for the async resolver. The requester set must be concurrent: the resolver
+        // iterates it while panel code adds new requesters.
+        Set<HeadRequester> requesters = headRequesters.computeIfAbsent(playerName,
+                k -> java.util.concurrent.ConcurrentHashMap.newKeySet());
+        requesters.add(requester);
+        // Refresh the expiry so a second requester is not dropped when the first request ages out.
+        headRequesters.put(playerName, requesters);
+        if (names.stream().noneMatch(pair -> pair.getKey().equals(playerName)
+                && pair.getValue() == panelItem)) {
+            names.add(new Pair<>(playerName, panelItem));
+        }
     }
 
     /**
@@ -246,14 +254,23 @@ public class HeadGetter {
                         // Tell requesters the head came in, but only if the texture is usable.
                         // Handing out a profile with no texture makes the server look it up at
                         // Mojang every time the head is shown, which ends in HTTP 429s.
-                        if (cache.hasTexture() && HeadGetter.headRequesters.containsKey(userName)) {
-                            for (HeadRequester req : HeadGetter.headRequesters.get(userName)) {
-                                elementEntry.getValue().setHead(cache.getPlayerHead());
-
+                        Set<HeadRequester> requesters = HeadGetter.headRequesters.get(userName);
+                        if (cache.hasTexture() && requesters != null) {
+                            final HeadCache resolved = cache;
+                            for (HeadRequester req : Set.copyOf(requesters)) {
+                                // Panel inventories are not thread-safe: update them on the
+                                // owning player's thread (global for console/other requesters).
+                                Runnable update = () -> {
+                                    elementEntry.getValue().setHead(resolved.getPlayerHead());
+                                    req.setHead(elementEntry.getValue());
+                                };
                                 if (!plugin.isShutdown()) {
-                                    // Do not run task if plugin is shutting down.
-                                    TaskScheduler.async(this.plugin,
-                                            () -> req.setHead(elementEntry.getValue()));
+                                    if (req instanceof world.bentobox.bentobox.api.panels.Panel panel
+                                            && panel.getUser().isPresent()) {
+                                        TaskScheduler.user(this.plugin, panel.getUser().get(), update);
+                                    } else {
+                                        TaskScheduler.global(this.plugin, update);
+                                    }
                                 }
                             }
                         }

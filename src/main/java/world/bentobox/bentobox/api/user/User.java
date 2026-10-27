@@ -978,7 +978,9 @@ public class User implements MetaDataAble {
      */
     public void notify(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
+        // No sender check: sendRawMessage routes offline players to OfflineMessageEvent so the
+        // message is not silently dropped for someone who is not online
+        if (!Util.stripColor(message).trim().isEmpty()) {
             plugin.getNotifier().notify(this, message);
         }
     }
@@ -1257,7 +1259,7 @@ public class User implements MetaDataAble {
                 + (offlinePlayer != null ? "offlinePlayer=" + offlinePlayer + ", " : "")
                 + (playerUUID != null ? "playerUUID=" + playerUUID + ", " : "")
                 + (sender != null ? "sender=" + sender + ", " : "") + (addon != null ? "addon=" + addon + ", " : "")
-                + "getLocation()=" + getLocation() + "isPlayer()=" + isPlayer()
+                + "getLocation()=" + (isPlayer() ? getLocation() : "n/a") + "isPlayer()=" + isPlayer()
                 + "]";
     }
 

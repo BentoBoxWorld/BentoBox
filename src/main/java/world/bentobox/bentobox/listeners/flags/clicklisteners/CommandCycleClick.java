@@ -60,7 +60,7 @@ public class CommandCycleClick implements ClickHandler {
                 leftShiftClick(user);
             }
             // Apply change to panel
-            panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user, world).getItem());
+            panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user, world, island).getItem());
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }

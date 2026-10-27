@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -125,6 +126,35 @@ class PistonPushListenerTest extends CommonTestSetup {
 
         // Should fail because on island
         assertTrue(e.isCancelled());
+    }
+
+    /**
+     * The block a sticky piston pulls stays where it was, so only its own position
+     * decides whether it leaves the island.
+     */
+    @Test
+    void testOnPistonRetractInsideIsland() {
+        when(island.onIsland(any())).thenReturn(true);
+        BlockPistonRetractEvent e = new BlockPistonRetractEvent(block, blocks, BlockFace.EAST);
+        new PistonPushListener().onPistonRetract(e);
+        assertFalse(e.isCancelled());
+    }
+
+    @Test
+    void testOnPistonRetractOffIsland() {
+        when(island.onIsland(any())).thenReturn(false);
+        BlockPistonRetractEvent e = new BlockPistonRetractEvent(block, blocks, BlockFace.EAST);
+        new PistonPushListener().onPistonRetract(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testOnPistonRetractFlagNotSet() {
+        Flags.PISTON_PUSH.setSetting(world, false);
+        when(island.onIsland(any())).thenReturn(false);
+        BlockPistonRetractEvent e = new BlockPistonRetractEvent(block, blocks, BlockFace.EAST);
+        new PistonPushListener().onPistonRetract(e);
+        assertFalse(e.isCancelled());
     }
 
 }

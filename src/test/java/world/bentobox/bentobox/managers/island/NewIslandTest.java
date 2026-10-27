@@ -57,9 +57,8 @@ class NewIslandTest extends CommonTestSetup {
 
     private static final String NAME = "name";
 
-    @org.junit.jupiter.params.ParameterizedTest
-    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
-    void testPreparationAccessGuardPrecedesOwnerRegistrationAndWaitsForBaseline(boolean baselineSucceeds) {
+    @org.junit.jupiter.api.Test
+    void testPreparationAccessGuardPrecedesOwnerRegistrationAndReleasesBeforeTeleport() {
         var baseline = new java.util.concurrent.CompletableFuture<Void>();
         when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(
                 java.util.concurrent.CompletableFuture.completedFuture(null));
@@ -84,15 +83,43 @@ class NewIslandTest extends CommonTestSetup {
             var order = Mockito.inOrder(pim, im);
             order.verify(pim).registerEvents(access.capture(), eq(plugin));
             order.verify(im).createIsland(any(), eq(uuid));
-            org.junit.jupiter.api.Assertions.assertFalse(result.isDone());
-            handlers.verifyNoInteractions();
-            if (baselineSucceeds) baseline.complete(null);
-            else baseline.completeExceptionally(new IllegalStateException("baseline failed"));
+            // The guard cancels movement into the new island, so it must be released before
+            // delivery. Waiting for the level scan would block the teleport itself.
             handlers.verify(() -> org.bukkit.event.HandlerList.unregisterAll(access.getValue()));
-            if (!baselineSucceeds) {
-                org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
-                verify(im).deleteIsland(island, true, uuid);
-            }
+            org.junit.jupiter.api.Assertions.assertFalse(result.isDone());
+            baseline.completeExceptionally(new IllegalStateException("baseline failed"));
+            // The island was already handed over, so a failed scan is only logged, never rolled back.
+            org.junit.jupiter.api.Assertions.assertTrue(result.isDone());
+            org.junit.jupiter.api.Assertions.assertFalse(result.isCompletedExceptionally());
+            verify(im, never()).deleteIsland(eq(island), anyBoolean(), any());
+        }
+    }
+
+    @Test
+    void testVetoedDraftDeletionOrphansTheDraftInsteadOfLeavingItOwned() {
+        when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(
+                java.util.concurrent.CompletableFuture.completedFuture(null));
+        when(iwm.getIslandDistance(world)).thenReturn(100);
+        // A listener vetoed the delete: deleteIsland leaves the owner in place.
+        when(island.isOwned()).thenReturn(true);
+        try (var creation = Mockito.mockStatic(NewIsland.class, Mockito.CALLS_REAL_METHODS);
+                var handlers = Mockito.mockStatic(org.bukkit.event.HandlerList.class);
+                var tasks = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            creation.when(() -> NewIsland.initializeLevelCount(plugin, island)).thenReturn(
+                    java.util.concurrent.CompletableFuture.failedFuture(new IllegalStateException("baseline failed")));
+            var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.CREATE).buildAsync();
+            org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
+            verify(im).deleteIsland(island, true, uuid);
+            verify(im).orphanIsland(island);
         }
     }
 
@@ -116,6 +143,10 @@ class NewIslandTest extends CommonTestSetup {
                 call.getArgument(2, Runnable.class).run();
                 return java.util.concurrent.CompletableFuture.completedFuture(null);
             });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
             var creation = NewIsland.builder().player(user).addon(addon).name(NAME).reason(reason)
                     .afterBuild(created -> {
                         settled.set(true);
@@ -125,13 +156,16 @@ class NewIslandTest extends CommonTestSetup {
             var result = creation.buildAsync();
             org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
             org.junit.jupiter.api.Assertions.assertFalse(settled.get());
-            verify(im, never()).deleteIsland(any(), anyBoolean(), any());
+            // The teleport never happened, so the player is still standing on the old island.
+            // Keep it and drop the draft instead of deleting the island under their feet.
+            verify(im).deleteIsland(eq(island), anyBoolean(), any());
+            verify(im, never()).deleteIsland(eq(oldIsland), anyBoolean(), any());
             org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
         }
     }
 
     @Test
-    void testBlueprintCommandCancellationAfterCommitDoesNotDeleteRecoveryIsland() {
+    void testBlueprintCommandCancellationAfterCommitKeepsTheOldIsland() {
         when(builder.build()).thenReturn(ire);
         when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(
                 java.util.concurrent.CompletableFuture.completedFuture(null));
@@ -144,11 +178,18 @@ class NewIslandTest extends CommonTestSetup {
                 call.getArgument(2, Runnable.class).run();
                 return java.util.concurrent.CompletableFuture.completedFuture(null);
             });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
             var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.RESET)
                     .oldIsland(oldIsland).buildAsync();
             org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
             verify(im).setPrimaryIsland(uuid, island);
-            verify(im, never()).deleteIsland(any(), anyBoolean(), any());
+            // The cancellation happened before delivery, so the player is still on the old
+            // island: drop the draft and keep the island they are standing on.
+            verify(im).deleteIsland(eq(island), anyBoolean(), any());
+            verify(im, never()).deleteIsland(eq(oldIsland), anyBoolean(), any());
             org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
         }
     }
@@ -278,6 +319,14 @@ class NewIslandTest extends CommonTestSetup {
                     return java.util.concurrent.CompletableFuture.failedFuture(error);
                 }
             });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                try {
+                    call.getArgument(2, Runnable.class).run();
+                    return java.util.concurrent.CompletableFuture.completedFuture(null);
+                } catch (Throwable error) {
+                    return java.util.concurrent.CompletableFuture.failedFuture(error);
+                }
+            });
             var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.RESET)
                     .oldIsland(oldIsland).beforeTeleport(() -> {
                         prepareCalls.incrementAndGet();
@@ -314,6 +363,44 @@ class NewIslandTest extends CommonTestSetup {
             }
             org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
             verify(im).deleteIsland(oldIsland, true, uuid);
+        }
+    }
+
+    @Test
+    void testFailedTeleportKeepsTheOldIslandAndDropsTheDraft() {
+        var paste = new java.util.concurrent.CompletableFuture<Void>();
+        var leaving = new java.util.concurrent.CompletableFuture<Void>();
+        var teleport = new java.util.concurrent.CompletableFuture<Void>();
+        when(builder.build()).thenReturn(ire);
+        when(bpm.pasteTerrainAsync(addon, island, NAME, true)).thenReturn(paste);
+        when(bpm.completePasteAsync(addon, island, NAME)).thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
+        when(user.getPlayer()).thenReturn(mockPlayer);
+        when(im.homeTeleportAsync(island, user, true)).thenReturn(teleport);
+        try (var tasks = Mockito.mockStatic(TaskScheduler.class, Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(TaskScheduler::isFolia).thenReturn(true);
+            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
+                try {
+                    call.getArgument(2, Runnable.class).run();
+                    return java.util.concurrent.CompletableFuture.completedFuture(null);
+                } catch (Throwable error) {
+                    return java.util.concurrent.CompletableFuture.failedFuture(error);
+                }
+            });
+            tasks.when(() -> TaskScheduler.regionFuture(any(), any(), any())).thenAnswer(call -> {
+                call.getArgument(2, Runnable.class).run();
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            });
+            var result = NewIsland.builder().player(user).addon(addon).name(NAME).reason(Reason.RESET)
+                    .oldIsland(oldIsland).beforeTeleport(() -> leaving).buildAsync();
+            paste.complete(null);
+            leaving.complete(null);
+            teleport.completeExceptionally(new IllegalStateException("Home teleport was rejected"));
+            org.junit.jupiter.api.Assertions.assertTrue(result.isCompletedExceptionally());
+            // The teleport failed, so the player is still on the old island: keep it and drop
+            // the draft rather than deleting the island they are standing on.
+            verify(im).deleteIsland(eq(island), anyBoolean(), any());
+            verify(im, never()).deleteIsland(eq(oldIsland), anyBoolean(), any());
+            org.junit.jupiter.api.Assertions.assertFalse(NewIsland.isCreating(user));
         }
     }
 
@@ -513,6 +600,10 @@ class NewIslandTest extends CommonTestSetup {
         when(block.isEmpty()).thenReturn(true);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(block);
         when(oldIsland.getWorld()).thenReturn(world);
+        when(oldIsland.getOwner()).thenReturn(uuid);
+        when(oldIsland.getMemberSet()).thenReturn(com.google.common.collect.ImmutableSet.of(uuid));
+        when(pm.cleanLeavingPlayerAsync(any(), any(), anyBoolean(), any()))
+                .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
 
         // Util - return the same location
         mockedUtil.when(() -> Util.getClosestIsland(any()))

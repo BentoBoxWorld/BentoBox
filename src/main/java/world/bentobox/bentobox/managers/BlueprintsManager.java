@@ -118,8 +118,8 @@ public class BlueprintsManager {
         // Register adapter factory
         builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(plugin));
         gson = builder.create();
-        // Loaded tracker
-        blueprintsLoaded = new HashSet<>();
+        // Loaded tracker: written from the async loaders and read from the server thread
+        blueprintsLoaded = ConcurrentHashMap.newKeySet();
         // Register Display listeners
         Bukkit.getPluginManager().registerEvents(new DisplayListener(), plugin);
     }
@@ -200,17 +200,21 @@ public class BlueprintsManager {
         // Set loading flag
         blueprintsLoaded.add(addon);
         TaskScheduler.async(plugin, () -> {
-            // Load bundles
-            blueprintBundles.put(addon, new ArrayList<>());
-            if (!loadBundles(addon)) {
-                makeDefaults(addon);
-                loadBundles(addon);
+            try {
+                // Load bundles
+                blueprintBundles.put(addon, new java.util.concurrent.CopyOnWriteArrayList<>());
+                if (!loadBundles(addon)) {
+                    makeDefaults(addon);
+                    loadBundles(addon);
+                }
+                // Load blueprints
+                loadBlueprints(addon);
+            } catch (Exception e) {
+                plugin.logError("Could not load blueprints for " + addon.getDescription().getName() + ": " + e.getMessage());
+            } finally {
+                // Clear loading flag - if this is skipped the whole plugin waits for ever
+                blueprintsLoaded.remove(addon);
             }
-            // Load blueprints
-            loadBlueprints(addon);
-
-            // Clear loading flag
-            blueprintsLoaded.remove(addon);
         });
     }
 
@@ -505,7 +509,7 @@ public class BlueprintsManager {
 
     /** Runs owner commands after old-island leave resets have finished. */
     public CompletableFuture<Void> completePasteAsync(GameModeAddon addon, Island island, String name) {
-        BlueprintBundle bundle = getBlueprintBundles(addon).get(name.toLowerCase());
+        BlueprintBundle bundle = getBlueprintBundles(addon).get(name);
         if (bundle == null) return CompletableFuture.failedFuture(new IllegalStateException("Blueprint is unavailable: " + name));
         return TaskScheduler.userFuture(plugin, User.getInstance(island.getOwner()), () -> {
             sendMessage(island);
@@ -519,7 +523,7 @@ public class BlueprintsManager {
             plugin.logError("Tried to paste '" + name + "' but the bundle is not loaded!");
             return null;
         }
-        BlueprintBundle bb = getBlueprintBundles(addon).get(name.toLowerCase());
+        BlueprintBundle bb = getBlueprintBundles(addon).get(name);
         if (!blueprints.containsKey(addon) || blueprints.get(addon).isEmpty()) {
             plugin.logError("No blueprints loaded for bundle '" + name + "'!");
             return null;
@@ -647,7 +651,7 @@ public class BlueprintsManager {
             // Remove any bundles with the same name
             blueprintBundles.get(addon).removeIf(b -> b.getUniqueId().equals(bb.getUniqueId()));
         }
-        blueprintBundles.computeIfAbsent(addon, k -> new ArrayList<>()).add(bb);
+        blueprintBundles.computeIfAbsent(addon, k -> new java.util.concurrent.CopyOnWriteArrayList<>()).add(bb);
     }
 
     /**
@@ -662,7 +666,7 @@ public class BlueprintsManager {
         // Permission
         String permission = addon.getPermissionPrefix() + "island.create." + name;
         // Get Blueprint bundle
-        BlueprintBundle bb = getBlueprintBundles((GameModeAddon) addon).get(name.toLowerCase());
+        BlueprintBundle bb = getBlueprintBundles((GameModeAddon) addon).get(name);
         if (bb == null || (bb.isRequirePermission() && !name.equals(DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission))) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;

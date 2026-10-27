@@ -6,6 +6,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminRangeSetCommand extends AbstractAdminRangeCommand {
@@ -23,6 +24,9 @@ public class AdminRangeSetCommand extends AbstractAdminRangeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        RangeTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Island targetIsland = target.island();
         // Get new range
         if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
@@ -55,7 +59,7 @@ public class AdminRangeSetCommand extends AbstractAdminRangeCommand {
         IslandEvent.builder()
                 .island(targetIsland).location(targetIsland.getCenter())
         .reason(IslandEvent.Reason.RANGE_CHANGE)
-        .involvedPlayer(targetUUID)
+        .involvedPlayer(target.playerUUID())
         .admin(true)
         .protectionRange(range, oldRange)
         .build();

@@ -177,10 +177,14 @@ public class JoinLeaveListener implements Listener {
                             }
                         };
 
+                        // Do not use the entity scheduler here: on Folia the task is dropped if the
+                        // player logs out before the delay elapses, and the "known player" marker
+                        // is already saved, so they would never get an island. The runnable itself
+                        // checks isCreateIslandOnFirstLoginAbortOnLogout()/isOnline().
                         if (delay <= 0) {
-                            TaskScheduler.user(plugin, user, createIsland);
+                            TaskScheduler.global(plugin, createIsland);
                         } else {
-                            TaskScheduler.userLater(plugin, user, createIsland, delay * 20L);
+                            TaskScheduler.globalLater(plugin, createIsland, delay * 20L);
                         }
                     }
                 });

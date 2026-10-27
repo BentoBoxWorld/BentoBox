@@ -121,12 +121,11 @@ public class PlayersManager {
     private Players addPlayer(@NonNull UUID playerUUID) {
         Objects.requireNonNull(playerUUID, "Player UUID must not be null");
 
-        // If the player exists in the database, load it; otherwise, create and save a new player
-        if (handler.objectExists(playerUUID.toString())) {
-            Players p = loadPlayer(playerUUID);
-            if (p != null) {
-                return p;
-            }
+        // loadObject returns null when the player is unknown, so the extra objectExists()
+        // round-trip was just a second blocking query on the calling (often region) thread.
+        Players p = loadPlayer(playerUUID);
+        if (p != null) {
+            return p;
         }
         Players newPlayer = new Players(plugin, playerUUID);
         handler.saveObjectAsync(newPlayer);
@@ -141,7 +140,12 @@ public class PlayersManager {
      * @since 2.4.0
      */
     public @Nullable Players loadPlayer(UUID uuid) {
-        return handler.loadObject(uuid.toString());
+        Players player = handler.loadObject(uuid.toString());
+        if (player != null) {
+            // Gson hands back plain maps/sets; make them safe for concurrent region-thread use.
+            player.normaliseCollections();
+        }
+        return player;
     }
 
     /**
@@ -151,7 +155,9 @@ public class PlayersManager {
      */
     @NonNull
     public Collection<Players> getPlayers() {
-        return Collections.unmodifiableCollection(handler.loadObjects());
+        Collection<Players> players = handler.loadObjects();
+        players.forEach(Players::normaliseCollections);
+        return Collections.unmodifiableCollection(players);
     }
 
     /**
@@ -484,6 +490,20 @@ public class PlayersManager {
         if (TaskScheduler.isFolia() && target.isOnline() && target.isPlayer()) {
             return TaskScheduler.userFuture(plugin, target, () -> cleanLeavingPlayerOwned(world, target, kicked, island));
         }
+        if (TaskScheduler.isFolia()) {
+            // Offline cleanup touches Vault and player data, so it must not run on the
+            // completing scheduler thread.
+            CompletableFuture<Void> done = new CompletableFuture<>();
+            TaskScheduler.global(plugin, () -> {
+                try {
+                    cleanLeavingPlayerOwned(world, target, kicked, island);
+                    done.complete(null);
+                } catch (Throwable error) {
+                    done.completeExceptionally(error);
+                }
+            });
+            return done;
+        }
         try {
             cleanLeavingPlayerOwned(world, target, kicked, island);
             return CompletableFuture.completedFuture(null);
@@ -501,14 +521,24 @@ public class PlayersManager {
         if (!PlayerEvent.builder()
                 .world(world).island(island).involvedPlayer(target.getUniqueId())
                 .reason(PlayerEvent.Reason.TAMED_REMOVAL).build().isCancelled()) {
-            world.getEntitiesByClass(Tameable.class).forEach(t -> {
-                Runnable untame = () -> {
-                    if (t.isTamed() && t.getOwner() != null
-                            && t.getOwner().getUniqueId().equals(target.getUniqueId())) t.setOwner(null);
-                };
-                if (TaskScheduler.isFolia()) TaskScheduler.entity(plugin, t, untame);
-                else untame.run();
-            });
+            Runnable untameAll = () -> {
+                try {
+                    world.getEntitiesByClass(Tameable.class).forEach(t -> {
+                        Runnable untame = () -> {
+                            if (t.isTamed() && t.getOwner() != null
+                                    && t.getOwner().getUniqueId().equals(target.getUniqueId())) t.setOwner(null);
+                        };
+                        if (TaskScheduler.isFolia()) TaskScheduler.entity(plugin, t, untame);
+                        else untame.run();
+                    });
+                } catch (Throwable error) {
+                    // A failed scan must not skip the inventory/ender chest/money cleanup below.
+                    plugin.logError("Could not release pets of " + target.getName() + ": " + error.getMessage());
+                }
+            };
+            // Folia only allows a whole-world entity scan on the global thread.
+            if (TaskScheduler.isFolia()) TaskScheduler.global(plugin, untameAll);
+            else untameAll.run();
         }
 
         // Clear ender chest – skipped if the ENDERCHEST_RESET event is cancelled

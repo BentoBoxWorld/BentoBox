@@ -69,6 +69,7 @@ public class BlueprintClipboard {
     private BukkitTask copyTask;
     private int count;
     private volatile boolean copying;
+    private volatile boolean copyFailed;
     private CompletableFuture<Void> copyBatch = CompletableFuture.completedFuture(null);
     private int index;
     private int lastPercentage;
@@ -114,6 +115,7 @@ public class BlueprintClipboard {
             user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
         }
+        copyFailed = false;
         if (pos1 == null || pos2 == null) {
             user.sendMessage("commands.admin.blueprint.need-pos1-pos2");
             return false;
@@ -245,7 +247,8 @@ public class BlueprintClipboard {
             } catch (Exception error) {
                 copyTask.cancel();
                 copying = false;
-                blueprint = null;
+                copyFailed = true;
+                // Keep the blueprint: nulling it here makes the next save/retry NPE
                 plugin.logStacktrace(error);
                 TaskScheduler.user(plugin, user, () -> user.sendMessage("general.errors.general"));
             }
@@ -485,6 +488,11 @@ public class BlueprintClipboard {
 
     public boolean isCopying() {
         return copying;
+    }
+
+    /** True when the last copy aborted part way, so the blueprint must not be saved. */
+    public boolean isCopyFailed() {
+        return copyFailed;
     }
 
     /**

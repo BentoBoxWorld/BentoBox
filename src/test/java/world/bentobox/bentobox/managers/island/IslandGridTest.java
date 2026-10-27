@@ -99,6 +99,24 @@ class IslandGridTest extends CommonTestSetup {
        assertTrue(ig.addToGrid(island2));
     }
 
+    @Test
+    void testRejectedReAddKeepsTheExistingEntry() {
+        Island moved = org.mockito.Mockito.mock(Island.class);
+        when(moved.getUniqueId()).thenReturn("island");
+        when(moved.getMinX()).thenReturn(450);
+        when(moved.getMinZ()).thenReturn(5678);
+        when(moved.getRange()).thenReturn(64);
+        when(b.getUniqueId()).thenReturn("b");
+        when(b.getMinX()).thenReturn(512);
+        when(b.getMinZ()).thenReturn(5678);
+        when(b.getRange()).thenReturn(64);
+        assertTrue(ig.addToGrid(island));
+        assertTrue(ig.addToGrid(b));
+        // Moving "island" would overlap b, so the add is rejected and the old cell must survive.
+        assertFalse(ig.addToGrid(moved));
+        assertEquals(island, ig.getIslandAt(360, 5700));
+    }
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.IslandGrid#removeFromGrid(world.bentobox.bentobox.database.objects.Island)}.
      */

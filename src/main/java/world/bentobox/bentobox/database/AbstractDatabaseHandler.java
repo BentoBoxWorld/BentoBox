@@ -128,9 +128,11 @@ public abstract class AbstractDatabaseHandler<T> {
             synchronized (this) {
             // Check shutdown
             if(shutdown || plugin.isShutdown()) {
-                // Cancel - this will only get called if the plugin is shutdown separately to the server
-                databaseConnector.closeConnection(dataObject);
-                asyncSaveTask.cancel();
+                // Do not close the pool here: onDisable still has players/islands to save, and a
+                // closed SQL pool would silently drop those writes. stopAll() closes it at the end.
+                BukkitTask task = asyncSaveTask;
+                asyncSaveTask = null;
+                if (task != null) task.cancel();
             } else if (!processQueue.isEmpty()) {
                 drainQueue();
             }
@@ -213,6 +215,19 @@ public abstract class AbstractDatabaseHandler<T> {
     }
 
     /**
+     * Flushes and closes every registered handler. Called at the very end of BentoBox's
+     * onDisable, after the final synchronous saves and deferred purge cleanup, so an SQL pool is
+     * never closed while data still has to be written.
+     */
+    public static void stopAll() {
+        List<AbstractDatabaseHandler<?>> handlers;
+        synchronized (HANDLERS) {
+            handlers = new ArrayList<>(HANDLERS);
+        }
+        handlers.forEach(AbstractDatabaseHandler::stop);
+    }
+
+    /**
      * Stops every handler whose data object was defined by the given class loader.
      * <p>
      * Addon data objects are defined by the addon's own class loader, so this
@@ -221,8 +236,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @param loader class loader that owns the data objects
      * @since 3.23.4
      */
-    public static void stopHandlers(@NonNull ClassLoader loader) {
-        List<AbstractDatabaseHandler<?>> handlers;
+    public static void stopHandlers(@NonNull ClassLoader loader) {        List<AbstractDatabaseHandler<?>> handlers;
         synchronized (HANDLERS) {
             handlers = new ArrayList<>(HANDLERS);
         }

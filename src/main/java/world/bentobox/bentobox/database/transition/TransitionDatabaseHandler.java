@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.transition;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,13 +40,22 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
-        // Load all objects from both databases
+        // Load all objects from both databases. The destination wins on a shared uniqueId so a
+        // previously interrupted migration cannot overwrite newer data with an old snapshot.
         List<T> listFrom = fromHandler.loadObjects();
         List<T> listTo = toHandler.loadObjects();
-        // If source database has objects, then delete and save them in the destination database
+        Map<String, T> merged = new java.util.LinkedHashMap<>();
+        for (T object : listTo) {
+            merged.put(((world.bentobox.bentobox.database.objects.DataObject) object).getUniqueId(), object);
+        }
         for (T object : listFrom) {
+            String id = ((world.bentobox.bentobox.database.objects.DataObject) object).getUniqueId();
+            if (merged.containsKey(id)) {
+                continue; // already migrated (or newer): do not copy the source snapshot over it
+            }
+            merged.put(id, object);
             toHandler.saveObject(object).thenAccept(b -> {
-                // Only delete if save was successful
+                // Only delete the source once the destination write has succeeded.
                 if (Boolean.TRUE.equals(b)) {
                     try {
                         fromHandler.deleteObject(object);
@@ -55,9 +65,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             });
         }
-        // Merge results
-        listTo.addAll(listFrom);
-        return listTo;
+        return new java.util.ArrayList<>(merged.values());
     }
 
     /* (non-Javadoc)
@@ -72,9 +80,19 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Try source database
             object = fromHandler.loadObject(uniqueId);
             if (object != null) {
-                // Save the object in the new database and delete it from the old one
-                toHandler.saveObject(object);
-                fromHandler.deleteObject(object);
+                // Save first and only delete the source row after the destination write succeeded.
+                // Both handlers queue writes, so the previous fire-and-forget order could lose the
+                // island permanently when the target write failed.
+                final T migrated = object;
+                toHandler.saveObject(migrated).thenAccept(ok -> {
+                    if (Boolean.TRUE.equals(ok)) {
+                        try {
+                            fromHandler.deleteObject(migrated);
+                        } catch (IllegalAccessException | InvocationTargetException | IntrospectionException e) {
+                            plugin.logStacktrace(e);
+                        }
+                    }
+                });
             }
         }
         return object;

@@ -39,7 +39,6 @@ import world.bentobox.bentobox.util.Util;
 public class CommandRankClickListener implements ClickHandler {
 
     private final BentoBox plugin = BentoBox.getInstance();
-    private Island island;
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)
@@ -47,7 +46,10 @@ public class CommandRankClickListener implements ClickHandler {
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Get the island the panel is about
-        island = SettingsTab.getIsland(panel);
+        Island island = SettingsTab.getIsland(panel);
+        if (island == null) {
+            return true;
+        }
 
         // Get the world
         if (!user.inWorld()) {
@@ -86,15 +88,15 @@ public class CommandRankClickListener implements ClickHandler {
             // Slot relates to the command
             String c = getCommands(panel.getWorld().orElse(user.getWorld()), user).get(slot);
             // Apply change to panel
-            panel.getInventory().setItem(slot, getPanelItem(c, user, panel.getWorld().orElse(user.getWorld())).getItem());
+            panel.getInventory().setItem(slot, getPanelItem(c, user, panel.getWorld().orElse(user.getWorld()), island).getItem());
         } else {
             // Open the Sub Settings panel
-            openPanel(user, panelName, panel.getWorld().orElse(user.getWorld()));
+            openPanel(user, panelName, panel.getWorld().orElse(user.getWorld()), island);
         }
         return true;
     }
 
-    private void openPanel(User user, String panelName, World world) {
+    private void openPanel(User user, String panelName, World world, Island island) {
         // Close the current panel
         user.closeInventory();
         // Open the templated panel, laid out by panels/command_ranks_panel.yml
@@ -108,7 +110,7 @@ public class CommandRankClickListener implements ClickHandler {
         pb.user(user).name(panelName).world(world);
         // Make panel items
         getCommands(world, user).stream().limit(49) // Silently limit to 49
-                .forEach(c -> pb.item(getPanelItem(c, user, world)));
+                .forEach(c -> pb.item(getPanelItem(c, user, world, island)));
         Panel p = pb.build();
         p.setIsland(island);
     }
@@ -120,7 +122,7 @@ public class CommandRankClickListener implements ClickHandler {
      * @param world - world for this panel
      * @return panel item for this command
      */
-    public PanelItem getPanelItem(String c, User user, World world) {
+    public PanelItem getPanelItem(String c, User user, World world, Island island) {
         return getPanelItemBuilder(c, user, world, island, null).build();
     }
 

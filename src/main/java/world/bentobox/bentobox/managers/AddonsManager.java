@@ -644,24 +644,39 @@ public class AddonsManager {
                 .filter(a -> a.getDescription().getDependencies().isEmpty()
                         && a.getDescription().getSoftDependencies().isEmpty())
                 .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
-        // Fill remaining
-        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName()))
-                .toList();
 
-        // Run through remaining addons
-        remaining.forEach(addon -> {
-            // Get the addon's dependencies.
-            List<String> dependencies = new ArrayList<>(addon.getDescription().getDependencies());
-            dependencies.addAll(addon.getDescription().getSoftDependencies());
+        // Fill remaining. Repeat until no more can be added, otherwise a chain deeper than one
+        // level (A depends on B depends on C) loses A whenever it happens to be listed first.
+        boolean added = true;
+        while (added) {
+            added = false;
+            for (Addon addon : addons) {
+                String name = addon.getDescription().getName();
+                if (sortedAddons.containsKey(name)) {
+                    continue;
+                }
+                // Get the addon's dependencies.
+                List<String> dependencies = new ArrayList<>(addon.getDescription().getDependencies());
+                dependencies.addAll(addon.getDescription().getSoftDependencies());
 
-            // Remove already sorted addons (dependencies) from the list
-            dependencies.removeIf(sortedAddons::containsKey);
+                // Remove already sorted addons (dependencies) from the list
+                dependencies.removeIf(sortedAddons::containsKey);
 
-            if (dependencies.stream()
-                    .noneMatch(dependency -> addon.getDescription().getDependencies().contains(dependency))) {
-                sortedAddons.put(addon.getDescription().getName(), addon);
+                if (dependencies.stream()
+                        .noneMatch(dependency -> addon.getDescription().getDependencies().contains(dependency))) {
+                    sortedAddons.put(name, addon);
+                    added = true;
+                }
             }
-        });
+        }
+        // Whatever is left has a missing or circular hard dependency. Keep it loaded instead of
+        // silently dropping an addon whose listeners, flags and commands are already registered.
+        addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName()))
+                .forEach(a -> {
+                    plugin.logError("Addon " + a.getDescription().getName() + " has unresolvable dependencies "
+                            + a.getDescription().getDependencies() + " - loading it last");
+                    sortedAddons.put(a.getDescription().getName(), a);
+                });
 
         addons.clear();
         addons.addAll(sortedAddons.values());

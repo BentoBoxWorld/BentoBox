@@ -84,12 +84,38 @@ public class AdminSettingsCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return null;
         }
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
-        if (island == null || !getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
+        Island island = getOwnedIsland(targetUUID);
+        if (island == null) {
             user.sendMessage("general.errors.player-has-no-island");
             return null;
         }
         return island;
+    }
+
+    /**
+     * Resolve the island the target actually owns. getIsland(World, UUID) returns the island the
+     * player is standing on, which may be someone else's team island.
+     *
+     * @param targetUUID target player
+     * @return the owned island, or null if the player owns none
+     */
+    private @Nullable Island getOwnedIsland(UUID targetUUID) {
+        List<Island> owned = getIslands().getIslands(getWorld(), targetUUID).stream()
+                .filter(i -> targetUUID.equals(i.getOwner())).toList();
+        if (owned.isEmpty()) {
+            // No island is attributed to this player: keep the previous resolution so that
+            // islands whose owner field is missing are still reachable
+            return getIslands().hasIsland(getWorld(), targetUUID) ? getIslands().getIsland(getWorld(), targetUUID)
+                    : null;
+        }
+        if (owned.size() == 1) {
+            return owned.getFirst();
+        }
+        // More than one island: prefer the one the player is standing on
+        User target = User.getInstance(targetUUID);
+        return target.isOnline() && target.getLocation() != null
+                ? getIslands().getIslandAt(target.getLocation()).filter(owned::contains).orElse(owned.getFirst())
+                : owned.getFirst();
     }
 
     private @Nullable SettingChange checkWorldSetting(User user, List<String> args) {

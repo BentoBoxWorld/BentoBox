@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import com.google.common.primitives.Ints;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.IslandGoCommand;
@@ -33,8 +35,12 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminMaxHomesCommand extends ConfirmableCommand {
 
-    Integer maxHomes;
-    Map<String, IslandInfo> islands = new HashMap<>();
+    /**
+     * Resolved once per command run. This command object is shared by every player on
+     * the server, so nothing may be kept in instance fields between canExecute and execute.
+     */
+    private record MaxHomesTarget(Map<String, IslandInfo> islands, int maxHomes) {
+    }
 
     public AdminMaxHomesCommand(CompositeCommand parent) {
         super(parent, "setmaxhomes");
@@ -50,79 +56,77 @@ public class AdminMaxHomesCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        islands.clear();
-        if (args.isEmpty()) {
-            showHelp(this, user);
-            return false;
-        }
-        if (args.size() == 1) {
-            return canExecuteStandingOnIsland(user, args);
-        }
-        return canExecuteWithTarget(user, args);
+        return resolveTarget(user, args) != null;
     }
 
-    private boolean canExecuteStandingOnIsland(User user, List<String> args) {
+    private @Nullable MaxHomesTarget resolveTarget(User user, List<String> args) {
+        if (args.isEmpty()) {
+            showHelp(this, user);
+            return null;
+        }
+        return args.size() == 1 ? resolveStandingOnIsland(user, args) : resolveWithTarget(user, args);
+    }
+
+    private @Nullable MaxHomesTarget resolveStandingOnIsland(User user, List<String> args) {
         if (!user.isPlayer()) {
             user.sendMessage("general.errors.use-in-game");
-            return false;
+            return null;
         }
         if (user.getWorld() != getWorld()) {
             user.sendMessage("general.errors.wrong-world");
-            return false;
+            return null;
         }
-        maxHomes = Ints.tryParse(args.getFirst());
+        Integer maxHomes = Ints.tryParse(args.getFirst());
         if (maxHomes == null || maxHomes < 1) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.getFirst());
-            return false;
+            return null;
         }
-        boolean onIsland = getIslands().getIslandAt(user.getLocation()).map(is -> {
-            islands.put("", new IslandInfo(is, false));
-            return true;
-        }).orElse(false);
-        if (!onIsland) {
+        Optional<world.bentobox.bentobox.database.objects.Island> island = getIslands().getIslandAt(user.getLocation());
+        if (island.isEmpty()) {
             user.sendMessage("general.errors.not-on-island");
-            return false;
+            return null;
         }
-        return true;
+        return new MaxHomesTarget(Map.of("", new IslandInfo(island.get(), false)), maxHomes);
     }
 
-    private boolean canExecuteWithTarget(User user, List<String> args) {
+    private @Nullable MaxHomesTarget resolveWithTarget(User user, List<String> args) {
         UUID targetUUID = getPlayers().getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
-            return false;
+            return null;
         }
-        maxHomes = Ints.tryParse(args.get(1));
-        if (maxHomes == null) {
+        Integer maxHomes = Ints.tryParse(args.get(1));
+        if (maxHomes == null || maxHomes < 1) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
-            return false;
+            return null;
         }
-        islands = IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld());
+        Map<String, IslandInfo> islands = new HashMap<>(
+                IslandGoCommand.getNameIslandMap(User.getInstance(targetUUID), getWorld()));
         if (islands.isEmpty()) {
             user.sendMessage("general.errors.player-has-no-island");
-            return false;
+            return null;
         }
         if (args.size() > 2) {
             final String name = String.join(" ", args.subList(2, args.size()));
             islands.keySet().removeIf(n -> !name.equalsIgnoreCase(n));
             if (islands.isEmpty()) {
                 user.sendMessage("commands.admin.maxhomes.errors.unknown-island", TextVariables.NAME, name);
-                return false;
+                return null;
             }
         }
-        return true;
+        return new MaxHomesTarget(islands, maxHomes);
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (islands.isEmpty() || maxHomes < 1) {
-            // Sanity check
+        MaxHomesTarget target = resolveTarget(user, args);
+        if (target == null) {
             return false;
         }
-        islands.forEach((name, island) -> {
-            island.island().setMaxHomes(maxHomes);
+        target.islands().forEach((name, island) -> {
+            island.island().setMaxHomes(target.maxHomes());
             user.sendMessage("commands.admin.maxhomes.max-homes-set", TextVariables.NAME, name, TextVariables.NUMBER,
-                    String.valueOf(maxHomes));
+                    String.valueOf(target.maxHomes()));
         });
         return true;
     }

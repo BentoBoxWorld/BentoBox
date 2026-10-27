@@ -35,7 +35,7 @@ public class OfflineRedstoneListener extends FlagListener {
                 }
             }
             // Check mods or Ops on island
-            if (Bukkit.getOnlinePlayers().parallelStream()
+            if (Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.isOp() || p.hasPermission(getIWM().getPermissionPrefix(i.getWorld()) + "mod.bypassprotect"))
                     .anyMatch(p -> i.onIsland(p.getLocation()))) {
                 return;

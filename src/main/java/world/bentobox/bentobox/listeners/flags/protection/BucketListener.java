@@ -13,6 +13,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.base.Enums;
 
@@ -73,18 +75,19 @@ public class BucketListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTropicalFishScooping(final PlayerInteractEntityEvent e) {
+        ItemStack inHand = itemInHand(e.getPlayer(), e.getHand());
         if (e.getRightClicked() instanceof Fish &&
-            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
+            inHand.getType().equals(Material.WATER_BUCKET))
         {
             this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
         }
         else if (e.getRightClicked() instanceof Axolotl &&
-            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
+            inHand.getType().equals(Material.WATER_BUCKET))
         {
             this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.AXOLOTL_SCOOPING);
         }
         else if (SULFUR_CUBE != null && e.getRightClicked().getType() == SULFUR_CUBE &&
-            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BUCKET))
+            inHand.getType().equals(Material.BUCKET))
         {
             // Sulfur Cube (26.2) is picked up with an empty bucket
             this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BUCKET);
@@ -98,8 +101,15 @@ public class BucketListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBowlFill(final PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof MushroomCow && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BOWL)) {
+        if (e.getRightClicked() instanceof MushroomCow
+                && itemInHand(e.getPlayer(), e.getHand()).getType().equals(Material.BOWL)) {
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MILKING);
         }
+    }
+
+    /** The item actually used for this interaction (main or off hand). */
+    private static ItemStack itemInHand(Player player, EquipmentSlot hand) {
+        return hand == EquipmentSlot.OFF_HAND ? player.getInventory().getItemInOffHand()
+                : player.getInventory().getItemInMainHand();
     }
 }

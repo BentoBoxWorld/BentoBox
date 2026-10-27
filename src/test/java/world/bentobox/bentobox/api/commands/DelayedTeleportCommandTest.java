@@ -63,6 +63,10 @@ class DelayedTeleportCommandTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+        // The listener is registered once per JVM; reset it so each test sees its own registration
+        java.lang.reflect.Field registered = DelayedTeleportCommand.class.getDeclaredField("listenerRegistered");
+        registered.setAccessible(true);
+        registered.setBoolean(null, false);
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);

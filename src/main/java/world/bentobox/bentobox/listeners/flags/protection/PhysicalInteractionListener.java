@@ -78,9 +78,9 @@ public class PhysicalInteractionListener extends FlagListener
         boolean result = tagToFlag.entrySet().stream().filter(entry -> entry.getKey().isTagged(block.getType()))
                 .findFirst().map(entry -> this.checkIsland(e, player, block.getLocation(), entry.getValue()))
                 .orElse(true);
-        if (result && matToFlag.containsKey(block.getType())) {
-            result = this.checkIsland(e, player, block.getLocation(), matToFlag.get(block.getType()));
-
+        Flag matFlag = matToFlag.get(block.getType());
+        if (result && matFlag != null) {
+            result = this.checkIsland(e, player, block.getLocation(), matFlag);
         }
 
         return result;

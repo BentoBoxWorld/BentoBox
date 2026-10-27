@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -43,7 +44,12 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
             }
 
             // Everything's fine, we can set the island as spawn :)
-            askConfirmation(user, user.getTranslation("commands.admin.setspawn.confirmation"), () -> setSpawn(user, island.get()));
+            // Capture the position now: reading it in the 30-second callback would allow the
+            // admin to walk away and set a spawn point on a different island.
+            Location spawnLocation = user.getLocation().clone();
+            String islandId = island.get().getUniqueId();
+            askConfirmation(user, user.getTranslation("commands.admin.setspawn.confirmation"),
+                    () -> setSpawn(user, islandId, spawnLocation));
             return true;
         } else {
             user.sendMessage("commands.admin.setspawn.no-island-here");
@@ -51,7 +57,13 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
         }
     }
 
-    private void setSpawn(User user, Island i) {
+    private void setSpawn(User user, String islandId, Location spawnLocation) {
+        Island i = getIslands().getIslandById(islandId).orElse(null);
+        if (i == null || !i.onIsland(spawnLocation)) {
+            // The island was deleted or replaced, or the captured position is no longer inside it.
+            user.sendMessage("commands.admin.setspawn.no-island-here");
+            return;
+        }
         if (!i.getMembers().isEmpty()) {
             if (i.isOwned()) {
                 // Build and fire event
@@ -68,7 +80,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
                     .forEach(m -> getIslands().removePlayer(i, m));
         }
         getIslands().setSpawn(i);
-        i.setSpawnPoint(World.Environment.NORMAL, user.getLocation());
+        i.setSpawnPoint(World.Environment.NORMAL, spawnLocation);
         // Set the island's range to the full island space because it is spawn
         i.setProtectionRange(i.getRange() * 2);
         user.sendMessage("commands.admin.setspawn.success");

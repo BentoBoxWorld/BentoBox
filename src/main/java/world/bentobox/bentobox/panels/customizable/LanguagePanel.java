@@ -434,7 +434,8 @@ public class LanguagePanel extends AbstractPanel
                 this.user.sendMessage("panels.language.edited", "[lang]",
                         WordUtils.capitalize(locale.getDisplayName(this.user.getLocale())));
                 this.build();
-            } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+            } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())
+                    && action.content() != null) {
                 Util.runCommands(user,
                         Arrays.stream(action.content()
                                 .replaceAll(Pattern.quote(TextVariables.LABEL), this.command.getTopLabel())

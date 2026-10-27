@@ -407,9 +407,15 @@ public class IslandEvent extends IslandBaseEvent {
          */
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
-            Bukkit.getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
-            // Generate new event
+            IslandEvent deprecated = new IslandEvent(island, player, admin, location, reason);
+            Bukkit.getPluginManager().callEvent(deprecated);
+            // Generate new event and carry over a cancellation from the generic one, otherwise
+            // addons listening to IslandEvent(+Reason) could never veto anything.
             IslandBaseEvent newEvent = getEvent();
+            deprecated.setNewEvent(newEvent);
+            if (deprecated.isCancelled()) {
+                newEvent.setCancelled(true);
+            }
             Bukkit.getPluginManager().callEvent(newEvent);
             return newEvent;
         }

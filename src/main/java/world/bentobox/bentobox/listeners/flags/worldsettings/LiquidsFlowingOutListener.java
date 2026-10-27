@@ -62,14 +62,19 @@ public class LiquidsFlowingOutListener extends FlagListener {
             return;
         }
 
-        Location to = event.getVelocity().toLocation(event.getBlock().getWorld());
-
         if (!event.getItem().getType().equals(Material.WATER_BUCKET) &&
             !event.getItem().getType().equals(Material.LAVA_BUCKET) &&
             !event.getItem().getType().equals(Material.POWDER_SNOW_BUCKET))
         {
             return;
         }
+
+        // getVelocity() is the projectile speed, not a position. The liquid lands in the block
+        // the dispenser faces.
+        if (!(event.getBlock().getBlockData() instanceof org.bukkit.block.data.Directional directional)) {
+            return;
+        }
+        Location to = event.getBlock().getRelative(directional.getFacing()).getLocation();
 
         // Only prevent if it is flowing into the area between islands or into another island.
         Optional<Island> fromIsland = this.getIslandsManager().getProtectedIslandAt(from);

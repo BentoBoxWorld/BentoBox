@@ -130,9 +130,14 @@ public class PlaceBlocksListener extends FlagListener
         }
         default ->
         {
-            // Check in-hand items
-            if (e.getMaterial() == Material.FIREWORK_ROCKET ||
-                    e.getMaterial() == Material.ARMOR_STAND ||
+            // Check in-hand items. Armour stands, end crystals, item frames and chests are
+            // spawned on the clicked block (some do not fire BlockPlaceEvent), so checking the
+            // player's feet let a visitor stand just outside protection and place inside.
+            if (e.getMaterial() == Material.FIREWORK_ROCKET)
+            {
+                this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
+            }
+            else if (e.getMaterial() == Material.ARMOR_STAND ||
                     e.getMaterial() == Material.END_CRYSTAL ||
                     e.getMaterial() == Material.ITEM_FRAME ||
                     e.getMaterial() == Material.GLOW_ITEM_FRAME ||
@@ -140,7 +145,10 @@ public class PlaceBlocksListener extends FlagListener
                     e.getMaterial() == Enums.getIfPresent(Material.class, "COPPER_CHEST").or(Material.CHEST) ||
                     e.getMaterial() == Material.TRAPPED_CHEST)
             {
-                this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
+                this.checkIsland(e, e.getPlayer(),
+                        e.getClickedBlock() != null ? e.getClickedBlock().getLocation()
+                                : e.getPlayer().getLocation(),
+                        Flags.PLACE_BLOCKS);
             }
             else if (Tag.ITEMS_BOATS.isTagged(e.getMaterial()))
             {

@@ -22,6 +22,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -178,7 +179,9 @@ public class IslandGoCommand extends DelayedTeleportCommand {
      * @return true if the picker was shown; false to fall through to the default teleport
      */
     private boolean showGoPicker(User user, Map<String, IslandInfo> names) {
-        if (!user.isPlayer() || names.size() < 2 || !Dialogs.isSupported()
+        // An island being created is already owned by the player, so a reset briefly looks like
+        // two destinations. A modal picker here would lock the player's view for the whole build.
+        if (!user.isPlayer() || names.size() < 2 || NewIsland.isCreating(user) || !Dialogs.isSupported()
                 || !getPlugin().getSettings().isDialogGoPicker()) {
             return false;
         }

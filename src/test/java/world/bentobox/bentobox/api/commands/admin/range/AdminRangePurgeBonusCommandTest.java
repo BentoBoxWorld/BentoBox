@@ -30,6 +30,7 @@ import world.bentobox.bentobox.database.objects.BonusRangeRecord;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.island.IslandCache;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -145,18 +146,43 @@ class AdminRangePurgeBonusCommandTest extends CommonTestSetup {
 
     @Test
     void testConfirmAppliesPurge() {
-        // Arrange a pending confirmation as the async scan would have done
-        command.toBeConfirmed = true;
-        command.pendingId = "Upgrades";
-        command.pendingIslandIds = List.of("island1", "island2");
-
-        assertTrue(command.execute(user, "purgebonus", List.of("Upgrades", "confirm")));
+        when(im.getIslandsASync())
+                .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(List.of(island, island2)));
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class,
+                org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(() -> TaskScheduler.user(any(), any(), any()))
+                    .thenAnswer(call -> {
+                        call.getArgument(2, Runnable.class).run();
+                        return null;
+                    });
+            assertTrue(command.execute(user, "purgebonus", List.of("Upgrades")));
+            assertTrue(command.execute(user, "purgebonus", List.of("Upgrades", "confirm")));
+        }
 
         verify(island, times(1)).clearBonusRange("Upgrades");
         verify(island2, times(1)).clearBonusRange("Upgrades");
         verify(user).sendMessage("commands.admin.range.purgebonus.success", "[id]", "Upgrades", "[number]", "2");
-        // Pending state cleared
-        assertFalse(command.toBeConfirmed);
+    }
+
+    @Test
+    void anotherAdminCannotConfirmThisAdminsScan() {
+        when(im.getIslandsASync())
+                .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(List.of(island, island2)));
+        User other = mock(User.class);
+        when(other.getUniqueId()).thenReturn(java.util.UUID.randomUUID());
+        try (var tasks = org.mockito.Mockito.mockStatic(TaskScheduler.class,
+                org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            tasks.when(() -> TaskScheduler.user(any(), any(), any()))
+                    .thenAnswer(call -> {
+                        call.getArgument(2, Runnable.class).run();
+                        return null;
+                    });
+            assertTrue(command.execute(user, "purgebonus", List.of("Upgrades")));
+            // The other admin has no pending scan, so this only rescans; nothing is purged.
+            assertTrue(command.execute(other, "purgebonus", List.of("Upgrades", "confirm")));
+        }
+        verify(island, never()).clearBonusRange("Upgrades");
+        verify(island2, never()).clearBonusRange("Upgrades");
     }
 
     @Test

@@ -119,7 +119,7 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
             // Adds the flag items
-            panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
+            panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
             // set up the footer
             setupFooter(items);
             // Add forward and backward icons
@@ -244,6 +244,10 @@ public class TabbedPanel extends Panel implements PanelListener {
      */
     @Override
     public boolean isActionableSlot(int rawSlot) {
+        // Slots outside the panel belong to the player's inventory and never do anything here
+        if (rawSlot < 0 || rawSlot >= getInventory().getSize()) {
+            return false;
+        }
         // Top row tab icons are trapped by onInventoryClick rather than by a click handler
         if (tpb.getTabs().containsKey(rawSlot)) {
             return true;

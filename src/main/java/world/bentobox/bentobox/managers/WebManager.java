@@ -263,8 +263,9 @@ public class WebManager {
                         new Contributor(gitHubContributor.username(), gitHubContributor.contributionsAmount()));
             }
             contributors.put(repo.fullName(), addonContributors);
-        } catch (Exception e) {
-            // Silently fail
+        } catch (Exception | LinkageError e) {
+            // Silently fail. LinkageError too: on some servers PluginClassLoader can fail to load a
+            // plugin class mid-run (NoClassDefFoundError), which an Exception catch would miss.
         }
     }
 

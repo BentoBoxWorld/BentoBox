@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -93,7 +94,11 @@ public class StandardSpawnProtectionListener implements Listener {
         if (noAction(e.getPlayer())) {
             return;
         }
-        if (atSpawn(e.getBlockClicked().getLocation())) {
+        Block block = e.getBlock();
+        if (block == null) {
+            return;
+        }
+        if (atSpawn(block.getLocation())) {
             User user = User.getInstance(e.getPlayer());
             user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.BUCKET.getHintReference()));
             e.setCancelled(true);
@@ -143,11 +148,24 @@ public class StandardSpawnProtectionListener implements Listener {
      * @return true if nothing needs to be done
      */
     private boolean noAction(@NonNull Player player) {
-        return (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL)
-                || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
-                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
-                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().getWorldSettings(player.getWorld()).isMakeNetherPortals())
-                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && (plugin.getIWM().isEndIslands(player.getWorld()) || plugin.getIWM().getWorldSettings(player.getWorld()).isMakeEndPortals())));
+        if (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+            return true;
+        }
+        // Use the game-mode overworld: getWorldSettings() is keyed by it, and the player's
+        // sub-world may no longer exist or be registered.
+        World gameWorld = Util.getWorld(player.getWorld());
+        if (!plugin.getIWM().inWorld(gameWorld)) {
+            return true;
+        }
+        if (player.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
+            return plugin.getIWM().isNetherIslands(gameWorld)
+                    || plugin.getIWM().getWorldSettings(gameWorld).isMakeNetherPortals();
+        }
+        if (player.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
+            return plugin.getIWM().isEndIslands(gameWorld)
+                    || plugin.getIWM().getWorldSettings(gameWorld).isMakeEndPortals();
+        }
+        return false;
 
     }
 }

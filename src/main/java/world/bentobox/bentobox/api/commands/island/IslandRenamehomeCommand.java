@@ -15,6 +15,8 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Conversations;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -120,10 +122,7 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         Island island = findIsland(user, args);
         if (island == null) return false;
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withTimeout(90)
+        Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args), getUsage()))
         .buildConversation(user.getPlayer()).begin();
         return true;

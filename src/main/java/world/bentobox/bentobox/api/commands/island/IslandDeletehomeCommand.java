@@ -126,6 +126,13 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
      * @param name The name of the home to delete
      */
     private void delete(Island island, User user, String name) {
+        // Check the island that owns the home, not the one the player was standing on
+        int rank = island.getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank",
+                    TextVariables.RANK, user.getTranslation(RanksManager.getInstance().getRank(rank)));
+            return;
+        }
         island.removeHome(name);
         user.sendMessage("general.success");
     }

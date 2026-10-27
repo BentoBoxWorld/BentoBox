@@ -15,7 +15,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -63,13 +65,13 @@ import world.bentobox.bentobox.util.TaskScheduler;
 public class Island implements DataObject, MetaDataAble {
 
     @Expose
-    private Set<UUID> primaries = new HashSet<>();
+    private Set<UUID> primaries = ConcurrentHashMap.newKeySet();
 
     /**
      * Set to true if this data object has been changed since being loaded from the
      * database
      */
-    private boolean changed;
+    private volatile boolean changed;
 
     /**
      * Counter for deferred saves. When positive, {@link #setChanged()} will mark
@@ -77,7 +79,13 @@ public class Island implements DataObject, MetaDataAble {
      * This is used by the settings panel to batch all flag changes into a single
      * save when the panel is closed.
      */
-    private transient int deferSaveCount = 0;
+    private transient final AtomicInteger deferSaveCount = new AtomicInteger();
+
+    /**
+     * True once the island is known to exist in the database. Avoids a database existence
+     * check on every single change (a query on MySQL).
+     */
+    private transient volatile boolean saved;
 
     /** True if this island is deleted and pending deletion from the database
      * @deprecated
@@ -120,7 +128,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.20.0
      */
     @Expose
-    private List<BonusRangeRecord> bonusRanges = new ArrayList<>();
+    private List<BonusRangeRecord> bonusRanges = new CopyOnWriteArrayList<>();
 
     // Maximum ever protection range - used in island deletion
     @Expose
@@ -148,7 +156,7 @@ public class Island implements DataObject, MetaDataAble {
     @Expose
     private long createdDate;
     @Expose
-    private long updatedDate;
+    private volatile long updatedDate;
 
     //// Team ////
     /**
@@ -167,7 +175,7 @@ public class Island implements DataObject, MetaDataAble {
      * {@link RanksManager#OWNER_RANK OWNER}.
      */
     @Expose
-    private volatile Map<UUID, Integer> members = new ConcurrentHashMap<>();
+    private volatile ConcurrentHashMap<UUID, Integer> members = new ConcurrentHashMap<>();
 
     /**
      * Maximum number of members allowed on this island. Key is rank, value is
@@ -186,16 +194,16 @@ public class Island implements DataObject, MetaDataAble {
 
     //// Protection flags ////
     @Expose
-    private volatile Map<String, Integer> flags = new ConcurrentHashMap<>();
+    private volatile ConcurrentHashMap<String, Integer> flags = new ConcurrentHashMap<>();
 
     //// Island History ////
 
     @Adapter(LogEntryListAdapter.class)
     @Expose
-    private List<LogEntry> history = new LinkedList<>();
+    private List<LogEntry> history = new CopyOnWriteArrayList<>();
 
     @Expose
-    private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
+    private Map<Environment, Location> spawnPoint = new ConcurrentHashMap<>();
 
     /**
      * This flag is used to quarantine islands that cannot be loaded and should be
@@ -208,7 +216,7 @@ public class Island implements DataObject, MetaDataAble {
      * Used to store flag cooldowns for this island
      */
     @Expose
-    private Map<String, Long> cooldowns = new HashMap<>();
+    private Map<String, Long> cooldowns = new ConcurrentHashMap<>();
 
     /**
      * Commands and the rank required to use them for this island
@@ -276,9 +284,9 @@ public class Island implements DataObject, MetaDataAble {
     public Island(Island island) {
         this.center = island.getCenter().clone();
         this.createdDate = island.getCreatedDate();
-        this.commandRanks = island.getCommandRanks() == null ? null : new HashMap<>(island.getCommandRanks());
+        this.commandRanks = island.getCommandRanks() == null ? null : new ConcurrentHashMap<>(island.getCommandRanks());
         Optional.ofNullable(island.getCooldowns()).ifPresent(c -> {
-            this.cooldowns = new HashMap<>();
+            this.cooldowns = new ConcurrentHashMap<>();
             this.cooldowns.putAll(c);
         });
         this.createdDate = island.getCreatedDate();
@@ -287,12 +295,12 @@ public class Island implements DataObject, MetaDataAble {
         this.doNotLoad = island.isDoNotLoad();
         this.flags.putAll(island.getFlags());
         this.gameMode = island.getGameMode();
-        this.homes = new HashMap<>(island.getHomes());
+        this.homes = new ConcurrentHashMap<>(island.getHomes());
         this.history.addAll(island.getHistory());
         this.location = island.getProtectionCenter();
         this.maxEverProtectionRange = island.getMaxEverProtectionRange();
         this.maxHomes = island.getMaxHomes();
-        this.maxMembers = new HashMap<>(island.getMaxMembers());
+        this.maxMembers = new ConcurrentHashMap<>(island.getMaxMembers());
         this.members.putAll(island.getMembers());
         this.metaData = island.getMetaData().map(MetaDataAble::toConcurrentMap).orElse(null);
         this.name = island.getName();
@@ -309,6 +317,95 @@ public class Island implements DataObject, MetaDataAble {
         this.bonusRanges.addAll(island.getBonusRanges());
         this.primaries.addAll(island.getPrimaries());
         this.setChanged();
+    }
+
+    /**
+     * Replaces the collections Gson filled in on load with concurrent ones. Gson assigns a
+     * plain {@code LinkedHashMap}/{@code ArrayList} to a field declared as {@code Map}/{@code List},
+     * which a region thread would then mutate while the save thread walks it.
+     */
+    public void normaliseCollections() {
+        int dropped = nullEntries(spawnPoint) + nullEntries(cooldowns) + nullEntries(commandRanks)
+                + nullEntries(homes) + nullEntries(maxMembers) + nullEntries(metaData) + nullKeys(primaries);
+        primaries = concurrentSet(primaries);
+        bonusRanges = concurrentList(bonusRanges);
+        history = concurrentList(history);
+        spawnPoint = concurrentMap(spawnPoint);
+        cooldowns = concurrentMap(cooldowns);
+        commandRanks = concurrentMap(commandRanks);
+        homes = concurrentMap(homes);
+        maxMembers = concurrentMap(maxMembers);
+        if (metaData != null && !(metaData instanceof ConcurrentMap)) {
+            metaData = MetaDataAble.toConcurrentMap(metaData);
+        }
+        if (dropped > 0 && BentoBox.getInstance() != null) {
+            // ConcurrentHashMap cannot hold a null key/value; say so instead of losing it silently.
+            BentoBox.getInstance().logWarning("Island " + uniqueId + ": ignored " + dropped
+                    + " null entry/entries while loading; the stored data is invalid.");
+        }
+    }
+
+    private static int nullEntries(@Nullable Map<?, ?> map) {
+        if (map == null) {
+            return 0;
+        }
+        int count = 0;
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static int nullKeys(@Nullable Set<?> set) {
+        if (set == null) {
+            return 0;
+        }
+        int count = 0;
+        for (Object item : set) {
+            if (item == null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static <T> Set<T> concurrentSet(@Nullable Set<T> set) {
+        if (set instanceof ConcurrentHashMap.KeySetView) {
+            return set;
+        }
+        Set<T> result = ConcurrentHashMap.newKeySet();
+        if (set != null) {
+            for (T item : set) {
+                if (item != null) {
+                    result.add(item);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static <T> List<T> concurrentList(@Nullable List<T> list) {
+        if (list instanceof CopyOnWriteArrayList) {
+            return list;
+        }
+        return list == null ? new CopyOnWriteArrayList<>() : new CopyOnWriteArrayList<>(list);
+    }
+
+    private static <K, V> Map<K, V> concurrentMap(@Nullable Map<K, V> map) {
+        if (map instanceof ConcurrentMap) {
+            return map;
+        }
+        Map<K, V> result = new ConcurrentHashMap<>();
+        if (map != null) {
+            map.forEach((key, value) -> {
+                if (key != null && value != null) {
+                    result.put(key, value);
+                }
+            });
+        }
+        return result;
     }
 
     /*
@@ -374,6 +471,11 @@ public class Island implements DataObject, MetaDataAble {
      *         otherwise.
      */
     public boolean unban(@NonNull UUID issuer, @NonNull UUID target) {
+        // Only a banned player may be unbanned: this is a public API, it must not be able to
+        // silently remove a member from the island
+        if (getRank(target) != RanksManager.BANNED_RANK) {
+            return false;
+        }
         if (members.remove(target) != null) {
             log(new LogEntry.Builder(LogType.UNBAN).data("player", target.toString()).data("issuer", issuer.toString())
                     .build());
@@ -654,10 +756,6 @@ public class Island implements DataObject, MetaDataAble {
      *         larger
      */
     public int getMaxEverProtectionRange() {
-        if (maxEverProtectionRange > this.getRange()) {
-            maxEverProtectionRange = this.getRange();
-            setChanged();
-        }
         return Math.max(this.getProtectionRange(), maxEverProtectionRange);
     }
 
@@ -970,14 +1068,13 @@ public class Island implements DataObject, MetaDataAble {
     public boolean onIsland(@NonNull Location target) {
         // Cheapest checks first: int coordinate compares before any world resolution
         int x = target.getBlockX();
-        int minProtectedX = this.getMinProtectedX();
-        int protectedSide = this.getProtectionRange() * 2;
-        if (x < minProtectedX || x >= minProtectedX + protectedSide) {
+        // Use the same bounds as getProtectionBoundingBox(): clamping the lower bound and then
+        // adding 2x range overflows into the neighbouring island when the centre was moved
+        if (x < this.getMinProtectedX() || x >= this.getMaxProtectedX()) {
             return false;
         }
         int z = target.getBlockZ();
-        int minProtectedZ = this.getMinProtectedZ();
-        if (z < minProtectedZ || z >= minProtectedZ + protectedSide) {
+        if (z < this.getMinProtectedZ() || z >= this.getMaxProtectedZ()) {
             return false;
         }
         World targetWorld = target.getWorld();
@@ -1250,6 +1347,11 @@ public class Island implements DataObject, MetaDataAble {
             }
         }
         this.range = range;
+        // Keep the historical maximum inside the new range here rather than in the getter, so
+        // that reading it never marks the island as changed
+        if (maxEverProtectionRange > range) {
+            maxEverProtectionRange = range;
+        }
         setChanged();
     }
 
@@ -1302,7 +1404,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param ranks the ranks to set
      */
     public void setRanks(Map<UUID, Integer> ranks) {
-        members = ranks;
+        members = new ConcurrentHashMap<>(ranks);
         setChanged();
     }
 
@@ -1347,7 +1449,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param spawnPoint the spawnPoint to set
      */
     public void setSpawnPoint(Map<Environment, Location> spawnPoint) {
-        this.spawnPoint = spawnPoint;
+        this.spawnPoint = concurrentMap(spawnPoint);
         setChanged();
     }
 
@@ -1496,7 +1598,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param history the list of {@link LogEntry} to set for this island.
      */
     public void setHistory(List<LogEntry> history) {
-        this.history = history;
+        this.history = concurrentList(history);
         setChanged();
     }
 
@@ -1679,7 +1781,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param cooldowns the cooldowns to set
      */
     public void setCooldowns(Map<String, Long> cooldowns) {
-        this.cooldowns = cooldowns;
+        this.cooldowns = concurrentMap(cooldowns);
         setChanged();
     }
 
@@ -1694,7 +1796,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param commandRanks the commandRanks to set
      */
     public void setCommandRanks(Map<String, Integer> commandRanks) {
-        this.commandRanks = commandRanks;
+        this.commandRanks = concurrentMap(commandRanks);
         setChanged();
     }
 
@@ -1709,7 +1811,7 @@ public class Island implements DataObject, MetaDataAble {
     public int getRankCommand(String command) {
 
         if (this.commandRanks == null) {
-            this.commandRanks = new HashMap<>();
+            this.commandRanks = new ConcurrentHashMap<>();
         }
 
         // Return or calculate default rank for a command.
@@ -1737,7 +1839,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setRankCommand(String command, int rank) {
         if (this.commandRanks == null)
-            this.commandRanks = new HashMap<>();
+            this.commandRanks = new ConcurrentHashMap<>();
         commandRanks.compute(command, (key, value) -> {
             if (value == null || !value.equals(rank)) {
                 setChanged(); // Call setChanged only if the value is updated.
@@ -1805,6 +1907,16 @@ public class Island implements DataObject, MetaDataAble {
         return changed;
     }
 
+    /** @return true if the island is known to exist in the database */
+    public boolean isSaved() {
+        return saved;
+    }
+
+    /** Marks the island as present in the database after a successful write or load. */
+    public void markSaved() {
+        this.saved = true;
+    }
+
     /**
      * Indicates the fields have been changed. Used to optimize saving on shutdown and notify other servers.
      * If saves are currently deferred (via {@link #beginDeferSaves()}), the island is
@@ -1813,7 +1925,7 @@ public class Island implements DataObject, MetaDataAble {
     public void setChanged() {
         this.setUpdatedDate(System.currentTimeMillis());
         this.changed = true;
-        if (deferSaveCount <= 0) {
+        if (deferSaveCount.get() <= 0) {
             IslandsManager.updateIsland(this);
         }
     }
@@ -1823,6 +1935,18 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void clearChanged() {
         this.changed = false;
+    }
+
+    /**
+     * Clears the dirty flag only if the island has not been modified since the given
+     * timestamp. Used after an asynchronous save so a newer change is not forgotten.
+     *
+     * @param savedAt value of {@link #getUpdatedDate()} when the save was started
+     */
+    public void clearChanged(long savedAt) {
+        if (this.updatedDate == savedAt) {
+            this.changed = false;
+        }
     }
 
     /**
@@ -1837,7 +1961,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 3.15.0
      */
     public void beginDeferSaves() {
-        deferSaveCount++;
+        deferSaveCount.incrementAndGet();
     }
 
     /**
@@ -1847,10 +1971,10 @@ public class Island implements DataObject, MetaDataAble {
      * @since 3.15.0
      */
     public void endDeferSaves() {
-        if (deferSaveCount > 0) {
-            deferSaveCount--;
+        if (deferSaveCount.get() > 0) {
+            deferSaveCount.decrementAndGet();
         }
-        if (deferSaveCount == 0 && changed) {
+        if (deferSaveCount.get() == 0 && changed) {
             IslandsManager.updateIsland(this);
         }
     }
@@ -1860,7 +1984,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 3.15.0
      */
     public boolean isDeferSaves() {
-        return deferSaveCount > 0;
+        return deferSaveCount.get() > 0;
     }
 
     /**
@@ -1902,7 +2026,7 @@ public class Island implements DataObject, MetaDataAble {
     @NonNull
     public Map<String, Location> getHomes() {
         if (homes == null) {
-            homes = new HashMap<>();
+            homes = new ConcurrentHashMap<>();
         }
         return homes;
     }
@@ -1919,6 +2043,8 @@ public class Island implements DataObject, MetaDataAble {
     public Location getHome(final String nameToLookFor) {
         return getHomes().entrySet().stream().filter(en -> en.getKey().equalsIgnoreCase(nameToLookFor))
                 .map(Entry::getValue)
+                // A copy: callers must not be able to move a saved home by editing the result
+                .map(Location::clone)
                 .findFirst().orElse(getProtectionCenter().clone().add(new Vector(0.5D, 0D, 0.5D)));
     }
 
@@ -1927,7 +2053,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void setHomes(Map<String, Location> homes) {
-        this.homes = homes;
+        this.homes = concurrentMap(homes);
         setChanged();
     }
 
@@ -1936,20 +2062,27 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void addHome(String name, Location location) {
-        if (getHomes().containsKey(name) && getHomes().get(name).equals(location)) {
+        String key = name.toLowerCase();
+        if (location == null) {
+            // A null location means "remove this home"; ConcurrentHashMap cannot hold null
+            if (getHomes().remove(key) != null) {
+                setChanged();
+            }
+            return;
+        }
+        if (getHomes().containsKey(key) && getHomes().get(key).equals(location)) {
             return; // nothing to do
         }
-        if (location != null) {
-            Vector v = location.toVector();
-            if (this.getBoundingBox() != null && !this.getBoundingBox().contains(v)) {
-                BentoBox.getInstance().logWarning("Tried to set a home location " + location
-                        + " outside of the island. This generally should not happen.");
-                BentoBox.getInstance().logWarning(
-                        "Island is at " + this.getCenter() + ". The island file may need editing to remove this home.");
-                BentoBox.getInstance().logWarning("Please report this issue and logs around this item to BentoBox");
-            }
+        Vector v = location.toVector();
+        if (this.getBoundingBox() != null && !this.getBoundingBox().contains(v)) {
+            BentoBox.getInstance().logWarning("Tried to set a home location " + location
+                    + " outside of the island. This generally should not happen.");
+            BentoBox.getInstance().logWarning(
+                    "Island is at " + this.getCenter() + ". The island file may need editing to remove this home.");
+            BentoBox.getInstance().logWarning("Please report this issue and logs around this item to BentoBox");
         }
-        getHomes().put(name.toLowerCase(), location);
+        // Store a copy: the caller's Location must not be able to change a saved home later
+        getHomes().put(key, location.clone());
         setChanged();
     }
 
@@ -2030,7 +2163,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public Map<Integer, Integer> getMaxMembers() {
         if (maxMembers == null) {
-            maxMembers = new HashMap<>();
+            maxMembers = new ConcurrentHashMap<>();
         }
         return maxMembers;
     }
@@ -2041,7 +2174,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxMembers(Map<Integer, Integer> maxMembers) {
         if (this.maxMembers != maxMembers) {
-            this.maxMembers = maxMembers;
+            this.maxMembers = concurrentMap(maxMembers);
             setChanged();
         }
     }
@@ -2082,7 +2215,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public List<BonusRangeRecord> getBonusRanges() {
         if (bonusRanges == null) {
-            this.setBonusRanges(new ArrayList<>());
+            this.setBonusRanges(new CopyOnWriteArrayList<>());
         }
         return bonusRanges;
     }
@@ -2091,7 +2224,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param bonusRanges the bonusRanges to set
      */
     public void setBonusRanges(List<BonusRangeRecord> bonusRanges) {
-        this.bonusRanges = bonusRanges;
+        this.bonusRanges = concurrentList(bonusRanges);
         setChanged();
     }
 
@@ -2220,7 +2353,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public Set<UUID> getPrimaries() {
         if (primaries == null) {
-            primaries = new HashSet<>();
+            primaries = ConcurrentHashMap.newKeySet();
         }
         return primaries;
     }
@@ -2229,7 +2362,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param primaries the primaries to set
      */
     public void setPrimaries(Set<UUID> primaries) {
-        this.primaries = primaries;
+        this.primaries = concurrentSet(primaries);
         setChanged();
     }
 

@@ -77,6 +77,12 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
+        if (user.getUniqueId().equals(island.getOwner())) {
+            // They were promoted to owner while the confirmation dialog was open. Leaving now
+            // would remove the owner from the member list and lock the island.
+            user.sendMessage("commands.island.team.leave.cannot-leave");
+            return false;
+        }
         // Fire event
         IslandBaseEvent event = TeamEvent.builder().island(island).reason(TeamEvent.Reason.LEAVE)
                 .involvedPlayer(user.getUniqueId()).build();

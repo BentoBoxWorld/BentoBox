@@ -32,6 +32,8 @@ import world.bentobox.bentobox.blueprints.conversation.NameConversationPrefix;
 import world.bentobox.bentobox.blueprints.conversation.NamePrompt;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.util.Conversations;
+import world.bentobox.bentobox.util.TaskScheduler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -206,7 +208,7 @@ public class BlueprintManagementPanel {
         for (int i = 9; i < 18; i++) {
             pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
-        blueprints.forEach((key, value) -> pb.item(getBlueprintItem(addon, key, bb, value)));
+        blueprints.forEach((key, value) -> pb.item(key, getBlueprintItem(addon, key, bb, value)));
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
             // Panel has a No Trash icon. If right-clicked it is discarded
@@ -522,33 +524,24 @@ public class BlueprintManagementPanel {
     }
 
     public void askForName(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
+        Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
         .withFirstPrompt(new NamePrompt(addon, bb))
         .withEscapeSequence(t("name.quit"))
         .buildConversation(whom).begin();
     }
 
     public void askForBlueprintName(Conversable whom, GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
+        Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
         .withFirstPrompt(new NamePrompt(addon, bp, bb))
         .withEscapeSequence(t("name.quit"))
         .buildConversation(whom).begin();
     }
 
     public void askForDescription(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
+        Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
         .withFirstPrompt(new DescriptionPrompt(addon, bb))
         .buildConversation(whom).begin();
     }
@@ -577,11 +570,8 @@ public class BlueprintManagementPanel {
      * @param bb - blueprint bundle
      */
     public void askForCommands(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
+        Conversations.factory(BentoBox.getInstance(), true, false, 90)
         .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
         .withFirstPrompt(new CommandsPrompt(addon, bb))
         .withEscapeSequence(t("commands.quit"))
         .buildConversation(whom).begin();

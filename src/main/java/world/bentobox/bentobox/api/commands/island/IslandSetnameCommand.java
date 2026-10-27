@@ -92,6 +92,14 @@ public class IslandSetnameCommand extends CompositeCommand {
         // Naming the island - join all the arguments with spaces.
         String name = String.join(" ", args);
 
+        // Names are substituted into chat messages that support inline [run_command: ...] tags.
+        // A player-chosen name must not be able to inject one.
+        if (name.indexOf('[') >= 0 || name.indexOf(']') >= 0
+                || name.indexOf('<') >= 0 || name.indexOf('>') >= 0) {
+            user.sendMessage("commands.island.setname.invalid-characters");
+            return false;
+        }
+
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength() || Util.stripColor(name).isEmpty()) {
             user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER, String.valueOf(getSettings().getNameMinLength()));
@@ -121,6 +129,14 @@ public class IslandSetnameCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Naming the island - join all the arguments with spaces.
         String name = String.join(" ", args);
+
+        // Names are substituted into chat messages that support inline [run_command: ...] tags.
+        // A player-chosen name must not be able to inject one.
+        if (name.indexOf('[') >= 0 || name.indexOf(']') >= 0
+                || name.indexOf('<') >= 0 || name.indexOf('>') >= 0) {
+            user.sendMessage("commands.island.setname.invalid-characters");
+            return false;
+        }
 
         // Apply colors
         if (user.hasPermission(getPermissionPrefix() + "island.name.format")) {

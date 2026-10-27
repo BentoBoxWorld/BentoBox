@@ -73,8 +73,16 @@ public class RanksManager {
             save();
         } else {
             // Load the ranks from the database
-            Objects.requireNonNull(handler.loadObject("BentoBox-Ranks")).getRankReference()
-                    .forEach(this::ranksPut);
+            Ranks ranks = handler.loadObject("BentoBox-Ranks");
+            if (ranks == null || ranks.getRankReference().isEmpty()) {
+                // The file exists but could not be read: never let a broken file leave the
+                // rank ladder empty, every rank check depends on it
+                BentoBox.getInstance().logError("Could not read BentoBox-Ranks - using default ranks");
+                DEFAULT_RANKS.forEach(this::ranksPut);
+                save();
+            } else {
+                ranks.getRankReference().forEach(this::ranksPut);
+            }
         }
 
     }
@@ -122,6 +130,9 @@ public class RanksManager {
      * @return true if removed
      */
     public boolean removeRank(String reference) {
+        if (DEFAULT_RANKS.containsKey(reference)) {
+            return false; // built-in ranks are part of the ladder and cannot be removed
+        }
         boolean result = ranks.remove(reference) != null;
         if (result) {
             save();

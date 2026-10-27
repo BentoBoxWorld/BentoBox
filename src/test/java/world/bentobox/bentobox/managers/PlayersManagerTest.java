@@ -740,7 +740,10 @@ class PlayersManagerTest extends CommonTestSetup {
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
      */
     @Test
-    void testGetName() {
+    void testGetName() throws Exception {
+        // An unknown player must be created from the offline player name; loadObject returns null
+        // for a row that does not exist.
+        when(playerHandler.loadObject(uuid.toString())).thenReturn(null);
         assertEquals("tastybento", pm.getName(uuid));
     }
 

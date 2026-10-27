@@ -287,17 +287,17 @@ public class FancyNpcsHook extends NPCHook {
                 BlueprintEntity cit = new BlueprintEntity();
                 cit.setType(npc.getData().getType());
                 cit.setNpc(this.serializeNPC(npc, origin));
-                // Retrieve or create the list, then add the entity
-                List<BlueprintEntity> entities = bpEntities.getOrDefault(spot, new ArrayList<>());
-                entities.add(cit);
-                // Create position
+                // Create position relative to the origin - this is also the map key
                 Vector origin2 = origin == null ? new Vector(0, 0, 0) : origin;
                 int x = spot.getBlockX() - origin2.getBlockX();
                 int y = spot.getBlockY() - origin2.getBlockY();
                 int z = spot.getBlockZ() - origin2.getBlockZ();
                 Vector pos = new Vector(x, y, z);
+                // Retrieve or create the list, then add the entity
+                List<BlueprintEntity> entities = bpEntities.getOrDefault(pos, new ArrayList<>());
+                entities.add(cit);
                 // Store
-                bpEntities.put(pos, entities); // Update the map
+                bpEntities.put(pos, entities);
             }
         }
         return bpEntities;

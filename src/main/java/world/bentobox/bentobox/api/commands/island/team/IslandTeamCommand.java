@@ -222,7 +222,12 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     @Nullable
     public UUID getInviter(UUID invitee) {
-        return isInvited(invitee) ? handler.loadObject(invitee.toString()).getInviter() : null;
+        if (!isInvited(invitee)) {
+            return null;
+        }
+        TeamInvite invite = handler.loadObject(invitee.toString());
+        // The index says invited but the file is gone or unreadable
+        return invite == null ? null : invite.getInviter();
     }
 
     /**

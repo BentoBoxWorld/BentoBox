@@ -36,15 +36,27 @@ public class WorldRegeneratorImpl implements WorldRegenerator {
                 throw new IllegalStateException(error);
             }
             var data = Bukkit.getServer().createChunkData(world);
-            long stageSeed = cx * 341873128712L + cz * 132897987541L;
+            // CustomChunkGenerator seeds noise/surface/bedrock with setLargeFeatureWithSalt(0, x, z, 0):
+            // the world seed is not mixed in, only the chunk coordinates are.
+            long featureSeed = cx * 341873128712L + cz * 132897987541L;
+            boolean noise = overrides(generator, "generateNoise");
+            boolean surface = overrides(generator, "generateSurface");
+            boolean bedrock = overrides(generator, "generateBedrock");
+            boolean caves = overrides(generator, "generateCaves");
+            // Nothing overridden means the buffer would stay empty and the chunk would be erased
+            if (!noise && !surface && !bedrock && !caves) {
+                throw new UnsupportedOperationException(
+                        "Generator does not implement any modern generation stage: " + generator.getClass().getName());
+            }
             // shouldGenerate* describes the server pipeline, not whether the generator owns the stage.
-            if (overrides(generator, "generateNoise"))
-                generator.generateNoise(world, new Random(stageSeed), cx, cz, data);
-            if (overrides(generator, "generateSurface"))
-                generator.generateSurface(world, new Random(stageSeed), cx, cz, data);
-            if (overrides(generator, "generateBedrock"))
-                generator.generateBedrock(world, new Random(stageSeed), cx, cz, data);
-            if (overrides(generator, "generateCaves"))
+            if (noise)
+                generator.generateNoise(world, new Random(featureSeed), cx, cz, data);
+            if (surface)
+                generator.generateSurface(world, new Random(featureSeed), cx, cz, data);
+            if (bedrock)
+                generator.generateBedrock(world, new Random(featureSeed), cx, cz, data);
+            // applyCarvers uses setDecorationSeed(world.getSeed(), 0, 0), which reduces to the world seed.
+            if (caves)
                 generator.generateCaves(world, new Random(world.getSeed()), cx, cz, data);
 
             var biomeProvider = generator.getDefaultBiomeProvider(world);
@@ -69,7 +81,7 @@ public class WorldRegeneratorImpl implements WorldRegenerator {
             }
             var populators = new java.util.ArrayList<BlockPopulator>(generator.getDefaultPopulators(world));
             populators.addAll(world.getPopulators());
-            var random = new Random(stageSeed);
+            var random = new Random(featureSeed);
             for (BlockPopulator populator : populators) populator.populate(world, random, chunk);
         });
     }
@@ -81,12 +93,5 @@ public class WorldRegeneratorImpl implements WorldRegenerator {
         } catch (NoSuchMethodException error) {
             throw new IllegalStateException(error);
         }
-    }
-
-    private static Random flagRandom(World world, int x, int z, String stage) {
-        // Minecraft's coordinate seed, kept local to avoid an NMS runtime dependency.
-        long seed = (long) (x * 3129871) ^ z * 116129781L ^ stage.hashCode();
-        seed = (seed * seed * 42317861L + seed * 11L) >> 16;
-        return new Random(seed ^ world.getSeed());
     }
 }

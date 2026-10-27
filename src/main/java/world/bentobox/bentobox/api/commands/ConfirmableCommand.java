@@ -112,7 +112,10 @@ public abstract class ConfirmableCommand extends CompositeCommand {
         if (pending != null) {
             pending.task().cancel();
             if (pending.topLabel().equals(getTopLabel()) && pending.label().equalsIgnoreCase(getLabel())) {
-                TaskScheduler.user(getPlugin(), user, pending.runnable());
+                // Run the action supplied by *this* invocation: it captured the current
+                // arguments, so changing the target between the prompt and the confirmation
+                // (e.g. setowner Alice -> setowner Bob) cannot execute the old target.
+                TaskScheduler.user(getPlugin(), user, confirmed);
                 return;
             } else {
                 // Player has another outstanding confirmation request that will now be cancelled
@@ -125,8 +128,9 @@ public abstract class ConfirmableCommand extends CompositeCommand {
         }
         // Tell user that they need to confirm
         user.sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
-        // Set up a cancellation task
-        BukkitTask task = TaskScheduler.userLater(getPlugin(), user, () -> {
+        // Set up a cancellation task. This must not be tied to the player entity: on Folia a
+        // logout drops entity tasks, leaving the confirmation armed and the map entry leaked.
+        BukkitTask task = TaskScheduler.globalLater(getPlugin(), () -> {
             toBeConfirmed.computeIfPresent(user, (key, current) -> {
                 if (current.runnable() != confirmed) return current;
                 user.sendMessage("commands.confirmation.request-cancelled");

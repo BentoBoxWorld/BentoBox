@@ -315,7 +315,7 @@ public class IslandHomesPanel extends AbstractPanel
             // Out of index.
             return null;
         }
-        return this.createIslandButtonDetail(template, slot);
+        return this.createIslandButtonDetail(template, slot, index);
     }
 
 
@@ -324,7 +324,7 @@ public class IslandHomesPanel extends AbstractPanel
      *
      * @return PanelItem that allows to select bundle button
      */
-    private PanelItem createIslandButtonDetail(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot)
+    private PanelItem createIslandButtonDetail(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot, int index)
     {
         // Get settings for island.
         PanelItemBuilder builder = new PanelItemBuilder();
@@ -341,19 +341,19 @@ public class IslandHomesPanel extends AbstractPanel
         if (template.title() != null)
         {
             builder.name(this.user.getTranslation(this.command.getWorld(), template.title(),
-                    TextVariables.NAME, order.get(slot.slot())));
+                    TextVariables.NAME, order.get(index)));
         }
         else
         {
             builder.name(this.user.getTranslation("panels.island_homes.buttons.name", TextVariables.NAME,
-                    order.get(slot.slot())));
+                    order.get(index)));
         }
 
         // Add ClickHandler
         builder.clickHandler((panel, user, clickType, i) -> {
             template.actions().forEach(action -> {
                 if (goCommand != null) {
-                    String name = order.get(slot.slot());
+                    String name = order.get(index);
                     user.closeInventory();
                     if (goCommand.canExecute(user, "", List.of(name))) {
                         goCommand.execute(user, "", List.of(name));

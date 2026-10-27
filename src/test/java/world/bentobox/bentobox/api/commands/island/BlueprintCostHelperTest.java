@@ -76,8 +76,19 @@ class BlueprintCostHelperTest {
         }
     }
 
-    @Test void unpaidEventCancellationIsNotAPaymentFailureAndAllowsRetry() {
-        when(builder.buildAsync()).thenReturn(CompletableFuture.completedFuture(null));
+    @Test void declinedWithdrawalUndoesUpfrontBookkeeping() {
+        when(withdrawal.get()).thenReturn(new EconomyResponse(0, 100, ResponseType.FAILURE, "no money"));
+        var notStarted = mock(Runnable.class);
+        try (var tasks = mockStatic(TaskScheduler.class)) {
+            immediate(tasks);
+            assertTrue(BlueprintCostHelper.build(plugin, addon, user, "paid", world, builder, true,
+                    () -> CompletableFuture.completedFuture(null), () -> {}, notStarted));
+            verify(notStarted).run();
+            verify(builder, never()).buildAsync();
+        }
+    }
+
+    @Test void unpaidEventCancellationIsNotAPaymentFailureAndAllowsRetry() {        when(builder.buildAsync()).thenReturn(CompletableFuture.completedFuture(null));
         var completed = mock(Runnable.class);
         try (var tasks = mockStatic(TaskScheduler.class)) {
             immediate(tasks);
@@ -151,36 +162,27 @@ class BlueprintCostHelperTest {
             verifyNoInteractions(completed);
             verify(plugin, never()).logError(anyString());
             tasks.verify(() -> TaskScheduler.user(any(), any(), any()), never());
-            try (var files = java.nio.file.Files.list(directory.resolve("blueprint-payments"));
-                    var input = java.nio.file.Files.newInputStream(files.findFirst().orElseThrow())) {
-                var receipt = new java.util.Properties();
-                receipt.load(input);
-                assertEquals("REFUNDED", receipt.getProperty("state"));
-            }
+            assertEquals("REFUNDED", storedReceipt().getProperty("state"));
         }
     }
 
-    @Test void rejectedTeleportAfterCommittingPreservesPaymentForReview() throws Exception {
+    @Test void rejectedTeleportAfterCommittingRefunds() throws Exception {
         var beforeTeleport = new java.util.concurrent.atomic.AtomicReference<java.util.function.Supplier<CompletableFuture<Void>>>();
         when(builder.beforeTeleport(any())).thenAnswer(call -> {
             beforeTeleport.set(call.getArgument(0));
             return builder;
         });
         when(builder.buildAsync()).thenAnswer(call -> beforeTeleport.get().get().thenCompose(done ->
-                CompletableFuture.failedFuture(new IllegalStateException("Home teleport was rejected"))));
+                CompletableFuture.failedFuture(new world.bentobox.bentobox.managers.island.NewIsland.RolledBackException(
+                        new IllegalStateException("Home teleport was rejected")))));
         var completed = mock(Runnable.class);
         try (var tasks = mockStatic(TaskScheduler.class)) {
             immediate(tasks);
             assertTrue(BlueprintCostHelper.build(plugin, addon, user, "paid", world, builder, true,
                     () -> CompletableFuture.completedFuture(null), completed));
-            verify(withdrawal, never()).refund();
+            verify(withdrawal).refund();
             verifyNoInteractions(completed);
-            try (var files = java.nio.file.Files.list(directory.resolve("blueprint-payments"));
-                    var input = java.nio.file.Files.newInputStream(files.findFirst().orElseThrow())) {
-                var receipt = new java.util.Properties();
-                receipt.load(input);
-                assertEquals("COMMITTING", receipt.getProperty("state"));
-            }
+            assertEquals("REFUNDED", storedReceipt().getProperty("state"));
         }
     }
 
@@ -234,9 +236,30 @@ class BlueprintCostHelperTest {
         }
     }
 
+    /** Reads the newest receipt, which is in the root while pending and in archive/ once finished. */
+    private java.util.Properties storedReceipt() throws Exception {
+        java.nio.file.Path dir = directory.resolve("blueprint-payments");
+        java.nio.file.Path file;
+        try (var files = java.nio.file.Files.list(dir)) {
+            file = files.filter(p -> p.toString().endsWith(".properties")).findFirst().orElse(null);
+        }
+        if (file == null) {
+            try (var files = java.nio.file.Files.list(dir.resolve("archive"))) {
+                file = files.findFirst().orElseThrow();
+            }
+        }
+        var result = new java.util.Properties();
+        try (var input = java.nio.file.Files.newInputStream(file)) { result.load(input); }
+        return result;
+    }
+
     static void immediate(org.mockito.MockedStatic<TaskScheduler> tasks) {
         tasks.when(() -> TaskScheduler.globalFuture(any(), any())).thenAnswer(call -> run(call.getArgument(1)));
         tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> run(call.getArgument(2)));
+        tasks.when(() -> TaskScheduler.global(any(), any())).thenAnswer(call -> {
+            call.getArgument(1, Runnable.class).run();
+            return null;
+        });
     }
 
     private static CompletableFuture<Void> run(Runnable action) {

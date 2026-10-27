@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
+import world.bentobox.bentobox.util.Conversations;
 import world.bentobox.bentobox.util.TaskScheduler;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -110,7 +111,7 @@ public class IslandTeamInviteGUI {
         PanelItemBuilder pib = new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
                 .clickHandler((panel, user, clickType, clickSlot) -> {
                     user.closeInventory();
-                    new ConversationFactory(BentoBox.getInstance()).withLocalEcho(false).withTimeout(90)
+                    Conversations.factory(BentoBox.getInstance(), false, false, 90)
                             .withModality(false).withFirstPrompt(new InviteNamePrompt())
                             .buildConversation(user.getPlayer()).begin();
                     return true;
@@ -243,37 +244,25 @@ public class IslandTeamInviteGUI {
         if (clickType.equals(ClickType.LEFT)) {
             // Close inventory after one tick to allow the no pickup click return to occur
                             TaskScheduler.user(plugin, user, user::closeInventory);
-            if (itic.canExecute(user, itic.getLabel(), List.of(player.getName()))) {
-                plugin.log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
-                        + itc.getWorld().getName());
-                itic.execute(user, itic.getLabel(), List.of(player.getName()));
-            } else {
-                plugin.log("Invite failed: " + player.getName() + " by " + user.getName() + " to join island in "
-                        + itc.getWorld().getName());
-            }
+            // call() runs the permission check as well; canExecute() alone would skip
+            // island.team.invite / coop / trust nodes.
+            boolean sent = itic.call(user, itic.getLabel(), List.of(player.getName()));
+            plugin.log((sent ? "Invite sent to: " : "Invite failed: ") + player.getName() + " by " + user.getName()
+                    + " to join island in " + itc.getWorld().getName());
         } else if (clickType.equals(ClickType.RIGHT)) {
             // Close inventory after one tick to allow the no pickup click return to occur
                             TaskScheduler.user(plugin, user, user::closeInventory);
-            if (this.itc.getCoopCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
-                plugin.log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
-                        + itc.getWorld().getName());
-                this.itc.getCoopCommand().execute(user, itic.getLabel(), List.of(player.getName()));
-            } else {
-                plugin.log(
-                        "Coop failed: " + player.getName() + "'s coop to " + user.getName() + " failed for island in "
-                                + itc.getWorld().getName());
-            }
+            boolean cooped = this.itc.getCoopCommand().call(user, this.itc.getCoopCommand().getLabel(),
+                    List.of(player.getName()));
+            plugin.log((cooped ? "Coop: " : "Coop failed: ") + player.getName() + " cooped " + user.getName()
+                    + " to island in " + itc.getWorld().getName());
         } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
             // Close inventory after one tick to allow the no pickup click return to occur
                             TaskScheduler.user(plugin, user, user::closeInventory);
-            if (this.itc.getTrustCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
-                plugin.log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
-                        + itc.getWorld().getName());
-                this.itc.getTrustCommand().execute(user, itic.getLabel(), List.of(player.getName()));
-            } else {
-                plugin.log("Trust failed: " + player.getName() + "'s trust failed for " + user.getName()
-                        + " for island in " + itc.getWorld().getName());
-            }
+            boolean trusted = this.itc.getTrustCommand().call(user, this.itc.getTrustCommand().getLabel(),
+                    List.of(player.getName()));
+            plugin.log((trusted ? "Trust: " : "Trust failed: ") + player.getName() + " trusted " + user.getName()
+                    + " to island in " + itc.getWorld().getName());
         }
         return true;
     }

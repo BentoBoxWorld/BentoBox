@@ -7,6 +7,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * @since 1.10.0
@@ -27,6 +28,9 @@ public class AdminRangeAddCommand extends AbstractAdminRangeCommand {
 
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
+        RangeTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Island targetIsland = target.island();
         int newRange = targetIsland.getProtectionRange() + Integer.parseInt(args.get(1));
 
         if (newRange > targetIsland.getRange()) {
@@ -47,7 +51,7 @@ public class AdminRangeAddCommand extends AbstractAdminRangeCommand {
         // Call Protection Range Change event. Does not support cancelling.
         IslandEvent.builder()
                 .island(targetIsland).location(targetIsland.getCenter())
-                .reason(IslandEvent.Reason.RANGE_CHANGE).involvedPlayer(targetUUID).admin(true)
+                .reason(IslandEvent.Reason.RANGE_CHANGE).involvedPlayer(target.playerUUID()).admin(true)
                 .protectionRange(newRange, oldRange).build();
 
         user.sendMessage("commands.admin.range.add.success",

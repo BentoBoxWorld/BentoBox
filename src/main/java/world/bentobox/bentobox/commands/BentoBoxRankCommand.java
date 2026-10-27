@@ -133,7 +133,9 @@ public class BentoBoxRankCommand extends CompositeCommand {
             return Optional.of(options);
         }
         if (REMOVE.equals(firstElement)) {
-            return Optional.of(new ArrayList<>(RanksManager.getInstance().getRanks().keySet()));
+            List<String> options = new ArrayList<>(RanksManager.getInstance().getRanks().keySet());
+            options.removeIf(RanksManager.DEFAULT_RANKS::containsKey);
+            return Optional.of(options);
         }
         return Optional.empty();
 

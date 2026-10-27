@@ -7,6 +7,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -28,6 +29,9 @@ public class AdminRangeRemoveCommand extends AbstractAdminRangeCommand {
 
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
+        RangeTarget target = resolveTarget(user, args);
+        if (target == null) return false;
+        Island targetIsland = target.island();
         if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
             return false;
@@ -37,7 +41,7 @@ public class AdminRangeRemoveCommand extends AbstractAdminRangeCommand {
 
         if (newRange <= 1) {
             user.sendMessage("commands.admin.range.invalid-value.too-low", TextVariables.NUMBER,
-                    String.valueOf(targetIsland.getRange()));
+                    String.valueOf(newRange));
             return false;
         } else if (newRange == targetIsland.getProtectionRange()) {
             user.sendMessage("commands.admin.range.invalid-value.same-as-before", TextVariables.NUMBER, args.get(1));
@@ -54,7 +58,7 @@ public class AdminRangeRemoveCommand extends AbstractAdminRangeCommand {
         IslandEvent.builder()
                 .island(targetIsland).location(targetIsland.getCenter())
         .reason(IslandEvent.Reason.RANGE_CHANGE)
-        .involvedPlayer(targetUUID)
+        .involvedPlayer(target.playerUUID())
         .admin(true)
         .protectionRange(newRange, oldRange)
         .build();

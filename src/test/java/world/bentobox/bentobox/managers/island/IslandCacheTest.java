@@ -237,6 +237,8 @@ class IslandCacheTest extends CommonTestSetup {
 
         Mockito.verify(island).setOwner(newOwnerUUID);
         assertEquals(island, ic.getIsland(world, newOwnerUUID));
+        // The old owner is demoted to a member, so the index entry must survive the transfer.
+        assertEquals(island, ic.getIsland(world, owner));
     }
 
     /**

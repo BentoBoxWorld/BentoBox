@@ -204,6 +204,27 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         mockedUtil.verify(() -> Util.runCommands(any(User.class), anyString(), eq(Collections.emptyList()), eq("respawn")));
     }
 
+    @Test
+    void testOnPlayerRespawnFallsBackToIslandHome() {
+        // On Folia the synchronous safe-spot lookup always returns null.
+        when(im.getSafeRespawnLocation(eq(world), any(UUID.class))).thenReturn(null);
+        Location home = mock(Location.class);
+        when(home.getWorld()).thenReturn(world);
+        when(home.clone()).thenReturn(home);
+        when(im.getHomeLocation(eq(world), any(UUID.class))).thenReturn(home);
+        when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
+
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
+        l.onPlayerRespawn(ev);
+
+        assertEquals(home, ev.getRespawnLocation());
+    }
+
     /**
      * Test method for
      * {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
@@ -289,6 +310,8 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // No safe respawn location can be resolved
         when(im.getSafeRespawnLocation(eq(world), any(UUID.class))).thenReturn(null);
+        // ... and no island home either, so the protection center is the last resort
+        when(im.getHomeLocation(eq(world), any(UUID.class))).thenReturn(null);
         // Player has an island for SafeSpotTeleport fallback
         when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
         Location protectionCenter = mock(Location.class);
@@ -329,6 +352,30 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         assertSame(location, ev.getRespawnLocation());
         // Respawn commands still run
         mockedUtil.verify(() -> Util.runCommands(any(User.class), anyString(), eq(Collections.emptyList()), eq("respawn")));
+    }
+
+    /**
+     * A {@code /spawnpoint} position is neither a bed nor an anchor, so the vanilla event does
+     * not carry it. The stored respawn location is still honored when it is on the player's island.
+     */
+    @Test
+    void testOnPlayerRespawnCustomSpawnpointOnOwnIslandHonored() {
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, drops, 0, 0, 0, 0, "");
+        IslandRespawnListener l = new IslandRespawnListener();
+        l.onPlayerDeath(e);
+        UUID playerId = mockPlayer.getUniqueId();
+        when(location.getWorld()).thenReturn(world);
+        when(location.clone()).thenReturn(location);
+        when(im.getSafeRespawnLocation(eq(world), any(UUID.class))).thenReturn(null);
+        when(mockPlayer.getRespawnLocation(false)).thenReturn(location);
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(playerId));
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(mockPlayer, location, false, false, false, RespawnReason.DEATH);
+
+        l.onPlayerRespawn(ev);
+
+        assertSame(location, ev.getRespawnLocation());
     }
 
     /**

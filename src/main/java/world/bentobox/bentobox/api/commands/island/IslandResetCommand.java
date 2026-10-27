@@ -10,7 +10,6 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
-import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -19,7 +18,6 @@ import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
 import world.bentobox.bentobox.panels.customizable.IslandCreationPanel;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.TaskScheduler;
 
 /**
  * Handles the island reset command (/island reset).
@@ -29,9 +27,8 @@ import world.bentobox.bentobox.util.TaskScheduler;
  * <ul>
  *   <li>Cooldown management</li>
  *   <li>Reset limit tracking</li>
- *   <li>Team member removal</li>
- *   <li>Old island deletion</li>
- *   <li>New island creation</li>
+ *   <li>New island creation and teleport</li>
+ *   <li>Team member removal and old island deletion</li>
  * </ul>
  * <p>
  * Features:
@@ -202,31 +199,25 @@ public class IslandResetCommand extends ConfirmableCommand {
         }
         if (!preclearAllowed(user, oldIsland)) return false;
         user.sendMessage("commands.island.create.creating-island");
+        // Charge the cooldown as soon as the attempt starts. A failed reset must not be free to
+        // retry, otherwise a player can pile up islands faster than the cleanup can reap them.
+        setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
         // Create new island and then delete the old one
             Builder builder = NewIsland.builder().player(user).reason(Reason.RESET).addon(getAddon())
                     .oldIsland(oldIsland).name(name);
             if (noPaste)
                 builder.noPaste();
-            return BlueprintCostHelper.build(getPlugin(), getAddon(), user, name, getWorld(), builder,
-                    getPlugin().getSettings().isChargeForBlueprintOnReset(), () -> clearOldIslandAsync(user, oldIsland), () -> {
-                        getPlayers().addReset(getWorld(), user.getUniqueId());
-                        setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
-                    });
-    }
-
-    /**
-     * Handles old island cleanup before reset.
-     * Fires preclear event and removes all team members.
-     * 
-     * @param user The user resetting their island
-     * @param oldIsland The island being reset
-     */
-    private boolean deleteOldIsland(@NonNull User user, @NonNull Island oldIsland) {
-        if (!preclearAllowed(user, oldIsland)) return false;
-
-        // Kick all island members (including the owner)
-        kickMembers(oldIsland);
-        return true;
+            boolean started = BlueprintCostHelper.build(getPlugin(), getAddon(), user, name, getWorld(), builder,
+                    getPlugin().getSettings().isChargeForBlueprintOnReset(),
+                    () -> CompletableFuture.completedFuture(null),
+                    () -> getPlayers().addReset(getWorld(), user.getUniqueId()),
+                    () -> setCooldown(user.getUniqueId(), 0));
+            if (!started) {
+                // Nothing was created (cannot afford it, another creation in progress, ...), so
+                // the attempt must not cost the player their cooldown.
+                setCooldown(user.getUniqueId(), 0);
+            }
+            return started;
     }
 
     private boolean preclearAllowed(@NonNull User user, @NonNull Island oldIsland) {
@@ -235,68 +226,5 @@ public class IslandResetCommand extends ConfirmableCommand {
         IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
         return !event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled());
-    }
-
-    private CompletableFuture<Void> clearOldIslandAsync(User user, Island oldIsland) {
-        if (!user.getUniqueId().equals(oldIsland.getOwner())) {
-            return CompletableFuture.failedFuture(
-                    new java.util.concurrent.CancellationException("Island ownership changed during reset"));
-        }
-        IslandBaseEvent event = IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
-                .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
-        if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
-            return CompletableFuture.failedFuture(new java.util.concurrent.CancellationException("Island reset was cancelled"));
-        }
-        var tasks = oldIsland.getMemberSet().stream().map(memberId -> {
-            User member = User.getInstance(memberId);
-            return TaskScheduler.userFuture(getPlugin(), member, () -> {
-                        if (!memberId.equals(oldIsland.getOwner())) {
-                            member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE,
-                                    getAddon().getDescription().getName());
-                        }
-                        getIslands().removePlayer(oldIsland, memberId);
-                    }).thenCompose(ignored -> getPlayers().cleanLeavingPlayerAsync(getWorld(), member, false, oldIsland))
-                    .thenRun(() -> {
-                        TeamEvent.builder().island(oldIsland).reason(TeamEvent.Reason.DELETE)
-                                .involvedPlayer(memberId).build();
-                    });
-        }).toArray(CompletableFuture<?>[]::new);
-        return CompletableFuture.allOf(tasks).exceptionallyCompose(error -> CompletableFuture.failedFuture(
-                new IllegalStateException("Old-island cleanup failed after reset commit started", error)));
-    }
-
-    /**
-     * Removes all members from an island.
-     * Handles member cleanup and event firing.
-     * Does not use team kick command to avoid permission issues.
-     * 
-     * @param island The island to remove members from
-     * @since 1.7.0
-     */
-    private void kickMembers(Island island) {
-        /*
-         * We cannot assume the island owner can run /[cmd] team kick (it might be
-         * disabled, or there could be permission restrictions...) Therefore, we need to
-         * do it manually. Plus, a more specific team event (TeamDeleteEvent) is called
-         * by this method.
-         */
-        island.getMemberSet().forEach(memberUUID -> {
-
-            User member = User.getInstance(memberUUID);
-            // Send a "you're kicked" message if the member is not the island owner (send
-            // before removing!)
-            if (!memberUUID.equals(island.getOwner())) {
-                member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE,
-                        getAddon().getDescription().getName());
-            }
-            // Remove player
-            getIslands().removePlayer(island, memberUUID);
-
-            // Clean player
-            getPlayers().cleanLeavingPlayer(getWorld(), member, false, island);
-
-            // Fire event
-            TeamEvent.builder().island(island).reason(TeamEvent.Reason.DELETE).involvedPlayer(memberUUID).build();
-        });
     }
 }

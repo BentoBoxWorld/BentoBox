@@ -185,7 +185,7 @@ public class BlueprintPaster {
         pasteState = PasteState.CHUNK_LOAD;
 
         // If this is an island OVERWORLD paste, get the island owner.
-        final Optional<User> owner = Optional.ofNullable(island).map(i -> User.getInstance(i.getOwner()));
+        final Optional<User> owner = Optional.ofNullable(island).map(Island::getOwner).map(User::getInstance);
 
         // Tell the owner we're pasting blocks and how much time it might take
         owner.ifPresent(user -> tellOwner(user, blocks.size(), attached.size(), entities.size(), plugin.getSettings().getPasteSpeed()));

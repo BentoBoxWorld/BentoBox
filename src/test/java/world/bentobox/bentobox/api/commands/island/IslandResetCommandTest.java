@@ -76,43 +76,22 @@ class IslandResetCommandTest extends CommonTestSetup {
     private IslandResetCommand irc;
 
     @Test
-    void testFoliaResetCleanupWaitsForEveryMember() {
+    void testFoliaResetLeavesOldIslandCleanupToNewIsland() {
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
-        UUID otherId = UUID.randomUUID();
-        User other = mock(User.class);
-        when(other.getUniqueId()).thenReturn(otherId);
-        when(island.getOwner()).thenReturn(uuid);
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, otherId));
-        var ownerCleanup = new java.util.concurrent.CompletableFuture<Void>();
-        var otherCleanup = new java.util.concurrent.CompletableFuture<Void>();
-        when(pm.cleanLeavingPlayerAsync(world, user, false, island)).thenReturn(ownerCleanup);
-        when(pm.cleanLeavingPlayerAsync(world, other, false, island)).thenReturn(otherCleanup);
         NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
         when(builder.buildAsync()).thenReturn(new java.util.concurrent.CompletableFuture<>());
         try (var creation = Mockito.mockStatic(NewIsland.class);
-                var users = Mockito.mockStatic(User.class);
                 var tasks = Mockito.mockStatic(TaskScheduler.class)) {
             BlueprintCostHelperTest.immediate(tasks);
             creation.when(NewIsland::builder).thenReturn(builder);
-            users.when(() -> User.getInstance(uuid)).thenReturn(user);
-            users.when(() -> User.getInstance(otherId)).thenReturn(other);
             tasks.when(TaskScheduler::isFolia).thenReturn(true);
-            tasks.when(() -> TaskScheduler.userFuture(any(), any(), any())).thenAnswer(call -> {
-                call.getArgument(2, Runnable.class).run();
-                return java.util.concurrent.CompletableFuture.completedFuture(null);
-            });
             assertTrue(irc.execute(user, irc.getLabel(), List.of("custom")));
+            // Member cleanup moved to NewIsland.tidyUp: a failed teleport must leave the old
+            // island's members untouched instead of producing a ghost island.
             verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
             var callback = org.mockito.ArgumentCaptor.forClass(java.util.function.Supplier.class);
             verify(builder).beforeTeleport(callback.capture());
-            var cleanup = (java.util.concurrent.CompletableFuture<?>) callback.getValue().get();
-            assertFalse(cleanup.isDone());
-            ownerCleanup.complete(null);
-            assertFalse(cleanup.isDone());
-            otherCleanup.complete(null);
-            cleanup.join();
-            verify(im).removePlayer(island, uuid);
-            verify(im).removePlayer(island, otherId);
+            assertTrue(((java.util.concurrent.CompletableFuture<?>) callback.getValue().get()).isDone());
             verify(pm, never()).addReset(any(), any());
         }
     }
@@ -151,6 +130,26 @@ class IslandResetCommandTest extends CommonTestSetup {
             verify(builder, never()).build();
             verify(im, never()).deleteIsland(eq(island), anyBoolean(), any());
             verify(im, never()).removePlayer(any(Island.class), any(UUID.class));
+        }
+    }
+
+    @Test
+    void testAttemptThatNeverStartedDoesNotChargeTheResetCooldown() {
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(s.getResetCooldown()).thenReturn(300);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(pm.getResetsLeft(world, uuid)).thenReturn(-1);
+        NewIsland.Builder builder = mock(NewIsland.Builder.class, Mockito.RETURNS_SELF);
+        try (var creation = Mockito.mockStatic(NewIsland.class);
+                var costs = Mockito.mockStatic(BlueprintCostHelper.class)) {
+            creation.when(NewIsland::builder).thenReturn(builder);
+            costs.when(() -> BlueprintCostHelper.build(any(), any(), any(), any(), any(), any(), anyBoolean(), any(),
+                    any(), any())).thenReturn(false);
+            assertFalse(irc.execute(user, irc.getLabel(), List.of("custom")));
+            // Nothing was created (no money, another creation running, ...), so the cooldown
+            // must not be charged for it.
+            assertTrue(irc.canExecute(user, irc.getLabel(), List.of("custom")));
+            verify(user, never()).sendMessage(eq("general.errors.you-must-wait"), eq(TextVariables.NUMBER), anyString());
         }
     }
 

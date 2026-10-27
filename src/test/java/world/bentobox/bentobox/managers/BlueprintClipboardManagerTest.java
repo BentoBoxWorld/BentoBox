@@ -402,6 +402,32 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
     }
 
     /**
+     * A load while a background copy is running would leave the copy writing into a
+     * clipboard the player has already replaced.
+     */
+    @Test
+    void testLoadRefusedWhileCopying() {
+        when(clipboard.isCopying()).thenReturn(true);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder, clipboard);
+        User user = mock(User.class);
+        assertFalse(bcm.load(user, BLUEPRINT));
+        verify(user).sendMessage("commands.admin.blueprint.mid-copy");
+    }
+
+    /**
+     * isFull() is true as soon as a copy starts, but the blocks are attached only at the
+     * end: saving now would overwrite the file with an empty blueprint.
+     */
+    @Test
+    void testSaveRefusedWhileCopying() {
+        when(clipboard.isCopying()).thenReturn(true);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder, clipboard);
+        User user = mock(User.class);
+        assertFalse(bcm.save(user, "new", "New"));
+        verify(user).sendMessage("commands.admin.blueprint.mid-copy");
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test

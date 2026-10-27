@@ -459,7 +459,7 @@ public class IslandCreationPanel extends AbstractPanel
         {
             long uses = plugin.getIslands().getIslands(world, user).stream()
                     .filter(is -> is.getMetaData("bundle")
-                            .map(mdv -> bundle.getDisplayName().equalsIgnoreCase(mdv.asString())
+                            .map(mdv -> bundle.getUniqueId().equalsIgnoreCase(mdv.asString())
                                     && !(reset && is.isPrimary(user.getUniqueId()))) // If this is a reset, then ignore the use of the island being reset
                             .orElse(false))
                     .count();
@@ -514,7 +514,8 @@ public class IslandCreationPanel extends AbstractPanel
                         user.closeInventory();
                         this.command.execute(user, this.mainLabel,
                                 Collections.singletonList(bundle.getUniqueId()));
-                    } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+                    } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())
+                            && action.content() != null) {
                         Util.runCommands(user,
                                 Arrays.stream(action.content()
                                         .replaceAll(Pattern.quote(TextVariables.LABEL),

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -56,13 +57,13 @@ public class AdminSetSpawnPointCommand extends ConfirmableCommand {
                 default -> java.util.concurrent.CompletableFuture.completedFuture(true);
             };
             exists.thenCompose(found -> TaskScheduler.userFuture(getPlugin(), user, () -> {
-                if (!found || !location.equals(user.getLocation())) {
+                if (!found || !sameBlock(location, user.getLocation())) {
                     user.sendMessage("commands.admin.setspawnpoint.no-island-here");
                     return;
                 }
                 this.askConfirmation(user, user.getTranslation("commands.admin.setspawnpoint.confirmation"),
                     () -> {
-                        if (location.equals(user.getLocation()) && !island.isDeleted()) setSpawnPoint(user, island);
+                        if (sameBlock(location, user.getLocation()) && !island.isDeleted()) setSpawnPoint(user, island);
                         else user.sendMessage("commands.admin.setspawnpoint.no-island-here");
                     });
             })).exceptionally(error -> { getPlugin().logStacktrace(error); return null; });
@@ -71,6 +72,17 @@ public class AdminSetSpawnPointCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.setspawnpoint.no-island-here");
             return false;
         }
+    }
+
+    /**
+     * Compares positions by block, not yaw/pitch: turning around must not invalidate the
+     * spot the admin picked.
+     */
+    private static boolean sameBlock(Location first, Location second) {
+        return first != null && second != null && Objects.equals(first.getWorld(), second.getWorld())
+                && first.getBlockX() == second.getBlockX()
+                && first.getBlockY() == second.getBlockY()
+                && first.getBlockZ() == second.getBlockZ();
     }
 
     /**

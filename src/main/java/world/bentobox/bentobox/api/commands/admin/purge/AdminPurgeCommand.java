@@ -63,11 +63,10 @@ public class AdminPurgeCommand extends AbstractPurgeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        this.user = user;
-        if (args.getFirst().equalsIgnoreCase("confirm") && toBeConfirmed) {
-            return deleteEverything();
+        if (args.getFirst().equalsIgnoreCase("confirm") && hasPendingScan(user)) {
+            return deleteEverything(user);
         }
-        toBeConfirmed = false;
+        clearPendingScan(user);
 
         int days;
         try {
@@ -82,7 +81,7 @@ public class AdminPurgeCommand extends AbstractPurgeCommand {
         }
 
         final int finalDays = days;
-        runScanAndPrompt(() -> getPlugin().getPurgeRegionsService().scan(getWorld(), finalDays));
+        runScanAndPrompt(user, () -> getPlugin().getPurgeRegionsService().scan(getWorld(), finalDays));
         return true;
     }
 
@@ -97,7 +96,7 @@ public class AdminPurgeCommand extends AbstractPurgeCommand {
     }
 
     @Override
-    protected void sendConfirmPrompt() {
+    protected void sendConfirmPrompt(User user) {
         user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
         user.sendMessage("general.beta");
     }

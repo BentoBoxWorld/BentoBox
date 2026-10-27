@@ -109,7 +109,7 @@ public class SafeSpotTeleport {
             return false;
         }
         checking.set(true);
-        if (checkedChunks > MAX_CHUNKS || !chunksToScanIterator.hasNext()) {
+        if (checkedChunks >= MAX_CHUNKS || !chunksToScanIterator.hasNext()) {
             // Nothing left
             tidyUp(entity, failureMessage);
             return false;
@@ -119,10 +119,7 @@ public class SafeSpotTeleport {
         Pair<Integer, Integer> chunkPair = chunksToScanIterator.next();
         chunksToScanIterator.remove();
         checkedChunks++;
-        if (checkedChunks >= MAX_CHUNKS) {
-            checking.set(false);
-            return false;
-        }
+        // No early return here: the last allowed chunk must still be scanned.
 
         // Get the chunk snapshot and scan it
         Util.getChunkSnapshotAsync(Objects.requireNonNull(world), chunkPair.x(), chunkPair.z())

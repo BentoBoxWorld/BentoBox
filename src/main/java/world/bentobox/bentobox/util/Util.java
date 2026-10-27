@@ -1008,8 +1008,8 @@ public class Util {
     public static String sanitizeInput(String input)
     {
         return Util.stripColor(
-                Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
-                toLowerCase();
+                Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\\s]", "_"))).
+                toLowerCase(java.util.Locale.ENGLISH);
     }
 
     /**

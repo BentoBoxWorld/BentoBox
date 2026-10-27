@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Location;
 import org.bukkit.entity.AbstractWindCharge;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -26,5 +28,21 @@ public class WindChargeListener extends FlagListener {
         if (e.getEntity() instanceof AbstractWindCharge && e.getEntity().getShooter() instanceof Player player) {
             checkIsland(e, player, e.getEntity().getLocation(), Flags.WIND_CHARGE);
         }
+    }
+
+    /**
+     * Checks the impact point too: a player standing outside protection can aim a wind charge
+     * into the island, where its burst would move entities and trigger redstone.
+     * @param e ProjectileHitEvent
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onWindChargeHit(ProjectileHitEvent e) {
+        if (!(e.getEntity() instanceof AbstractWindCharge charge)
+                || !(charge.getShooter() instanceof Player player)) {
+            return;
+        }
+        Location hit = e.getHitBlock() != null ? e.getHitBlock().getLocation()
+                : e.getHitEntity() != null ? e.getHitEntity().getLocation() : charge.getLocation();
+        checkIsland(e, player, hit, Flags.WIND_CHARGE);
     }
 }

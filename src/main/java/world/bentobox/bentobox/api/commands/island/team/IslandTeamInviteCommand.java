@@ -51,10 +51,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     /** Parent team command reference */
     private final IslandTeamCommand itc;
-    
-    /** Currently invited player - used between canExecute and execute */
-    private @Nullable User invitedPlayer;
-    
+
     /** GUI template items */
     private @Nullable TemplateItem border;
     private @Nullable TemplateItem background;
@@ -129,9 +126,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
 
-        // Check for space on team
+        // Check for space on team. A negative limit means unlimited.
         int maxMembers = getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK);
-        if (island.getMemberSet().size() >= maxMembers) {
+        if (maxMembers >= 0 && island.getMemberSet().size() >= maxMembers) {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return false;
         }
@@ -141,8 +138,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, playerName);
             return false;
         }
-        // Write to field as this is used by execute method
-        invitedPlayer = User.getInstance(invitedPlayerUUID);
+        // Kept local: this command object is shared by every player on the server
+        User invitedPlayer = User.getInstance(invitedPlayerUUID);
         if (!canInvitePlayer(user, invitedPlayer)) {
             return false;
         }
@@ -152,7 +149,14 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
 
-        // Player cannot invite someone already on a team
+        // Never invite someone who is already a member of this island (the owner included):
+        // accepting would run setJoinTeam -> addMember and demote them to MEMBER.
+        if (island.getMemberSet().contains(invitedPlayerUUID)) {
+            user.sendMessage("commands.island.team.invite.errors.already-on-team");
+            return false;
+        }
+
+        // Player cannot invite someone already on a team when the gamemode forbids keeping islands
         if (getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands()
                 && getIslands().inTeam(getWorld(), invitedPlayerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
@@ -202,8 +206,11 @@ public class IslandTeamInviteCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Rare case when invited player is null. Could be a race condition.
-        if (invitedPlayer == null) return false;
+        // Resolve here rather than sharing a field: commands are singletons and two
+        // players on Folia can run this at the same time.
+        UUID invitedUUID = getPlayers().getUUID(args.getFirst());
+        if (invitedUUID == null) return false;
+        User invitedPlayer = User.getInstance(invitedUUID);
         // If that player already has an invitation out then retract it.
         // Players can only have one invite one at a time - interesting
         if (itc.isInvited(invitedPlayer.getUniqueId())) {
@@ -213,7 +220,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island == null) {
             user.sendMessage("general.errors.no-island");
-            invitedPlayer = null;
             return false;
         }
         // Fire event so add-ons can run commands, etc.
@@ -223,7 +229,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 .involvedPlayer(invitedPlayer.getUniqueId())
                 .build();
         if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
-            invitedPlayer = null;
             return false;
         }
         // Put the invited player (key) onto the list with inviter (value)
@@ -240,7 +245,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
         // Auto-open an accept/decline dialog for the invited player if enabled
         showInviteDialog(user, invitedPlayer, willLoseIsland);
-        invitedPlayer = null;
         return true;
     }
 

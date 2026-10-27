@@ -55,29 +55,32 @@ public class IslandGrid {
         int range = island.getRange();
         IslandData newIsland = new IslandData(island.getUniqueId(), minX, minZ, range);
 
-        // If this island is already in the grid, remove it first (handles moves/resizes)
-        IslandData existing = islandById.get(newIsland.id());
-        if (existing != null) {
-            removeCells(existing);
-            islandById.remove(existing.id());
-        }
-
         // Compute bounding box (upper bounds exclusive)
         int newMaxX = minX + range * 2;
         int newMaxZ = minZ + range * 2;
 
-        // Check for overlaps only against islands in the cells this island would occupy
+        // Check for overlaps only against islands in the cells this island would occupy.
+        // Check before removing any existing entry: a rejected add must not lose the old one.
         List<Long> coveredCells = getCoveredCells(minX, minZ, newMaxX, newMaxZ);
         for (long cellKey : coveredCells) {
             Set<String> ids = cellMap.get(cellKey);
             if (ids != null) {
                 for (String candidateId : ids) {
+                    if (candidateId.equals(newIsland.id())) {
+                        continue;
+                    }
                     IslandData candidate = islandById.get(candidateId);
                     if (candidate != null && isOverlapping(newIsland, candidate)) {
                         return false;
                     }
                 }
             }
+        }
+
+        // If this island is already in the grid, remove it first (handles moves/resizes)
+        IslandData existing = islandById.remove(newIsland.id());
+        if (existing != null) {
+            removeCells(existing);
         }
 
         // No overlaps — register the island
@@ -115,7 +118,18 @@ public class IslandGrid {
      * @return true if island existed and was deleted, false if there was nothing to delete
      */
     public synchronized boolean removeFromGrid(Island island) {
-        IslandData data = islandById.remove(island.getUniqueId());
+        return removeById(island.getUniqueId());
+    }
+
+    /**
+     * Remove an island from the grid by id, when the database row is already gone and the
+     * island object may no longer be cached.
+     *
+     * @param uniqueId island id
+     * @return true if the island existed and was removed
+     */
+    public synchronized boolean removeById(String uniqueId) {
+        IslandData data = islandById.remove(uniqueId);
         if (data == null) {
             return false;
         }

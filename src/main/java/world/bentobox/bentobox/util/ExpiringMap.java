@@ -26,6 +26,11 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class ExpiringMap<K, V> implements Map<K, V> {
     private final Map<K, V> map;
+    /**
+     * Per-key token for the most recently scheduled removal. Equal values must not let an older
+     * task remove an entry that was refreshed with the same value instance.
+     */
+    private final Map<K, Object> stamps = new java.util.concurrent.ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler;
     private final long expirationTime;
 
@@ -259,14 +264,20 @@ public class ExpiringMap<K, V> implements Map<K, V> {
 
     /**
      * Schedules the removal of the specified key from this map after the expiration time.
-     * Removal only happens while the key still maps to {@code value}, so refreshing an entry
-     * cannot be undone by the older task.
+     * Removal only happens while this call is still the latest one for the key, so refreshing an
+     * entry cannot be undone by an older task - even when the refreshed value is the same object.
      *
      * @param key key whose mapping is to be removed from the map after the expiration time
      * @param value value that was stored for the key
      */
     private void scheduleRemoval(final K key, final V value) {
-        scheduler.schedule(() -> map.remove(key, value), expirationTime, TimeUnit.MILLISECONDS);
+        Object stamp = new Object();
+        stamps.put(key, stamp);
+        scheduler.schedule(() -> {
+            if (stamps.remove(key, stamp)) {
+                map.remove(key, value);
+            }
+        }, expirationTime, TimeUnit.MILLISECONDS);
     }
 
     /**

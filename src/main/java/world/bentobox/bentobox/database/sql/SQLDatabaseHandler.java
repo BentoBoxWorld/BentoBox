@@ -437,7 +437,12 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     @Override
     public void deleteID(String uniqueId)
     {
-        this.processQueue.add(() -> this.delete(uniqueId));
+        // Matches the JSON handler: once the plugin is disabling the queue is never drained.
+        if (plugin.isEnabled()) {
+            this.processQueue.add(() -> this.delete(uniqueId));
+        } else {
+            this.delete(uniqueId);
+        }
     }
 
 

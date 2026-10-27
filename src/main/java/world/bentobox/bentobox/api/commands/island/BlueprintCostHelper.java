@@ -24,7 +24,15 @@ class BlueprintCostHelper {
 
     /** Capture account/price on the player's thread; all Vault calls run on the global/main thread. */
     static boolean build(BentoBox plugin, GameModeAddon addon, User user, String name, World world,
-            NewIsland.Builder builder, boolean charge, Supplier<CompletableFuture<Void>> beforeCommit, Runnable completed) {
+            NewIsland.Builder builder, boolean charge, Supplier<CompletableFuture<Void>> beforeCommit,
+            Runnable completed) {
+        return build(plugin, addon, user, name, world, builder, charge, beforeCommit, completed, () -> { });
+    }
+
+    /** Capture account/price on the player's thread; all Vault calls run on the global/main thread. */
+    static boolean build(BentoBox plugin, GameModeAddon addon, User user, String name, World world,
+            NewIsland.Builder builder, boolean charge, Supplier<CompletableFuture<Void>> beforeCommit, Runnable completed,
+            Runnable onNotStarted) {
         var bundles = plugin.getBlueprintsManager().getBlueprintBundles(addon);
         BlueprintBundle bundle = bundles.get(name);
         double amount = !charge || bundles.size() <= 1 || !plugin.getSettings().isUseEconomy()
@@ -40,16 +48,29 @@ class BlueprintCostHelper {
         }
         var withdrawal = amount > 0 ? provider.orElseThrow().captureRefundableWithdrawal(user, amount, world) : null;
         var playerId = user.getUniqueId();
-        if (!PAYING.add(playerId)) return false;
+        if (!PAYING.add(playerId)) {
+            user.sendMessage("commands.island.create.creating-island");
+            return false;
+        }
         String worldName = world == null ? null : world.getName();
         var settlement = new java.util.concurrent.atomic.AtomicReference<BlueprintSettlement>();
         var started = new java.util.concurrent.atomic.AtomicBoolean();
+        var declined = new java.util.concurrent.atomic.AtomicBoolean();
         TaskScheduler.globalFuture(plugin, () -> {
             if (withdrawal == null) return;
             try {
                 var payment = new BlueprintSettlement(BlueprintSettlement.directory(plugin), playerId, worldName, name, amount, withdrawal);
                 settlement.set(payment);
-                if (!payment.debit()) throw new IllegalStateException("Blueprint withdrawal rejected or outcome unknown");
+                var result = payment.debit();
+                if (result == BlueprintSettlement.DebitResult.REJECTED) {
+                    declined.set(true);
+                    TaskScheduler.user(plugin, user, () -> user.sendMessage("commands.island.create.cannot-afford",
+                            "[cost]", provider.map(v -> v.format(amount)).orElse(String.valueOf(amount))));
+                    throw new IllegalStateException("Blueprint withdrawal declined");
+                }
+                if (result != BlueprintSettlement.DebitResult.DEBITED) {
+                    throw new IllegalStateException("Blueprint withdrawal outcome unknown");
+                }
             } catch (IOException error) { throw new java.io.UncheckedIOException(error); }
         }).thenCompose(ignored -> onUser(plugin, user, () -> {
             started.set(true);
@@ -64,12 +85,35 @@ class BlueprintCostHelper {
                 }).thenCompose(done -> onUser(plugin, user, beforeCommit)))
                 .afterBuild(island -> TaskScheduler.globalFuture(plugin, () -> {
                     try { if (settlement.get() != null) settlement.get().complete(island.getUniqueId()); }
-                    catch (IOException error) { throw new java.io.UncheckedIOException(error); }
-                    completed.run();
+                    catch (IOException error) {
+                        // The island is already delivered; a receipt write failure must not fail the build.
+                        plugin.logError("Could not finalise the blueprint payment receipt for " + playerId
+                                + ": " + error.getMessage());
+                    }
+                    try {
+                        completed.run();
+                    } catch (RuntimeException postError) {
+                        // The island is delivered; a failing add-on hook must not tell the player
+                        // the creation failed.
+                        plugin.logError("Post-creation task failed after the island was delivered for "
+                                + playerId + ": " + postError.getMessage());
+                    }
                 }))
                 .buildAsync();
         })).whenComplete((island, error) -> {
                     if (error == null && island != null) { PAYING.remove(playerId); return; }
+                    if (declined.get()) {
+                        // The withdrawal was declined before any money moved: nothing to refund.
+                        PAYING.remove(playerId);
+                        // Nothing was created either, so any upfront bookkeeping is undone.
+                        TaskScheduler.global(plugin, onNotStarted);
+                        return;
+                    }
+                    if (!started.get()) {
+                        // The build never began (user went offline, another build won, ...):
+                        // undo the same bookkeeping.
+                        TaskScheduler.global(plugin, onNotStarted);
+                    }
                     boolean rolledBack = error == null || !started.get();
                     for (Throwable cause = error; cause != null; cause = cause.getCause()) {
                         if (cause instanceof NewIsland.RolledBackException) rolledBack = true;
@@ -80,8 +124,13 @@ class BlueprintCostHelper {
                         try { if (settlement.get() != null) compensated = settlement.get().failed(safeToRefund); }
                         catch (Exception failure) { plugin.logStacktrace(failure); }
                         if (error == null && compensated) return; // A veto with a safely discarded draft is normal cancellation.
-                        plugin.logError("Blueprint creation/payment did not complete for " + playerId
-                                + "; inspect blueprint-payments receipts before retrying or refunding. " + error);
+                        // Only mention receipts when a receipt actually exists.
+                        if (settlement.get() != null) {
+                            plugin.logError("Blueprint creation/payment did not complete for " + playerId
+                                    + "; inspect blueprint-payments receipts before retrying or refunding. " + error);
+                        } else {
+                            plugin.logError("Island creation did not complete for " + playerId + ": " + error);
+                        }
                         TaskScheduler.user(plugin, user, () -> user.sendMessage("commands.island.create.cannot-create-island"));
                     }).whenComplete((done, failure) -> PAYING.remove(playerId));
                 });

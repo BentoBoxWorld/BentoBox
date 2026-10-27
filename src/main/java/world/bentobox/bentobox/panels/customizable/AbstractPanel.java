@@ -146,7 +146,8 @@ public abstract class AbstractPanel {
         if (template.icon() != null) {
             var clone = template.icon().clone();
             if ((boolean) template.dataMap().getOrDefault(INDEXING, false)) {
-                clone.setAmount(nextPage);
+                // Never exceed the item's stack size: books and shields max out at 1
+                clone.setAmount(Math.max(1, Math.min(nextPage, clone.getMaxStackSize())));
             }
             builder.icon(clone);
         }
@@ -186,7 +187,8 @@ public abstract class AbstractPanel {
         if (template.icon() != null) {
             var clone = template.icon().clone();
             if ((boolean) template.dataMap().getOrDefault(INDEXING, false)) {
-                clone.setAmount(prevPage);
+                // Never exceed the item's stack size: books and shields max out at 1
+                clone.setAmount(Math.max(1, Math.min(prevPage, clone.getMaxStackSize())));
             }
             builder.icon(clone);
         }

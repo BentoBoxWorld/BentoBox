@@ -97,6 +97,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // Load the YAML file at the location.
         YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(path, key);
+        if (config == null) {
+            // Unparseable file: report it as missing rather than loading defaults over it.
+            plugin.logError("Could not load " + key + " from " + path + " - the file is invalid and was left untouched");
+            return null;
+        }
         // Use the createObject method to turn a YAML config into a Java object
         return createObject(config);
     }
@@ -137,8 +142,23 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
-            list.add(createObject(config));
+            try {
+                YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector)
+                        .loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
+                if (config == null) {
+                    // Do not let one broken file look like an empty table: callers would assume
+                    // no islands exist and could reuse their grid slots.
+                    plugin.logError("Skipping invalid database file " + file.getAbsolutePath());
+                    continue;
+                }
+                T object = createObject(config);
+                if (object != null) {
+                    list.add(object);
+                }
+            } catch (Exception e) {
+                // Matches the JSON handler: one bad record must not abort the whole table.
+                plugin.logError("Could not load database file " + file.getAbsolutePath() + ": " + e.getMessage());
+            }
         }
         return list;
     }

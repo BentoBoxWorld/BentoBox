@@ -246,7 +246,7 @@ class AdminTeleportCommandTest extends CommonTestSetup {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpnether");
         assertTrue(atc.canExecute(user, "tpnether", List.of("tastybento")));
         assertTrue(atc.execute(user, "tpnether", List.of("tastybento")));
-        verify(iwm).getNetherWorld(any());
+        verify(iwm, Mockito.times(2)).getNetherWorld(any());
         verify(iwm, Mockito.never()).getEndWorld(any());
         verify(user).getTranslation("commands.admin.tp.manual", "[location]", "0 0 0");
     }
@@ -259,7 +259,7 @@ class AdminTeleportCommandTest extends CommonTestSetup {
         assertTrue(atc.canExecute(user, "tpend", List.of("tastybento")));
         assertTrue(atc.execute(user, "tpend", List.of("tastybento")));
         verify(iwm, Mockito.never()).getNetherWorld(any());
-        verify(iwm).getEndWorld(any());
+        verify(iwm, Mockito.times(2)).getEndWorld(any());
         verify(user).getTranslation("commands.admin.tp.manual", "[location]", "0 0 0");
     }
 

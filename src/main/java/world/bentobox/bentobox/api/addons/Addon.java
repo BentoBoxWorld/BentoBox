@@ -369,7 +369,9 @@ public abstract class Addon {
             JarEntry jarConfig = jar.getJarEntry(jarResource);
             if (jarConfig != null) {
                 try (InputStream in = jar.getInputStream(jarConfig)) {
-                    return in;
+                    // Copy out before the jar closes: returning the stream itself hands back a
+                    // closed stream as soon as this method returns
+                    return new java.io.ByteArrayInputStream(in.readAllBytes());
                 }
             }
         } catch (IOException e) {

@@ -121,6 +121,7 @@ commands:
       none-found: '<red>No [prefix_Islands] found to purge.</red>'
       confirm: '<light_purple>Type </light_purple><aqua>/[label] purge confirm </aqua><light_purple>to start purging</light_purple>'
       failed: '<red>Purge completed with errors. Some region files could not be deleted. Check the server log for details.</red>'
+      deferred: '<green>Deletion registered. The region files will be removed on the next server start.</green>'
       age-regions:
         parameters: '[days]'
         description: 'debug/test: rewrite region file timestamps so they become purgable'
@@ -761,6 +762,7 @@ commands:
       name-already-exists: '<red>There is already [prefix_an-island] with that name
         in this gamemode.</red>'
       parameters: <name>
+      invalid-characters: '<red>That name contains characters that are not allowed: [ ] < ></red>'
       success: '<green>Successfully set your [prefix_island]''s name to </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
       description: rename a home location
@@ -838,6 +840,7 @@ commands:
         parameters: <player>
         cannot-coop-yourself: '<red>You cannot coop yourself!</red>'
         already-has-rank: '<red>Player already has a rank!</red>'
+        banned: '<red>[name] is banned from this [prefix_island]. Unban them first.</red>'
         you-are-a-coop-member: '<dark_green>You were cooped by </dark_green><aqua>[name]</aqua><green>.</green>'
         success: '<green>You cooped </green><aqua>[name]</aqua><green>.</green>'
         name-has-invited-you: |
@@ -860,6 +863,7 @@ commands:
         description: give a player trusted rank on your [prefix_island]
         parameters: <player>
         trust-in-yourself: '<red>Trust in yourself!</red>'
+        banned: '<red>[name] is banned from this [prefix_island]. Unban them first.</red>'
         name-has-invited-you: |
           <green>[name] has invited you</green>
           <green>to join as a trusted member</green>

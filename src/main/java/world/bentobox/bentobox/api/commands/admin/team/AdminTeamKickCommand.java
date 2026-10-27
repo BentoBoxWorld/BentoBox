@@ -3,13 +3,11 @@ package world.bentobox.bentobox.api.commands.admin.team;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -25,9 +23,6 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class AdminTeamKickCommand extends CompositeCommand {
-
-    private @Nullable UUID targetUUID;
-    private @Nullable Island island;
 
     public AdminTeamKickCommand(CompositeCommand parent) {
         super(parent, "kick");
@@ -49,7 +44,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         }
 
         // Get target
-        targetUUID = Util.getUUID(args.getFirst());
+        UUID targetUUID = Util.getUUID(args.getFirst());
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.getFirst());
             return false;
@@ -73,15 +68,14 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
         if (args.size() == 1) {
             if (kickable.size() == 1) {
-                island = kickable.values().iterator().next();
-            } else {
-                // Multiple islands – require the player to specify which one
-                user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
-                kickable.keySet().forEach(coords ->
-                        user.sendMessage("commands.admin.unregister.errors.specify-island-location",
-                                TextVariables.XYZ, coords));
-                return false;
+                return true;
             }
+            // Multiple islands – require the player to specify which one
+            user.sendMessage("commands.admin.unregister.errors.player-has-more-than-one-island");
+            kickable.keySet().forEach(coords ->
+                    user.sendMessage("commands.admin.unregister.errors.specify-island-location",
+                            TextVariables.XYZ, coords));
+            return false;
         } else {
             // args.size() == 2: xyz was supplied
             String coord = args.get(1);
@@ -95,7 +89,6 @@ public class AdminTeamKickCommand extends CompositeCommand {
                 }
                 return false;
             }
-            island = kickable.get(coord);
         }
         return true;
     }
@@ -127,10 +120,24 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
-        Objects.requireNonNull(island);
-        Objects.requireNonNull(targetUUID);
+        // Resolve again: the command instance is shared, and the island may have changed
+        // between validation and execution.
+        UUID targetUUID = Util.getUUID(args.getFirst());
+        Island island = null;
+        if (targetUUID != null) {
+            Map<String, Island> kickable = getMemberIslandsXYZ(targetUUID);
+            island = args.size() == 1
+                    ? (kickable.size() == 1 ? kickable.values().iterator().next() : null)
+                    : kickable.get(args.get(1));
+        }
+        if (targetUUID == null || island == null) {
+            user.sendMessage("commands.admin.team.kick.not-in-team");
+            return false;
+        }
         User target = User.getInstance(targetUUID);
         target.sendMessage("commands.admin.team.kick.admin-kicked");
+        // Capture the rank before removal: afterwards the player is a visitor
+        int previousRank = island.getRank(target);
         getIslands().removePlayer(island, targetUUID);
         user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]",
                 getPlayers().getName(island.getOwner()));
@@ -138,7 +145,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(targetUUID).admin(true).build();
         IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
                 .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(target), RanksManager.VISITOR_RANK).build();
+                .rankChange(previousRank, RanksManager.VISITOR_RANK).build();
         return true;
     }
 

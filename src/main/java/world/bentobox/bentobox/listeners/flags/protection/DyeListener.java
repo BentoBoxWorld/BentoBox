@@ -45,6 +45,7 @@ public class DyeListener extends FlagListener {
             return;
         }
 
-        this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.DYE);
+        // Use the sheep's location: that is where the dyeing happens (and the event thread owns it)
+        this.checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.DYE);
     }
 }

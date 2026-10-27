@@ -149,6 +149,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         i.setReserved(true);
         if (TaskScheduler.isFolia()) {
             Location center = i.getCenter().clone();
+            java.util.concurrent.atomic.AtomicBoolean markerPlaced = new java.util.concurrent.atomic.AtomicBoolean();
             Util.getChunkAtAsync(center)
                     .thenCompose(chunk -> TaskScheduler.regionFuture(getPlugin(), center,
                             () -> {
@@ -157,11 +158,39 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                                     throw new IllegalStateException("Reservation changed before marker placement");
                                 }
                                 center.getBlock().setType(Material.BEDROCK);
+                                markerPlaced.set(true);
                             }))
                     .thenRun(() -> completeReservation(user, targetUUID, targetName, i))
                     .exceptionally(error -> {
+                        if (markerPlaced.get()) {
+                            // The island is real; only the announcement failed. Do not delete it,
+                            // but tell the admin the state it is in.
+                            getPlugin().logError("Reserved island " + i.getUniqueId()
+                                    + " was created but could not be announced: " + error.getMessage());
+                            TaskScheduler.user(getPlugin(), user, () -> user.sendMessage(
+                                    "commands.admin.register.reserved-island", TextVariables.XYZ,
+                                    Util.xyz(i.getCenter().toVector()), TextVariables.NAME, targetName));
+                            return null;
+                        }
                         getPlugin().logError("Reserved island " + i.getUniqueId()
                                 + " could not place its marker: " + error.getMessage());
+                        // The reservation was never announced: drop it so the state matches the
+                        // message. Re-check inside the region thread to avoid a TOCTOU window.
+                        TaskScheduler.regionFuture(getPlugin(), i.getCenter(), () -> {
+                            if (!i.isReserved() || !targetUUID.equals(i.getOwner())) {
+                                return;
+                            }
+                            getIslands().deleteIsland(i, true, targetUUID);
+                            if (i.isOwned()) {
+                                getPlugin().logError("Reserved island " + i.getUniqueId()
+                                        + " could not be deleted, orphaning it");
+                                getIslands().orphanIsland(i);
+                            }
+                        }).exceptionally(deleteError -> {
+                            getPlugin().logError("Reserved island " + i.getUniqueId()
+                                    + " could not be deleted: " + deleteError.getMessage());
+                            return null;
+                        });
                         TaskScheduler.user(getPlugin(), user,
                                 () -> user.sendMessage("commands.admin.register.cannot-make-island"));
                         return null;

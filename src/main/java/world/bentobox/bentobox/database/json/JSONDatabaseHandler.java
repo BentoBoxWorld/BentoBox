@@ -146,7 +146,17 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             backupTableFolder.mkdirs();
         }
 
-        String toStore = getGson().toJson(instance);
+        String toStore;
+        try {
+            toStore = getGson().toJson(instance);
+        } catch (RuntimeException e) {
+            // Serialization can refuse (e.g. a location whose world is not loaded). Abort the
+            // write so the previous, complete file is kept.
+            plugin.logError("Could not serialize " + instance.getClass().getSimpleName() + " "
+                    + fileName + ": " + e.getMessage());
+            completableFuture.complete(false);
+            return completableFuture;
+        }
         if (!forceSync && plugin.isEnabled()) {
             // Async
             processQueue.add(() -> store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, true));

@@ -80,8 +80,11 @@ public class PanelListenerManager implements Listener {
             // client sends several click packets for one physical click, the cooldown keeps the
             // one that lands on a button rather than whichever arrived first (#3049).
             Optional<PanelListener> throttled = panel.getListener().filter(PanelListener::hasClickCooldown);
+            int topSize = event.getView().getTopInventory().getSize();
+            int rawSlot = event.getRawSlot();
+            // Only slots inside the panel can be actionable; the player's own inventory never is
             if (throttled.isPresent() && BentoBox.getInstance().onTimeout(user, panel,
-                    throttled.get().isActionableSlot(event.getRawSlot()))) {
+                    rawSlot >= 0 && rawSlot < topSize && throttled.get().isActionableSlot(rawSlot))) {
                 return;
             }
 
@@ -97,14 +100,18 @@ public class PanelListenerManager implements Listener {
                     return;
                 }
 
-                // Check that they clicked on a specific item
-                PanelItem pi = panel.getItems().get(event.getRawSlot());
+                // Check that they clicked on a specific item. Raw slots beyond the top inventory
+                // belong to the player's own inventory and must never hit a panel handler.
+                boolean inTop = rawSlot >= 0 && rawSlot < topSize;
+                PanelItem pi = inTop ? panel.getItems().get(rawSlot) : null;
+                if (inTop) {
+                    // A panel icon must never be taken out, whatever a handler returns
+                    event.setCancelled(true);
+                }
                 if (pi != null) {
+                    // The return value only says "handled"; the click is already cancelled above
                     pi.getClickHandler().ifPresent(handler ->
-                    // Execute the handler's onClick method and optionally cancel the event if the handler returns true
-                    event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot())
-                            // An item picked up from the player's inventory must never be placed in the panel
-                            || hasCursorItem(event)));
+                            handler.onClick(panel, user, event.getClick(), event.getSlot()));
                 }
                 // If there is a listener, then run it and refresh the panel
                 panel.getListener().ifPresent(l -> {
@@ -116,6 +123,9 @@ public class PanelListenerManager implements Listener {
             } else {
                 // Wrong name - delete this panel
                 openPanels.remove(user.getUniqueId());
+                // Notify the listener before closing: once the panel is unregistered the close
+                // event cannot find it any more, which would leak the panel's deferred saves.
+                panel.getListener().ifPresent(l -> l.onInventoryClose(new InventoryCloseEvent(view)));
                 // This avoids GUIs being left open so that items can be taken.
                 user.closeInventory();
             }
@@ -131,10 +141,6 @@ public class PanelListenerManager implements Listener {
                 && event.getClickedInventory().equals(event.getView().getBottomInventory())
                 && PLAYER_INVENTORY_ACTIONS.contains(event.getAction())
                 && panel.getListener().map(PanelListener::allowsPlayerInventoryClicks).orElse(true);
-    }
-
-    private boolean hasCursorItem(InventoryClickEvent event) {
-        return event.getCursor() != null && !event.getCursor().getType().isAir();
     }
 
     /**
@@ -164,7 +170,14 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogOut(PlayerQuitEvent event) {
-        openPanels.remove(event.getPlayer().getUniqueId());
+        // Paper may not fire InventoryCloseEvent before the quit event. Notify the panel anyway,
+        // otherwise SettingsPanel's beginDeferSaves() is never balanced and that island stops
+        // saving flag changes until the server restarts.
+        Panel panel = openPanels.remove(event.getPlayer().getUniqueId());
+        if (panel != null) {
+            panel.getListener().ifPresent(l -> l.onInventoryClose(
+                    new InventoryCloseEvent(event.getPlayer().getOpenInventory())));
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

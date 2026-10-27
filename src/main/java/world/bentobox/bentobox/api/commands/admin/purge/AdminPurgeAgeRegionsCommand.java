@@ -69,28 +69,42 @@ public class AdminPurgeAgeRegionsCommand extends CompositeCommand implements Lis
             return false;
         }
 
-        // Flush in-memory chunk state on the main thread before touching
-        // the region files — otherwise an auto-save can overwrite our
-        // ageing with current timestamps.
-        getPlugin().log("Age-regions: saving all worlds before rewriting timestamps...");
-        Bukkit.getWorlds().forEach(World::save);
-        getPlugin().log("Age-regions: world save complete");
-
         running = true;
-        final int finalDays = days;
-        TaskScheduler.async(getPlugin(), () -> {
-            try {
-                int count = getPlugin().getPurgeRegionsService().ageRegions(getWorld(), finalDays);
-                TaskScheduler.user(getPlugin(), user, () -> {
-                    user.sendMessage("commands.admin.purge.age-regions.done",
-                            TextVariables.NUMBER, String.valueOf(count));
-                    getPlugin().log("Age-regions: " + count + " region file(s) aged by "
-                            + finalDays + " day(s) in world " + getWorld().getName());
-                });
-            } finally {
-                running = false;
-            }
-        });
+        // World#save() must run on the global region thread, and a player's command runs on
+        // their own region thread. Hop first, then do the save and the async ageing.
+        if (TaskScheduler.isFolia() && !Bukkit.isGlobalTickThread()) {
+            TaskScheduler.global(getPlugin(), () -> saveAndAge(user, days));
+        } else {
+            saveAndAge(user, days);
+        }
         return true;
+    }
+
+    private void saveAndAge(User user, int days) {
+        try {
+            // Flush in-memory chunk state on the main thread before touching
+            // the region files — otherwise an auto-save can overwrite our
+            // ageing with current timestamps.
+            getPlugin().log("Age-regions: saving all worlds before rewriting timestamps...");
+            Bukkit.getWorlds().forEach(World::save);
+            getPlugin().log("Age-regions: world save complete");
+
+            TaskScheduler.async(getPlugin(), () -> {
+                try {
+                    int count = getPlugin().getPurgeRegionsService().ageRegions(getWorld(), days);
+                    TaskScheduler.user(getPlugin(), user, () -> {
+                        user.sendMessage("commands.admin.purge.age-regions.done",
+                                TextVariables.NUMBER, String.valueOf(count));
+                        getPlugin().log("Age-regions: " + count + " region file(s) aged by "
+                                + days + " day(s) in world " + getWorld().getName());
+                    });
+                } finally {
+                    running = false;
+                }
+            });
+        } catch (RuntimeException error) {
+            running = false;
+            getPlugin().logError("Age-regions failed: " + error.getMessage());
+        }
     }
 }

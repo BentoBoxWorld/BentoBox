@@ -84,10 +84,12 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
     }
 
     /**
-     * @return the owner of the island
+     * @return the owner of the island, or {@code null} when the event has no island yet
+     *         (for example PRE_CREATE)
      */
+    @Nullable
     public UUID getOwner() {
-        return island.getOwner();
+        return island == null ? null : island.getOwner();
     }
 
     /**

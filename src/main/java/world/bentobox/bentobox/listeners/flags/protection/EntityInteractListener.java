@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import com.google.common.base.Enums;
 
@@ -55,6 +56,9 @@ public class EntityInteractListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getRightClicked().getLocation();
 
+        // Name tags are checked before the vehicle early-return: horses/llamas are vehicles too.
+        checkNameTag(e, p, l);
+
         if (e.getRightClicked() instanceof Vehicle) {
             handleVehicleInteract(e, p, l);
             return;
@@ -66,12 +70,11 @@ public class EntityInteractListener extends FlagListener {
             this.checkIsland(e, p, l, Flags.ALLAY);
         } else if (SULFUR_CUBE != null && e.getRightClicked().getType() == SULFUR_CUBE) {
             // Sulfur Cube (26.2) absorbs the block the player is holding - treat as placing a block
-            Material hand = p.getInventory().getItemInMainHand().getType();
+            Material hand = itemInHand(p, e.getHand()).getType();
             if (hand.isBlock() && !hand.isAir()) {
                 this.checkIsland(e, p, l, Flags.PLACE_BLOCKS);
             }
         }
-        checkNameTag(e, p, l);
     }
 
     private void handleVehicleInteract(PlayerInteractEntityEvent e, Player p, Location l) {
@@ -92,8 +95,18 @@ public class EntityInteractListener extends FlagListener {
     }
 
     private void checkNameTag(PlayerInteractEntityEvent e, Player p, Location l) {
-        if (p.getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
+        // Boats and minecarts cannot be renamed, so a name tag in hand must not check NAME_TAG
+        // for them. Horses/llamas are Vehicles too but must be checked.
+        boolean canBeNamed = !(e.getRightClicked() instanceof org.bukkit.entity.Boat)
+                && !(e.getRightClicked() instanceof org.bukkit.entity.Minecart);
+        if (canBeNamed && itemInHand(p, e.getHand()).getType().equals(Material.NAME_TAG)) {
             this.checkIsland(e, p, l, Flags.NAME_TAG);
         }
+    }
+
+    /** The item used for this interaction (main or off hand). */
+    private static org.bukkit.inventory.ItemStack itemInHand(Player player, EquipmentSlot hand) {
+        return hand == EquipmentSlot.OFF_HAND ? player.getInventory().getItemInOffHand()
+                : player.getInventory().getItemInMainHand();
     }
 }

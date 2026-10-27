@@ -88,8 +88,9 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             island = info.island();
         }
 
-        // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (island.hasTeam() && targetUUID.equals(island.getOwner())) {
+        // Team members should be kicked before deleting otherwise the whole team will become weird.
+        // This also covers a member naming the team's island: deleting it would remove the owner's.
+        if (island.hasTeam()) {
             user.sendMessage(CANNOT_DELETE_OWNER);
             return null;
         }
@@ -149,24 +150,33 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         return true;
     }
 
-    private void deleteIsland(User user, Island oldIsland, UUID targetUUID) {
+    private boolean deleteIsland(User user, Island oldIsland, UUID targetUUID) {
         // Fire island preclear event
         IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
                 .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
-        user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
-                Util.xyz(oldIsland.getCenter().toVector()));
 
         // Soft-delete: mark deletable, clear owner, save. The region files
         // and DB row are reaped later by PurgeRegionsService /
         // HousekeepingManager so the row stays visible until the chunks
         // are actually gone from disk.
-        getIslands().deleteIsland(oldIsland, true, targetUUID);
+        if (!getIslands().deleteIsland(oldIsland, true, targetUUID)) {
+            // A listener vetoed the delete: do not claim it happened.
+            user.sendMessage("general.errors.command-cancelled");
+            return false;
+        }
+        user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
+                Util.xyz(oldIsland.getCenter().toVector()));
+        return true;
     }
 
     private void deletePlayer(User user, UUID targetUUID) {
-        // Delete player and island
+        // Delete the player's own island only. The rest of the list is islands the player is
+        // just a member of, which belong to somebody else - removePlayer below drops them.
+        boolean vetoed = false;
         for (Island oldIsland : getIslands().getIslands(getWorld(), targetUUID)) {
-            deleteIsland(user, oldIsland, targetUUID);
+            if (targetUUID.equals(oldIsland.getOwner()) && !deleteIsland(user, oldIsland, targetUUID)) {
+                vetoed = true;
+            }
         }
         // Check if player is online and on the island
         assert targetUUID != null;
@@ -181,7 +191,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
                 });
             } else cleanUp(target);
         }
-        user.sendMessage("general.success");
+        user.sendMessage(vetoed ? "general.errors.command-cancelled" : "general.success");
     }
 
     private void cleanUp(User target) {

@@ -74,6 +74,8 @@ public class AdminTeamAddCommand extends CompositeCommand {
         target.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         Island teamIsland = getIslands().getIsland(getWorld(), ownerUUID);
         if (teamIsland != null) {
+            // Capture the rank before joining: afterwards the player is a member
+            int previousRank = teamIsland.getRank(target);
             getIslands().setJoinTeam(teamIsland, targetUUID);
             user.sendMessage("commands.admin.team.add.success", TextVariables.NAME, target.getName(), "[owner]",
                     owner.getName());
@@ -81,7 +83,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
                     .admin(true).build();
             IslandEvent.builder().island(teamIsland).involvedPlayer(targetUUID).admin(true)
                     .reason(IslandEvent.Reason.RANK_CHANGE)
-                    .rankChange(teamIsland.getRank(target), RanksManager.MEMBER_RANK).build();
+                    .rankChange(previousRank, RanksManager.MEMBER_RANK).build();
             return true;
         } else {
             user.sendMessage("general.errors.player-has-no-island");

@@ -152,6 +152,12 @@ public class BlueprintClipboardManager {
      * @return - <tt>true</tt> if load is successful, <tt>false</tt> if not
      */
     public boolean load(User user, String fileName) {
+        if (this.clipboard != null && this.clipboard.isCopying()) {
+            // The background copy would keep writing into this clipboard and report success
+            // for a blueprint the player is no longer looking at.
+            user.sendMessage("commands.admin.blueprint.mid-copy");
+            return false;
+        }
         try {
             load(fileName);
         } catch (IOException e1) {
@@ -171,6 +177,19 @@ public class BlueprintClipboardManager {
      */
     public boolean save(User user, String newName, String displayName)
     {
+        if (this.clipboard != null && this.clipboard.isCopying())
+        {
+            // isFull() is true as soon as the copy starts, but the blocks are only attached at
+            // the end: saving now would overwrite the file with an empty blueprint.
+            user.sendMessage("commands.admin.blueprint.mid-copy");
+            return false;
+        }
+        if (this.clipboard.isCopyFailed())
+        {
+            // Never persist a blueprint that was only partly copied.
+            user.sendMessage("commands.admin.blueprint.could-not-save", "[message]", "The copy failed, so the blueprint is incomplete.");
+            return false;
+        }
         if (this.clipboard.isFull())
         {
             this.clipboard.getBlueprint().setName(newName);
@@ -216,13 +235,15 @@ public class BlueprintClipboardManager {
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
             ZipEntry entry = zipInputStream.getNextEntry();
             while (entry != null) {
-                Path filePath = Paths.get(path.getParent().toString(), entry.getName());
+                // Normalise before comparing: a ".." element must not survive into the path,
+                // otherwise startsWith() passes and the write lands outside the folder
+                Path filePath = Paths.get(path.getParent().toString(), entry.getName()).normalize();
+                if (!filePath.startsWith(blueprintFolder.getCanonicalFile().toPath().normalize())) {
+                    throw new IOException("Entry is outside of the target directory");
+                }
                 if (!entry.isDirectory()) {
                     unzipFiles(zipInputStream, filePath);
                 } else {
-                    if (!filePath.startsWith(blueprintFolder.getCanonicalPath())) {
-                        throw new IOException("Entry is outside of the target directory");
-                    }
                     Files.createDirectories(filePath);
                 }
 
@@ -234,7 +255,7 @@ public class BlueprintClipboardManager {
 
     private void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
         // Prevent directory traversal attacks by normalizing the path
-        if (!unzipFilePath.startsWith(blueprintFolder.getCanonicalFile().toPath().normalize())) {
+        if (!unzipFilePath.normalize().startsWith(blueprintFolder.getCanonicalFile().toPath().normalize())) {
             throw new IOException(
                     "Blueprint file is trying to write outside of the target directory! Blocked attempt to write to "
                             + unzipFilePath);

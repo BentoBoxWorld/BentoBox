@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import world.bentobox.bentobox.util.TaskScheduler;
@@ -40,7 +40,7 @@ public class LockAndBanListener extends FlagListener {
      * Tracks players who have already been notified about a locked or banned island,
      * to avoid spamming the same message on every move event.
      */
-    private final Set<UUID> notifiedPlayers = new HashSet<>();
+    private final Set<UUID> notifiedPlayers = ConcurrentHashMap.newKeySet();
 
     /**
      * Tracks ops who have already been notified that they are standing on an
@@ -48,7 +48,7 @@ public class LockAndBanListener extends FlagListener {
      * the notice on every move event. Cleared when the op leaves a deletable
      * island.
      */
-    private final Set<UUID> deletableNotified = new HashSet<>();
+    private final Set<UUID> deletableNotified = ConcurrentHashMap.newKeySet();
 
     /**
      * Result of checking the island for locked state or player bans

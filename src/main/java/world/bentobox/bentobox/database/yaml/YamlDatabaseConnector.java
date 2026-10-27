@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,16 +62,21 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 /*
                  * TODO: Temporary fix for removing UUID tags. Remove in a few versions
                  */
-                if (e.getMessage().contains("!!java.util.UUID")) {
+                if (e.getMessage() != null && e.getMessage().contains("!!java.util.UUID")) {
                     removeStringFromFile(yamlFile);
                     // Try again
                     try {
-                        Objects.requireNonNull(config).load(yamlFile);
+                        config = new YamlConfiguration();
+                        config.load(yamlFile);
                     } catch (IOException | InvalidConfigurationException e1) {
                         plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                        return null;
                     }
                 } else {
+                    // Never return an empty configuration: callers would treat it as "no settings"
+                    // and immediately overwrite the broken file with defaults.
                     plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                    return null;
                 }
             }
         } else {
@@ -88,6 +94,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 }
             } catch (Exception e) {
                 plugin.logError("Could not create the " + fileName + " file!");
+                return null;
             }
         }
         return config;
@@ -124,14 +131,28 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         if (!tableFolder.exists()) {
             tableFolder.mkdirs();
         }
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+        // Write to a temporary file and swap it in: a crash mid-write must never leave a
+        // truncated config or island row behind.
+        File temp = new File(tableFolder, name + ".tmp");
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());
             return false;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
-            commentFile(new File(tableFolder, name), commentMap);
+            commentFile(temp, commentMap);
+        }
+        try {
+            try {
+                Files.move(temp.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (java.nio.file.AtomicMoveNotSupportedException ignored) {
+                Files.move(temp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            plugin.logError("Could not replace yml file: " + tableName + " " + fileName + " " + e.getMessage());
+            return false;
         }
         return true;
     }

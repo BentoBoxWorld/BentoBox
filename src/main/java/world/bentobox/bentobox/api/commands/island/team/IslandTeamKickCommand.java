@@ -99,9 +99,29 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
         User target = User.getInstance(targetUUID);
-        Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), user)); // Should never be
-        // null because of
-        // checks above
+        Island oldIsland = getIslands().getIsland(getWorld(), user);
+        if (oldIsland == null) {
+            // The kicker may have left the team while the confirmation was pending
+            return false;
+        }
+        // Re-check rank and target: a dialog can sit open for a while, and the server may have
+        // demoted the kicker, promoted the target, or made the target the owner in the meantime.
+        int rank = oldIsland.getRank(user);
+        if (rank <= RanksManager.VISITOR_RANK || rank < oldIsland.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
+            return false;
+        }
+        int targetRank = oldIsland.getRank(targetUUID);
+        if (targetRank <= RanksManager.VISITOR_RANK) {
+            user.sendMessage("general.errors.not-in-team");
+            return false;
+        }
+        if (targetRank >= rank || targetUUID.equals(oldIsland.getOwner())) {
+            user.sendMessage("commands.island.team.kick.cannot-kick-rank", TextVariables.NAME,
+                    getPlayers().getName(targetUUID));
+            return false;
+        }
         // Fire event
         IslandBaseEvent event = TeamEvent.builder().island(oldIsland).reason(TeamEvent.Reason.KICK)
                 .involvedPlayer(targetUUID).build();
