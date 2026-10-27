@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -140,6 +141,16 @@ class IslandTeamCommandTest extends RanksManagerTestSetup {
         when(im.getMaxMembers(island, RanksManager.MEMBER_RANK)).thenReturn(0);
         assertTrue(tc.canExecute(user, "team", Collections.emptyList()));
         verify(user).sendMessage("commands.island.team.invite.errors.island-is-full");
+    }
+
+    /**
+     * A negative max team size means unlimited, so the owner must not be told the island is full.
+     */
+    @Test
+    void testCanExecuteUnlimitedTeamSize() {
+        when(im.getMaxMembers(island, RanksManager.MEMBER_RANK)).thenReturn(-1);
+        assertTrue(tc.canExecute(user, "team", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.island-is-full");
     }
 
     /**

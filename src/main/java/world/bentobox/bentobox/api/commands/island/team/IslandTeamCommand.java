@@ -145,11 +145,14 @@ public class IslandTeamCommand extends CompositeCommand {
         Set<UUID> teamMembers = getMembers(getWorld(), user);
         if (playerUUID.equals(island.getOwner())) {
             int maxSize = getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK);
-            if (teamMembers.size() < maxSize) {
-                user.sendMessage("commands.island.team.invite.you-can-invite", TextVariables.NUMBER,
-                        String.valueOf(maxSize - teamMembers.size()));
-            } else {
-                user.sendMessage("commands.island.team.invite.errors.island-is-full");
+            // A negative max size means unlimited, so there is no cap to report
+            if (maxSize >= 0) {
+                if (teamMembers.size() < maxSize) {
+                    user.sendMessage("commands.island.team.invite.you-can-invite", TextVariables.NUMBER,
+                            String.valueOf(maxSize - teamMembers.size()));
+                } else {
+                    user.sendMessage("commands.island.team.invite.errors.island-is-full");
+                }
             }
         }
         return true;
