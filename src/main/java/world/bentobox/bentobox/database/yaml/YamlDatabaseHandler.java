@@ -560,9 +560,18 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private void serializeMap(Map<Object, Object> value, YamlConfiguration config, String storageLocation) {
-        // Maps need to have keys serialized
+        // Maps need to have keys serialized. Iterate a copy: the write runs on an async scheduler
+        // thread while the owning region thread may still be mutating the map (entries are removed
+        // with remove() inside the same tick), which threw ConcurrentModificationException.
         Map<Object, Object> result = new HashMap<>();
-        for (Entry<Object, Object> object : value.entrySet()) {
+        List<Entry<Object, Object>> entries;
+        try {
+            entries = new ArrayList<>(value.entrySet());
+        } catch (java.util.ConcurrentModificationException e) {
+            plugin.logWarning("Map for " + storageLocation + " changed while being saved, keeping the previous file.");
+            throw e;
+        }
+        for (Entry<Object, Object> object : entries) {
             // Serialize all key and values
             if (serialize(object.getKey()) instanceof String key) {
                 key = key.replace("\\.", ":dot:");

@@ -579,6 +579,52 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
         verify(connector).saveYamlFile(anyString(), anyString(), eq("coll-save"), any());
     }
 
+    @Test
+    void testSaveObjectWithConcurrentMapMutation() throws Exception {
+        // Regression: the write may run on an async scheduler thread while the island's region
+        // thread keeps mutating the map (entries are removed inside a save tick). Iterating the
+        // live map threw ConcurrentModificationException and the file was silently not written.
+        // A map that mutates during entrySet() but iterates one fixed snapshot mimics the race.
+        when(plugin.isShutdown()).thenReturn(true);
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId("race-save");
+        Set<Map.Entry<String, Integer>> snapshot = Map.of("a", 1, "b", 2).entrySet();
+        java.util.concurrent.atomic.AtomicBoolean first = new java.util.concurrent.atomic.AtomicBoolean(true);
+        Map<String, Integer> racing = new HashMap<>() {
+            @Override
+            public Set<Map.Entry<String, Integer>> entrySet() {
+                if (first.getAndSet(false)) {
+                    put("c", 3); // the owner thread changing the live map mid-save
+                }
+                return snapshot;
+            }
+        };
+        obj.setScores(racing);
+        when(connector.saveYamlFile(anyString(), anyString(), anyString(), any())).thenReturn(true);
+
+        CompletableFuture<Boolean> result = handler.saveObject(obj);
+        assertTrue(result.join());
+        verify(connector).saveYamlFile(anyString(), anyString(), eq("race-save"), any());
+    }
+
+    @Test
+    void testSaveObjectWithMapChangingOnEntrySet() throws Exception {
+        // The other half of the race: the map changes between the copy contract and iteration.
+        // Best effort - the previous file must be kept and the caller told, not an NPE/partial file.
+        when(plugin.isShutdown()).thenReturn(true);
+        TestDataObject obj = new TestDataObject();
+        obj.setUniqueId("race-save-2");
+        Map<String, Integer> racing = new HashMap<>() {
+            @Override
+            public Set<Map.Entry<String, Integer>> entrySet() {
+                throw new java.util.ConcurrentModificationException("mutated on another thread");
+            }
+        };
+        obj.setScores(racing);
+        assertFalse(handler.saveObject(obj).join());
+        verify(plugin).logWarning("Map for scores changed while being saved, keeping the previous file.");
+    }
+
     // ---- deleteObject() ----
     @Test
     void testAsyncSerializationRuntimeFailureCompletesFalse() throws Exception {

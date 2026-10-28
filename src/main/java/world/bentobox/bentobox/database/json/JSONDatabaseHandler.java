@@ -91,7 +91,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         try (FileReader reader = new FileReader(new File(plugin.getDataFolder(), fileName))) {
             result = getGson().fromJson(reader, dataObject);
         } catch (FileNotFoundException e) {
-            plugin.logError("Could not load file '" + fileName + "': File not found.");
+            // A missing file is the normal way to see an unknown player, so this is not an error.
+            plugin.logDebug("No database file '" + fileName + "', a new object will be created.");
         } catch (Exception e) {
             plugin.logError("Could not load objects " + fileName + " " + e.getMessage());
         }
