@@ -570,13 +570,7 @@ public abstract sealed class AbstractTeleportListener
      */
     protected static Axis portalAxis(@Nullable Location from)
     {
-        if (from == null || from.getWorld() == null) {
-            return Axis.X;
-        }
-        // An unloaded chunk yields no block here; the axis only picks the orientation of a new
-        // portal, so falling back to X is safe and keeps the transfer alive.
-        org.bukkit.block.Block block = from.getBlock();
-        if (block != null && block.getBlockData() instanceof Orientable data)
+        if (from != null && from.getBlock().getBlockData() instanceof Orientable data)
         {
             return data.getAxis();
         }

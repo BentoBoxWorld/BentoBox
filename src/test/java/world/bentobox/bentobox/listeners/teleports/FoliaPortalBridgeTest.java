@@ -806,7 +806,11 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         when(iwm.getNetherWorld(world)).thenReturn(nether);
         Entity sheep = mock(Entity.class);
         PlayerTeleportListener listener = islandPathRunsInline(sheep);
+        org.bukkit.block.Block portalBlock = mock(org.bukkit.block.Block.class);
+        org.mockito.Mockito.doReturn(portalBlock).when(location).getBlock();
         FakePortalEvent event = new FakePortalEvent(sheep, location, nether);
+        // The bridge rebuilds the target from the portal position, so it needs a real vector.
+        org.mockito.Mockito.doReturn(new org.bukkit.util.Vector(1, 70, 2)).when(location).toVector();
         doAnswer(invocation -> {
             EntityPortalEvent portal = invocation.getArgument(0);
             assertEquals(sheep, portal.getEntity());

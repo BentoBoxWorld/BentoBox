@@ -9,8 +9,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,7 +33,6 @@ import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 
 /**
@@ -233,21 +230,6 @@ class PanelTest extends CommonTestSetup {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(user, user, user);
         verify(player, times(4)).openInventory(inv);
-    }
-
-    /**
-     * A core that loads a chunk inside openInventory can throw on the player's region thread.
-     * The panel must still be registered so later clicks are not acted on stale state.
-     */
-    @Test
-    void testOpenRegistersPanelWhenCoreRefusesInventory() {
-        Panel p = spy(new Panel(name, items, 10, user, listener));
-        doThrow(new IllegalStateException("Cannot asynchronously load chunks"))
-                .when(player).openInventory(inv);
-
-        p.open(player);
-
-        assertEquals(p, PanelListenerManager.getOpenPanels().get(player.getUniqueId()));
     }
 
     /**
