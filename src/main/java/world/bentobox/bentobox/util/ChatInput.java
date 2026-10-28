@@ -27,7 +27,8 @@ import world.bentobox.bentobox.api.user.User;
  */
 public final class ChatInput {
 
-    private record Pending(String prompt, @Nullable String cancelWord, Consumer<String> onInput) {
+    private record Pending(String prompt, @Nullable String cancelWord, Consumer<String> onInput,
+            @Nullable Runnable onCancel) {
     }
 
     private static final Map<UUID, Pending> PENDING = new ConcurrentHashMap<>();
@@ -55,11 +56,25 @@ public final class ChatInput {
      * @param onInput    called with the message on the player's own thread
      */
     public static void ask(User user, String prompt, @Nullable String cancelWord, Consumer<String> onInput) {
+        ask(user, prompt, cancelWord, onInput, null);
+    }
+
+    /**
+     * Asks the player for one line of chat.
+     *
+     * @param user       player to ask
+     * @param prompt     text shown to the player
+     * @param cancelWord message that cancels the request instead of answering it, or null
+     * @param onInput    called with the message on the player's own thread
+     * @param onCancel   called instead of {@code onInput} when the cancel word is used, or null
+     */
+    public static void ask(User user, String prompt, @Nullable String cancelWord, Consumer<String> onInput,
+            @Nullable Runnable onCancel) {
         if (user == null || !user.isPlayer()) {
             return;
         }
-        PENDING.put(user.getUniqueId(), new Pending(prompt, cancelWord, onInput));
-        onUser(user, () -> user.sendMessage(prompt));
+        PENDING.put(user.getUniqueId(), new Pending(prompt, cancelWord, onInput, onCancel));
+        onUser(user, () -> user.sendRawMessage(prompt));
     }
 
     /** @return true if this player owes a chat answer */
@@ -89,7 +104,11 @@ public final class ChatInput {
         }
         String input = message == null ? "" : message.trim();
         if (pending.cancelWord() != null && input.equalsIgnoreCase(pending.cancelWord())) {
-            onUser(user, () -> user.sendMessage("general.errors.command-cancelled"));
+            if (pending.onCancel() != null) {
+                onUser(user, pending.onCancel());
+            } else {
+                onUser(user, () -> user.sendMessage("general.errors.command-cancelled"));
+            }
             return true;
         }
         onUser(user, () -> pending.onInput().accept(input));

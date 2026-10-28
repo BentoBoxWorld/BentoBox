@@ -421,7 +421,45 @@ public class ClosestSafeSpotTeleport
             this.teleportEntity(this.noPortalPosition);
             return;
         }
-        else if (this.entity instanceof Player player)
+        if (this.portal)
+        {
+            // Nothing safe was found nearby. The portal itself may still be a valid landing place,
+            // but its blocks belong to another region (usually another world), so they may only be
+            // read there; this task runs on the global tick thread.
+            TaskScheduler.regionFuture(this.plugin, this.location, () -> {
+                if (this.canLandInPortal())
+                {
+                    this.teleportEntity(this.location);
+                }
+                else
+                {
+                    this.finishWithoutSafeSpot();
+                }
+            }).exceptionally(error -> {
+                this.result.complete(false);
+                return null;
+            });
+            return;
+        }
+        this.finishWithoutSafeSpot();
+    }
+
+    /** Reports the failure to the player or gives up, when no landing place was found. */
+    private void finishWithoutSafeSpot() {
+        if (this.portal) {
+            // A portal trip must not strand the player in the source portal just because the exact
+            // spot is unusable: fall back to the island's spawn in the destination dimension.
+            Location spawn = portalSpawnFallback();
+            if (spawn != null) {
+                if (this.entity instanceof Player) {
+                    TaskScheduler.entity(this.plugin, this.entity, () ->
+                            User.getInstance(this.entity).notify("general.errors.portal-spawn-fallback"));
+                }
+                this.teleportEntity(spawn);
+                return;
+            }
+        }
+        if (this.entity instanceof Player player)
         {
             // Return to main thread and teleport the player
             TaskScheduler.entityOrRetired(this.plugin, entity, () -> returnAndTeleport(player),
@@ -431,7 +469,30 @@ public class ClosestSafeSpotTeleport
         // We do not teleport entities if position failed.
         // Fail the completion
         this.result.complete(false);
+    }
 
+    /**
+     * @return the island spawn in the destination dimension, or null when there is none or it is
+     *         the same place that already failed. No blocks are read, so it is safe on any thread.
+     */
+    private Location portalSpawnFallback() {
+        World world = this.location.getWorld();
+        if (world == null) {
+            return null;
+        }
+        return this.plugin.getIslands().getIslandAt(this.location)
+                .map(island -> island.getSpawnPoint(world.getEnvironment()))
+                .filter(spawn -> spawn != null && spawn.getWorld() != null && !spawn.equals(this.location))
+                .orElse(null);
+    }
+
+    /**
+     * @return true when this is a portal transfer and the destination portal itself is safe to
+     *         stand in. That is where vanilla puts the player, so it is a valid last resort when
+     *         the nearby scan finds nothing.
+     */
+    boolean canLandInPortal() {
+        return this.portal && this.plugin.getIslandsManager().isSafeLocation(this.location);
     }
 
     void returnAndTeleport(Player player) {

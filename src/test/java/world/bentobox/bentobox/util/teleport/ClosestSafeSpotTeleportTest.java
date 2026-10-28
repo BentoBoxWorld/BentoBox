@@ -283,6 +283,30 @@ class ClosestSafeSpotTeleportTest extends CommonTestSetup {
     }
 
     /**
+     * A portal transfer may land in the destination portal itself when the nearby scan finds
+     * nothing: vanilla puts the player there, and the caller sets the portal cooldown.
+     */
+    @Test
+    void testCanLandInPortal_trueWhenPortalAndSafe() {
+        when(im.isSafeLocation(location)).thenReturn(true);
+        assertTrue(buildTeleport(true).canLandInPortal());
+    }
+
+    /** A non-portal teleport must not fall back to landing in the destination block. */
+    @Test
+    void testCanLandInPortal_falseWithoutPortalFlag() {
+        when(im.isSafeLocation(location)).thenReturn(true);
+        assertFalse(buildTeleport(false).canLandInPortal());
+    }
+
+    /** An unsafe portal must still fail rather than drop the player into it. */
+    @Test
+    void testCanLandInPortal_falseWhenUnsafe() {
+        when(im.isSafeLocation(location)).thenReturn(false);
+        assertFalse(buildTeleport(true).canLandInPortal());
+    }
+
+    /**
      * {@link Builder#successRunnable(Runnable)} stores the runnable and the getter returns
      * the same instance.
      */

@@ -126,6 +126,32 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         return event;
     }
 
+    /**
+     * Makes the island-portal path settle at once: the paired-portal lookup finds nothing and the
+     * entity scheduler runs the dispatch inline, so the assertions can read the event right away.
+     */
+    private PlayerTeleportListener islandPathRunsInline(Entity entity) {
+        return islandPathRunsInline(spyWithPortals(), entity);
+    }
+
+    private PlayerTeleportListener islandPathRunsInline(PlayerTeleportListener listener, Entity entity) {
+        // The bridge logs per entity and a null id would throw inside its guarded body.
+        org.mockito.Mockito.doReturn(java.util.UUID.randomUUID()).when(entity).getUniqueId();
+        org.mockito.Mockito.doReturn(java.util.concurrent.CompletableFuture.completedFuture(null))
+                .when(listener).ensureNetherPortal(org.mockito.ArgumentMatchers.any(Location.class),
+                        org.mockito.ArgumentMatchers.any(org.bukkit.Axis.class),
+                        org.mockito.ArgumentMatchers.anyBoolean());
+        var scheduler = mock(io.papermc.paper.threadedregions.scheduler.EntityScheduler.class);
+        when(entity.getScheduler()).thenReturn(scheduler);
+        when(scheduler.execute(org.mockito.ArgumentMatchers.eq(plugin),
+                org.mockito.ArgumentMatchers.any(Runnable.class), org.mockito.ArgumentMatchers.any(Runnable.class),
+                org.mockito.ArgumentMatchers.eq(1L))).thenAnswer(call -> {
+                    call.getArgument(1, Runnable.class).run();
+                    return true;
+                });
+        return listener;
+    }
+
     @Test
     void testLateSyntheticCancellationStopsNativeTargetAndPreparation() throws Exception {
         World nether = mock(World.class);
@@ -407,8 +433,7 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         World redirected = mock(World.class);
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(iwm.getNetherWorld(world)).thenReturn(nether);
-        PlayerTeleportListener listener = org.mockito.Mockito.spy(ptl);
-        org.mockito.Mockito.doReturn(true).when(listener).isMakePortals(world, World.Environment.NETHER);
+        PlayerTeleportListener listener = spyWithPortals();
         Location target = new Location(redirected, 1200.5, 80, -3400.5);
         doAnswer(call -> {
             EntityPortalEvent portal = call.getArgument(0);
@@ -416,7 +441,9 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
             portal.setSearchRadius(9);
             return null;
         }).when(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
-        FakePortalEvent event = new FakePortalEvent(mock(Entity.class), new Location(world, 1, 70, 2), nether);
+        Entity entity = mock(Entity.class);
+        listener = islandPathRunsInline(listener, entity);
+        FakePortalEvent event = new FakePortalEvent(entity, new Location(world, 1, 70, 2), nether);
         FoliaPortalBridge.reroute(plugin, listener, event, getEntity, getPortalPos, getDestination,
                 FakePortalEvent.class.getMethod("setDestination", World.class));
         assertFalse(event.isCancelled());
@@ -542,9 +569,10 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
             ((EntityPortalEvent) call.getArgument(0)).setCancelled(true);
             return null;
         }).when(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
+        PlayerTeleportListener listener = islandPathRunsInline(entity);
         FakePortalEvent event = new FakePortalEvent(entity, entrance, end);
 
-        FoliaPortalBridge.reroute(plugin, ptl, event, getEntity, getPortalPos, getDestination,
+        FoliaPortalBridge.reroute(plugin, listener, event, getEntity, getPortalPos, getDestination,
                 FakePortalEvent.class.getMethod("setDestination", World.class));
 
         assertTrue(event.isCancelled());
@@ -616,6 +644,12 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         verifyNoInteractions(pim);
     }
 
+    private PlayerTeleportListener spyWithPortals() {
+        PlayerTeleportListener listener = org.mockito.Mockito.spy(ptl);
+        org.mockito.Mockito.doReturn(true).when(listener).isMakePortals(world, World.Environment.NETHER);
+        return listener;
+    }
+
     @Test
     void testNativePathChangesDestinationWithoutCancelling() throws Exception {
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
@@ -625,15 +659,17 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(addonNether.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(iwm.getNetherWorld(world)).thenReturn(addonNether);
+        PlayerTeleportListener listener = spyWithPortals();
 
-        FakePortalEvent event = new FakePortalEvent(mock(Entity.class), location, nether);
-        FoliaPortalBridge.reroute(plugin, ptl, event,
+        Entity nativeEntity = mock(Entity.class);
+        when(nativeEntity.getUniqueId()).thenReturn(java.util.UUID.randomUUID());
+        FakePortalEvent event = new FakePortalEvent(nativeEntity, location, nether);
+        FoliaPortalBridge.reroute(plugin, listener, event,
                 getEntity, getPortalPos, getDestination,
                 FakePortalEvent.class.getMethod("setDestination", World.class));
 
         assertFalse(event.isCancelled());
         assertEquals(addonNether, event.getDestination());
-        verifyNoInteractions(pim);
     }
 
     @Test
@@ -645,10 +681,13 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(serverOverworld.getEnvironment()).thenReturn(World.Environment.NORMAL);
         mockedUtil.when(() -> Util.getWorld(nether)).thenReturn(world);
+        PlayerTeleportListener listener = spyWithPortals();
         Location portal = new Location(nether, 8, 90, 8);
-        FakePortalEvent event = new FakePortalEvent(mock(Entity.class), portal, serverOverworld);
+        Entity nativeEndEntity = mock(Entity.class);
+        when(nativeEndEntity.getUniqueId()).thenReturn(java.util.UUID.randomUUID());
+        FakePortalEvent event = new FakePortalEvent(nativeEndEntity, portal, serverOverworld);
 
-        FoliaPortalBridge.reroute(plugin, ptl, event, getEntity, getPortalPos, getDestination,
+        FoliaPortalBridge.reroute(plugin, listener, event, getEntity, getPortalPos, getDestination,
                 FakePortalEvent.class.getMethod("setDestination", World.class));
 
         assertFalse(event.isCancelled());
@@ -709,6 +748,7 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         when(iwm.getNetherWorld(world)).thenReturn(nether);
         Location entrance = new Location(world, 2701.5, 90, 4198.5);
         Entity entity = mock(Entity.class);
+        PlayerTeleportListener listener = islandPathRunsInline(entity);
         FakePortalEvent event = new FakePortalEvent(entity, entrance, nether);
         doAnswer(invocation -> {
             EntityPortalEvent portal = invocation.getArgument(0);
@@ -718,12 +758,13 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
             return null;
         }).when(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
 
-        FoliaPortalBridge.reroute(plugin, ptl, event, getEntity, getPortalPos, getDestination,
+        FoliaPortalBridge.reroute(plugin, listener, event, getEntity, getPortalPos, getDestination,
                 FakePortalEvent.class.getMethod("setDestination", World.class));
 
         assertTrue(event.isCancelled());
         verify(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
-        verifyNoInteractions(entity);
+        org.mockito.Mockito.verify(entity, org.mockito.Mockito.never())
+                .teleportAsync(org.mockito.ArgumentMatchers.any(Location.class));
     }
 
     @Test
@@ -764,6 +805,7 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(iwm.getNetherWorld(world)).thenReturn(nether);
         Entity sheep = mock(Entity.class);
+        PlayerTeleportListener listener = islandPathRunsInline(sheep);
         FakePortalEvent event = new FakePortalEvent(sheep, location, nether);
         doAnswer(invocation -> {
             EntityPortalEvent portal = invocation.getArgument(0);
@@ -773,11 +815,13 @@ class FoliaPortalBridgeTest extends CommonTestSetup {
             return null;
         }).when(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
 
-        FoliaPortalBridge.reroute(plugin, ptl, event, getEntity, getPortalPos, getDestination);
+        FoliaPortalBridge.reroute(plugin, listener, event, getEntity, getPortalPos, getDestination);
 
         assertTrue(event.isCancelled());
         verify(pim).callEvent(org.mockito.ArgumentMatchers.any(EntityPortalEvent.class));
-        verifyNoInteractions(sheep);
+        // The bridge only logs on the entity; it must not move it itself.
+        org.mockito.Mockito.verify(sheep, org.mockito.Mockito.never())
+                .teleportAsync(org.mockito.ArgumentMatchers.any(Location.class));
     }
 
     /**

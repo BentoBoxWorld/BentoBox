@@ -7,8 +7,10 @@
 package world.bentobox.bentobox.listeners.teleports;
 
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
@@ -323,6 +325,23 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
     // Section: Processors
     // ---------------------------------------------------------------------
 
+    /** Rate-limited diagnostics for the portal path; see {@link #logPortal(Player, String)}. */
+    private static final Map<UUID, Long> PORTAL_LOG = new ConcurrentHashMap<>();
+
+    /**
+     * Logs a portal decision at most once every five seconds per player. The transfer has several
+     * silent bail-outs, so without this a portal that does nothing leaves no trace at all.
+     */
+    private void logPortal(Player player, String message) {
+        long now = System.currentTimeMillis();
+        Long last = PORTAL_LOG.get(player.getUniqueId());
+        if (last != null && now - last < 5000L) {
+            return;
+        }
+        PORTAL_LOG.put(player.getUniqueId(), now);
+        plugin.log("Portal " + player.getName() + ": " + message);
+    }
+
 
     /**
      * This method process player teleportation to new dimension.
@@ -354,6 +373,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
         if (this.inTeleport.contains(event.getPlayer().getUniqueId()))
         {
             // Player is already in teleportation.
+            logPortal(event.getPlayer(), "ignored: a transfer is already in flight");
             return;
         }
 
@@ -388,10 +408,18 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                 event.getCanCreatePortal());
         if (destination == null) {
             // Destination world is not loaded: mirror EntityTeleportListener and leave the player be
+            logPortal(event.getPlayer(), "no destination: from=" + fromWorld.getName()
+                    + " to=" + toWorld.getName() + " environment=" + environment);
             event.setCancelled(true);
             return;
         }
         event.setTo(destination);
+        // One line per portal entry: without it we cannot tell whether the destination or the
+        // portal search is wrong when the transfer fails.
+        plugin.log("Portal " + event.getPlayer().getName() + ": destination " + toWorld.getName() + " "
+                + destination.getBlockX() + "," + destination.getBlockY() + "," + destination.getBlockZ()
+                + " canCreate=" + event.getCanCreatePortal()
+                + " makePortals=" + this.isMakePortals(overWorld, environment));
 
         // Find the distance from edge of island's protection and set the search radius
         this.getIsland(event.getTo()).ifPresent(island ->
@@ -414,7 +442,11 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
     }
 
     private void finishPortal(PlayerPortalEvent event, World overWorld, World.Environment environment) {
-        if (event.isCancelled() || event.getTo() == null) return;
+        if (event.isCancelled() || event.getTo() == null) {
+            logPortal(event.getPlayer(), "abandoned before teleport: cancelled=" + event.isCancelled()
+                    + " to=" + event.getTo() + " environment=" + environment);
+            return;
+        }
         this.inTeleport.add(event.getPlayer().getUniqueId());
         // Check if there is an island there or not
         Island island = this.getIsland(event.getTo()).orElse(null);
@@ -438,6 +470,11 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                                             plugin.logStacktrace(error);
                                         } else if (portal != null && !event.isCancelled()) {
                                             event.setTo(portal);
+                                        } else if (portal == null) {
+                                            logPortal(event.getPlayer(), "no portal could be found or built near "
+                                                    + destination.getBlockX() + "," + destination.getBlockY()
+                                                    + "," + destination.getBlockZ() + " in "
+                                                    + destination.getWorld().getName());
                                         }
                                         completePortal(event);
                                     });
@@ -491,8 +528,16 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                     event.getPlayer().setFallDistance(0);
                     // Vanilla cooldown, otherwise arriving inside the portal bounces the player back.
                     event.getPlayer().setPortalCooldown(300);
+                    logPortal(event.getPlayer(), "teleported to " + event.getTo().getWorld().getName() + " "
+                            + event.getTo().getBlockX() + "," + event.getTo().getBlockY() + ","
+                            + event.getTo().getBlockZ());
                 }).
                 build();
+            } else {
+                logPortal(event.getPlayer(), "not teleporting: cancelled=" + event.isCancelled()
+                        + " to=" + event.getTo()
+                        + " from=" + event.getPlayer().getWorld().getName()
+                        + (event.getTo() == null ? "" : " to=" + event.getTo().getWorld().getName()));
             }
         });
     }

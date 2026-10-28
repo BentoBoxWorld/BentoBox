@@ -34,6 +34,22 @@ public class PanelListenerManager implements Listener {
     private static final Map<UUID, Panel> openPanels = new ConcurrentHashMap<>();
 
     /**
+     * Temporary diagnostics: a panel that opens but ignores every click is otherwise invisible in
+     * the log. Logs at most one line per player every two seconds.
+     */
+    private static final Map<UUID, Long> panelLogTimes = new ConcurrentHashMap<>();
+
+    private static void panelLog(UUID id, String message) {
+        long now = System.currentTimeMillis();
+        Long last = panelLogTimes.get(id);
+        if (last != null && now - last < 2000L) {
+            return;
+        }
+        panelLogTimes.put(id, now);
+        BentoBox.getInstance().log("PanelClick " + message);
+    }
+
+    /**
      * Actions that, when performed on a slot of the player's own inventory, only move items
      * within that inventory, to the cursor, or out of the world via a drop. None of them can put
      * an item into the panel. Shift-click ({@link InventoryAction#MOVE_TO_OTHER_INVENTORY}) and
@@ -56,6 +72,14 @@ public class PanelListenerManager implements Listener {
 
         // Open the inventory panel that this player has open (they can only ever have one)
         Panel openPanel = openPanels.get(user.getUniqueId());
+        if (openPanel == null) {
+            panelLog(user.getUniqueId(), "no open panel registered for click in " + view.getTitle());
+            return;
+        }
+        if (!openPanel.getInventory().equals(event.getInventory())) {
+            panelLog(user.getUniqueId(), "event inventory " + event.getInventory().getType() + " != panel inventory "
+                    + openPanel.getInventory().getType() + " (title " + view.getTitle() + ")");
+        }
         if (openPanel != null && openPanel.getInventory().equals(event.getInventory())) {
             // Cancel the event. If they don't want it to be cancelled then the click handler(s) should
             // uncancel it. If gui was from our environment, then cancel event anyway.
@@ -94,7 +118,6 @@ public class PanelListenerManager implements Listener {
             String viewTitle = Util.stripColor(view.getTitle());
             String panelName = panel.getPlainName();
             if (viewTitle.equals(panelName)) {
-                // Close inventory if clicked outside and if setting is true
                 if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
                     event.getWhoClicked().closeInventory();
                     return;

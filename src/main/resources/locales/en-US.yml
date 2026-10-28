@@ -28,6 +28,7 @@ general:
   errors:
     command-cancelled: '<red>Command cancelled.</red>'
     chat-input-unavailable: '<red>This server cannot read chat input for this menu. Use the equivalent command instead.</red>'
+    portal-spawn-fallback: '<yellow>No safe spot was found at the portal, so you were sent to the island spawn.</yellow>'
     no-permission: '<red>You don''t have the permission to execute this command (</red><gray>
       [permission]</gray><red>).</red>'
     insufficient-rank: '<red>Your rank is not high enough to do that! (</red><gray>[rank]</gray><red>)</red>'

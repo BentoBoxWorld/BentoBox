@@ -513,8 +513,27 @@ public abstract sealed class AbstractTeleportListener
      */
     protected java.util.concurrent.CompletableFuture<Location> ensureNetherPortal(@NonNull Location destination, Axis axis)
     {
+        // Never build portals automatically: every trip landed at a slightly different Y, so each one
+        // created another portal. Reuse an existing one, or give up and let the caller fall back.
+        return ensureNetherPortal(destination, axis, false);
+    }
+
+    /**
+     * Finds or optionally builds the paired portal at the destination.
+     *
+     * @param destination where the entity is going
+     * @param axis        orientation for a newly built portal
+     * @param create      whether a missing portal may be built. Entities must never build one:
+     *                    every mob would get its own portal and spawn more mobs around it.
+     * @return the portal entrance, or null when none exists (and creating is not allowed)
+     */
+    protected java.util.concurrent.CompletableFuture<Location> ensureNetherPortal(@NonNull Location destination, Axis axis,
+            boolean create)
+    {
         World world = destination.getWorld();
-        if (world == null || !World.Environment.NETHER.equals(world.getEnvironment()))
+        // Any dimension with a portal forcer can host the paired portal: the destination may be the
+        // nether (overworld -> nether) or the island overworld (nether -> overworld).
+        if (world == null || World.Environment.THE_END.equals(world.getEnvironment()))
         {
             return java.util.concurrent.CompletableFuture.completedFuture(null);
         }
@@ -528,7 +547,7 @@ public abstract sealed class AbstractTeleportListener
                     PortalForcer forcer = level.getPortalForcer();
                     // Same order as vanilla: reuse a portal that is already in range, else build one.
                     BlockPos portal = forcer.findClosestPortalPosition(pos, true, level.getWorldBorder()).orElse(null);
-                    if (portal == null)
+                    if (portal == null && create)
                     {
                         forcer.createPortal(pos, Axis.X == axis ? Direction.Axis.X : Direction.Axis.Z);
                         portal = forcer.findClosestPortalPosition(pos, true, level.getWorldBorder()).orElse(null);
@@ -551,7 +570,13 @@ public abstract sealed class AbstractTeleportListener
      */
     protected static Axis portalAxis(@Nullable Location from)
     {
-        if (from != null && from.getBlock().getBlockData() instanceof Orientable data)
+        if (from == null || from.getWorld() == null) {
+            return Axis.X;
+        }
+        // An unloaded chunk yields no block here; the axis only picks the orientation of a new
+        // portal, so falling back to X is safe and keeps the transfer alive.
+        org.bukkit.block.Block block = from.getBlock();
+        if (block != null && block.getBlockData() instanceof Orientable data)
         {
             return data.getAxis();
         }

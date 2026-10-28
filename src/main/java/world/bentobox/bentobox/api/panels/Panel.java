@@ -13,6 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.eclipse.jdt.annotation.NonNull;
 
 import net.kyori.adventure.text.Component;
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -225,11 +226,25 @@ public class Panel implements HeadRequester, InventoryHolder {
 
     public void open(Player... players) {
         for (Player player : players) {
-            player.openInventory(inventory);
+            openInventory(player);
             // A null UUID cannot identify a player; the open-panel map rejects null keys.
             if (player.getUniqueId() != null) {
                 PanelListenerManager.getOpenPanels().put(player.getUniqueId(), this);
             }
+        }
+    }
+
+    /**
+     * Shows the panel inventory, logging a core that refuses to open it instead of aborting the
+     * caller halfway: the panel is still registered, so later clicks do not act on stale state.
+     * Some cores (Lophine 26.3) load a chunk inside {@code openInventory} and throw when the
+     * player's region thread cannot do that.
+     */
+    private void openInventory(Player player) {
+        try {
+            player.openInventory(inventory);
+        } catch (RuntimeException e) {
+            BentoBox.getInstance().logError("Could not open panel for " + player.getName() + ": " + e.getMessage());
         }
     }
 
@@ -239,7 +254,7 @@ public class Panel implements HeadRequester, InventoryHolder {
      */
     public void open(User... users) {
         for (User u : users) {
-            u.getPlayer().openInventory(inventory);
+            openInventory(u.getPlayer());
             if (u.getUniqueId() != null) {
                 PanelListenerManager.getOpenPanels().put(u.getUniqueId(), this);
             }

@@ -27,6 +27,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 class PanelItemBuilderTest extends CommonTestSetup {
 
@@ -70,7 +71,7 @@ class PanelItemBuilderTest extends CommonTestSetup {
         assertEquals(Material.IRON_ORE, item.getItem().getType());
     }
 
-    // Removed testIconString — PLAYER_HEAD not classified as item in Paper
+    // Removed testIconString 鈥?PLAYER_HEAD not classified as item in Paper
 
     @Test
     void testName() {
@@ -149,6 +150,19 @@ class PanelItemBuilderTest extends CommonTestSetup {
         // Test with glowing
         item = builder.glow(true).build();
         assertTrue(item.isGlow());
+    }
+
+    /**
+     * A MiniMessage {@code <lang:鈥?} name must parse to a translatable component, so the client can
+     * show the block name in its own language. If it becomes plain text, the tooltip shows the raw
+     * translation key instead.
+     */
+    @Test
+    void testNameKeepsTranslatableComponent() {
+        net.kyori.adventure.text.Component parsed =
+                Util.parseMiniMessageOrLegacy("<lang:block.minecraft.ancient_debris>");
+        org.junit.jupiter.api.Assertions.assertInstanceOf(
+                net.kyori.adventure.text.TranslatableComponent.class, parsed, "parsed was " + parsed);
     }
 
     public class Clicker implements PanelItem.ClickHandler {

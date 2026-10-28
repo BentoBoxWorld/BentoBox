@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.teleports;
 import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -88,6 +89,27 @@ public final class FoliaPortalBridge {
         }
     }
 
+    /** Rate-limited bridge diagnostics: the portal event fires every tick while standing in a portal. */
+    private static final java.util.Map<java.util.UUID, Long> BRIDGE_LOG = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static void bridgeLog(BentoBox plugin, Entity entity, String message) {
+        long now = System.currentTimeMillis();
+        Long last = BRIDGE_LOG.get(entity.getUniqueId());
+        if (last != null && now - last < 3000L) {
+            return;
+        }
+        BRIDGE_LOG.put(entity.getUniqueId(), now);
+        plugin.log("PortalBridge " + entity.getType() + " " + entity.getUniqueId() + ": " + message);
+    }
+
+    private static String describe(Location location) {
+        if (location == null || location.getWorld() == null) {
+            return "null";
+        }
+        return location.getWorld().getName() + " " + location.getBlockX() + "," + location.getBlockY() + ","
+                + location.getBlockZ();
+    }
+
     private static Method findMethod(Class<?> type, String name, Class<?>... parameterTypes) {
         try {
             return type.getMethod(name, parameterTypes);
@@ -159,10 +181,15 @@ public final class FoliaPortalBridge {
     static void reroute(BentoBox plugin, PlayerTeleportListener listener, Event event,
             Method getEntity, Method getPortalPos, Method getDestination, Method setDestination) {
         try {
-            if (((Cancellable) event).isCancelled()) return;
-            if (!(getEntity.invoke(event) instanceof Entity entity)) {
+            Object rawEntity = getEntity.invoke(event);
+            if (!(rawEntity instanceof Entity entity)) {
                 return;
             }
+            Location rawPos = (Location) getPortalPos.invoke(event);
+            World rawDestination = (World) getDestination.invoke(event);
+            bridgeLog(plugin, entity, "event cancelled=" + ((Cancellable) event).isCancelled()
+                    + " pos=" + describe(rawPos) + " destination=" + (rawDestination == null ? "null" : rawDestination.getName()));
+            if (((Cancellable) event).isCancelled()) return;
             if (!preparing.isEmpty() && entity.getUniqueId() != null && preparing.contains(entity.getUniqueId())) {
                 ((Cancellable) event).setCancelled(true);
                 return;
@@ -239,14 +266,26 @@ public final class FoliaPortalBridge {
                 }
                 if (listener.isIslandWorld(overWorld, environment)) {
                     // Island dimensions use matching island coordinates, not vanilla's 8:1 scale.
+                    // Find or build the paired portal first: the same Y in the other dimension is
+                    // usually air, so a safe-spot search there finds nothing and drops the transfer.
                     ((Cancellable) event).setCancelled(true);
-                    EntityPortalEvent portal = new EntityPortalEvent(entity, portalPos,
-                            portalPos.toVector().toLocation(target), 0);
-                    boolean handled = AbstractTeleportListener.dispatchPortal(portal, false);
-                    if (!handled && !portal.isCancelled() && portal.getTo() != null) {
-                        ClosestSafeSpotTeleport.builder(plugin).entity(entity).location(portal.getTo())
-                                .portal().successRunnable(() -> entity.setPortalCooldown(300)).build();
-                    }
+                    Location anchor = portalPos.toVector().toLocation(target);
+                    Axis axis = AbstractTeleportListener.portalAxis(portalPos);
+                    listener.ensureNetherPortal(anchor, axis, false).whenComplete((paired, error) -> {
+                        if (error != null) {
+                            plugin.logStacktrace(error);
+                        }
+                        Location pairedTarget = paired == null ? anchor : paired;
+                        // Dispatch on the entity's own region: the portal event reads the source block.
+                        entity.getScheduler().execute(plugin, () -> {
+                            EntityPortalEvent portal = new EntityPortalEvent(entity, portalPos, pairedTarget, 0);
+                            boolean handled = AbstractTeleportListener.dispatchPortal(portal, false);
+                            if (!handled && !portal.isCancelled() && portal.getTo() != null) {
+                                ClosestSafeSpotTeleport.builder(plugin).entity(entity).location(portal.getTo())
+                                        .portal().successRunnable(() -> entity.setPortalCooldown(300)).build();
+                            }
+                        }, () -> { }, 1);
+                    });
                     return;
                 }
                 setDestination.invoke(event, target);
