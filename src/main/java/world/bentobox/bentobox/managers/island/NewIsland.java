@@ -476,16 +476,19 @@ public class NewIsland {
             }).thenCompose(ignored -> {
                 // The island is now delivered; a failure from here must not strand the player.
                 delivered[0] = true;
-                return initializeLevelCount(plugin, island).handle((ignoredLevel, levelError) -> {
-                    if (levelError != null) {
-                        // The island is usable; the level add-on can still scan it later, so this
-                        // must not roll the reset back.
-                        plugin.logError("Could not start the initial level scan for " + island.getUniqueId()
-                                + ": " + levelError.getMessage());
-                    }
-                    return null;
-                });
-            }).thenCompose(ignored -> tidyUp(oldIsland));
+                // Clean up the old island before the initial level scan. The scan of a
+                // protectionRange 400 island takes minutes, and the old island file is not
+                // touched by it, so the order does not affect the new island's baseline.
+                return tidyUp(oldIsland);
+            }).thenCompose(ignored -> initializeLevelCount(plugin, island).handle((ignoredLevel, levelError) -> {
+                if (levelError != null) {
+                    // The island is usable; the level add-on can still scan it later, so this
+                    // must not roll the reset back.
+                    plugin.logError("Could not start the initial level scan for " + island.getUniqueId()
+                            + ": " + levelError.getMessage());
+                }
+                return null;
+            }));
             completion = completion.exceptionallyCompose(error -> {
                 Throwable cause = error instanceof java.util.concurrent.CompletionException && error.getCause() != null
                         ? error.getCause() : error;
