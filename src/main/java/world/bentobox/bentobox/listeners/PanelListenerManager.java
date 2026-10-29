@@ -65,7 +65,11 @@ public class PanelListenerManager implements Listener {
             InventoryAction.PICKUP_SOME_INTO_BUNDLE, InventoryAction.PLACE_FROM_BUNDLE,
             InventoryAction.PLACE_ALL_INTO_BUNDLE, InventoryAction.PLACE_SOME_INTO_BUNDLE);
 
-    @EventHandler(priority = EventPriority.LOW)
+    // LOWEST so the panel sees the click before other plugins cancel it. CMI registers three
+    // InventoryClickEvent listeners at LOWEST (SaveInvListener, silentChestListener,
+    // ShulkerBoxListener) that cancel every container click they do not own; at LOW this handler
+    // ran after them and every BentoBox GUI looked dead.
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
         InventoryView view = event.getView();
