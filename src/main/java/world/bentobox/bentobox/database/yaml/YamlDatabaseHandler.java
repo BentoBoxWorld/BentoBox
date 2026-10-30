@@ -646,26 +646,26 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private void handleConfigEntryComments(@NonNull ConfigEntry configEntry, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
         // Tell if there is a video associated to this configuration option.
         if (!configEntry.video().isEmpty()) {
-            setComment("You can find more details in this video: " + configEntry.video(), config, yamlComments, parent);
+            setComment("更多细节可查看这个视频：" + configEntry.video(), config, yamlComments, parent);
         }
 
         // Tell when the configEntry has been added (if it's not "1.0")
         if (!configEntry.since().equals("1.0")) {
-            setComment("Added since " + configEntry.since() + ".", config, yamlComments, parent);
+            setComment("自 " + configEntry.since() + " 起加入。", config, yamlComments, parent);
         }
 
         // Tell if the configEntry is experimental
         if (configEntry.experimental()) {
-            setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.", config, yamlComments, parent);
+            setComment("/!\\ 此功能为实验性功能，可能无法按预期工作，甚至完全不可用。", config, yamlComments, parent);
         }
 
         // Tell if the configEntry needs a reset.
         if (configEntry.needsReset()) {
-            setComment("/!\\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.", config, yamlComments, parent);
+            setComment("/!\\ BentoBox 目前不支持在游戏中途修改此值。如果确实需要修改，请对数据库和世界做一次完整重置。", config, yamlComments, parent);
         }
         // Tell if the configEntry needs the server to be restarted.
         if (configEntry.needsRestart()) {
-            setComment("/!\\ In order to apply the changes made to this option, you must restart your server. Reloading BentoBox or the server won't work.", config, yamlComments, parent);
+            setComment("/!\\ 要让此选项的改动生效，必须重启服务器。重载 BentoBox 或服务器都不起作用。", config, yamlComments, parent);
         }
     }
 
