@@ -546,11 +546,19 @@ public abstract sealed class AbstractTeleportListener
                     BlockPos pos = new BlockPos(anchor.getBlockX(), anchor.getBlockY(), anchor.getBlockZ());
                     PortalForcer forcer = level.getPortalForcer();
                     // Same order as vanilla: reuse a portal that is already in range, else build one.
-                    BlockPos portal = forcer.findClosestPortalPosition(pos, true, level.getWorldBorder()).orElse(null);
+                    // The boolean means "the destination is the nether": vanilla shrinks the search
+                    // to 16 blocks for nether destinations and uses 128 for overworld ones. A
+                    // constant true made every nether -> overworld trip search only 16 blocks, so a
+                    // farm portal one or two Y-levels away was missed and the entity was then
+                    // dropped on the nearest safe block instead of in the portal.
+                    boolean destinationIsNether = World.Environment.NETHER.equals(world.getEnvironment());
+                    BlockPos portal = forcer.findClosestPortalPosition(pos, destinationIsNether, level.getWorldBorder())
+                            .orElse(null);
                     if (portal == null && create)
                     {
                         forcer.createPortal(pos, Axis.X == axis ? Direction.Axis.X : Direction.Axis.Z);
-                        portal = forcer.findClosestPortalPosition(pos, true, level.getWorldBorder()).orElse(null);
+                        portal = forcer.findClosestPortalPosition(pos, destinationIsNether, level.getWorldBorder())
+                                .orElse(null);
                     }
                     if (portal != null)
                     {

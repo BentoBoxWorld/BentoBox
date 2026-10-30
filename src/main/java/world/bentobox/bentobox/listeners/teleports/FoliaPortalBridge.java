@@ -121,6 +121,7 @@ public final class FoliaPortalBridge {
     static void handleEndEnter(BentoBox plugin, PlayerTeleportListener listener,
             org.bukkit.event.entity.EntityPortalEnterEvent event) {
         if (event.isCancelled() || event.getPortalType() != org.bukkit.PortalType.ENDER) return;
+        if (isVanillaEndPortalEntity(event.getEntity())) return;
         World overWorld = Util.getWorld(event.getLocation().getWorld());
         if (overWorld == null || !plugin.getIWM().inWorld(overWorld)) return;
         // Own only BentoBox End portals before other world managers redirect them.
@@ -129,6 +130,18 @@ public final class FoliaPortalBridge {
         if (entity.getPortalCooldown() > 0) return;
         entity.setPortalCooldown(300);
         routeEnd(plugin, listener, entity, event.getLocation(), overWorld);
+    }
+
+    /**
+     * Falling blocks have to stay on vanilla's end portal path. Sand and gravel dupers rely on the
+     * server duplicating the entity, while BentoBox only moves it to the island End (or drops it
+     * outright when that world is missing), which a player sees as the sand simply vanishing.
+     *
+     * @param entity the entity entering the portal
+     * @return {@code true} when the event must be left to the server
+     */
+    static boolean isVanillaEndPortalEntity(Entity entity) {
+        return entity instanceof org.bukkit.entity.FallingBlock;
     }
 
     private static void routeEnd(BentoBox plugin, PlayerTeleportListener listener, Entity entity,
@@ -218,6 +231,11 @@ public final class FoliaPortalBridge {
                 return;
             }
             if (environment == World.Environment.THE_END && !(entity instanceof Player)) {
+                if (isVanillaEndPortalEntity(entity)) {
+                    // Leave the event uncancelled so the server runs its own end portal transfer,
+                    // which is the step sand and gravel dupers depend on.
+                    return;
+                }
                 ((Cancellable) event).setCancelled(true);
                 routeEnd(plugin, listener, entity, portalPos, overWorld);
                 return;
@@ -275,14 +293,22 @@ public final class FoliaPortalBridge {
                         if (error != null) {
                             plugin.logStacktrace(error);
                         }
-                        Location pairedTarget = paired == null ? anchor : paired;
+                        if (paired == null) {
+                            // No paired portal anywhere near the anchor. Teleporting to the raw
+                            // coordinate makes the safe-spot search fall back to an arbitrary block,
+                            // which is what scattered farm mobs over the island. Leave the entity in
+                            // the source dimension instead.
+                            return;
+                        }
+                        Location pairedTarget = paired;
                         // Dispatch on the entity's own region: the portal event reads the source block.
                         entity.getScheduler().execute(plugin, () -> {
                             EntityPortalEvent portal = new EntityPortalEvent(entity, portalPos, pairedTarget, 0);
                             boolean handled = AbstractTeleportListener.dispatchPortal(portal, false);
                             if (!handled && !portal.isCancelled() && portal.getTo() != null) {
                                 ClosestSafeSpotTeleport.builder(plugin).entity(entity).location(portal.getTo())
-                                        .portal().successRunnable(() -> entity.setPortalCooldown(300)).build();
+                                        .portal().requirePortal()
+                                        .successRunnable(() -> entity.setPortalCooldown(300)).build();
                             }
                         }, () -> { }, 1);
                     });

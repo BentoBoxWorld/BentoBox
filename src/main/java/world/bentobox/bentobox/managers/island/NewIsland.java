@@ -65,7 +65,6 @@ public class NewIsland {
     private CompletableFuture<Void> completion = CompletableFuture.completedFuture(null);
     private final Supplier<CompletableFuture<Void>> beforeTeleport;
     private boolean newlyAllocated;
-    private boolean creationGuardHeld;
     private boolean leaveCleanupStarted;
     private boolean leaveCleanupCompleted;
     /** Guards the member cleanup: a failed tidyUp is retried, but on-leave commands must not run twice. */
@@ -311,7 +310,6 @@ public class NewIsland {
                 try {
                     NewIsland newIsland = new NewIsland(this);
                     if (newIsland.getIsland() == null) CREATING.remove(user2.getUniqueId());
-                    else newIsland.creationGuardHeld = true;
                     return newIsland.getIsland();
                 } catch (Throwable error) {
                     CREATING.remove(user2.getUniqueId());
@@ -482,10 +480,15 @@ public class NewIsland {
                 return tidyUp(oldIsland);
             }).thenCompose(ignored -> initializeLevelCount(plugin, island).handle((ignoredLevel, levelError) -> {
                 if (levelError != null) {
+                    Throwable cause = levelError instanceof java.util.concurrent.CompletionException
+                            && levelError.getCause() != null ? levelError.getCause() : levelError;
                     // The island is usable; the level add-on can still scan it later, so this
-                    // must not roll the reset back.
-                    plugin.logError("Could not start the initial level scan for " + island.getUniqueId()
-                            + ": " + levelError.getMessage());
+                    // must not roll the reset back. A cancellation only means the island was
+                    // deleted or changed owner mid-scan, which is expected, not an error.
+                    if (!(cause instanceof java.util.concurrent.CancellationException)) {
+                        plugin.logError("Could not start the initial level scan for " + island.getUniqueId()
+                                + ": " + levelError.getMessage());
+                    }
                 }
                 return null;
             }));
@@ -750,9 +753,9 @@ public class NewIsland {
             plugin.logError("Old island ownership changed during reset, not deleting " + oldIsland.getUniqueId());
             // The normal release at the end of this method is never reached on this path, and
             // without it the player is told they are already creating an island until a restart.
-            if (creationGuardHeld) {
-                CREATING.remove(user.getUniqueId());
-            }
+            // Release unconditionally: buildAsync never sets creationGuardHeld, so gating on it
+            // left the guard held until the initial level scan finished (minutes).
+            CREATING.remove(user.getUniqueId());
             // Nobody owns it now: mark it so the purge can reclaim the slot
             oldIsland.setDeletable(true);
             return CompletableFuture.completedFuture(null);
@@ -796,7 +799,9 @@ public class NewIsland {
                             .location(island.getCenter()).oldIsland(oldIsland).build();
                 } finally {
                     // A listener that throws must not lock this player out of creating islands.
-                    if (creationGuardHeld) CREATING.remove(user.getUniqueId());
+                    // Release here, after the island is delivered, instead of waiting for the
+                    // initial level scan (which can take minutes on a large protection range).
+                    CREATING.remove(user.getUniqueId());
                 }
             }
         }));

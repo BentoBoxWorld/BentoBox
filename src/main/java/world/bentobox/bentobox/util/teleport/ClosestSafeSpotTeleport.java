@@ -111,6 +111,11 @@ public class ClosestSafeSpotTeleport
      * Boolean that indicates if failing teleport should cancel it or create spot for player.
      */
     private final boolean cancelIfFail;
+    /**
+     * When true the entity must arrive inside a nether portal. Used for farm mobs: landing on an
+     * arbitrary safe block is what scattered them across the island.
+     */
+    private final boolean requirePortal;
 
     /**
      * Local variable that indicates if current process is running.
@@ -165,6 +170,7 @@ public class ClosestSafeSpotTeleport
         this.world = Objects.requireNonNull(this.location.getWorld());
 
         this.cancelIfFail = builder.isCancelIfFail();
+        this.requirePortal = builder.isRequirePortal();
 
         // Try starting location
         Util.getChunkAtAsync(this.location).thenCompose(chunk -> TaskScheduler.regionFuture(plugin, location,
@@ -418,6 +424,13 @@ public class ClosestSafeSpotTeleport
 
         if (this.portal && this.noPortalPosition != null)
         {
+            if (this.requirePortal)
+            {
+                // No paired portal nearby. Leaving the entity where it is beats dropping it on a
+                // random safe block, which is what flooded the island with farm mobs.
+                this.result.complete(false);
+                return;
+            }
             this.teleportEntity(this.noPortalPosition);
             return;
         }
@@ -734,6 +747,19 @@ public class ClosestSafeSpotTeleport
 
 
         /**
+         * Require the destination to be a nether portal block. Used for farm mobs so a missing
+         * paired portal leaves them in place instead of dropping them on a safe block.
+         *
+         * @return Builder
+         */
+        public Builder requirePortal()
+        {
+            this.requirePortal = true;
+            return this;
+        }
+
+
+        /**
          * This is a successRunnable for teleportation
          *
          * @return Builder
@@ -871,6 +897,17 @@ public class ClosestSafeSpotTeleport
         }
 
 
+        /**
+         * Checks if the landing position must be a portal block.
+         *
+         * @return {@code true} when a safe-spot fallback must not be used
+         */
+        public boolean isRequirePortal()
+        {
+            return this.requirePortal;
+        }
+
+
         // ---------------------------------------------------------------------
         // Section: Variables
         // ---------------------------------------------------------------------
@@ -915,6 +952,11 @@ public class ClosestSafeSpotTeleport
          * Boolean that indicates if failing teleport should cancel it or create spot for player.
          */
         private boolean cancelIfFail;
+
+        /**
+         * Boolean that indicates the entity must land in a portal block, never on a safe spot.
+         */
+        private boolean requirePortal;
     }
 }
 
