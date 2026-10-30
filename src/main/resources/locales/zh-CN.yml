@@ -37,6 +37,9 @@ general:
     player-has-no-island: '<red>该玩家没有岛屿!</red>'
     already-have-island: '<red>你已经有岛屿了!</red>'
     no-safe-location-found: '<red>试图将你传送到岛屿上时找不到安全的落脚点.</red>'
+    chat-input-unavailable: '<red>此服务器无法读取该菜单的聊天输入。请改用对应的命令。</red>'
+    portal-paste-failed: '<red>无法在那个维度准备岛屿。请让管理员检查服务器控制台。</red>'
+    portal-spawn-fallback: '<yellow>传送门处没有找到安全落点，已将你送到岛屿出生点。</yellow>'
     not-owner: '<red>你不是这座岛屿的岛主!</red>'
     player-is-not-owner: '<aqua>[name]</aqua><red>不是这座岛屿的岛主!</red>'
     not-in-team: '<red>该玩家不在你的团队中!</red>'
@@ -98,6 +101,7 @@ commands:
     purge:
       parameters: '[days]'
       description: 清理超过[days]天不活跃的岛屿
+      deferred: '<green>已登记删除。region 文件将在下次服务器启动时移除。</green>'
       days-one-or-more: 天数必需为至少1天或大于1天
       purgable-islands: '<green>发现</green><aqua>[number]</aqua><green>个不活跃的岛屿可以被清理.</green>'
       too-many: |-
@@ -741,6 +745,7 @@ commands:
       name-too-short: '<red>岛屿名过短. 请至少有: </red><aqua>[number]</aqua><red>个字符.</red>'
       name-too-long: '<red>岛屿名过长. 请至多有: </red><aqua>[number]</aqua><red>个字符.</red>'
       name-already-exists: '<red>已经有一个该名称的岛屿了.</red>'
+      invalid-characters: '<red>该名称包含不允许的字符: [ ] < ></red>'
       parameters: <名称>
       success: '<green>成功将你的岛屿命名为: </green><aqua>[name]</aqua><green>.</green>'
     renamehome:
@@ -818,6 +823,7 @@ commands:
         already-has-rank: '<red>该玩家在你的团队中已经有身份等级了!</red>'
         you-are-a-coop-member: '<dark_green>你成为了</dark_green><aqua>[name]</aqua><dark_green>的协作者.</dark_green>'
         success: '<aqua>[name]</aqua><green>成为了你的协作者.</green>'
+        banned: '<red>[name] 已被本[prefix_island]封禁。请先解除封禁。</red>'
         name-has-invited-you: '<aqua>[name]</aqua><green>邀请你以</green><aqua>协作者</aqua><green>的身份加入团队.</green>'
       uncoop:
         description: 与一位玩家解除协作
@@ -839,6 +845,7 @@ commands:
         player-already-trusted: '<red>该玩家已经是可信玩家了!</red>'
         you-are-trusted: '<dark_green>你成为了</dark_green><aqua>[name]</aqua><dark_green>的可信玩家.</dark_green>'
         success: '<aqua>[name]</aqua><green>成为了你的可信玩家.</green>'
+        banned: '<red>[name] 已被本[prefix_island]封禁。请先解除封禁。</red>'
         is-full: '<red>你的可信玩家数量已达上限.</red>'
       untrust:
         description: 将指定玩家取消可信玩家身份
