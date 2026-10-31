@@ -3,10 +3,13 @@ package world.bentobox.bentobox.api.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +66,7 @@ class CommandFailureStatsTest extends CommonTestSetup {
         when(user.hasPermission(anyString())).thenReturn(false);
 
         assertFalse(sub.call(user, "restricted", List.of()));
-        verify(bStats).recordCommandFailure(eq(CommandFailure.NO_PERMISSION), eq("bentobox.restricted"));
+        verify(bStats).recordCommandFailure(eq(CommandFailure.NO_PERMISSION), eq("bentobox.restricted"), isNull());
     }
 
     @Test
@@ -73,7 +76,7 @@ class CommandFailureStatsTest extends CommonTestSetup {
         when(user.isPlayer()).thenReturn(false);
 
         assertFalse(sub.call(user, "playeronly", List.of()));
-        verify(bStats).recordCommandFailure(eq(CommandFailure.WRONG_CONTEXT), anyString());
+        verify(bStats).recordCommandFailure(eq(CommandFailure.WRONG_CONTEXT), anyString(), isNull());
     }
 
     @Test
@@ -83,7 +86,7 @@ class CommandFailureStatsTest extends CommonTestSetup {
         when(user.isOp()).thenReturn(true);
 
         assertFalse(sub.call(user, "blocked", List.of()));
-        verify(bStats).recordCommandFailure(eq(CommandFailure.CANNOT_EXECUTE), eq("bentobox.blocked"));
+        verify(bStats).recordCommandFailure(eq(CommandFailure.CANNOT_EXECUTE), eq("bentobox.blocked"), isNull());
     }
 
     @Test
@@ -93,7 +96,7 @@ class CommandFailureStatsTest extends CommonTestSetup {
         when(user.isOp()).thenReturn(true);
 
         assertFalse(sub.call(user, "failing", List.of()));
-        verify(bStats).recordCommandFailure(eq(CommandFailure.BAD_ARGS), eq("bentobox.failing"));
+        verify(bStats).recordCommandFailure(eq(CommandFailure.BAD_ARGS), eq("bentobox.failing"), isNull());
     }
 
     @Test
@@ -103,7 +106,56 @@ class CommandFailureStatsTest extends CommonTestSetup {
         when(user.isOp()).thenReturn(true);
 
         assertTrue(sub.call(user, "working", List.of()));
-        verify(bStats, never()).recordCommandFailure(org.mockito.ArgumentMatchers.any(), anyString());
+        verify(bStats, never()).recordCommandFailure(any(), anyString(), any());
+    }
+
+    /**
+     * The reason reported is the locale key of the last message the command sent
+     * the user, and the key is cleared when the command starts so that a message
+     * from earlier is never mistaken for the reason.
+     */
+    @Test
+    void testReasonIsLastMessageKey() {
+        TopLevelCommand tlc = new TopLevelCommand();
+        CompositeCommand sub = tlc.getSubCommand("blocked").orElseThrow();
+        when(user.isOp()).thenReturn(true);
+        when(user.getLastMessageKey()).thenReturn("general.errors.no-island");
+
+        assertFalse(sub.call(user, "blocked", List.of()));
+        verify(user).clearLastMessageKey();
+        verify(bStats).recordCommandFailure(eq(CommandFailure.CANNOT_EXECUTE), eq("bentobox.blocked"),
+                eq("general.errors.no-island"));
+    }
+
+    /**
+     * A command that hands its work to a subcommand must not record the
+     * subcommand's failure a second time against itself.
+     */
+    @Test
+    void testDelegatedFailureIsRecordedOnce() {
+        TopLevelCommand tlc = new TopLevelCommand();
+        CompositeCommand delegating = tlc.getSubCommand("delegating").orElseThrow();
+        when(user.isOp()).thenReturn(true);
+
+        assertFalse(delegating.call(user, "delegating", List.of()));
+        verify(bStats).recordCommandFailure(eq(CommandFailure.BAD_ARGS), eq("bentobox.failing"), isNull());
+        verify(bStats, never()).recordCommandFailure(any(), eq("bentobox.DelegatingCommand"), any());
+        verify(bStats, times(1)).recordCommandFailure(any(), anyString(), any());
+    }
+
+    /**
+     * The delegation mark is per call, so a later failure of the delegating command's
+     * own is still recorded.
+     */
+    @Test
+    void testDelegationMarkDoesNotLeakIntoNextCall() {
+        TopLevelCommand tlc = new TopLevelCommand();
+        CompositeCommand delegating = tlc.getSubCommand("delegating").orElseThrow();
+        when(user.isOp()).thenReturn(true);
+
+        assertFalse(delegating.call(user, "delegating", List.of()));
+        assertFalse(delegating.call(user, "delegating", List.of("own")));
+        verify(bStats).recordCommandFailure(eq(CommandFailure.BAD_ARGS), eq("bentobox.DelegatingCommand"), isNull());
     }
 
     /**
@@ -137,6 +189,7 @@ class CommandFailureStatsTest extends CommonTestSetup {
             new BlockedCommand(this);
             new FailingCommand(this);
             new WorkingCommand(this);
+            new DelegatingCommand(this);
         }
 
         @Override
@@ -210,6 +263,30 @@ class CommandFailureStatsTest extends CommonTestSetup {
 
         @Override
         public boolean execute(User user, String label, List<String> args) {
+            return false;
+        }
+    }
+
+    /**
+     * Hands over to its sibling "failing" when called without args, like the bare
+     * island command does with its default action; fails on its own otherwise.
+     */
+    private static class DelegatingCommand extends CompositeCommand {
+        DelegatingCommand(CompositeCommand parent) {
+            super(parent, "delegating");
+        }
+
+        @Override
+        public void setup() {
+            // No permission set on purpose
+        }
+
+        @Override
+        public boolean execute(User user, String label, List<String> args) {
+            if (args.isEmpty()) {
+                CompositeCommand failing = getParent().getSubCommand("failing").orElseThrow();
+                return callSubCommand(failing, user, "failing", List.of());
+            }
             return false;
         }
     }

@@ -145,6 +145,15 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private final Map<String, Map<String, Long>> cooldowns = new HashMap<>();
 
     /**
+     * Set by {@link #callSubCommand} while this command hands its work to a
+     * subcommand. The subcommand records its own failure, so {@link #call} must not
+     * record a second one against this command. Commands run on the main thread, so
+     * a plain field is enough.
+     * @since 3.23.6
+     */
+    private boolean failureDelegated;
+
+    /**
      * Top level command
      * 
      * @param addon   - addon creating the command
@@ -265,6 +274,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         CompositeCommand cmd = getCommandFromArgs(args);
         String cmdLabel = (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel - 1] : label;
         List<String> cmdArgs = Arrays.asList(args).subList(cmd.subCommandLevel, args.length);
+        // Anything sent from here on is this command's doing, so a failure can be
+        // attributed to the last message the user received.
+        user.clearLastMessageKey();
         // Did-you-mean: the walk stopped at a command that has subcommands but with
         // unconsumed args, i.e. the first leftover arg matched none of them. Suggest
         // what the player probably meant instead of dead-ending into an error.
@@ -274,7 +286,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                     ? " " + String.join(" ", Arrays.asList(args).subList(0, cmd.subCommandLevel))
                     : "");
             if (plugin.getSuggestionsManager().suggestSubcommand(user, cmd, typedPrefix, cmdArgs)) {
-                cmd.recordFailure(CommandFailure.UNKNOWN_SUBCOMMAND);
+                cmd.recordFailure(CommandFailure.UNKNOWN_SUBCOMMAND, user);
                 return true;
             }
         }
@@ -292,6 +304,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @since 1.5.3
      */
     public boolean call(User user, String cmdLabel, List<String> cmdArgs) {
+        user.clearLastMessageKey();
+        failureDelegated = false;
         // A game mode's commands are handed their world when the addon enables. If
         // the addon never got that far its commands are still live but have nothing
         // behind them, and the first island or world settings lookup throws (#3059).
@@ -299,51 +313,77 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             user.sendMessage("general.errors.general");
             plugin.logError(addon.getDescription().getName() + " is not enabled, so /" + cmdLabel
                     + " has no world to act on. Check the startup log for why the addon did not load.");
-            recordFailure(CommandFailure.CANNOT_EXECUTE);
+            recordFailure(CommandFailure.CANNOT_EXECUTE, user);
             return false;
         }
         // Check for console and permissions
         if (isOnlyPlayer() && !user.isPlayer()) {
             user.sendMessage("general.errors.use-in-game");
-            recordFailure(CommandFailure.WRONG_CONTEXT);
+            recordFailure(CommandFailure.WRONG_CONTEXT, user);
             return false;
         }
 
         if (isOnlyConsole() && user.isPlayer()) {
             user.sendMessage("general.errors.use-in-console");
-            recordFailure(CommandFailure.WRONG_CONTEXT);
+            recordFailure(CommandFailure.WRONG_CONTEXT, user);
             return false;
         }
 
         if (!this.runPermissionCheck(user)) {
             // Error message is displayed by permission check.
-            recordFailure(CommandFailure.NO_PERMISSION);
+            recordFailure(CommandFailure.NO_PERMISSION, user);
             return false;
         }
         // Set the user's addon context
         user.setAddon(addon);
         // Execute and trim args
         if (!canExecute(user, cmdLabel, cmdArgs)) {
-            recordFailure(CommandFailure.CANNOT_EXECUTE);
+            recordFailure(CommandFailure.CANNOT_EXECUTE, user);
             return false;
         }
         if (!execute(user, cmdLabel, cmdArgs)) {
-            recordFailure(CommandFailure.BAD_ARGS);
+            if (!failureDelegated) {
+                recordFailure(CommandFailure.BAD_ARGS, user);
+            }
             return false;
         }
         return true;
     }
 
     /**
+     * Calls a subcommand on this command's behalf, as if the user had typed it.
+     * <p>
+     * Use this rather than calling {@link #call} on the subcommand directly: the
+     * subcommand records any failure against itself, and this marks the hand-over so
+     * that this command does not record the same failure a second time.
+     *
+     * @param subCommand the subcommand to run
+     * @param user       the user running it
+     * @param label      the label to run it under
+     * @param args       the arguments to pass
+     * @return the subcommand's result
+     * @since 3.23.6
+     */
+    protected boolean callSubCommand(@NonNull CompositeCommand subCommand, User user, String label,
+            List<String> args) {
+        failureDelegated = true;
+        return subCommand.call(user, label, args);
+    }
+
+    /**
      * Records that this command could not be run to completion, so that the
-     * aggregate failure counts can be reported to bStats. Nothing the user typed is
-     * recorded - see {@link BStats#recordCommandFailure(CommandFailure, String)}.
+     * aggregate failure counts can be reported to bStats. The reason is the locale
+     * key of the last message the command sent the user, which is why commands
+     * should always say why they refuse. Nothing the user typed is recorded - see
+     * {@link BStats#recordCommandFailure(CommandFailure, String, String)}.
      *
      * @param failure kind of failure
+     * @param user    the user the command refused, whose last message is the reason
      * @since 3.22.0
      */
-    private void recordFailure(@NonNull CommandFailure failure) {
-        plugin.getMetrics().ifPresent(bStats -> bStats.recordCommandFailure(failure, getStatsKey()));
+    private void recordFailure(@NonNull CommandFailure failure, User user) {
+        plugin.getMetrics().ifPresent(
+                bStats -> bStats.recordCommandFailure(failure, getStatsKey(), user.getLastMessageKey()));
     }
 
     /**

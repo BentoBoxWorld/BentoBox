@@ -95,6 +95,83 @@ class BStatsTest {
     void testRecordCommandFailureNoFailures() throws ReflectiveOperationException {
         assertTrue(field("commandFailures").isEmpty());
         assertTrue(field("commandFailurePaths").isEmpty());
+        assertTrue(field("commandFailureReasons").isEmpty());
+    }
+
+    @Test
+    void testRecordCommandFailureCountsByReason() throws ReflectiveOperationException {
+        bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.team.kick",
+                "general.errors.no-team");
+        bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.team.invite",
+                "general.errors.no-team");
+        bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.go",
+                "general.errors.no-island");
+
+        Map<String, Integer> reasons = field("commandFailureReasons");
+        assertEquals(2, reasons.size());
+        assertEquals(2, reasons.get("general.errors.no-team"));
+        assertEquals(1, reasons.get("general.errors.no-island"));
+    }
+
+    /**
+     * bStats data is public, so only something shaped like a locale key may be
+     * sent as a reason. Translated text, player names and the like become "unknown".
+     */
+    @Test
+    void testSanitizeReason() {
+        assertEquals("general.errors.no-island", BStats.sanitizeReason("general.errors.no-island"));
+        assertEquals("aoneblock.commands.admin.setcount.set", BStats.sanitizeReason("aoneblock.commands.admin.setcount.set"));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason(null));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason(""));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("Steve"));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("§cYou cannot visit Steve's island."));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("general.errors. no-island"));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("a." + "b".repeat(200)));
+    }
+
+    @Test
+    void testRecordCommandFailureUnknownReason() throws ReflectiveOperationException {
+        bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.go");
+        bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.go", "free text here");
+
+        Map<String, Integer> reasons = field("commandFailureReasons");
+        assertEquals(1, reasons.size());
+        assertEquals(2, reasons.get(BStats.UNKNOWN_REASON));
+    }
+
+    /**
+     * What is sent is presence, not volume: one server with a player hammering a
+     * command must not swamp the chart. The counts still choose which to send.
+     */
+    @Test
+    void testCommandFailurePathsDataReportsPresenceOfBusiest() throws ReflectiveOperationException {
+        for (int i = 0; i < 30; i++) {
+            bStats.recordCommandFailure(CommandFailure.BAD_ARGS, "addon.command" + i);
+        }
+        for (int i = 0; i < 100; i++) {
+            bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.team.kick");
+        }
+
+        Map<String, Integer> data = bStats.commandFailurePathsData();
+        assertEquals(20, data.size());
+        assertEquals(1, data.get("bskyblock.island.team.kick"));
+        assertEquals("bskyblock.island.team.kick", data.keySet().iterator().next());
+        assertTrue(data.values().stream().allMatch(v -> v == 1));
+        // Sending resets the counts
+        assertTrue(field("commandFailurePaths").isEmpty());
+    }
+
+    @Test
+    void testCommandFailureReasonsDataReportsPresence() throws ReflectiveOperationException {
+        for (int i = 0; i < 50; i++) {
+            bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.island.team.kick",
+                    "general.errors.not-in-team");
+        }
+        bStats.recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bskyblock.visit", null);
+
+        Map<String, Integer> data = bStats.commandFailureReasonsData();
+        assertEquals(Map.of("general.errors.not-in-team", 1, BStats.UNKNOWN_REASON, 1), data);
+        assertTrue(field("commandFailureReasons").isEmpty());
     }
 
     @Test

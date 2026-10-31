@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.bstats.bukkit.Metrics;
@@ -52,6 +53,28 @@ public class BStats {
      * @since 3.22.0
      */
     private static final int REPORTED_COMMANDS = 20;
+
+    /**
+     * Reason reported when a failing command sent no message, or sent one whose
+     * reference does not look like a locale key (for example an addon that passes
+     * already-translated text to {@code User#sendMessage}).
+     * @since 3.23.6
+     */
+    static final String UNKNOWN_REASON = "unknown";
+
+    /**
+     * Shape of a locale key: dot-separated segments of letters, digits, hyphens and
+     * underscores, at least two of them. Anything else could be free text, which
+     * must never reach bStats because the data there is public.
+     * @since 3.23.6
+     */
+    private static final Pattern LOCALE_KEY = Pattern.compile("[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)+");
+
+    /**
+     * Longest reason accepted. Real locale keys are far shorter than this.
+     * @since 3.23.6
+     */
+    private static final int MAX_REASON_LENGTH = 100;
 
     /**
      * Delay before the island worlds are first measured on disk, in ticks (one minute).
@@ -105,6 +128,13 @@ public class BStats {
      */
     private final Map<String, Integer> commandFailurePaths = new HashMap<>();
 
+    /**
+     * Counts of command failures by the locale key of the message the command sent
+     * when it refused, since the last data send.
+     * @since 3.23.6
+     */
+    private final Map<String, Integer> commandFailureReasons = new HashMap<>();
+
 
     BStats(BentoBox plugin) {
         this.plugin = plugin;
@@ -124,6 +154,7 @@ public class BStats {
         registerPlayersPerServerChart();
         registerAddonApiVersionsChart();
         registerCommandFailuresChart();
+        registerCommandFailureReasonsChart();
         registerWorldSizeChart();
 
         // Drilldown Pie Charts
@@ -470,23 +501,70 @@ public class BStats {
     }
 
     /**
-     * Sends the commands that failed most often since the last data send. Only the
-     * busiest {@value #REPORTED_COMMANDS} are sent.
-     * @since 3.22.0
+     * Sends the locale keys of the messages that failing commands sent most often
+     * since the last data send - the <em>reason</em> each command refused, such as
+     * {@code general.errors.no-island} or {@code general.errors.insufficient-rank}.
+     * <p>
+     * Like {@link #registerCommandFailurePathsChart()}, each reason is reported once
+     * per server, so the chart shows how many servers saw each reason rather than
+     * how many times it happened.
+     * @since 3.23.6
      */
-    private void registerCommandFailurePathsChart() {
-        metrics.addCustomChart(new SimpleBarChart("commandFailurePaths", () -> {
-            Map<String, Integer> values = commandFailurePaths.entrySet().stream()
-                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
-                    .limit(REPORTED_COMMANDS)
-                    .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
-            commandFailurePaths.clear();
-            return values;
-        }));
+    private void registerCommandFailureReasonsChart() {
+        metrics.addCustomChart(new AdvancedPie("commandFailureReasons", this::commandFailureReasonsData));
     }
 
     /**
-     * Records that a command could not be run to completion.
+     * Sends the commands that failed most often since the last data send.
+     * <p>
+     * Each command is reported once per server, not once per failure. bStats sums the
+     * values of every server into one bar, so if raw counts were sent a single server
+     * with one player hammering a command would dominate the chart. Reporting presence
+     * instead makes the chart read "how many servers had this command fail", which is
+     * what matters when deciding what to improve. The raw count is still used to pick
+     * the busiest {@value #REPORTED_COMMANDS} to send.
+     * @since 3.22.0
+     */
+    private void registerCommandFailurePathsChart() {
+        metrics.addCustomChart(new SimpleBarChart("commandFailurePaths", this::commandFailurePathsData));
+    }
+
+    /**
+     * Builds the data for the failing commands chart and resets the counts.
+     * @return the busiest {@value #REPORTED_COMMANDS} command keys, each with the value 1
+     * @since 3.23.6
+     */
+    Map<String, Integer> commandFailurePathsData() {
+        Map<String, Integer> values = presenceOfBusiest(commandFailurePaths);
+        commandFailurePaths.clear();
+        return values;
+    }
+
+    /**
+     * Builds the data for the failure reasons chart and resets the counts.
+     * @return the busiest {@value #REPORTED_COMMANDS} reasons, each with the value 1
+     * @since 3.23.6
+     */
+    Map<String, Integer> commandFailureReasonsData() {
+        Map<String, Integer> values = presenceOfBusiest(commandFailureReasons);
+        commandFailureReasons.clear();
+        return values;
+    }
+
+    /**
+     * Picks the {@value #REPORTED_COMMANDS} entries with the highest counts and maps
+     * each of them to 1, so that what is sent is "this happened here" rather than
+     * "this happened this many times here".
+     */
+    private static Map<String, Integer> presenceOfBusiest(Map<String, Integer> counts) {
+        return counts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
+                .limit(REPORTED_COMMANDS)
+                .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), 1), Map::putAll);
+    }
+
+    /**
+     * Records that a command could not be run to completion, with no reason given.
      * <p>
      * Only the failure kind and the command's stable key are recorded - never what
      * the player typed - because bStats data is public.
@@ -496,12 +574,50 @@ public class BStats {
      * @since 3.22.0
      */
     public void recordCommandFailure(@NonNull CommandFailure failure, @NonNull String commandKey) {
+        recordCommandFailure(failure, commandKey, null);
+    }
+
+    /**
+     * Records that a command could not be run to completion, and why.
+     * <p>
+     * Only the failure kind, the command's stable key and the locale key of the
+     * message the command sent are recorded - never what the player typed - because
+     * bStats data is public. A reason that does not look like a locale key is
+     * replaced with {@value #UNKNOWN_REASON} rather than sent as is.
+     * @param failure kind of failure
+     * @param commandKey stable identifier of the command, see
+     *        {@link world.bentobox.bentobox.api.commands.CompositeCommand#getStatsKey()}
+     * @param reason locale key of the message the command sent when it refused, usually
+     *        {@link world.bentobox.bentobox.api.user.User#getLastMessageKey()}, or
+     *        {@code null} if it sent none
+     * @since 3.23.6
+     */
+    public void recordCommandFailure(@NonNull CommandFailure failure, @NonNull String commandKey,
+            @Nullable String reason) {
         commandFailures.merge(failure.name().toLowerCase(Locale.ENGLISH), 1, Integer::sum);
         // Only track a new command if there is room, otherwise a badly behaved addon
         // could grow this map without limit between submissions.
-        if (commandFailurePaths.containsKey(commandKey) || commandFailurePaths.size() < MAX_TRACKED_COMMANDS) {
-            commandFailurePaths.merge(commandKey, 1, Integer::sum);
+        countIfRoom(commandFailurePaths, commandKey);
+        countIfRoom(commandFailureReasons, sanitizeReason(reason));
+    }
+
+    private static void countIfRoom(Map<String, Integer> counts, String key) {
+        if (counts.containsKey(key) || counts.size() < MAX_TRACKED_COMMANDS) {
+            counts.merge(key, 1, Integer::sum);
         }
+    }
+
+    /**
+     * Accepts a reason only if it has the shape of a locale key.
+     * @param reason candidate reason, may be null
+     * @return the reason, or {@value #UNKNOWN_REASON} if it is missing or does not look like a locale key
+     * @since 3.23.6
+     */
+    static @NonNull String sanitizeReason(@Nullable String reason) {
+        if (reason == null || reason.length() > MAX_REASON_LENGTH || !LOCALE_KEY.matcher(reason).matches()) {
+            return UNKNOWN_REASON;
+        }
+        return reason;
     }
 
     /**
