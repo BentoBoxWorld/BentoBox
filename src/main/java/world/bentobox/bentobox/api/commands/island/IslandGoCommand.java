@@ -280,8 +280,8 @@ public class IslandGoCommand extends DelayedTeleportCommand {
     }
 
     /**
-     * Normalizes a name for forgiving comparison: strips colour codes, lower-cases and
-     * collapses runs of whitespace to a single space.
+     * Normalizes a name for forgiving comparison: strips colour codes, lower-cases,
+     * treats underscores as spaces and collapses runs of whitespace to a single space.
      *
      * @param s the string to normalize
      * @return the normalized form
