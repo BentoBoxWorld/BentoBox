@@ -27,6 +27,9 @@ general:
   success: <green>成功！</green>
   invalid: 無效
   beta: <light_purple><bold>此指令仍處於 Beta 測試階段，請務必先做好備份！</bold></light_purple>
+  dialogs:
+    game-mode-selection:
+      title: '<green>選擇你的遊戲</green>'
   errors:
     command-cancelled: <red>指令已取消。</red>
     no-permission: <red>你沒有權限執行此指令（</red><gray>[permission]</gray><red>）。</red>
@@ -616,6 +619,11 @@ commands:
     confirm: <red>請在 </red><aqua>[seconds] 秒</aqua><red>內再次輸入此指令以確認。</red>
     previous-request-cancelled: <gold>已取消上一個確認請求。</gold>
     request-cancelled: <red>確認逾時，</red><aqua>已取消此請求。</aqua>
+    title: '<red>確定嗎？</red>'
+    dialog-body: '<gray>確認以繼續，或取消以中止。</gray>'
+    buttons:
+      confirm: '<green>確認</green>'
+      cancel: '<red>取消</red>'
   delay:
     previous-command-cancelled: <red>已取消上一個指令。</red>
     stand-still: <gold>請勿移動！將於 [seconds] 秒後傳送。</gold>
@@ -631,6 +639,8 @@ commands:
       teleported: <green>已將你傳送至家 </green><yellow>[number]</yellow><green>。</green>
       failure: <red>傳送失敗，請稍後再試。</red>
       unknown-home: <red>未知的家名稱！</red>
+      picker:
+        title: '<green>你想去哪裡？</green>'
     help:
       description: 島嶼主指令
     spawn:
@@ -831,6 +841,11 @@ commands:
         you-will-lose-your-island: |
           <red>警告！接受邀請後，</red>
           <red>你將失去所有[prefix_islands]！</red>
+        dialog:
+          title: '<green>來自 [name] 的隊伍邀請</green>'
+          body: '<gray>[name] 邀請你加入他們的島嶼。要接受嗎？</gray>'
+          accept: '<green>接受</green>'
+          decline: '<red>拒絕</red>'
         gui:
           titles:
             team-invite-panel: 邀請玩家
