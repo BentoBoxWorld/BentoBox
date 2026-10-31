@@ -33,7 +33,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
@@ -159,6 +161,26 @@ class TNTListenerTest extends CommonTestSetup {
         List<Block> list = new ArrayList<>();
         list.add(block);
         EntityExplodeEvent e = getExplodeEvent(entity, location, list);
+        listener.onExplosion(e);
+        assertFalse(e.isCancelled());
+        assertFalse(list.isEmpty());
+    }
+
+    @Test
+    void testOnSulfurCubeExplosion() {
+        List<Block> list = new ArrayList<>();
+        list.add(block);
+        EntityExplodeEvent e = getExplodeEvent(sulfurCube(), location, list);
+        listener.onExplosion(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testOnSulfurCubeExplosionAllowed() {
+        when(island.isAllowed(Flags.TNT_DAMAGE)).thenReturn(true);
+        List<Block> list = new ArrayList<>();
+        list.add(block);
+        EntityExplodeEvent e = getExplodeEvent(sulfurCube(), location, list);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
         assertFalse(list.isEmpty());
@@ -324,6 +346,23 @@ class TNTListenerTest extends CommonTestSetup {
     }
 
     @Test
+    void testOnSulfurCubeEntityExplosion() {
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(sulfurCube(), mockPlayer,
+                DamageCause.ENTITY_EXPLOSION, null, 20D);
+        listener.onExplosion(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testOnSulfurCubeEntityExplosionAllowed() {
+        when(island.isAllowed(Flags.TNT_DAMAGE)).thenReturn(true);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(sulfurCube(), mockPlayer,
+                DamageCause.ENTITY_EXPLOSION, null, 20D);
+        listener.onExplosion(e);
+        assertFalse(e.isCancelled());
+    }
+
+    @Test
     void testOnEntityExplosionOutsideIsland() {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
         assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
@@ -352,6 +391,42 @@ class TNTListenerTest extends CommonTestSetup {
                 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
+    }
+
+    @Test
+    void testOnSulfurCubePrimingNotAllowed() {
+        ItemStack flintAndSteel = new ItemStack(Material.FLINT_AND_STEEL);
+        when(inv.getItem(EquipmentSlot.HAND)).thenReturn(flintAndSteel);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, sulfurCube(), EquipmentSlot.HAND);
+        listener.onSulfurCubePriming(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    void testOnSulfurCubePrimingAllowed() {
+        ItemStack flintAndSteel = new ItemStack(Material.FLINT_AND_STEEL);
+        when(island.isAllowed(any(), eq(Flags.TNT_PRIMING))).thenReturn(true);
+        when(inv.getItem(EquipmentSlot.HAND)).thenReturn(flintAndSteel);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, sulfurCube(), EquipmentSlot.HAND);
+        listener.onSulfurCubePriming(e);
+        assertFalse(e.isCancelled());
+    }
+
+    @Test
+    void testOnSulfurCubePrimingNonPrimingItem() {
+        ItemStack stone = new ItemStack(Material.STONE);
+        when(inv.getItem(EquipmentSlot.HAND)).thenReturn(stone);
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(mockPlayer, sulfurCube(), EquipmentSlot.HAND);
+        listener.onSulfurCubePriming(e);
+        assertFalse(e.isCancelled());
+    }
+
+    private Entity sulfurCube() {
+        Entity sulfurCube = mock(Entity.class);
+        when(sulfurCube.getType()).thenReturn(EntityType.SULFUR_CUBE);
+        when(sulfurCube.getWorld()).thenReturn(world);
+        when(sulfurCube.getLocation()).thenReturn(location);
+        return sulfurCube;
     }
 
 }
