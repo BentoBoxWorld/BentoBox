@@ -328,6 +328,15 @@ public abstract sealed class AbstractTeleportListener
                     map(island -> island.getSpawnPoint(toWorld.getEnvironment())).
                     orElse(toLocation), toLocation);
         }
+        else if (World.Environment.NETHER.equals(environment))
+        {
+            // Nether islands are pasted at a fixed place, so anchor the trip at the island's nether
+            // spawn. Using the portal's own Y made every entry land at a different height and left
+            // the island with no paired portal to come back through.
+            toLocation = Objects.requireNonNullElse(this.getIsland(fromLocation).
+                    map(island -> island.getSpawnPoint(World.Environment.NETHER)).
+                    orElse(toLocation), toLocation);
+        }
 
         // Limit Y to the min/max world height.
         toLocation.setY(Math.max(Math.min(toLocation.getY(), toWorld.getMaxHeight()), toWorld.getMinHeight()));
@@ -543,7 +552,11 @@ public abstract sealed class AbstractTeleportListener
                 TaskScheduler.regionFuture(plugin, anchor, () -> {
                     clearMisalignedPortals(world, anchor.getBlockX(), anchor.getBlockY(), anchor.getBlockZ());
                     ServerLevel level = ((CraftWorld) world).getHandle();
-                    BlockPos pos = new BlockPos(anchor.getBlockX(), anchor.getBlockY(), anchor.getBlockZ());
+                    // The anchor comes from the island's spawn point, which can sit above the
+                    // terrain on pasted nether islands. Snap to the first standable block near it
+                    // so the portal is built on the ground instead of floating in the air.
+                    int groundY = groundY(level, anchor.getBlockX(), anchor.getBlockZ(), anchor.getBlockY());
+                    BlockPos pos = new BlockPos(anchor.getBlockX(), groundY, anchor.getBlockZ());
                     PortalForcer forcer = level.getPortalForcer();
                     // Same order as vanilla: reuse a portal that is already in range, else build one.
                     // The boolean means "the destination is the nether": vanilla shrinks the search
@@ -566,6 +579,32 @@ public abstract sealed class AbstractTeleportListener
                         arrival.set(new Location(world, portal.getX() + 0.5, portal.getY(), portal.getZ() + 0.5));
                     }
                 })).thenApply(ignored -> arrival.get());
+    }
+
+
+    /**
+     * Finds the first standable Y near {@code anchorY} (solid block below, two air blocks above),
+     * preferring the closest one. Used to place a created portal on the terrain.
+     */
+    private static int groundY(ServerLevel level, int x, int z, int anchorY)
+    {
+        for (int d = 0; d <= 16; d++)
+        {
+            for (int y : new int[]{anchorY - d, anchorY + d})
+            {
+                if (y <= level.getMinY() + 1 || y >= level.getMaxY() - 1)
+                {
+                    continue;
+                }
+                if (level.getBlockState(new BlockPos(x, y - 1, z)).isSolid()
+                        && level.getBlockState(new BlockPos(x, y, z)).isAir()
+                        && level.getBlockState(new BlockPos(x, y + 1, z)).isAir())
+                {
+                    return y;
+                }
+            }
+        }
+        return anchorY;
     }
 
 

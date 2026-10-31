@@ -395,8 +395,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                 this.getNetherEndWorld(overWorld, environment) : overWorld;
 
         // Set whether portals should be created or not
-        event.setCanCreatePortal(this.isMakePortals(overWorld, environment));
-        // Blueprint spawns already have terrain; regenerating a platform would overwrite the island.
+        event.setCanCreatePortal(this.isMakePortals(overWorld, environment));        // Blueprint spawns already have terrain; regenerating a platform would overwrite the island.
         if (getEndIslandSpawn(event.getFrom(), toWorld).isPresent()) event.setCanCreatePortal(false);
         // Default 16 is will always end up placing portal as close to X/8 coordinate as possible.
         // In most situations, 2 block value should be enough... I hope.
@@ -464,7 +463,7 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                         } else if (World.Environment.NETHER == environment && this.isMakePortals(overWorld, environment)) {
                             // Vanilla reuses or creates the paired portal and puts the player in
                             // it, so follow the same order before handing over to the teleport.
-                            this.ensureNetherPortal(destination, portalAxis(event.getFrom()))
+                            this.ensureNetherPortal(destination, portalAxis(event.getFrom()), true)
                                     .whenComplete((portal, error) -> {
                                         if (error != null) {
                                             plugin.logStacktrace(error);
@@ -482,6 +481,22 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
                             completePortal(event);
                         }
                     })).exceptionally(error -> { plugin.logStacktrace(error); return null; });
+            return;
+        }
+        // Even when missing islands are not pasted, the trip must leave a portal behind or the
+        // player has no way back. Reuse an existing portal near the destination, else build one.
+        if (World.Environment.NETHER == environment && this.isMakePortals(overWorld, environment))
+        {
+            Location destination = event.getTo().clone();
+            this.ensureNetherPortal(destination, portalAxis(event.getFrom()), true)
+                    .whenComplete((portal, error) -> {
+                        if (error != null) {
+                            plugin.logStacktrace(error);
+                        } else if (portal != null && !event.isCancelled()) {
+                            event.setTo(portal);
+                        }
+                        completePortal(event);
+                    });
             return;
         }
         completePortal(event);
