@@ -4,27 +4,38 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
+import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import world.bentobox.bentobox.BStats.CommandFailure;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.managers.AddonsManager;
 
 /**
- * Tests the accumulation of command failure statistics.
+ * Tests the accumulation of command failure statistics and the world size measurement.
  *
  * @author tastybento
  */
 class BStatsTest {
 
     private BStats bStats;
+    private BentoBox plugin;
 
     @BeforeEach
     public void setUp() {
-        bStats = new BStats(mock(BentoBox.class));
+        plugin = mock(BentoBox.class);
+        bStats = new BStats(plugin);
     }
 
     @SuppressWarnings("unchecked")
@@ -84,5 +95,81 @@ class BStatsTest {
     void testRecordCommandFailureNoFailures() throws ReflectiveOperationException {
         assertTrue(field("commandFailures").isEmpty());
         assertTrue(field("commandFailurePaths").isEmpty());
+    }
+
+    @Test
+    void testWorldSizeBucketBoundaries() {
+        long gb = 1_000_000_000L;
+        assertEquals("0-1 GB", BStats.worldSizeBucket(0));
+        assertEquals("0-1 GB", BStats.worldSizeBucket(gb - 1));
+        assertEquals("1-5 GB", BStats.worldSizeBucket(gb));
+        assertEquals("1-5 GB", BStats.worldSizeBucket(5 * gb - 1));
+        assertEquals("5-10 GB", BStats.worldSizeBucket(5 * gb));
+        assertEquals("10-50 GB", BStats.worldSizeBucket(10 * gb));
+        assertEquals("50-100 GB", BStats.worldSizeBucket(50 * gb));
+        assertEquals("100-500 GB", BStats.worldSizeBucket(100 * gb));
+        assertEquals("500-1000 GB", BStats.worldSizeBucket(500 * gb));
+        assertEquals("1 TB+", BStats.worldSizeBucket(1000 * gb));
+        assertEquals("1 TB+", BStats.worldSizeBucket(1_200_000_000_000L));
+    }
+
+    @Test
+    void testFolderSizeSumsNestedRegularFiles(@TempDir Path dir) throws IOException {
+        Files.write(dir.resolve("level.dat"), new byte[100]);
+        Path region = Files.createDirectories(dir.resolve("region"));
+        Files.write(region.resolve("r.0.0.mca"), new byte[4096]);
+        Files.write(region.resolve("r.0.1.mca"), new byte[8192]);
+        Files.createDirectories(dir.resolve("empty"));
+
+        assertEquals(100 + 4096 + 8192, BStats.folderSize(dir));
+    }
+
+    @Test
+    void testFolderSizeMissingOrEmptyFolder(@TempDir Path dir) {
+        assertEquals(0, BStats.folderSize(dir));
+        assertEquals(0, BStats.folderSize(dir.resolve("does-not-exist")));
+    }
+
+    /**
+     * Worlds sharing a folder are counted once, null worlds (no nether or end) are
+     * skipped, and the result lands in the cache the chart reads.
+     */
+    @Test
+    void testMeasureWorldSize(@TempDir Path dir) throws IOException {
+        Path over = Files.createDirectories(dir.resolve("bskyblock_world"));
+        Files.write(over.resolve("a.mca"), new byte[1000]);
+        Path nether = Files.createDirectories(dir.resolve("bskyblock_world_nether"));
+        Files.write(nether.resolve("b.mca"), new byte[500]);
+
+        World overWorld = mock(World.class);
+        when(overWorld.getWorldFolder()).thenReturn(over.toFile());
+        World netherWorld = mock(World.class);
+        when(netherWorld.getWorldFolder()).thenReturn(nether.toFile());
+
+        GameModeAddon gm1 = mock(GameModeAddon.class);
+        when(gm1.getOverWorld()).thenReturn(overWorld);
+        when(gm1.getNetherWorld()).thenReturn(netherWorld);
+        when(gm1.getEndWorld()).thenReturn(null);
+        // A second game mode pointing at the same overworld folder must not double count
+        GameModeAddon gm2 = mock(GameModeAddon.class);
+        when(gm2.getOverWorld()).thenReturn(overWorld);
+
+        AddonsManager am = mock(AddonsManager.class);
+        when(am.getGameModeAddons()).thenReturn(List.of(gm1, gm2));
+        when(plugin.getAddonsManager()).thenReturn(am);
+
+        assertNull(bStats.getWorldSizeBucket());
+        bStats.measureWorldSize();
+        assertEquals("0-1 GB", bStats.getWorldSizeBucket());
+    }
+
+    @Test
+    void testMeasureWorldSizeNoGameModes() {
+        AddonsManager am = mock(AddonsManager.class);
+        when(am.getGameModeAddons()).thenReturn(List.of());
+        when(plugin.getAddonsManager()).thenReturn(am);
+
+        bStats.measureWorldSize();
+        assertEquals("0-1 GB", bStats.getWorldSizeBucket());
     }
 }
