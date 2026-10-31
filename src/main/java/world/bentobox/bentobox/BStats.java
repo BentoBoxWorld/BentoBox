@@ -1,5 +1,11 @@
 package world.bentobox.bentobox;
 
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -16,7 +23,10 @@ import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimpleBarChart;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -43,8 +53,32 @@ public class BStats {
      */
     private static final int REPORTED_COMMANDS = 20;
 
+    /**
+     * Delay before the island worlds are first measured on disk, in ticks (one minute).
+     * Gives the game modes time to finish creating their worlds.
+     * @since 3.23.6
+     */
+    private static final long WORLD_SIZE_INITIAL_DELAY = 20L * 60;
+
+    /**
+     * Interval between measurements of the island worlds on disk, in ticks (six hours).
+     * World size changes slowly, and walking a large world folder is not free.
+     * @since 3.23.6
+     */
+    private static final long WORLD_SIZE_INTERVAL = 20L * 60 * 60 * 6;
+
+    private static final long GB = 1_000_000_000L;
+
     private final BentoBox plugin;
     private Metrics metrics;
+
+    /**
+     * Size bracket of the island worlds on disk, measured off the main thread by
+     * {@link #measureWorldSize()}. {@code null} until the first measurement completes,
+     * in which case the chart is skipped for that submission.
+     * @since 3.23.6
+     */
+    private volatile String worldSizeBucket;
 
     /**
      * Counts of the islands that got created.
@@ -90,6 +124,7 @@ public class BStats {
         registerPlayersPerServerChart();
         registerAddonApiVersionsChart();
         registerCommandFailuresChart();
+        registerWorldSizeChart();
 
         // Drilldown Pie Charts
         registerAddonVersionsChart();
@@ -165,6 +200,104 @@ public class BStats {
             else if (players <= 200) return "151-200";
             else return "201+";
         }));
+    }
+
+    /**
+     * Sends the total size on disk of all island worlds (overworld, nether and end of
+     * every game mode) as a bracket, e.g. {@code 10-50 GB}.
+     * <p>
+     * bStats collects chart data on the main thread, so the folders are not walked in
+     * the callable. A repeating asynchronous task measures them and caches the bracket;
+     * the callable only reads the cache. Until the first measurement completes the
+     * chart is skipped. This is the data behind the question of whether island storage
+     * (Slime worlds, database-backed islands) is a problem anyone actually has.
+     * @since 3.23.6
+     */
+    private void registerWorldSizeChart() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::measureWorldSize, WORLD_SIZE_INITIAL_DELAY,
+                WORLD_SIZE_INTERVAL);
+        metrics.addCustomChart(new SimplePie("worldSize", () -> worldSizeBucket));
+    }
+
+    /**
+     * Walks every island world folder and caches the size bracket. Runs off the main
+     * thread.
+     * @since 3.23.6
+     */
+    void measureWorldSize() {
+        Set<Path> folders = new HashSet<>();
+        for (GameModeAddon gm : plugin.getAddonsManager().getGameModeAddons()) {
+            Stream.of(gm.getOverWorld(), gm.getNetherWorld(), gm.getEndWorld())
+                    .filter(Objects::nonNull)
+                    .map(World::getWorldFolder)
+                    .filter(Objects::nonNull)
+                    .forEach(f -> folders.add(f.toPath()));
+        }
+        long bytes = 0;
+        for (Path folder : folders) {
+            bytes += folderSize(folder);
+        }
+        worldSizeBucket = worldSizeBucket(bytes);
+    }
+
+    /**
+     * Sums the size of every regular file under the folder. Files that vanish or cannot
+     * be read while walking are skipped rather than aborting the measurement, because
+     * region files are being written while the server runs.
+     * @param folder folder to measure
+     * @return total size in bytes, or 0 if the folder does not exist
+     * @since 3.23.6
+     */
+    static long folderSize(@NonNull Path folder) {
+        if (!Files.isDirectory(folder)) {
+            return 0;
+        }
+        long[] total = { 0 };
+        try {
+            Files.walkFileTree(folder, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile()) {
+                        total[0] += attrs.size();
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // Partial total is still informative
+        }
+        return total[0];
+    }
+
+    /**
+     * Bracket label for a size in bytes, using decimal gigabytes.
+     * @param bytes size in bytes
+     * @return bracket label such as {@code 1-5 GB}
+     * @since 3.23.6
+     */
+    static @NonNull String worldSizeBucket(long bytes) {
+        if (bytes < GB) return "0-1 GB";
+        else if (bytes < 5 * GB) return "1-5 GB";
+        else if (bytes < 10 * GB) return "5-10 GB";
+        else if (bytes < 50 * GB) return "10-50 GB";
+        else if (bytes < 100 * GB) return "50-100 GB";
+        else if (bytes < 500 * GB) return "100-500 GB";
+        else if (bytes < 1000 * GB) return "500-1000 GB";
+        else return "1 TB+";
+    }
+
+    /**
+     * @return the cached world size bracket, or {@code null} if not yet measured
+     * @since 3.23.6
+     */
+    @Nullable
+    String getWorldSizeBucket() {
+        return worldSizeBucket;
     }
 
     /**
