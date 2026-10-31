@@ -328,11 +328,13 @@ public abstract sealed class AbstractTeleportListener
                     map(island -> island.getSpawnPoint(toWorld.getEnvironment())).
                     orElse(toLocation), toLocation);
         }
-        else if (World.Environment.NETHER.equals(environment))
+        else if (World.Environment.NETHER.equals(toWorld.getEnvironment()))
         {
             // Nether islands are pasted at a fixed place, so anchor the trip at the island's nether
             // spawn. Using the portal's own Y made every entry land at a different height and left
-            // the island with no paired portal to come back through.
+            // the island with no paired portal to come back through. Only do this when the
+            // destination really is the nether: returning to the overworld must keep its own
+            // coordinates, otherwise both ends resolve to the same world and nothing happens.
             toLocation = Objects.requireNonNullElse(this.getIsland(fromLocation).
                     map(island -> island.getSpawnPoint(World.Environment.NETHER)).
                     orElse(toLocation), toLocation);
@@ -462,9 +464,9 @@ public abstract sealed class AbstractTeleportListener
 
         // Only touch fully empty columns: the destination is normally void, but a player may
         // already have built there. Overwriting that would destroy blocks and container contents.
-        for (int dx = -2; dx <= 2; dx++)
+        for (int dx = -4; dx <= 4; dx++)
         {
-            for (int dz = -2; dz <= 2; dz++)
+            for (int dz = -4; dz <= 4; dz++)
             {
                 Block floor = world.getBlockAt(baseX + dx, baseY - 1, baseZ + dz);
                 boolean empty = floor.isEmpty();
@@ -487,8 +489,8 @@ public abstract sealed class AbstractTeleportListener
             return java.util.concurrent.CompletableFuture.completedFuture(null);
         }
         var columns = new java.util.ArrayList<java.util.concurrent.CompletableFuture<Void>>();
-        for (int dx = -2; dx <= 2; dx++) {
-            for (int dz = -2; dz <= 2; dz++) {
+        for (int dx = -4; dx <= 4; dx++) {
+            for (int dz = -4; dz <= 4; dz++) {
                 Location column = new Location(world, destination.getBlockX() + dx,
                         destination.getBlockY(), destination.getBlockZ() + dz);
                 columns.add(Util.getChunkAtAsync(column).thenCompose(chunk ->
@@ -583,28 +585,33 @@ public abstract sealed class AbstractTeleportListener
 
 
     /**
-     * Finds the first standable Y near {@code anchorY} (solid block below, two air blocks above),
-     * preferring the closest one. Used to place a created portal on the terrain.
+     * Finds the first standable Y near {@code anchorY} (solid block below, two air blocks above).
+     * Searches downwards first, because an island's spawn point can sit above the terrain.
      */
     private static int groundY(ServerLevel level, int x, int z, int anchorY)
     {
-        for (int d = 0; d <= 16; d++)
+        for (int y = anchorY; y > anchorY - 17 && y > level.getMinY() + 1; y--)
         {
-            for (int y : new int[]{anchorY - d, anchorY + d})
+            if (isStandable(level, x, y, z))
             {
-                if (y <= level.getMinY() + 1 || y >= level.getMaxY() - 1)
-                {
-                    continue;
-                }
-                if (level.getBlockState(new BlockPos(x, y - 1, z)).isSolid()
-                        && level.getBlockState(new BlockPos(x, y, z)).isAir()
-                        && level.getBlockState(new BlockPos(x, y + 1, z)).isAir())
-                {
-                    return y;
-                }
+                return y;
+            }
+        }
+        for (int y = anchorY + 1; y <= anchorY + 16 && y < level.getMaxY() - 1; y++)
+        {
+            if (isStandable(level, x, y, z))
+            {
+                return y;
             }
         }
         return anchorY;
+    }
+
+    private static boolean isStandable(ServerLevel level, int x, int y, int z)
+    {
+        return level.getBlockState(new BlockPos(x, y - 1, z)).isSolid()
+                && level.getBlockState(new BlockPos(x, y, z)).isAir()
+                && level.getBlockState(new BlockPos(x, y + 1, z)).isAir();
     }
 
 
