@@ -48,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.23.4"
+val buildVersion = "3.23.5"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -89,25 +89,24 @@ val javaVersion = "25"
 val junitVersion = "5.10.2"
 val mockitoVersion = "5.11.0"
 // MockBukkit's modern, per-Minecraft-version artifacts are published to Paper's Maven repo
-// under org.mockbukkit.mockbukkit (see the testImplementation coordinate below). 4.116.1 is the
-// first release with a 26.2 artifact, built against 26.2.build.111-stable.
-val mockBukkitVersion = "4.116.1"
+// under org.mockbukkit.mockbukkit (see the testImplementation coordinate below). 4.119.0 is the
+// first release with a usable 26.3 artifact, built against 26.3.build.200-stable.
+val mockBukkitVersion = "4.119.0"
 val mongodbVersion = "3.12.12"
 val mariadbVersion = "3.0.5"
 val mysqlVersion = "8.0.27"
 val postgresqlVersion = "42.2.18"
 val hikaricpVersion = "5.0.1"
-// Compile against Paper 26.3 so 26.3-only API (Cushion, EntityBreakByEntityEvent, STRAW_BED...)
-// is visible at compile time. Code that touches it must stay guarded (Enums.getIfPresent, or a
-// listener class registered only when the class exists) because the plugin still runs on 26.2.
-// 26.3 is alpha-only so far; move to the first "-stable" build once Paper publishes one.
-val paperVersion = "26.3.build.41-alpha"
-// Tests RUN against the 26.2 API because MockBukkit has no v26.3 artifact yet (its registry
-// validation hard-fails on an API/MockBukkit version mismatch). They still COMPILE against
-// paperVersion so 26.3-only listeners can have tests; guard those with @EnabledIf on the class.
+// Paper 26.3. Code that touches 26.3-only API (Cushion, EntityBreakByEntityEvent, STRAW_BED...)
+// must stay guarded (Enums.getIfPresent, or a listener class registered only when the class
+// exists) because the plugin still runs on 26.2.
 // Note 26.2 brought Adventure 5, which makes ClickEvent generic (payload() rather than value())
 // and seals Component so it cannot be mocked.
-val testPaperVersion = "26.2.build.111-stable"
+val paperVersion = "26.3.build.231-stable"
+// The paper-api line tests run against. It must be the MockBukkit artifact's MC line (its
+// registry validation hard-fails on an API/MockBukkit version mismatch); keep it equal to
+// paperVersion unless Paper gets ahead of MockBukkit again.
+val testPaperVersion = paperVersion
 val bstatsVersion = "3.0.0"
 val vaultVersion = "1.7.1"
 val levelVersion = "2.21.3"
@@ -272,7 +271,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
-    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:$mockBukkitVersion")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.3:$mockBukkitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testCompileOnly("io.papermc.paper:paper-api:$paperVersion")
     testRuntimeOnly("io.papermc.paper:paper-api:$testPaperVersion")
