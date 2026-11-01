@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.bstats.bukkit.Metrics;
@@ -66,6 +67,12 @@ public class BStats {
      * @since 3.23.6
      */
     private static final int MAX_REASON_LENGTH = 100;
+
+    /**
+     * Characters allowed in a locale key. See {@link #isLocaleKey(String)}.
+     * @since 3.23.6
+     */
+    private static final Pattern KEY_CHARACTERS = Pattern.compile("[A-Za-z0-9_.-]+");
 
     /**
      * Delay before the island worlds are first measured on disk, in ticks (one minute).
@@ -613,35 +620,16 @@ public class BStats {
      * underscores, at least two of them. Anything else could be free text, which must
      * never reach bStats because the data there is public.
      * <p>
-     * Written as a loop rather than a regex: a repeated group can make the regex
-     * engine recurse on long inputs (Sonar S5998).
+     * The regex only checks the character set; a single repeated character class
+     * cannot make the regex engine recurse (Sonar S5998). The segment rules are plain
+     * string checks.
      */
     private static boolean isLocaleKey(@Nullable String reason) {
-        if (reason == null || reason.isEmpty() || reason.length() > MAX_REASON_LENGTH) {
+        if (reason == null || reason.length() > MAX_REASON_LENGTH || !KEY_CHARACTERS.matcher(reason).matches()) {
             return false;
         }
-        int dots = 0;
-        boolean segmentStarted = false;
-        for (int i = 0; i < reason.length(); i++) {
-            char c = reason.charAt(i);
-            if (c == '.') {
-                if (!segmentStarted) {
-                    return false; // leading dot or two dots in a row
-                }
-                dots++;
-                segmentStarted = false;
-            } else if (isKeyCharacter(c)) {
-                segmentStarted = true;
-            } else {
-                return false;
-            }
-        }
-        // At least two segments, and no trailing dot
-        return dots > 0 && segmentStarted;
-    }
-
-    private static boolean isKeyCharacter(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_';
+        // At least two segments, and none of them empty
+        return reason.indexOf('.') > 0 && !reason.endsWith(".") && !reason.contains("..");
     }
 
     /**
