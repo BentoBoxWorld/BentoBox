@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.bstats.bukkit.Metrics;
@@ -61,14 +60,6 @@ public class BStats {
      * @since 3.23.6
      */
     static final String UNKNOWN_REASON = "unknown";
-
-    /**
-     * Shape of a locale key: dot-separated segments of letters, digits, hyphens and
-     * underscores, at least two of them. Anything else could be free text, which
-     * must never reach bStats because the data there is public.
-     * @since 3.23.6
-     */
-    private static final Pattern LOCALE_KEY = Pattern.compile("[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)+");
 
     /**
      * Longest reason accepted. Real locale keys are far shorter than this.
@@ -614,10 +605,43 @@ public class BStats {
      * @since 3.23.6
      */
     static @NonNull String sanitizeReason(@Nullable String reason) {
-        if (reason == null || reason.length() > MAX_REASON_LENGTH || !LOCALE_KEY.matcher(reason).matches()) {
-            return UNKNOWN_REASON;
+        return isLocaleKey(reason) ? reason : UNKNOWN_REASON;
+    }
+
+    /**
+     * Shape of a locale key: dot-separated segments of letters, digits, hyphens and
+     * underscores, at least two of them. Anything else could be free text, which must
+     * never reach bStats because the data there is public.
+     * <p>
+     * Written as a loop rather than a regex: a repeated group can make the regex
+     * engine recurse on long inputs (Sonar S5998).
+     */
+    private static boolean isLocaleKey(@Nullable String reason) {
+        if (reason == null || reason.isEmpty() || reason.length() > MAX_REASON_LENGTH) {
+            return false;
         }
-        return reason;
+        int dots = 0;
+        boolean segmentStarted = false;
+        for (int i = 0; i < reason.length(); i++) {
+            char c = reason.charAt(i);
+            if (c == '.') {
+                if (!segmentStarted) {
+                    return false; // leading dot or two dots in a row
+                }
+                dots++;
+                segmentStarted = false;
+            } else if (isKeyCharacter(c)) {
+                segmentStarted = true;
+            } else {
+                return false;
+            }
+        }
+        // At least two segments, and no trailing dot
+        return dots > 0 && segmentStarted;
+    }
+
+    private static boolean isKeyCharacter(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_';
     }
 
     /**

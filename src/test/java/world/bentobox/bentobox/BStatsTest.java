@@ -126,6 +126,10 @@ class BStatsTest {
         assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("Steve"));
         assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("§cYou cannot visit Steve's island."));
         assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("general.errors. no-island"));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason(".general.errors"));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("general.errors."));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("general..errors"));
+        assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("nodots"));
         assertEquals(BStats.UNKNOWN_REASON, BStats.sanitizeReason("a." + "b".repeat(200)));
     }
 

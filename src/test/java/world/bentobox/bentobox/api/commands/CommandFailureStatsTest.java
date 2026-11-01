@@ -123,8 +123,8 @@ class CommandFailureStatsTest extends CommonTestSetup {
 
         assertFalse(sub.call(user, "blocked", List.of()));
         verify(user).clearLastMessageKey();
-        verify(bStats).recordCommandFailure(eq(CommandFailure.CANNOT_EXECUTE), eq("bentobox.blocked"),
-                eq("general.errors.no-island"));
+        verify(bStats).recordCommandFailure(CommandFailure.CANNOT_EXECUTE, "bentobox.blocked",
+                "general.errors.no-island");
     }
 
     /**
