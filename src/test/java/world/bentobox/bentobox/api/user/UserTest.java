@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -303,6 +304,25 @@ class UserTest extends CommonTestSetup {
     void testSendMessage() {
         user.sendMessage("a.reference");
         checkSpigotMessage(TEST_TRANSLATION_WITH_COLOR);
+    }
+
+    /**
+     * The last message key lets a command report why it refused to run. It tracks
+     * translated messages only, never raw ones, and can be cleared.
+     */
+    @Test
+    void testLastMessageKey() {
+        assertNull(user.getLastMessageKey());
+        user.sendMessage("a.reference");
+        assertEquals("a.reference", user.getLastMessageKey());
+        user.sendMessage("another.reference", "[test]", "variable");
+        assertEquals("another.reference", user.getLastMessageKey());
+        user.sendRawMessage("raw text");
+        assertEquals("another.reference", user.getLastMessageKey());
+        user.clearLastMessageKey();
+        assertNull(user.getLastMessageKey());
+        user.notify("notified.reference");
+        assertEquals("notified.reference", user.getLastMessageKey());
     }
 
     @Test

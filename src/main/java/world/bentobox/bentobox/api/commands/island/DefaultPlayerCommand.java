@@ -162,10 +162,11 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         if (command == null || command.isEmpty()) {
             command = defaultSubCommand;
         }
-        // Call sub command or perform command if it does not exist
+        // Call sub command or perform command if it does not exist. The subcommand
+        // reports its own failure, so it must not be counted against this command too.
         if (this.getSubCommand(command).isPresent()) {
             return this.getSubCommand(command).
-                    map(c -> c.call(user, c.getLabel(), Collections.emptyList())).
+                    map(c -> callSubCommand(c, user, c.getLabel(), Collections.emptyList())).
                     orElse(false);
         } else {
             // Command is not a known sub command - try to perform it directly - some plugins trap these commands, like Deluxe menus

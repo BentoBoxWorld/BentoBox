@@ -71,6 +71,19 @@ public class User implements MetaDataAble {
 
     private static final Map<UUID, User> users = new HashMap<>();
 
+    /**
+     * Locale key of the last message sent to this user through
+     * {@link #sendMessage(String, String...)} or {@link #notify(String, String...)},
+     * or {@code null} if none has been sent since {@link #clearLastMessageKey()}.
+     * <p>
+     * Commands use this to report <em>why</em> they refused to run, without
+     * recording anything the player typed - see
+     * {@link world.bentobox.bentobox.BStats#recordCommandFailure(world.bentobox.bentobox.BStats.CommandFailure, String, String)}.
+     * @since 3.23.6
+     */
+    @Nullable
+    private String lastMessageKey;
+
     // Patterns for message delivery type tags in locale strings
     private static final Pattern ACTIONBAR_PATTERN = Pattern.compile("^\\[actionbar]", Pattern.CASE_INSENSITIVE);
     private static final Pattern TITLE_PATTERN = Pattern.compile("^\\[title]", Pattern.CASE_INSENSITIVE);
@@ -725,11 +738,35 @@ public class User implements MetaDataAble {
      * @param variables - CharSequence target, replacement pairs
      */
     public void sendMessage(String reference, String... variables) {
+        lastMessageKey = reference;
         String message = getTranslation(reference, variables);
         String noColors = message.replaceAll("(?i)§[0-9A-FK-ORX]", "").trim();
         if (!noColors.isEmpty()) {
             sendRawMessage(message);
         }
+    }
+
+    /**
+     * Returns the locale key of the last message sent to this user with
+     * {@link #sendMessage(String, String...)} or {@link #notify(String, String...)}.
+     * Raw messages sent with {@link #sendRawMessage(String)} are not tracked.
+     *
+     * @return the locale key, or {@code null} if nothing has been sent since the
+     *         last {@link #clearLastMessageKey()}
+     * @since 3.23.6
+     */
+    @Nullable
+    public String getLastMessageKey() {
+        return lastMessageKey;
+    }
+
+    /**
+     * Forgets the last message key, so that {@link #getLastMessageKey()} only
+     * reports messages sent from now on. Called at the start of each command.
+     * @since 3.23.6
+     */
+    public void clearLastMessageKey() {
+        lastMessageKey = null;
     }
 
     /**
@@ -976,6 +1013,7 @@ public class User implements MetaDataAble {
      * @see Notifier
      */
     public void notify(String reference, String... variables) {
+        lastMessageKey = reference;
         String message = getTranslation(reference, variables);
         if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
@@ -994,6 +1032,7 @@ public class User implements MetaDataAble {
      * @since 1.3.0
      */
     public void notify(World world, String reference, String... variables) {
+        lastMessageKey = reference;
         String message = getTranslation(world, reference, variables);
         if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
