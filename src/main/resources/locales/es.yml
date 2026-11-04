@@ -1115,6 +1115,15 @@ protection:
       name: Interacción con Allay y Copper Golem
       description: Permitir dar y recibir artículos de/para Allay y Copper Golem
       hint: Interacción de Allay y Copper Golem deshabilitada
+    ALLOW_MOBS:
+      description: |-
+        <green>Entidades que siempre</green>
+        <green>aparecen, incluso si la</green>
+        <green>aparición de animales o</green>
+        <green>monstruos está desactivada.</green>
+      name: '<yellow>Tipos de entidad siempre permitidos</yellow>'
+      always: '<green>Siempre aparece</green>'
+      flags: '<gray>Sigue las banderas de aparición</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Alternar el desove natural de animales
       name: Aparición natural de animales

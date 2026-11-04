@@ -1135,6 +1135,15 @@ protection:
       name: Allay & Copper Golem-interactie
       description: Sta toe om items te geven en af te nemen van Allay en Copper Golem
       hint: Allay & Copper Golem-interactie uitgeschakeld
+    ALLOW_MOBS:
+      description: |-
+        <green>Entiteiten die altijd</green>
+        <green>spawnen, zelfs als het</green>
+        <green>spawnen van dieren of</green>
+        <green>monsters uit staat.</green>
+      name: '<yellow>Altijd toegestane entiteitstypes</yellow>'
+      always: '<green>Spawnt altijd</green>'
+      flags: '<gray>Volgt de spawn-vlaggen</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Schakel het natuurlijke uitzetten van dieren in of uit
       name: Dierlijke natuurlijke spawn

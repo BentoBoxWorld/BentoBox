@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab.EntityLimitTabType;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.MobLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
@@ -582,6 +583,14 @@ public final class Flags {
      */
     public static final Flag LIMIT_MOBS = new Flag.Builder("LIMIT_MOBS", Material.CHAINMAIL_BOOTS).type(Type.WORLD_SETTING)
             .listener(new LimitMobsListener()).clickHandler(new MobLimitClickListener()).usePanel(true).build();
+
+    /**
+     * Admin list of mobs that may always spawn, overriding the animal and monster spawning flags
+     * at both world and island level. Enforced by {@link MobSpawnListener}; {@link #LIMIT_MOBS} still wins.
+     * @since 3.23.6
+     */
+    public static final Flag ALLOW_MOBS = new Flag.Builder("ALLOW_MOBS", Material.IRON_INGOT).type(Type.WORLD_SETTING)
+            .clickHandler(new MobLimitClickListener(EntityLimitTabType.MOB_ALLOW)).usePanel(true).build();
 
     public static final Flag REMOVE_MOBS = new Flag.Builder("REMOVE_MOBS", Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
             .listener(new RemoveMobsListener()).defaultSetting(true).build();

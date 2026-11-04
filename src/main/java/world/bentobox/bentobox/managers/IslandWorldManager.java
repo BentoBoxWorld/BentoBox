@@ -858,6 +858,18 @@ public class IslandWorldManager {
     }
 
     /**
+     * Get the mob types that may always spawn in this world, regardless of the animal and
+     * monster spawning flags
+     * @param world - world
+     * @return list of always-allowed mobs
+     * @since 3.23.6
+     */
+    public List<String> getMobAllowSettings(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMobAllowSettings()
+                : Collections.emptyList();
+    }
+
+    /**
      * Get the reset limit for this world
      * @param world - world
      * @return number of resets allowed. -1 = unlimited

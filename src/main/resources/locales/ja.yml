@@ -1000,6 +1000,15 @@ protection:
       name: アレ���・銅のゴーレムの相互作用
       description: アレイと銅のゴーレムとの間でアイテム��授受を許可する
       hint: アレ���・銅のゴーレムのインタラクションが無効になっていま���
+    ALLOW_MOBS:
+      description: |-
+        <green>動物やモンスターの</green>
+        <green>スポーンがオフでも</green>
+        <green>常にスポーンする</green>
+        <green>エンティティです。</green>
+      name: '<yellow>常に許可されるエンティティタイプ</yellow>'
+      always: '<green>常にスポーンします</green>'
+      flags: '<gray>スポーンフラグに従います</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: 自然な動物の産卵を切り替えます
       name: 動物の自然なスポーン
