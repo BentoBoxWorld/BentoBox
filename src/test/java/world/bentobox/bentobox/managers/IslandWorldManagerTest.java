@@ -694,16 +694,18 @@ class IslandWorldManagerTest extends CommonTestSetup {
         when(desc.getName()).thenReturn("BSkyBlock");
         when(gm.getDescription()).thenReturn(desc);
         when(gm.getDefaultAllowedMobs()).thenReturn(List.of("IRON_GOLEM"));
-        when(db.loadObject("BSkyBlock")).thenReturn(null);
+        when(db.objectExists("BSkyBlock")).thenReturn(false);
 
         List<String> list = testIwm.getMobAllowSettings(testWorld);
         assertEquals(List.of("IRON_GOLEM"), list);
+        // A missing record is never loaded, which would log an error
+        verify(db, never()).loadObject(anyString());
         // Seeded record is saved
         verify(db).saveObjectAsync(any(CoreWorldSettings.class));
         // Same list on every call: cached, loaded once
         list.add("COW");
         assertSame(list, testIwm.getMobAllowSettings(testWorld));
-        verify(db, times(1)).loadObject(anyString());
+        verify(db, times(1)).objectExists(anyString());
 
         testIwm.saveCoreWorldSettings(testWorld);
         verify(db, times(2)).saveObjectAsync(any(CoreWorldSettings.class));
@@ -719,6 +721,7 @@ class IslandWorldManagerTest extends CommonTestSetup {
         when(gm.getDescription()).thenReturn(desc);
         CoreWorldSettings stored = new CoreWorldSettings("BSkyBlock");
         stored.setAllowedMobs(new ArrayList<>(List.of("COW")));
+        when(db.objectExists("BSkyBlock")).thenReturn(true);
         when(db.loadObject("BSkyBlock")).thenReturn(stored);
 
         assertSame(stored.getAllowedMobs(), testIwm.getMobAllowSettings(testWorld));
