@@ -901,7 +901,9 @@ public class IslandWorldManager {
     }
 
     private CoreWorldSettings loadOrSeed(GameModeAddon gm, String name) {
-        CoreWorldSettings s = getCoreWorldSettingsDb().loadObject(name);
+        // Check first: loading a missing record logs an error in the flat-file handlers
+        CoreWorldSettings s = getCoreWorldSettingsDb().objectExists(name) ? getCoreWorldSettingsDb().loadObject(name)
+                : null;
         if (s == null) {
             s = new CoreWorldSettings(name);
             s.setAllowedMobs(new ArrayList<>(gm.getDefaultAllowedMobs()));
