@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.addons;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
@@ -72,6 +73,18 @@ public abstract class GameModeAddon extends Addon {
      * @return The {@link WorldSettings} for this game mode.
      */
     public abstract WorldSettings getWorldSettings();
+
+    /**
+     * Entity types that may always spawn in this game mode by default, regardless of the animal and
+     * monster spawning flags. Used to seed the BentoBox-stored world settings the first time this
+     * game mode is seen; after that the admin's edits in the settings panel apply.
+     * Override to change the seed, e.g. return an empty list for a game mode with no villages.
+     * @return list of {@link org.bukkit.entity.EntityType} names
+     * @since 3.23.6
+     */
+    public List<String> getDefaultAllowedMobs() {
+        return List.of("IRON_GOLEM");
+    }
 
     /**
      * Checks if location is governed by this game mode
