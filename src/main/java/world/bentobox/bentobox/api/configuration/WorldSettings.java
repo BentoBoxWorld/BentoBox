@@ -428,6 +428,18 @@ public interface WorldSettings extends ConfigObject {
     }
 
     /**
+     * Get list of entities that may always spawn in this game mode, regardless of the
+     * animal and monster spawning flags at world or island level. Entities listed in
+     * {@link #getMobLimitSettings()} are still blocked. Entries are {@link org.bukkit.entity.EntityType}
+     * names, e.g. {@code IRON_GOLEM}.
+     * @return list of entities that may always spawn
+     * @since 3.23.6
+     */
+    default List<String> getMobAllowSettings() {
+        return new ArrayList<>();
+    }
+
+    /**
      * @return reset limit for world
      */
     int getResetLimit();

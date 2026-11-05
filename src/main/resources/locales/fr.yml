@@ -1136,6 +1136,15 @@ protection:
       name: Interaction Allay & Copper Golem
       description: Autoriser le don et le transport d'objets vers/depuis Allay et Copper Golem
       hint: Interaction Allay & Copper Golem désactivée
+    ALLOW_MOBS:
+      description: |-
+        <green>Entités qui apparaissent</green>
+        <green>toujours, même si l'apparition</green>
+        <green>des animaux ou des monstres</green>
+        <green>est désactivée.</green>
+      name: '<yellow>Types d''entités toujours autorisés</yellow>'
+      always: '<green>Apparaît toujours</green>'
+      flags: '<gray>Suit les flags d''apparition</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Activer/désactiver l'apparition naturelle des animaux
       name: Apparition naturelle des animaux

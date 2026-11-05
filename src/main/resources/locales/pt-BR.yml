@@ -1095,6 +1095,15 @@ protection:
       name: Interação com Allay e Copper Golem
       description: Permitir dar e pegar itens do/para Allay e Copper Golem
       hint: Interação com Allay e Copper Golem desabilitada
+    ALLOW_MOBS:
+      description: |-
+        <green>Entidades que sempre</green>
+        <green>aparecem, mesmo quando o</green>
+        <green>surgimento de animais ou</green>
+        <green>monstros está desativado.</green>
+      name: '<yellow>Tipos de entidade sempre permitidos</yellow>'
+      always: '<green>Sempre aparece</green>'
+      flags: '<gray>Segue as flags de surgimento</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Permitir nascimento natural de animais
       name: Nascimento natural de animais

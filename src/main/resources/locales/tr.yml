@@ -1071,6 +1071,15 @@ protection:
       name: Allay ve Copper Golem etkileşimi
       description: Allay ve Copper Golem'e eşya verme ve alma işlemlerine izin ver
       hint: Allay ve Copper Golem etkileşimi devre dışı bırakıldı
+    ALLOW_MOBS:
+      description: |-
+        <green>Hayvan veya canavar</green>
+        <green>doğması kapalı olsa bile</green>
+        <green>her zaman doğan</green>
+        <green>varlıklar.</green>
+      name: '<yellow>Her zaman izin verilen varlık türleri</yellow>'
+      always: '<green>Her zaman doğar</green>'
+      flags: '<gray>Doğma bayraklarına uyar</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Doğal hayvan yumurtlamasını aç / kapat
       name: Hayvan doğal yumurtlama

@@ -1081,6 +1081,15 @@ protection:
       name: Tương tác với Allay và Copper Golem
       description: Cho phép đưa và nhận vật phẩm từ/đến Allay và Copper Golem
       hint: Tương tác Allay và Copper Golem đã bị tắt
+    ALLOW_MOBS:
+      description: |-
+        <green>Thực thể luôn xuất hiện,</green>
+        <green>ngay cả khi việc sinh</green>
+        <green>động vật hoặc quái vật</green>
+        <green>đã bị tắt.</green>
+      name: '<yellow>Loại thực thể luôn được phép</yellow>'
+      always: '<green>Luôn xuất hiện</green>'
+      flags: '<gray>Theo cờ sinh thực thể</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Bật/Tắt sinh thú tự nhiên
       name: Sinh thú tự nhiên

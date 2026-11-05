@@ -1074,6 +1074,15 @@ protection:
       name: Allay a Copper Golem interakce
       description: Povolit dávání a odebírání předmětů do/z Allay a Copper Golem
       hint: Interakce Allay a Copper Golem zakázána
+    ALLOW_MOBS:
+      description: |-
+        <green>Entity, které se objevují</green>
+        <green>vždy, i když je spawnování</green>
+        <green>zvířat nebo monster</green>
+        <green>vypnuté.</green>
+      name: '<yellow>Vždy povolené typy entit</yellow>'
+      always: '<green>Objevuje se vždy</green>'
+      flags: '<gray>Řídí se vlajkami spawnování</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Přepnout přirozené spawnování zvířat
       name: Přirozené spawnování zvířat

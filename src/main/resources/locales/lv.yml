@@ -1097,6 +1097,15 @@ protection:
       name: Allay un Copper Golem mijiedarbība
       description: Atļaut dot un ņemt priekšmetus no/uz Allay un Copper Golem
       hint: Interakcija ar Allay un Copper Golem atslēgta
+    ALLOW_MOBS:
+      description: |-
+        <green>Entītijas, kas vienmēr</green>
+        <green>parādās, pat ja dzīvnieku</green>
+        <green>vai monstru parādīšanās</green>
+        <green>ir izslēgta.</green>
+      name: '<yellow>Vienmēr atļautie entītiju tipi</yellow>'
+      always: '<green>Vienmēr parādās</green>'
+      flags: '<gray>Seko parādīšanās karogiem</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Pārslēgt dabisko dzīvnieku parādīšanos
       name: Dzīvnieku dabiskā parādīšanās

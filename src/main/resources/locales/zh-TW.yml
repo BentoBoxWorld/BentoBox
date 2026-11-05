@@ -1002,6 +1002,15 @@ protection:
       name: 悅靈與銅魔像互動
       description: 允許與悅靈及銅魔像互相給予或取回物品
       hint: 已停用悅靈與銅魔像互動
+    ALLOW_MOBS:
+      description: |-
+        <green>即使動物或怪物</green>
+        <green>生成已關閉，</green>
+        <green>也永遠會生成的</green>
+        <green>實體。</green>
+      name: '<yellow>永遠允許的實體類型</yellow>'
+      always: '<green>永遠生成</green>'
+      flags: '<gray>依生成旗標決定</gray>'
     ANIMAL_NATURAL_SPAWN:
       name: 動物自然生成
       description: 切換是否允許動物自然生成

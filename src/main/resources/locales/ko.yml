@@ -1022,6 +1022,14 @@ protection:
       name: Allay 및 Copper Golem 상호작용
       description: Allay와 Copper Golem에게 아이템을 주고 받을 수 있도록 허용합니다.
       hint: 알레이 및 Copper Golem 상호작용 비활성화됨
+    ALLOW_MOBS:
+      description: |-
+        <green>동물 또는 몬스터 생성이</green>
+        <green>꺼져 있어도 항상</green>
+        <green>생성되는 엔티티입니다.</green>
+      name: '<yellow>항상 허용되는 엔티티 타입</yellow>'
+      always: '<green>항상 생성됨</green>'
+      flags: '<gray>생성 플래그를 따름</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: 자연적 동물생성 여부설정
       name: 자연적 동물 생성
