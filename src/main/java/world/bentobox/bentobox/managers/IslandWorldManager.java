@@ -892,10 +892,10 @@ public class IslandWorldManager {
      * @since 3.23.6
      */
     public Optional<CoreWorldSettings> getCoreWorldSettings(@NonNull World world) {
-        GameModeAddon gm = gameModes.get(world);
-        if (gm == null) {
+        if (!gameModes.containsKey(world)) {
             return Optional.empty();
         }
+        GameModeAddon gm = gameModes.get(world);
         String name = gm.getDescription().getName();
         return Optional.of(coreWorldSettings.computeIfAbsent(name, k -> loadOrSeed(gm, k)));
     }
