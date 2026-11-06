@@ -99,9 +99,10 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         // Mutate the game mode's live list - the IWM getters return an immutable
         // empty list when the world is not a game world (java:S6322)
         plugin.getIWM().getAddon(Util.getWorld(world)).ifPresent(gameModeAddon -> {
+            // The allow list is stored by BentoBox, not in the game mode's config
             List<String> settings = switch (type) {
                 case MOB_LIMIT -> gameModeAddon.getWorldSettings().getMobLimitSettings();
-                case MOB_ALLOW -> gameModeAddon.getWorldSettings().getMobAllowSettings();
+                case MOB_ALLOW -> plugin.getIWM().getMobAllowSettings(world);
                 case GEO_LIMIT -> gameModeAddon.getWorldSettings().getGeoLimitSettings();
             };
             if (settings.contains(c.name())) {
@@ -110,7 +111,11 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 settings.add(c.name());
             }
             // Save settings
-            gameModeAddon.saveWorldSettings();
+            if (type == EntityLimitTabType.MOB_ALLOW) {
+                plugin.getIWM().saveCoreWorldSettings(world);
+            } else {
+                gameModeAddon.saveWorldSettings();
+            }
         });
         // Apply change to panel
         panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());

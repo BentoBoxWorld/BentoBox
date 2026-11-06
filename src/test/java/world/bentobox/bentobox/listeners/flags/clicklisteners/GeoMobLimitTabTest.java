@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -70,7 +71,6 @@ class GeoMobLimitTabTest extends CommonTestSetup {
         when(gma.getWorldSettings()).thenReturn(ws);
         when(ws.getMobLimitSettings()).thenReturn(list);
         when(ws.getGeoLimitSettings()).thenReturn(list);
-        when(ws.getMobAllowSettings()).thenReturn(list);
         // Panel
         when(panel.getInventory()).thenReturn(inv);
         // User
@@ -186,7 +186,9 @@ class GeoMobLimitTabTest extends CommonTestSetup {
         tab.onClick(panel, user, ClickType.LEFT, 10);
         assertEquals(4, list.size());
         assertTrue(list.contains("ARMADILLO"));
-        verify(gma, times(2)).saveWorldSettings();
+        // Stored by BentoBox, not the game mode
+        verify(iwm, times(2)).saveCoreWorldSettings(world);
+        verify(gma, never()).saveWorldSettings();
     }
 
     /**

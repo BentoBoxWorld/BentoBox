@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.managers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.CoreWorldSettings;
 import world.bentobox.bentobox.hooks.WorldManagementHook;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -41,6 +44,17 @@ public class IslandWorldManager {
      * Map associating Worlds (Overworld, Nether and End) with the GameModeAddon that creates them.
      */
     private final Map<@NonNull World, @NonNull GameModeAddon> gameModes;
+
+    /**
+     * World settings that BentoBox stores itself, cached per game mode name.
+     * @see #getCoreWorldSettings(World)
+     */
+    private final Map<String, CoreWorldSettings> coreWorldSettings = new HashMap<>();
+
+    /**
+     * Lazily created so that construction does not depend on the database being ready
+     */
+    private Database<CoreWorldSettings> coreWorldSettingsDb;
 
     /**
      * Manages worlds registered with BentoBox
@@ -859,14 +873,67 @@ public class IslandWorldManager {
 
     /**
      * Get the mob types that may always spawn in this world, regardless of the animal and
-     * monster spawning flags
+     * monster spawning flags. Stored by BentoBox, not by the game mode; seeded from
+     * {@link GameModeAddon#getDefaultAllowedMobs()}. Edit the returned list and then call
+     * {@link #saveCoreWorldSettings(World)}.
      * @param world - world
-     * @return list of always-allowed mobs
+     * @return mutable list of always-allowed mob type names, or an immutable empty list if not a game world
      * @since 3.23.6
      */
     public List<String> getMobAllowSettings(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMobAllowSettings()
-                : Collections.emptyList();
+        return getCoreWorldSettings(world).map(CoreWorldSettings::getAllowedMobs).orElse(Collections.emptyList());
+    }
+
+    /**
+     * Get the BentoBox-stored world settings for the game mode of this world, loading them from
+     * the database or seeding them from the game mode's defaults on first use.
+     * @param world - world
+     * @return the settings, or empty if the world is not a game world
+     * @since 3.23.6
+     */
+    public Optional<CoreWorldSettings> getCoreWorldSettings(@NonNull World world) {
+        if (!gameModes.containsKey(world)) {
+            return Optional.empty();
+        }
+        GameModeAddon gm = gameModes.get(world);
+        String name = gm.getDescription().getName();
+        return Optional.of(coreWorldSettings.computeIfAbsent(name, k -> loadOrSeed(gm, k)));
+    }
+
+    private CoreWorldSettings loadOrSeed(GameModeAddon gm, String name) {
+        // Check first: loading a missing record logs an error in the flat-file handlers
+        CoreWorldSettings s = getCoreWorldSettingsDb().objectExists(name) ? getCoreWorldSettingsDb().loadObject(name)
+                : null;
+        if (s == null) {
+            s = new CoreWorldSettings(name);
+            s.setAllowedMobs(new ArrayList<>(gm.getDefaultAllowedMobs()));
+            getCoreWorldSettingsDb().saveObjectAsync(s);
+        }
+        return s;
+    }
+
+    /**
+     * Save the BentoBox-stored world settings for the game mode of this world
+     * @param world - world
+     * @since 3.23.6
+     */
+    public void saveCoreWorldSettings(@NonNull World world) {
+        getCoreWorldSettings(world).ifPresent(s -> getCoreWorldSettingsDb().saveObjectAsync(s));
+    }
+
+    private Database<CoreWorldSettings> getCoreWorldSettingsDb() {
+        if (coreWorldSettingsDb == null) {
+            coreWorldSettingsDb = new Database<>(plugin, CoreWorldSettings.class);
+        }
+        return coreWorldSettingsDb;
+    }
+
+    /**
+     * Inject the database used for BentoBox-stored world settings. For tests.
+     * @param db - database
+     */
+    void setCoreWorldSettingsDb(Database<CoreWorldSettings> db) {
+        this.coreWorldSettingsDb = db;
     }
 
     /**
