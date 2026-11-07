@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.managers;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,7 +22,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -842,5 +845,67 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         // Loading flag should be set (not yet cleared since task didn't run)
         assertFalse(manager.isBlueprintsLoaded());
+    }
+
+    @Test
+    void testIsBlueprintsLoadedTrueAfterLoaderThrows() {
+        // Make the loader fail hard: a file where the blueprints folder should be
+        blueprintsFolder.getParentFile().mkdirs();
+        try {
+            Files.writeString(blueprintsFolder.toPath(), "not a folder");
+        } catch (IOException e) {
+            fail(e);
+        }
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            Runnable r = inv.getArgument(1);
+            // A throwing loader must not propagate and must still clear the flag
+            assertDoesNotThrow(r::run);
+            return mock(BukkitTask.class);
+        });
+
+        manager.loadBlueprintBundles(addon);
+
+        assertTrue(manager.isBlueprintsLoaded());
+    }
+
+    @Test
+    void testConcurrentLoadersAllClearLoadingFlag() throws Exception {
+        // Seven game modes finish loading on seven threads at the same instant (#3114)
+        int gameModes = 7;
+        List<Runnable> loaders = new ArrayList<>();
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            loaders.add(inv.getArgument(1));
+            return mock(BukkitTask.class);
+        });
+        for (int i = 0; i < gameModes; i++) {
+            GameModeAddon gm = mock(GameModeAddon.class);
+            AddonDescription d = new AddonDescription.Builder("main", "GM" + i, "1.0").build();
+            when(gm.getDescription()).thenReturn(d);
+            when(gm.getDataFolder()).thenReturn(new File(dataFolder, "gm" + i));
+            manager.loadBlueprintBundles(gm);
+        }
+        assertFalse(manager.isBlueprintsLoaded());
+
+        // Release every loader at the same instant
+        CountDownLatch start = new CountDownLatch(1);
+        List<Thread> threads = new ArrayList<>();
+        for (Runnable r : loaders) {
+            Thread t = new Thread(() -> {
+                try {
+                    start.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                r.run();
+            });
+            t.start();
+            threads.add(t);
+        }
+        start.countDown();
+        for (Thread t : threads) {
+            t.join(10_000);
+        }
+
+        assertTrue(manager.isBlueprintsLoaded(), "a racing removal was lost");
     }
 }

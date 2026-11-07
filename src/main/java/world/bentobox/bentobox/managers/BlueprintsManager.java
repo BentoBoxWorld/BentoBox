@@ -117,8 +117,11 @@ public class BlueprintsManager {
         // Register adapter factory
         builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(plugin));
         gson = builder.create();
-        // Loaded tracker
-        blueprintsLoaded = new HashSet<>();
+        // Loaded tracker. Each game mode's loader removes itself from this set on its own
+        // async thread while the main thread polls isBlueprintsLoaded(), so it must be a
+        // concurrent set: with a plain HashSet, racing removals could be lost and the
+        // "all blueprints loaded" phase would never fire (#3114).
+        blueprintsLoaded = ConcurrentHashMap.newKeySet();
         // Register Display listeners
         Bukkit.getPluginManager().registerEvents(new DisplayListener(), plugin);
     }
@@ -199,17 +202,23 @@ public class BlueprintsManager {
         // Set loading flag
         blueprintsLoaded.add(addon);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            // Load bundles
-            blueprintBundles.put(addon, new ArrayList<>());
-            if (!loadBundles(addon)) {
-                makeDefaults(addon);
-                loadBundles(addon);
+            try {
+                // Load bundles
+                blueprintBundles.put(addon, new ArrayList<>());
+                if (!loadBundles(addon)) {
+                    makeDefaults(addon);
+                    loadBundles(addon);
+                }
+                // Load blueprints
+                loadBlueprints(addon);
+            } catch (Exception e) {
+                plugin.logError("Could not load blueprints for " + addon.getDescription().getName() + ": " + e.getMessage());
+                plugin.logStacktrace(e);
+            } finally {
+                // Always clear the loading flag, otherwise a single failing game mode would
+                // stall the all-loaded phase for every addon forever
+                blueprintsLoaded.remove(addon);
             }
-            // Load blueprints
-            loadBlueprints(addon);
-
-            // Clear loading flag
-            blueprintsLoaded.remove(addon);
         });
     }
 
