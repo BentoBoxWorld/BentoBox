@@ -6,10 +6,11 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Base64;
-import java.util.HashSet;
+
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -123,7 +124,8 @@ public class HeadGetter {
         }
 
         // Queue for the async resolver
-        headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
+        // The async head task iterates this set while the main thread adds to it, so it must be concurrent
+        headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> ConcurrentHashMap.newKeySet()).add(requester);
         names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
     }
 

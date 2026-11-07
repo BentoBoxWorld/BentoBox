@@ -2395,4 +2395,26 @@ class IslandsManagerTest extends CommonTestSetup {
         assertNotNull(result);
         assertEquals(1, result.join().size());
     }
+
+    /**
+     * clearRank must not touch island member maps from an async thread: the maps are plain
+     * HashMaps read and written on the main thread.
+     */
+    @Test
+    void testClearRankRunsOnCallingThread() {
+        Island localIsland = mock(Island.class);
+        when(islandCache.getCachedIslands()).thenReturn(List.of(localIsland));
+        islandsManager.setIslandCache(islandCache);
+        Map<UUID, Integer> members = new HashMap<>();
+        when(localIsland.getMembers()).thenReturn(members);
+        UUID coopUUID = UUID.randomUUID();
+        members.put(coopUUID, RanksManager.COOP_RANK);
+
+        islandsManager.clearRank(RanksManager.COOP_RANK, coopUUID);
+
+        // Removed synchronously, with no async task scheduled
+        assertTrue(members.isEmpty());
+        verify(Bukkit.getScheduler(), never()).runTaskAsynchronously(any(), any(Runnable.class));
+    }
+
 }

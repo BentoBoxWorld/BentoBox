@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.util.heads;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -21,6 +23,13 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Tests the online-player fast path of {@link HeadGetter#getHead}.
@@ -119,4 +128,36 @@ class HeadGetterTest extends CommonTestSetup {
 
         verify(secondRequester).setHead(panelItem);
     }
+
+    /**
+     * The async head task iterates a name's requester set while the main thread may still be
+     * adding requesters for the same name, so the set must tolerate concurrent modification.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void testRequesterSetSurvivesAddWhileIterating() throws Exception {
+        when(panelItem.getPlayerHeadName()).thenReturn("hg_concurrent");
+        mockedBukkit.when(Bukkit::isPrimaryThread).thenReturn(true);
+        mockedBukkit.when(() -> Bukkit.getPlayerExact("hg_concurrent")).thenReturn(null);
+
+        HeadGetter.getHead(panelItem, requester);
+
+        Field f = HeadGetter.class.getDeclaredField("headRequesters");
+        f.setAccessible(true);
+        Map<String, Set<HeadRequester>> requesters = (Map<String, Set<HeadRequester>>) f.get(null);
+        Set<HeadRequester> set = requesters.get("hg_concurrent");
+        assertNotNull(set);
+        assertInstanceOf(ConcurrentHashMap.KeySetView.class, set);
+
+        // Simulate the async task iterating while the main thread adds a second requester
+        Iterator<HeadRequester> it = set.iterator();
+        HeadGetter.getHead(panelItem, mock(HeadRequester.class));
+        assertDoesNotThrow(() -> {
+            while (it.hasNext()) {
+                it.next();
+            }
+        });
+        assertEquals(2, set.size());
+    }
+
 }

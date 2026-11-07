@@ -1818,7 +1818,10 @@ public class IslandsManager {
      * @param uniqueId - UUID of player
      */
     public void clearRank(int rank, UUID uniqueId) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> clearRankSync(rank, uniqueId));
+        // Island member maps are plain HashMaps owned by the main thread, so this must not
+        // run async: a concurrent removeIf races with every main-thread read and write of
+        // the same maps. The work is one map lookup per cached island, which is cheap.
+        clearRankSync(rank, uniqueId);
     }
 
     void clearRankSync(int rank, UUID uniqueId) {
