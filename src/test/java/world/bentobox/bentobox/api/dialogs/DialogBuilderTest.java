@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -76,8 +77,8 @@ class DialogBuilderTest extends CommonTestSetup {
     void testDialogButtonNoTooltip() {
         DialogButton b = new DialogButton(Component.text("Go"), null);
         assertNotNull(b.label());
-        assertTrue(b.tooltip() == null);
-        assertTrue(b.onClick() == null);
+        assertNull(b.tooltip());
+        assertNull(b.onClick());
     }
 
     /**

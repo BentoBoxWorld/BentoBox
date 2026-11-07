@@ -548,6 +548,7 @@ public class LangUtilsHook extends Hook {
                 return "Yellow Tang";
             }
             default -> {
+                // Not a named variant; fall through to the generic name
             }
             }
         }

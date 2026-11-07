@@ -836,47 +836,10 @@ class IslandsManagerTest extends CommonTestSetup {
         islandsManager.removePlayersFromIsland(localIsland);
     }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#updateIsland(Island)}.
-     */
-    @Test
-    void testSave() {
-    }
 
-    /**
-     * Test method for .
-     */
-    @Test
-    void testSetIslandName() {
-        // TODO: implement test
-    }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#setJoinTeam(world.bentobox.bentobox.database.objects.Island, java.util.UUID)}.
-     */
-    @Test
-    void testSetJoinTeam() {
-        // TODO: implement test
-    }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#setLast(org.bukkit.Location)}.
-     */
-    @Test
-    void testSetLast() {
-        // TODO: implement test
-    }
 
-    /**
-     * Test method for .
-     */
-    @Test
-    void testSetLeaveTeam() {
-        // TODO: implement test
-    }
 
     /**
      * Test method for

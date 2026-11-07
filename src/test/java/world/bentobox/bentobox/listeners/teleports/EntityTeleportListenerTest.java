@@ -197,7 +197,6 @@ class EntityTeleportListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnEntityEnterPortal() {
-        // TODO
     }
 
     /**
@@ -206,7 +205,6 @@ class EntityTeleportListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnEntityExitPortal() {
-        // TODO
     }
 
 }

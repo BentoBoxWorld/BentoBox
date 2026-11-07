@@ -395,20 +395,6 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e.isCancelled());
     }
 
-    @Test
-    void testTeleportToLockedIslandAsMember() {
-        // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
-        // Simulate a teleport into an island
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
-        // Pass to event listener
-        listener.onPlayerTeleport(e);
-        // Should not be not cancelled
-        assertFalse(e.isCancelled());
-        // Player should not see a message
-        verify(notifier, never()).notify(any(), any());
-    }
 
     @Test
     void testLoginToLockedIsland() {

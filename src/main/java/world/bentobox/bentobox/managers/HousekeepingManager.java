@@ -48,6 +48,8 @@ import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
  */
 public class HousekeepingManager {
 
+    private static final String LOG_PREFIX = "Housekeeping ";
+
     private static final String LEGACY_LAST_RUN_KEY = "lastRunMillis";
     private static final String LAST_AGE_RUN_KEY = "lastAgeRunMillis";
     private static final String LAST_DELETED_RUN_KEY = "lastDeletedRunMillis";
@@ -333,14 +335,14 @@ public class HousekeepingManager {
 
     private int runDeleteIfNonEmpty(PurgeScanResult scan, World overworld, String label) {
         if (scan.isEmpty()) {
-            plugin.log("Housekeeping " + label + ": nothing to purge in " + overworld.getName());
+            plugin.log(LOG_PREFIX + label + ": nothing to purge in " + overworld.getName());
             return 0;
         }
-        plugin.log("Housekeeping " + label + ": " + scan.deletableRegions().size() + " region(s) and "
+        plugin.log(LOG_PREFIX + label + ": " + scan.deletableRegions().size() + " region(s) and "
                 + scan.uniqueIslandCount() + " island(s) eligible in " + overworld.getName());
         boolean ok = plugin.getPurgeRegionsService().delete(scan);
         if (!ok) {
-            plugin.logError("Housekeeping " + label + ": purge of " + overworld.getName()
+            plugin.logError(LOG_PREFIX + label + ": purge of " + overworld.getName()
                     + " completed with errors");
             return -1;
         }

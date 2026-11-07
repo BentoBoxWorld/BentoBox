@@ -519,7 +519,6 @@ class IslandWorldManagerTest extends CommonTestSetup {
      */
     @Test
     void testIsWorldFlag() {
-        // TODO
     }
 
     /**

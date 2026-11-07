@@ -30,7 +30,7 @@ public class PanelItemBuilder {
     private int amount = 1;
 
     public PanelItemBuilder icon(@Nullable Material icon) {
-        this.icon = icon == null ? new ItemStack(Material.PAPER) : new ItemStack(icon);
+        this.icon = new ItemStack(icon == null ? Material.PAPER : icon);
         return this;
     }
 

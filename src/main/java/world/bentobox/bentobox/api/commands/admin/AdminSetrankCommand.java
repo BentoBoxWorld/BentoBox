@@ -40,6 +40,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminSetrankCommand extends CompositeCommand {
 
+    private static final String CANNOT_SET_OWNER = "commands.admin.setrank.cannot-set-owner";
+
     private static final String RANK_PREFIX = "ranks.";
 
     private int rankValue;
@@ -84,7 +86,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             return false;
         }
         if (rankValue >= RanksManager.OWNER_RANK) {
-            user.sendMessage("commands.admin.setrank.cannot-set-owner");
+            user.sendMessage(CANNOT_SET_OWNER);
             return false;
         }
         // Island
@@ -93,7 +95,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             return false;
         }
         if (targetUUID.equals(island.getOwner())) {
-            user.sendMessage("commands.admin.setrank.cannot-set-owner");
+            user.sendMessage(CANNOT_SET_OWNER);
             return false;
         }
         if (island.getRank(targetUUID) == rankValue) {
@@ -167,7 +169,7 @@ public class AdminSetrankCommand extends CompositeCommand {
                 .filter(i -> !Objects.equals(targetUUID, i.getOwner())).toList();
         if (memberOf.isEmpty()) {
             if (getIslands().hasIsland(getWorld(), targetUUID)) {
-                user.sendMessage("commands.admin.setrank.cannot-set-owner");
+                user.sendMessage(CANNOT_SET_OWNER);
             } else {
                 user.sendMessage("general.errors.player-has-no-island");
             }

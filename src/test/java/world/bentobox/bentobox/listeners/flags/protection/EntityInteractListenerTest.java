@@ -217,7 +217,7 @@ class EntityInteractListenerTest extends CommonTestSetup {
      */
     @Test
 
-    public void testOnPlayerInteractEntityNamingVillagerAllowedNoTrading() {
+    void testOnPlayerInteractEntityNamingVillagerAllowedNoTrading() {
         when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(false);
         when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(true);
         clickedEntity = mock(Villager.class);
@@ -280,7 +280,7 @@ class EntityInteractListenerTest extends CommonTestSetup {
      */
     @Test
 
-    public void testOnPlayerInteractEntityNamingWanderingTraderAllowedNoTrading() {
+    void testOnPlayerInteractEntityNamingWanderingTraderAllowedNoTrading() {
         when(island.isAllowed(any(), 
                 eq(Flags.TRADING))).thenReturn(false);
         when(island.isAllowed(any(User.class), 
@@ -299,7 +299,7 @@ class EntityInteractListenerTest extends CommonTestSetup {
      */
     @Test
 
-    public void testOnPlayerInteractEntityNamingWanderingTraderAllowedTradingNoNaming() {
+    void testOnPlayerInteractEntityNamingWanderingTraderAllowedTradingNoNaming() {
         when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(true);
         when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
         clickedEntity = mock(WanderingTrader.class);

@@ -75,7 +75,7 @@ public class Island implements DataObject, MetaDataAble {
      * This is used by the settings panel to batch all flag changes into a single
      * save when the panel is closed.
      */
-    private transient int deferSaveCount = 0;
+    private int deferSaveCount = 0;
 
     /** True if this island is deleted and pending deletion from the database
      * @deprecated
@@ -92,7 +92,7 @@ public class Island implements DataObject, MetaDataAble {
     @NonNull
     private String uniqueId = UUID.randomUUID().toString();
 
-    //// Island ////
+    // ---- Island ----
     // The center of the island space
     @Expose
     private Location center;
@@ -148,7 +148,7 @@ public class Island implements DataObject, MetaDataAble {
     @Expose
     private long updatedDate;
 
-    //// Team ////
+    // ---- Team ----
 
     /**
      * Owner of the island. There can only be one per island. If it is {@code null},
@@ -177,17 +177,17 @@ public class Island implements DataObject, MetaDataAble {
     @Expose
     private Map<Integer, Integer> maxMembers;
 
-    //// State ////
+    // ---- State ----
     @Expose
     private boolean spawn = false;
     @Expose
     private boolean purgeProtected = false;
 
-    //// Protection flags ////
+    // ---- Protection flags ----
     @Expose
     private Map<String, Integer> flags = new HashMap<>();
 
-    //// Island History ////
+    // ---- Island History ----
 
     @Adapter(LogEntryListAdapter.class)
     @Expose

@@ -86,6 +86,18 @@ import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
  * @author Poslovitch
  */
 public class Util {
+
+    private static final String RESET = "reset";
+
+    private static final String ITALIC = "italic";
+
+    private static final String UNDERLINED = "underlined";
+
+    private static final String STRIKETHROUGH = "strikethrough";
+
+    private static final String OBFUSCATED = "obfuscated";
+
+    private static final String COLOR_HEX_OPEN = "<color:#";
     /**
      * The section sign character used for legacy color codes, replacing ChatColor.COLOR_CHAR.
      */
@@ -151,12 +163,12 @@ public class Util {
             java.util.Map.entry('d', "light_purple"),
             java.util.Map.entry('e', "yellow"),
             java.util.Map.entry('f', "white"),
-            java.util.Map.entry('k', "obfuscated"),
+            java.util.Map.entry('k', OBFUSCATED),
             java.util.Map.entry('l', "bold"),
-            java.util.Map.entry('m', "strikethrough"),
-            java.util.Map.entry('n', "underlined"),
-            java.util.Map.entry('o', "italic"),
-            java.util.Map.entry('r', "reset")
+            java.util.Map.entry('m', STRIKETHROUGH),
+            java.util.Map.entry('n', UNDERLINED),
+            java.util.Map.entry('o', ITALIC),
+            java.util.Map.entry('r', RESET)
     );
 
     /**
@@ -208,7 +220,7 @@ public class Util {
         long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
         long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
         int y = plugin.getIWM().getIslandHeight(location.getWorld());
-        return new Location(location.getWorld(), x, y, z);
+        return new Location(location.getWorld(), (double) x, y, (double) z);
     }
 
     /**
@@ -1113,7 +1125,7 @@ public class Util {
                 // Expand 3-digit to 6-digit
                 hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
             }
-            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+            hexMatcher.appendReplacement(sb, COLOR_HEX_OPEN + hex + ">");
         }
         hexMatcher.appendTail(sb);
         text = sb.toString();
@@ -1141,11 +1153,11 @@ public class Util {
                             || Character.isWhitespace(text.charAt(i - 1));
                     i += 2;
                     // &r is a format terminator; any following space is always intentional.
-                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
+                    if (!RESET.equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
                     justConsumedCode = true;
-                    if ("reset".equals(mmTag)) {
+                    if (RESET.equals(mmTag)) {
                         // Close all open tags
                         for (int j = openTags.size() - 1; j >= 0; j--) {
                             result.append("</").append(openTags.get(j)).append(">");
@@ -1154,9 +1166,9 @@ public class Util {
                     } else {
                         // Color codes reset previous colors but not decorations
                         // Decorations (bold, italic, etc.) are additive until reset
-                        boolean isDecoration = mmTag.equals("bold") || mmTag.equals("italic")
-                                || mmTag.equals("underlined") || mmTag.equals("strikethrough")
-                                || mmTag.equals("obfuscated");
+                        boolean isDecoration = mmTag.equals("bold") || mmTag.equals(ITALIC)
+                                || mmTag.equals(UNDERLINED) || mmTag.equals(STRIKETHROUGH)
+                                || mmTag.equals(OBFUSCATED);
                         if (!isDecoration) {
                             // Close previous color tags (not decorations).
                             // To maintain proper MiniMessage nesting, close any decoration
@@ -1164,8 +1176,8 @@ public class Util {
                             List<String> decorationsToReopen = new ArrayList<>();
                             for (int j = openTags.size() - 1; j >= 0; j--) {
                                 String tag = openTags.get(j);
-                                if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
-                                        || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                                if (tag.equals("bold") || tag.equals(ITALIC) || tag.equals(UNDERLINED)
+                                        || tag.equals(STRIKETHROUGH) || tag.equals(OBFUSCATED)) {
                                     // Close decoration temporarily to maintain nesting
                                     result.append("</").append(tag).append(">");
                                     decorationsToReopen.addFirst(tag);
@@ -1189,7 +1201,7 @@ public class Util {
                 }
             }
             // Handle <color:#RRGGBB> that we already inserted
-            if (text.charAt(i) == '<' && text.substring(i).startsWith("<color:#")) {
+            if (text.charAt(i) == '<' && text.startsWith(COLOR_HEX_OPEN, i)) {
                 int end = text.indexOf('>', i);
                 if (end != -1) {
                     // Same boundary check as named &X codes — hex was originally &#RRGGBB
@@ -1201,8 +1213,8 @@ public class Util {
                     List<String> decorationsToReopen = new ArrayList<>();
                     for (int j = openTags.size() - 1; j >= 0; j--) {
                         String tag = openTags.get(j);
-                        if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
-                                || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                        if (tag.equals("bold") || tag.equals(ITALIC) || tag.equals(UNDERLINED)
+                                || tag.equals(STRIKETHROUGH) || tag.equals(OBFUSCATED)) {
                             // Close decoration temporarily to maintain nesting
                             result.append("</").append(tag).append(">");
                             decorationsToReopen.addFirst(tag);
@@ -1271,7 +1283,7 @@ public class Util {
             if (hex.length() == 3) {
                 hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
             }
-            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+            hexMatcher.appendReplacement(sb, COLOR_HEX_OPEN + hex + ">");
         }
         hexMatcher.appendTail(sb);
         text = sb.toString();
@@ -1291,7 +1303,7 @@ public class Util {
                     i += 2;
                     // Legacy locale hack — only strip at a boundary, and never after &r.
                     // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
-                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
+                    if (!RESET.equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
                     justConsumedCode = true;

@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Collections;
 import java.util.Date;
@@ -324,8 +325,7 @@ class UtilTest extends CommonTestSetup {
         User user = mock(User.class);
         when(user.getName()).thenReturn("TestPlayer");
 
-        // Should not throw
-        Util.runCommands(user, List.of(), "test");
+        assertDoesNotThrow(() -> Util.runCommands(user, List.of(), "test"));
     }
 
     @Test

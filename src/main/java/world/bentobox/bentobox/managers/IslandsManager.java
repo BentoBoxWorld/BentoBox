@@ -39,8 +39,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.github.puregero.multilib.MultiLib;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -53,7 +51,6 @@ import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.logs.LogEntry.LogType;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
@@ -375,21 +372,6 @@ public class IslandsManager {
         return false;
     }
 
-    private Gson getGson() {
-
-        // Build the Gson
-
-        // excludeFieldsWithoutExposeAnnotation - this means that every field to be stored should use @Expose
-        // enableComplexMapKeySerialization - forces GSON to use TypeAdapters even for Map keys
-        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-                .enableComplexMapKeySerialization().setPrettyPrinting();
-        // Register adapter factory
-        builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(plugin));
-        // Allow characters like < or > without escaping them
-        builder.disableHtmlEscaping();
-
-        return builder.create();
-    }
 
     /**
      * Get the number of islands made on this server. Used by stats.
@@ -1415,9 +1397,7 @@ public class IslandsManager {
                 plugin.logWarning("Null island when loading...");
                 continue;
             }
-            if (island.isDeleted()) {
-                // TODO delete from database
-            } else {
+            if (!island.isDeleted()) {
                 loadIsland(island);
             }
 
@@ -1484,7 +1464,7 @@ public class IslandsManager {
                     + plugin.getIWM().getIslandStartX(world);
             z = Math.round((double) z / distance) * distance + plugin.getIWM().getIslandZOffset(world)
                     + plugin.getIWM().getIslandStartZ(world);
-            island.setCenter(new Location(world, x, island.getCenter().getBlockY(), z));
+            island.setCenter(new Location(world, (double) x, island.getCenter().getBlockY(), (double) z));
             return true;
         }
         return false;

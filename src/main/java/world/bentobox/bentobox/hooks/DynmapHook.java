@@ -38,6 +38,8 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class DynmapHook extends MapHook implements Listener {
 
+    private static final String AREA_SUFFIX = "_area";
+
     private final BentoBox plugin;
     private MarkerAPI markerAPI;
     /**
@@ -113,7 +115,7 @@ public class DynmapHook extends MapHook implements Listener {
         if (existingMarker != null) {
             existingMarker.deleteMarker();
         }
-        AreaMarker existingArea = markerSet.findAreaMarker(id + "_area");
+        AreaMarker existingArea = markerSet.findAreaMarker(id + AREA_SUFFIX);
         if (existingArea != null) {
             existingArea.deleteMarker();
         }
@@ -129,7 +131,7 @@ public class DynmapHook extends MapHook implements Listener {
                     island.getMaxProtectedX(), island.getMinProtectedX() };
             double[] zCorners = { island.getMinProtectedZ(), island.getMinProtectedZ(),
                     island.getMaxProtectedZ(), island.getMaxProtectedZ() };
-            AreaMarker area = markerSet.createAreaMarker(id + "_area", label, false, worldName,
+            AreaMarker area = markerSet.createAreaMarker(id + AREA_SUFFIX, label, false, worldName,
                     xCorners, zCorners, true);
             if (area != null) {
                 area.setRangeY(w.getMaxHeight(), w.getMinHeight());
@@ -170,7 +172,7 @@ public class DynmapHook extends MapHook implements Listener {
             if (marker != null) {
                 marker.deleteMarker();
             }
-            AreaMarker area = markerSet.findAreaMarker(islandUniqueId + "_area");
+            AreaMarker area = markerSet.findAreaMarker(islandUniqueId + AREA_SUFFIX);
             if (area != null) {
                 area.deleteMarker();
             }

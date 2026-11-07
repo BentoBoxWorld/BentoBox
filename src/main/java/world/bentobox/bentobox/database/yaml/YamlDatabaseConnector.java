@@ -59,7 +59,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 config.load(yamlFile);
             } catch (Exception e) {
                 /*
-                 * TODO: Temporary fix for removing UUID tags. Remove in a few versions
+                 * Legacy fix: removes UUID tags left by old versions
                  */
                 if (e.getMessage().contains("!!java.util.UUID")) {
                     removeStringFromFile(yamlFile);

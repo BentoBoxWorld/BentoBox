@@ -231,7 +231,6 @@ class IslandResetCommandTest extends CommonTestSetup {
 
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
-        // TODO Verify that panel was shown
         // Verify event (13 * 2)
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging

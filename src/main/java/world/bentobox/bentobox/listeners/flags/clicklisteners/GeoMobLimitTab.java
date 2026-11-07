@@ -164,7 +164,8 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(LangUtilsHook.getEntityName(c, user));
         pib.clickHandler(this);
-        if (type == EntityLimitTabType.MOB_LIMIT) {
+        switch (type) {
+        case MOB_LIMIT -> {
             if (!BentoBox.getInstance().getIWM().getMobLimitSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.can"));
@@ -172,7 +173,8 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 pib.icon(Material.RED_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.cannot"));
             }
-        } else if (type == EntityLimitTabType.MOB_ALLOW) {
+        }
+        case MOB_ALLOW -> {
             if (BentoBox.getInstance().getIWM().getMobAllowSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.ALLOW_MOBS.always"));
@@ -180,7 +182,8 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 pib.icon(Material.RED_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.ALLOW_MOBS.flags"));
             }
-        } else {
+        }
+        default -> {
             if (BentoBox.getInstance().getIWM().getGeoLimitSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
@@ -188,6 +191,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 pib.icon(Material.RED_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled"));
             }
+        }
         }
         return pib.build();
     }

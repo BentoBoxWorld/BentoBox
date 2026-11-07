@@ -33,7 +33,7 @@ class BStatsTest {
     private BentoBox plugin;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         plugin = mock(BentoBox.class);
         bStats = new BStats(plugin);
     }

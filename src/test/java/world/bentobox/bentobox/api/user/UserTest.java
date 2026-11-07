@@ -934,22 +934,6 @@ class UserTest extends CommonTestSetup {
 
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
-     */
-    @Test
-    void testSpawnParticleParticleObjectDoubleDoubleDoubleRedstone() {
-        User.clearUsers();
-        Location loc = mock(Location.class);
-        when(mockPlayer.getLocation()).thenReturn(loc);
-        when(loc.toVector()).thenReturn(new Vector(1,1,1));
-
-        User p = User.getInstance(mockPlayer);
-        DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
-        verify(mockPlayer).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
-
-    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, double, double, double)}.

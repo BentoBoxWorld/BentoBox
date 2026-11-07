@@ -852,11 +852,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
     void testIsBlueprintsLoadedTrueAfterLoaderThrows() {
         // Make the loader fail hard: a file where the blueprints folder should be
         blueprintsFolder.getParentFile().mkdirs();
-        try {
-            Files.writeString(blueprintsFolder.toPath(), "not a folder");
-        } catch (IOException e) {
-            fail(e);
-        }
+        assertDoesNotThrow(() -> Files.writeString(blueprintsFolder.toPath(), "not a folder"));
         when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
             Runnable r = inv.getArgument(1);
             // A throwing loader must not propagate and must still clear the flag

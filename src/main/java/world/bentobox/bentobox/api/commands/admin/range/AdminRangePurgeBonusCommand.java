@@ -36,6 +36,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminRangePurgeBonusCommand extends CompositeCommand {
 
+    private static final String CONFIRM = "confirm";
+
     /** True while an async scan is running, to prevent overlapping runs. */
     volatile boolean inPurge;
     /** True once a scan has found islands and is awaiting a {@code confirm}. */
@@ -70,7 +72,7 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
         }
         // Expect "<id>" or "<id> confirm"
         if (args.isEmpty() || args.size() > 2
-                || (args.size() == 2 && !args.get(1).equalsIgnoreCase("confirm"))) {
+                || (args.size() == 2 && !args.get(1).equalsIgnoreCase(CONFIRM))) {
             showHelp(this, user);
             return false;
         }
@@ -80,7 +82,7 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         String id = args.get(0);
-        boolean confirm = args.size() == 2 && args.get(1).equalsIgnoreCase("confirm");
+        boolean confirm = args.size() == 2 && args.get(1).equalsIgnoreCase(CONFIRM);
         // Apply a pending purge if this is the matching confirmation
         if (confirm && toBeConfirmed && id.equals(pendingId)) {
             List<String> ids = pendingIslandIds;
@@ -177,7 +179,7 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
                     .toList();
             return Optional.of(Util.tabLimit(new ArrayList<>(ids), lastArg));
         } else if (args.size() == 2) {
-            return Optional.of(Util.tabLimit(new ArrayList<>(List.of("confirm")), args.getLast()));
+            return Optional.of(Util.tabLimit(new ArrayList<>(List.of(CONFIRM)), args.getLast()));
         }
         return Optional.empty();
     }

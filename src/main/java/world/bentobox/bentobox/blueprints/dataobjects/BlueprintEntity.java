@@ -45,6 +45,7 @@ import org.bukkit.util.Vector;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author tastybento
@@ -104,14 +105,18 @@ public class BlueprintEntity {
     @Expose
     private Integer level;
     @Expose
-    Double MMLevel;
+    @SerializedName("MMLevel")
+    Double mmLevel;
     @Expose
-    Float MMpower;
+    @SerializedName("MMpower")
+    Float mmPower;
     @Expose
-    String MMStance;
+    @SerializedName("MMStance")
+    String mmStance;
     // GSON can serialize records, but the record class needs to be known in advance. So this breaks out the record entries
     @Expose
-    String MMtype;
+    @SerializedName("MMtype")
+    String mmType;
     // Npc storage
     @Expose
     private String npc;
@@ -451,10 +456,10 @@ public class BlueprintEntity {
      * @return the mythicMobsRecord
      */
     public MythicMobRecord getMythicMobsRecord() {
-        if (this.MMtype == null || this.MMLevel == null || this.MMpower == null || this.MMStance == null) {
+        if (this.mmType == null || this.mmLevel == null || this.mmPower == null || this.mmStance == null) {
             return null;
         }
-        return new MythicMobRecord(this.MMtype, this.getCustomName(), this.MMLevel, this.MMpower, this.MMStance);
+        return new MythicMobRecord(this.mmType, this.getCustomName(), this.mmLevel, this.mmPower, this.mmStance);
     }
     /**
      * @return the npc
@@ -620,10 +625,10 @@ public class BlueprintEntity {
      */
     public void setMythicMobsRecord(MythicMobRecord mmr) {
         this.setCustomName(mmr.displayName());
-        this.MMtype = mmr.type();
-        this.MMLevel = mmr.level();
-        this.MMStance = mmr.stance();
-        this.MMpower = mmr.power();
+        this.mmType = mmr.type();
+        this.mmLevel = mmr.level();
+        this.mmStance = mmr.stance();
+        this.mmPower = mmr.power();
     }
     /**
      * @param npc the citizen to set

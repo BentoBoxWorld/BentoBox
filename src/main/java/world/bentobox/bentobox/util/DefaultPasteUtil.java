@@ -276,13 +276,10 @@ public class DefaultPasteUtil {
             return true;
         }
         // MythicMobs entity
-        if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
+        return k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
                 .filter(MythicMobsHook.class::isInstance)
                 .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
-                .orElse(false)) {
-            return true;
-        }
-        return false;
+                .orElse(false);
     }
 
     /**

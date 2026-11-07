@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.awt.Color;
 import java.util.List;
@@ -158,13 +159,15 @@ class MapManagerTest extends CommonTestSetup {
         when(hooksManager.getHooks()).thenReturn(List.of());
         Location loc = mock(Location.class);
         // These should all silently do nothing
-        mapManager.createMarkerSet("test", "Test");
-        mapManager.addPointMarker("test", "id", "label", loc);
-        mapManager.removePointMarker("test", "id");
-        mapManager.addAreaMarker("test", "id", "label", mock(World.class), 0, 0, 100, 100, Color.RED, Color.BLUE, 2);
-        mapManager.removeAreaMarker("test", "id");
-        mapManager.clearMarkerSet("test");
-        mapManager.removeMarkerSet("test");
+        assertDoesNotThrow(() -> {
+            mapManager.createMarkerSet("test", "Test");
+            mapManager.addPointMarker("test", "id", "label", loc);
+            mapManager.removePointMarker("test", "id");
+            mapManager.addAreaMarker("test", "id", "label", mock(World.class), 0, 0, 100, 100, Color.RED, Color.BLUE, 2);
+            mapManager.removeAreaMarker("test", "id");
+            mapManager.clearMarkerSet("test");
+            mapManager.removeMarkerSet("test");
+        });
     }
 
     // --- Exception isolation ---

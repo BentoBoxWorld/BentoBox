@@ -381,7 +381,6 @@ public final class Flags {
 
     /**
      * This flag allows choosing which island member group can activate sculk sensors.
-     * TODO: Enums#getIfPresent is used to support 1.18
      * @since 1.21.0
      */
     public static final Flag SCULK_SENSOR = new Flag.Builder(SCULKSENSOR, Enums.getIfPresent(Material.class, SCULKSENSOR).or(Material.BARRIER)).
@@ -396,7 +395,6 @@ public final class Flags {
 
     /**
      * This flag allows choosing which island member group can activate sculk shrieker.
-     * TODO: Enums#getIfPresent is used to support 1.18
      * @since 1.21.0
      */
     public static final Flag SCULK_SHRIEKER = new Flag.Builder(SCULKSHRIEKER, Enums.getIfPresent(Material.class, SCULKSHRIEKER).or(Material.BARRIER)).

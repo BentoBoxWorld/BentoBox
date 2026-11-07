@@ -416,7 +416,7 @@ public class BlueprintManagementPanel {
 
     private PanelItem getPermissionIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
         return new PanelItemBuilder().icon(Material.PAINTING).name(t("permission"))
-                .description(bb.isRequirePermission() ? t("perm-required") : t("perm-not-required"))
+                .description(t(bb.isRequirePermission() ? "perm-required" : "perm-not-required"))
                 .description(bb.isRequirePermission() ? t("perm-format") + addon.getPermissionPrefix() + "island.create."  + bb.getUniqueId() : "")
                 .clickHandler((panel, u, clickType, slot) -> {
                     // Toggle permission

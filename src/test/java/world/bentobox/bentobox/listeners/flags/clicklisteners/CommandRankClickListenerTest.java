@@ -221,7 +221,7 @@ class CommandRankClickListenerTest extends RanksManagerTestSetup {
         when(plugin.getDataFolder()).thenReturn(Path.of("src", "main", "resources").toFile());
         try (MockedStatic<ItemParser> itemParser = Mockito.mockStatic(ItemParser.class)) {
             itemParser.when(() -> ItemParser.parse(anyString()))
-                    .thenAnswer(inv -> new ItemStack(Material.valueOf(inv.getArgument(0, String.class))));
+                    .thenAnswer(invocation -> new ItemStack(Material.valueOf(invocation.getArgument(0, String.class))));
             assertTrue(crcl.onClick(panel, user, ClickType.LEFT, 0));
         } finally {
             TemplateReader.clearPanels();

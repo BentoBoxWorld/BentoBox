@@ -378,5 +378,4 @@ class EnterExitListenerTest extends CommonTestSetup {
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
 
-    // TODO add tests to make sure the enter/exit messages work properly when on an island the player is part of.
 }

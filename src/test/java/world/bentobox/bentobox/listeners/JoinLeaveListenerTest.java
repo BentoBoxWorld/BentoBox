@@ -302,15 +302,15 @@ class JoinLeaveListenerTest extends RanksManagerTestSetup {
     @Test
     void testOnPlayerJoinGameModeDialogFallsBack() {
         when(settings.isDialogGameModeSelection()).thenReturn(true);
-        AddonDescription desc = mock(AddonDescription.class);
-        when(desc.getName()).thenReturn("BSkyBlock");
+        AddonDescription bskyDesc = mock(AddonDescription.class);
+        when(bskyDesc.getName()).thenReturn("BSkyBlock");
         CompositeCommand cmd = mock(CompositeCommand.class);
         GameModeAddon gm1 = mock(GameModeAddon.class);
         GameModeAddon gm2 = mock(GameModeAddon.class);
         when(gm1.getPlayerCommand()).thenReturn(Optional.of(cmd));
         when(gm2.getPlayerCommand()).thenReturn(Optional.of(cmd));
-        when(gm1.getDescription()).thenReturn(desc);
-        when(gm2.getDescription()).thenReturn(desc);
+        when(gm1.getDescription()).thenReturn(bskyDesc);
+        when(gm2.getDescription()).thenReturn(bskyDesc);
         when(am.getGameModeAddons()).thenReturn(List.of(gm1, gm2));
 
         jll.onPlayerJoin(new PlayerJoinEvent(mockPlayer, component));

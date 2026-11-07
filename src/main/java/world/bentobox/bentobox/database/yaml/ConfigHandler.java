@@ -18,10 +18,10 @@ import world.bentobox.bentobox.database.DatabaseConnector;
 public class ConfigHandler<T> extends YamlDatabaseHandler<T> {
 
     public ConfigHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector);
         if (!ConfigObject.class.isAssignableFrom(type)) {
             throw new java.lang.ClassFormatError("Config classes must implement ConfigObject");
         }
+        super(plugin, type, databaseConnector);
     }
 
     public void saveSettings(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -35,8 +35,7 @@ public class ConfigHandler<T> extends YamlDatabaseHandler<T> {
 
     public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
 
-        // TODO: compare the loaded with the database copy
-
+        // dbConfig is accepted for API compatibility; the loaded copy is returned as-is
         return loadObject(uniqueId);
     }
 

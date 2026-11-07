@@ -292,7 +292,7 @@ public class ItemParser {
      * @return Potion with given properties.
      * @deprecated due to the spigot potion changes.
      */
-    @Deprecated
+    @Deprecated(forRemoval = false)
     private static ItemStack parsePotionOld(String[] part) {
         if (part.length != 6) {
             throw new MissingFormatArgumentException("Potion parsing requires 6 parts.");
@@ -320,7 +320,7 @@ public class ItemParser {
         }
         PotionMeta potionMeta = (PotionMeta)(result.getItemMeta());
         PotionType type = PotionType.valueOf(part[1].toUpperCase(java.util.Locale.ENGLISH));
-        // TODO: Set extended and upgraded settings.
+        // Extended and upgraded potion settings are not applied here.
         potionMeta.setBasePotionType(type);
         result.setItemMeta(potionMeta);
         result.setAmount(clampAmount(Integer.parseInt(part[5]), part[0]));
@@ -489,10 +489,8 @@ public class ItemParser {
      */
     private static URL getSkinURLFromBase64(String base64) {
         /*
-         * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
-         * "profileName": "USERNAME", "textures": { "SKIN": { "url":
-         * "https://textures.minecraft.net/texture/TEXTURE_ID" }, "CAPE": { "url":
-         * "https://textures.minecraft.net/texture/TEXTURE_ID" } } }
+         * The Base64 string decodes to JSON with timestamp, profileId, profileName and a textures
+         * object whose SKIN (and optionally CAPE) entries carry the texture URL.
          */
         try {
             String decoded = new String(Base64.getDecoder().decode(base64));

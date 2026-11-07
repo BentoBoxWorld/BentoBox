@@ -782,8 +782,8 @@ class PlayersManagerTest extends CommonTestSetup {
      * cancel that event before returning.
      */
     private <T extends org.bukkit.event.Event> void cancelEventOfType(Class<T> type) {
-        doAnswer(inv -> {
-            Object event = inv.getArgument(0);
+        doAnswer(invocation -> {
+            Object event = invocation.getArgument(0);
             if (type.isInstance(event)) {
                 ((world.bentobox.bentobox.api.events.player.PlayerBaseEvent) event).setCancelled(true);
             }

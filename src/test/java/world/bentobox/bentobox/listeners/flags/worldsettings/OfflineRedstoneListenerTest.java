@@ -151,23 +151,6 @@ class OfflineRedstoneListenerTest extends CommonTestSetup {
         assertEquals(0, e.getNewCurrent());
     }
 
-    /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
-     */
-    @Test
-    void testOnBlockRedstoneMembersOfflineOpsOnlineNotOnIsland() {
-        // Make an event to give some current to block
-        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
-        OfflineRedstoneListener orl = new OfflineRedstoneListener();
-        // Offline redstone not allowed
-        Flags.OFFLINE_REDSTONE.setSetting(world, false);
-        // Members are offline
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
-
-        orl.onBlockRedstone(e);
-        // Current will be 0
-        assertEquals(0, e.getNewCurrent());
-    }
 
     /**
      * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.

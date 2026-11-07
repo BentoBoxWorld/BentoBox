@@ -276,9 +276,6 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         hookRegistrar.registerLateHooks();
 
-        // TODO: re-enable after implementation
-        // TODO: re-enable after rework
-
         webManager = new WebManager(this);
 
         // Housekeeping: auto-purge of unused region files (default OFF)

@@ -104,10 +104,14 @@ class AddonTest extends CommonTestSetup {
 
     class TestClass extends Addon {
         @Override
-        public void onEnable() { }
+        public void onEnable() {
+            // No-op for test
+        }
 
         @Override
-        public void onDisable() { }
+        public void onDisable() {
+            // No-op for test
+        }
     }
 
     @Test
@@ -250,8 +254,8 @@ class AddonTest extends CommonTestSetup {
 
     @Test
     void testGetAddonByName() {
-        AddonsManager am = new AddonsManager(plugin);
-        when(plugin.getAddonsManager()).thenReturn(am);
+        AddonsManager localAm = new AddonsManager(plugin);
+        when(plugin.getAddonsManager()).thenReturn(localAm);
         assertEquals(Optional.empty(),test.getAddonByName("addon"));
     }
 
@@ -264,7 +268,7 @@ class AddonTest extends CommonTestSetup {
         // Open archive file
         try (FileOutputStream stream = new FileOutputStream(archiveFile)) {
             try (JarOutputStream out = new JarOutputStream(stream, new Manifest())) {
-                for (File j: tobeJaredList) addFile(buffer, stream, out, j);
+                for (File j: tobeJaredList) addFile(buffer, out, j);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -272,7 +276,7 @@ class AddonTest extends CommonTestSetup {
         }
     }
 
-    private void addFile(byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared) throws IOException {
+    private void addFile(byte[] buffer, JarOutputStream out, File tobeJared) throws IOException {
         if (tobeJared == null || !tobeJared.exists() || tobeJared.isDirectory())
             return;
         // Add archive entry

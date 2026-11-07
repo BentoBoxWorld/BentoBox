@@ -42,8 +42,8 @@ public class TemplatedPanel extends Panel {
         this.panelTemplate = builder.getPanelTemplate();
         // Init type creators
         this.typeCreators = new HashMap<>(builder.getObjectCreatorMap());
-        this.typeIndex = new HashMap<>(builder.getObjectCreatorMap().size());
-        this.typeSlotMap = new HashMap<>(builder.getObjectCreatorMap().size());
+        this.typeIndex = HashMap.newHashMap(builder.getObjectCreatorMap().size());
+        this.typeSlotMap = HashMap.newHashMap(builder.getObjectCreatorMap().size());
 
         this.parameters = builder.getParameters().toArray(new String[0]);
 
@@ -248,7 +248,7 @@ public class TemplatedPanel extends Panel {
      * @return The map that links index of button to panel item.
      */
     private Map<Integer, PanelItem> createItemMap(PanelItem[][] itemArray) {
-        Map<Integer, PanelItem> itemMap = new HashMap<>(itemArray.length * itemArray[0].length);
+        Map<Integer, PanelItem> itemMap = HashMap.newHashMap(itemArray.length * itemArray[0].length);
         int correctIndex = 0;
 
         for (int i = 0; i < itemArray.length; i++) {

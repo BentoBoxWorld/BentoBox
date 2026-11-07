@@ -277,8 +277,8 @@ public class IslandWorldManager {
      */
     public int getIslandHeight(@NonNull World world) {
         if (gameModes.containsKey(world) && world.getMaxHeight() > 0) {
-            return Math.min(world.getMaxHeight() - 1,
-                    Math.max(world.getMinHeight(), gameModes.get(world).getWorldSettings().getIslandHeight()));
+            return Math.clamp(gameModes.get(world).getWorldSettings().getIslandHeight(), world.getMinHeight(),
+                    world.getMaxHeight() - 1);
         }
         return 0;
     }

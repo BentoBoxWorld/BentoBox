@@ -55,8 +55,7 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-
-
+        // Not needed for tests
     }
 
     @Override

@@ -274,7 +274,9 @@ class TestBentoBox extends CommonTestSetup {
         }
 
         @Override
-        public void setup() {}
+        public void setup() {
+            // No setup needed for this test command
+        }
 
         @Override
         public boolean execute(User user, String label, List<String> args) {
@@ -297,7 +299,9 @@ class TestBentoBox extends CommonTestSetup {
         }
 
         @Override
-        public void setup() {}
+        public void setup() {
+            // No setup needed for this test command
+        }
 
         @Override
         public boolean execute(User user, String label, List<String> args) {

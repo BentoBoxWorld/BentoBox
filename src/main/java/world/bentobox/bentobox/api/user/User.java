@@ -68,6 +68,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class User implements MetaDataAble {
 
+    private static final String FRIENDLY_NAME = "[friendly_name]";
+
     private static final Map<UUID, User> users = new HashMap<>();
 
     /**
@@ -687,10 +689,10 @@ public class User implements MetaDataAble {
         if (translation.contains("[gamemode]") && addon != null && addon.getDescription() != null) {
             translation = translation.replace("[gamemode]", addon.getDescription().getName());
         }
-        if (player != null && translation.contains("[friendly_name]")) {
+        if (player != null && translation.contains(FRIENDLY_NAME)) {
             // Replace the [friendly_name] text variable
-            translation = translation.replace("[friendly_name]",
-                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+            translation = translation.replace(FRIENDLY_NAME,
+                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : FRIENDLY_NAME);
         }
         return translation;
     }
@@ -814,8 +816,8 @@ public class User implements MetaDataAble {
         if (ACTIONBAR_PATTERN.matcher(remaining).find()) {
             String text = ACTIONBAR_PATTERN.matcher(remaining).replaceFirst("");
             Component component = parseToComponent(text);
-            if (sender instanceof Player player) {
-                player.sendActionBar(component);
+            if (sender instanceof Player p) {
+                p.sendActionBar(component);
             } else {
                 sender.sendMessage(component);
             }
@@ -832,8 +834,8 @@ public class User implements MetaDataAble {
             } else {
                 titleComponent = parseToComponent(text);
             }
-            if (sender instanceof Player player) {
-                player.showTitle(Title.title(titleComponent, subtitleComponent));
+            if (sender instanceof Player p) {
+                p.showTitle(Title.title(titleComponent, subtitleComponent));
             } else {
                 sender.sendMessage(titleComponent);
             }
@@ -909,8 +911,8 @@ public class User implements MetaDataAble {
             String soundName = matcher.group(1).toLowerCase(Locale.ENGLISH).replace('_', '.');
             float volume = parseFloatOrDefault(matcher.group(2), 1.0f);
             float pitch = parseFloatOrDefault(matcher.group(3), 1.0f);
-            if (sender instanceof Player player) {
-                player.playSound(player.getLocation(), soundName, volume, pitch);
+            if (sender instanceof Player p) {
+                p.playSound(p.getLocation(), soundName, volume, pitch);
             }
             matcher.appendReplacement(sb, "");
         }

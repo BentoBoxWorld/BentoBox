@@ -629,7 +629,7 @@ public class BStats {
             return false;
         }
         // At least two segments, and none of them empty
-        return reason.indexOf('.') > 0 && !reason.endsWith(".") && !reason.contains("..");
+        return reason.contains(".") && !reason.startsWith(".") && !reason.endsWith(".") && !reason.contains("..");
     }
 
     /**

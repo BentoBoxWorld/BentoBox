@@ -322,14 +322,14 @@ class ChunkPregenManagerTest extends CommonTestSetup {
     @Test
     void testPredictNextLocations_returnsCorrectCount() {
         Location start = new Location(world, 0, 64, 0);
-        List<Location> result = ChunkPregenManager.predictNextLocations(world, start, 5, 200);
+        List<Location> result = ChunkPregenManager.predictNextLocations(start, 5, 200);
         assertEquals(5, result.size());
     }
 
     @Test
     void testPredictNextLocations_doesNotMutateStart() {
         Location start = new Location(world, 0, 64, 0);
-        ChunkPregenManager.predictNextLocations(world, start, 3, 200);
+        ChunkPregenManager.predictNextLocations(start, 3, 200);
         // Original start should not be modified
         assertEquals(0, start.getBlockX());
         assertEquals(0, start.getBlockZ());
@@ -340,7 +340,7 @@ class ChunkPregenManagerTest extends CommonTestSetup {
         // From (0,0) the spiral first moves in the +x direction (x >= z and x <= 0 edge → z+d)
         // Actually: x=0, z=0 → x==z and x<=0 → setZ(z+d)
         Location start = new Location(world, 0, 64, 0);
-        List<Location> result = ChunkPregenManager.predictNextLocations(world, start, 1, 100);
+        List<Location> result = ChunkPregenManager.predictNextLocations(start, 1, 100);
         Location first = result.get(0);
         // x stays 0, z moves to +100
         assertEquals(0, first.getBlockX());
@@ -350,7 +350,7 @@ class ChunkPregenManagerTest extends CommonTestSetup {
     @Test
     void testPredictNextLocations_emptyWhenCountZero() {
         Location start = new Location(world, 0, 64, 0);
-        List<Location> result = ChunkPregenManager.predictNextLocations(world, start, 0, 200);
+        List<Location> result = ChunkPregenManager.predictNextLocations(start, 0, 200);
         assertEquals(0, result.size());
     }
 

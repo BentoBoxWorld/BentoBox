@@ -16,6 +16,7 @@ import world.bentobox.bentobox.web.catalog.CatalogEntry;
 import world.bentobox.bentobox.web.credits.Contributor;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -145,8 +146,8 @@ class WebManagerTest extends CommonTestSetup {
 
     @Test
     void testRequestGitHubDataNoGitHub() {
-        // Should not throw when gitHub is not present
-        wm.requestGitHubData();
+        // Must not throw when gitHub is not present
+        assertDoesNotThrow(() -> wm.requestGitHubData());
     }
 
     // ---- Catalog refresh is a snapshot swap, not an in-place clear/refill ----

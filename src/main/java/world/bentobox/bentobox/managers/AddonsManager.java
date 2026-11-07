@@ -739,7 +739,7 @@ public class AddonsManager {
         addons.remove(addon);
     }
 
-    /*
+    /**
      * Get an unmodifiable list of addon classes that are of type {@link DataObject}
      * but not {@link ConfigObject}. Configs are not transitioned to database.
      * Used in database transition.

@@ -369,10 +369,8 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @Override
     public void removeAreaMarker(@NonNull String markerSetId, @NonNull String markerId) {
-        MarkerSet markerSet = markerSets.get(markerSetId);
-        if (markerSet != null) {
-            markerSet.remove(markerId);
-        }
+        // Area and point markers share one marker set in BlueMap
+        removePointMarker(markerSetId, markerId);
     }
 
     private static de.bluecolored.bluemap.api.math.Color toBlueMapColor(java.awt.Color c) {

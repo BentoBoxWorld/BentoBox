@@ -171,7 +171,7 @@ public class PanelItem {
 
     /**
      * This checks the stack trace for @Test to determine if a test is calling the code and skips.
-     * TODO: when we find a way to mock Enchantment, remove this.
+     * Needed because Enchantment cannot be mocked in unit tests.
      * @return true if it's a test.
      */
     private boolean inTest() {

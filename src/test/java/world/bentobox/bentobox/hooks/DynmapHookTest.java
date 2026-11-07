@@ -16,6 +16,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.awt.Color;
 import java.util.Collections;
@@ -331,8 +332,7 @@ class DynmapHookTest extends CommonTestSetup {
         when(iwm.getAddon(overWorld)).thenReturn(Optional.empty());
         IslandNewIslandEvent event = mock(IslandNewIslandEvent.class);
         when(event.getIsland()).thenReturn(island);
-        // Should not throw
-        hook.onNewIsland(event);
+        assertDoesNotThrow(() -> hook.onNewIsland(event));
     }
 
     @Test
@@ -358,8 +358,7 @@ class DynmapHookTest extends CommonTestSetup {
 
         IslandDeleteEvent event = mock(IslandDeleteEvent.class);
         when(event.getIsland()).thenReturn(island);
-        // Should not throw
-        hook.onIslandDelete(event);
+        assertDoesNotThrow(() -> hook.onIslandDelete(event));
     }
 
     @Test

@@ -308,9 +308,7 @@ public class HeadGetter {
             JsonObject jsonObject = GSON.fromJson(
                     HeadGetter.getURLContent("https://api.mojang.com/users/profiles/minecraft/" + name),
                     JsonObject.class);
-            /*
-             * Returned Json Object: { name: USER_NAME, id: USER_ID }
-             */
+            // The returned JSON object carries the player name and id
 
             // Mojang returns ID without `-`. So it is necessary to insert them back.
             // Well technically it is not necessary and can use just a string instead of
@@ -344,10 +342,7 @@ public class HeadGetter {
                             "https://sessionserver.mojang.com/session/minecraft/profile/" + userId.toString()),
                     JsonObject.class);
 
-            /*
-             * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
-             * "textures", value: ENCODED_BASE64_TEXTURE } ] }
-             */
+            // The returned JSON object carries id, name and a properties list whose "textures" entry holds the Base64 texture
 
             String decodedTexture = "";
 
@@ -388,10 +383,7 @@ public class HeadGetter {
                     "https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
                     JsonObject.class);
 
-            /*
-             * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
-             * "textures", value: ENCODED_BASE64_TEXTURE } ] }
-             */
+            // The returned JSON object carries id, name and a properties list whose "textures" entry holds the Base64 texture
 
             String decodedTexture = "";
 
@@ -441,10 +433,8 @@ public class HeadGetter {
 
     private static URL getSkinURLFromBase64(String base64) {
         /*
-         * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
-         * "profileName": "USERNAME", "textures": { "SKIN": { "url":
-         * "https://textures.minecraft.net/texture/TEXTURE_ID" }, "CAPE": { "url":
-         * "https://textures.minecraft.net/texture/TEXTURE_ID" } } }
+         * The Base64 string decodes to JSON with timestamp, profileId, profileName and a textures
+         * object whose SKIN (and optionally CAPE) entries carry the texture URL.
          */
         try {
             String decoded = new String(Base64.getDecoder().decode(base64));

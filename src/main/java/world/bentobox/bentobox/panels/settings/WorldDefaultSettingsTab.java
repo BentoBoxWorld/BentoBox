@@ -75,9 +75,9 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
             // Replace the click handler with WorldToggleClick
             i.setClickHandler(new WorldToggleClick(f.getID()));
             // Replace the description
-            String worldSetting = f.isSetForWorld(world)
-                    ? user.getTranslation("protection.panel.flag-item.setting-active")
-                    : user.getTranslation("protection.panel.flag-item.setting-disabled");
+            String worldSetting = user.getTranslation(f.isSetForWorld(world)
+                    ? "protection.panel.flag-item.setting-active"
+                    : "protection.panel.flag-item.setting-disabled");
             i.setDescription(Arrays.asList(user.getTranslation("protection.panel.flag-item.setting-layout",
                     TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference()),
                     "[setting]", worldSetting).split("\n")));

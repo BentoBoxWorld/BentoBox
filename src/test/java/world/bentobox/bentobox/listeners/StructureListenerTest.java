@@ -58,7 +58,7 @@ class StructureListenerTest {
     private StructureListener listener;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockBukkit.mock();
         lenient().when(plugin.getSettings()).thenReturn(settings);
         // Global default disables ancient_city and trial_chambers everywhere.
@@ -74,7 +74,7 @@ class StructureListenerTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         MockBukkit.unmock();
     }
 

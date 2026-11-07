@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -637,7 +638,7 @@ class LocalesManagerTest  extends CommonTestSetup {
     void testLoadLocalesFromFileNonexistentFolder() {
         LocalesManager lm = new LocalesManager(plugin);
         // Should not throw
-        lm.loadLocalesFromFile("NonExistentAddon");
+        assertDoesNotThrow(() -> lm.loadLocalesFromFile("NonExistentAddon"));
     }
 
     // ---- getLanguages returns correct map ----
