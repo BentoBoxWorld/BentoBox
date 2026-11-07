@@ -118,7 +118,7 @@ class TNTListenerTest extends CommonTestSetup {
 
         listener.onTNTPriming(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
     @Test

@@ -21,7 +21,6 @@ import java.util.UUID;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;

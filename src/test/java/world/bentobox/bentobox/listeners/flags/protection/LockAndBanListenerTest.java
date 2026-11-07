@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -293,7 +294,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Horizontal move across a block boundary into an open island
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
         // Resolved lazily on the first player and reused for the second
-        verify(im, org.mockito.Mockito.times(1)).getProtectedIslandAt(inside);
+        verify(im, times(1)).getProtectedIslandAt(inside);
     }
 
     @Test
@@ -756,7 +757,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e2.isCancelled());
 
         // Verify notification was sent only once
-        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
+        verify(notifier, times(1)).notify(any(), anyString());
     }
 
     @Test
@@ -782,7 +783,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e2.isCancelled());
 
         // Verify notification was sent only once
-        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
+        verify(notifier, times(1)).notify(any(), anyString());
     }
 
     @Test
@@ -821,7 +822,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e3.isCancelled());
 
         // Verify notification was sent twice (once per entry attempt)
-        verify(notifier, org.mockito.Mockito.times(2)).notify(any(), anyString());
+        verify(notifier, times(2)).notify(any(), anyString());
     }
 
 }

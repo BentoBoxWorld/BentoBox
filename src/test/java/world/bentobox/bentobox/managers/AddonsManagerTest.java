@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -650,7 +649,7 @@ class AddonsManagerTest extends CommonTestSetup {
     // ---- disable with loaders ----
 
     @Test
-    void testDisableClosesLoaders() throws IOException {
+    void testDisableClosesLoaders() {
         Addon addon = mock(Addon.class);
         AddonDescription desc = new AddonDescription.Builder("main", "LoaderAddon", "1.0")
                 .authors("Author1").build();

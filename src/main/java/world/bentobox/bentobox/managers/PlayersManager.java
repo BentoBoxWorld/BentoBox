@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -180,7 +179,7 @@ public class PlayersManager {
         if (name.length() == 36 && name.contains("-")) {
             try {
                 return UUID.fromString(name);
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // Not used
             }
         }

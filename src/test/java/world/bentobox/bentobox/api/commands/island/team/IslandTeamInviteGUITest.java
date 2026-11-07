@@ -45,10 +45,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand;
-import world.bentobox.bentobox.api.commands.island.team.IslandTeamKickCommand;
-import world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand;
-import world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand;
 
 /**
  * Tests for {@link IslandTeamInviteGUI}.

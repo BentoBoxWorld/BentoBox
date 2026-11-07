@@ -693,7 +693,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    void testSaveBlueprintBundlesSavesAll() throws IOException {
+    void testSaveBlueprintBundlesSavesAll() {
         blueprintsFolder.mkdirs();
 
         BlueprintBundle bb1 = new BlueprintBundle();
@@ -744,7 +744,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
         bp.setName("other");
         manager.addBlueprint(addon, bp);
 
-        boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
+        manager.paste(addon, island, BUNDLE_NAME, null, true);
         // Should log error about no default blueprint
         verify(plugin).logError("Blueprint bundle has no normal world blueprint, using default");
     }
@@ -893,7 +893,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
             Thread t = new Thread(() -> {
                 try {
                     start.await();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException _) {
                     Thread.currentThread().interrupt();
                 }
                 r.run();

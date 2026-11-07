@@ -201,7 +201,7 @@ public class BlueprintClipboardManager {
         String toStore = gson.toJson(blueprint, Blueprint.class);
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
             fileWriter.write(toStore);
-        } catch (IOException e) {
+        } catch (IOException _) {
             plugin.logError("Could not save blueprint file: " + file.getName());
             return false;
         }

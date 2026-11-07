@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -165,7 +166,7 @@ class AddonTest extends CommonTestSetup {
         class TestListener implements Listener {}
         TestListener listener = new TestListener();
         test.registerListener(listener);
-        Mockito.verify(am).registerListener(Mockito.any(), Mockito.eq(listener));
+        verify(am).registerListener(Mockito.any(), Mockito.eq(listener));
     }
 
     @Test

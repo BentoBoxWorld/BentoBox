@@ -94,7 +94,7 @@ public class FireListener extends FlagListener {
                     checkIsland(e, e.getPlayer(), lastBlock.getLocation(), Flags.FIRE_EXTINGUISH);
                 }
             }
-        } catch (Exception ex) {
+        } catch (Exception _) {
             // To catch at block iterator exceptions that can happen in the void or at the very top of blocks
         }
     }

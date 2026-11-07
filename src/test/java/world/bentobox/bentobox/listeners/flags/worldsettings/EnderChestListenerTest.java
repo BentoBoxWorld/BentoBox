@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -123,7 +123,7 @@ class EnderChestListenerTest extends CommonTestSetup {
         BlockInteractionListener bil = new BlockInteractionListener();
         bil.onPlayerInteract(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
-        verify(notifier, Mockito.never()).notify(any(), anyString());
+        verify(notifier, never()).notify(any(), anyString());
     }
 
     @Test

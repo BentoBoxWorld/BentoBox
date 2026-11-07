@@ -760,7 +760,7 @@ class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     void testSetResetEpoch() {
         testIwm.setResetEpoch(testWorld);
-        Mockito.verify(ws).setResetEpoch(Mockito.anyLong());
+        verify(ws).setResetEpoch(Mockito.anyLong());
     }
 
     /**

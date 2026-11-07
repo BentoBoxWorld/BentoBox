@@ -227,7 +227,7 @@ public class IslandExpelCommand extends CompositeCommand {
                     .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")).map(Player::getName)
                     .toList();
 
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
+            String lastArg = args.isEmpty() ? "" : args.getLast();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

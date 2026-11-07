@@ -6,13 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doReturn;
 
 import java.beans.IntrospectionException;
 import java.io.File;
@@ -77,7 +78,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -350,10 +350,6 @@ class IslandsManagerTest extends CommonTestSetup {
         mockedDatabaseSetup.closeOnDemand();
     }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
     // Removed testIsSafeLocationSafe — MockBukkit does not return correct BlockData for isSafeLocation
 
     /**
@@ -374,16 +370,10 @@ class IslandsManagerTest extends CommonTestSetup {
         assertFalse(islandsManager.isSafeLocation(location));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
     // Removed testIsSafeLocationSubmerged — MockBukkit does not support water submersion checks
 
     // Removed testCheckIfSafeTrapdoor — Material.values() iteration causes mock framework issues
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
     // Removed testIsSafeLocationPortals — MockBukkit does not return correct BlockData for portal types
 
     /**
@@ -405,19 +395,10 @@ class IslandsManagerTest extends CommonTestSetup {
         assertFalse( islandsManager.isSafeLocation(location), "In lava");
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
     // Removed testTrapDoor — MockBukkit does not return correct BlockData for trapdoor state
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
     // Removed testBadBlocks — MockBukkit does not return correct BlockData for fence/sign/cactus types
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
     // Removed testSolidBlocks — MockBukkit does not return correct BlockData for solid block checks
 
     /**
@@ -516,17 +497,8 @@ class IslandsManagerTest extends CommonTestSetup {
         assertEquals(1, islandsManager.getIslandCount());
     }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, User)}
-     */
     // Removed testGetIslandWorldUser — Island cache mock does not integrate with IslandsManager.getIsland
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, UUID)}.
-     * @throws IOException 
-     */
     // Removed testGetIsland — Database load/mock integration prevents proper testing
 
     /**
@@ -1708,7 +1680,7 @@ class IslandsManagerTest extends CommonTestSetup {
      * Test with unsafe home location - should use SafeSpotTeleport fallback instead of direct teleport.
      */
     @Test
-    void testHomeTeleportAsyncIslandUserBooleanUnsafeLocation() throws Exception {
+    void testHomeTeleportAsyncIslandUserBooleanUnsafeLocation() {
         // Setup
         Island island = mock(Island.class);
         Location homeLoc = mock(Location.class);
@@ -2110,9 +2082,9 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetSafeRespawnLocationHomeSafe() {
-        IslandsManager spyIm = Mockito.spy(islandsManager);
-        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
-        Mockito.doReturn(true).when(spyIm).isSafeLocation(location);
+        IslandsManager spyIm = spy(islandsManager);
+        doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        doReturn(true).when(spyIm).isSafeLocation(location);
         assertEquals(location, spyIm.getSafeRespawnLocation(world, uuid));
     }
 
@@ -2123,13 +2095,13 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetSafeRespawnLocationHomeUnsafeOneAboveSafe() {
-        IslandsManager spyIm = Mockito.spy(islandsManager);
+        IslandsManager spyIm = spy(islandsManager);
         Location above = mock(Location.class);
         when(location.clone()).thenReturn(location);
         when(location.add(any(Vector.class))).thenReturn(above);
-        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
-        Mockito.doReturn(false).when(spyIm).isSafeLocation(location);
-        Mockito.doReturn(true).when(spyIm).isSafeLocation(above);
+        doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        doReturn(false).when(spyIm).isSafeLocation(location);
+        doReturn(true).when(spyIm).isSafeLocation(above);
         assertEquals(above, spyIm.getSafeRespawnLocation(world, uuid));
     }
 
@@ -2139,17 +2111,17 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetSafeRespawnLocationFallsBackToIslandCenter() {
-        IslandsManager spyIm = Mockito.spy(islandsManager);
+        IslandsManager spyIm = spy(islandsManager);
         Location islandCenter = mock(Location.class);
         Location offset = mock(Location.class);
         when(location.clone()).thenReturn(location);
         when(location.add(any(Vector.class))).thenReturn(location);
         when(islandCenter.clone()).thenReturn(islandCenter);
         when(islandCenter.add(any(Vector.class))).thenReturn(offset);
-        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
-        Mockito.doReturn(islandCenter).when(spyIm).getIslandLocation(world, uuid);
-        Mockito.doReturn(false).when(spyIm).isSafeLocation(location);
-        Mockito.doReturn(true).when(spyIm).isSafeLocation(offset);
+        doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        doReturn(islandCenter).when(spyIm).getIslandLocation(world, uuid);
+        doReturn(false).when(spyIm).isSafeLocation(location);
+        doReturn(true).when(spyIm).isSafeLocation(offset);
         assertEquals(offset, spyIm.getSafeRespawnLocation(world, uuid));
     }
 
@@ -2159,15 +2131,15 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetSafeRespawnLocationNothingSafe() {
-        IslandsManager spyIm = Mockito.spy(islandsManager);
+        IslandsManager spyIm = spy(islandsManager);
         Location islandCenter = mock(Location.class);
         when(location.clone()).thenReturn(location);
         when(location.add(any(Vector.class))).thenReturn(location);
         when(islandCenter.clone()).thenReturn(islandCenter);
         when(islandCenter.add(any(Vector.class))).thenReturn(islandCenter);
-        Mockito.doReturn(location).when(spyIm).getHomeLocation(world, uuid);
-        Mockito.doReturn(islandCenter).when(spyIm).getIslandLocation(world, uuid);
-        Mockito.doReturn(false).when(spyIm).isSafeLocation(any());
+        doReturn(location).when(spyIm).getHomeLocation(world, uuid);
+        doReturn(islandCenter).when(spyIm).getIslandLocation(world, uuid);
+        doReturn(false).when(spyIm).isSafeLocation(any());
         assertNull(spyIm.getSafeRespawnLocation(world, uuid));
     }
 
@@ -2177,9 +2149,9 @@ class IslandsManagerTest extends CommonTestSetup {
      */
     @Test
     void testGetSafeRespawnLocationNoHomeNoIsland() {
-        IslandsManager spyIm = Mockito.spy(islandsManager);
-        Mockito.doReturn(null).when(spyIm).getHomeLocation(world, uuid);
-        Mockito.doReturn(null).when(spyIm).getIslandLocation(world, uuid);
+        IslandsManager spyIm = spy(islandsManager);
+        doReturn(null).when(spyIm).getHomeLocation(world, uuid);
+        doReturn(null).when(spyIm).getIslandLocation(world, uuid);
         assertNull(spyIm.getSafeRespawnLocation(world, uuid));
     }
 

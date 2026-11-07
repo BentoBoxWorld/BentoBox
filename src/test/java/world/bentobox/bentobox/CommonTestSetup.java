@@ -239,7 +239,7 @@ public abstract class CommonTestSetup {
             java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
             unsafe = (sun.misc.Unsafe) unsafeField.get(null);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return; // Cannot obtain Unsafe – skip tag reinit
         }
         for (java.lang.reflect.Field field : Tag.class.getDeclaredFields()) {
@@ -271,7 +271,7 @@ public abstract class CommonTestSetup {
                 field.setAccessible(true);
                 long offset = unsafe.staticFieldOffset(field);
                 unsafe.putObject(unsafe.staticFieldBase(field), offset, tag);
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // If Unsafe write fails, leave the field as-is
             }
         }

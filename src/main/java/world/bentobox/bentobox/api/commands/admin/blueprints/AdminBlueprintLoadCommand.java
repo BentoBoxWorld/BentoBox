@@ -58,7 +58,7 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
                     .map(AdminBlueprintLoadCommand::removeBlueprintSuffix)
                     .toList();
         }
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
 
         return Optional.of(Util.tabLimit(options, lastArg));
     }

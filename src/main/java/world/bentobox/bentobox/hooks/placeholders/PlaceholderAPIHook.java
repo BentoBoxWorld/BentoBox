@@ -39,7 +39,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     public boolean hook() {
         try {
             this.bentoboxExpansion = new BentoBoxPlaceholderExpansion(BentoBox.getInstance());
-        } catch (Exception | NoClassDefFoundError | NoSuchMethodError e) {
+        } catch (Exception | NoClassDefFoundError | NoSuchMethodError _) {
             return false;
         }
 

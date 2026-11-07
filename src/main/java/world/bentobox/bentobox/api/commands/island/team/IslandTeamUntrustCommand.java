@@ -114,7 +114,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             List<String> options = island.getMembers().entrySet().stream()
                     .filter(e -> e.getValue() == RanksManager.TRUSTED_RANK)
                     .map(e -> Bukkit.getOfflinePlayer(e.getKey())).map(OfflinePlayer::getName).toList();
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
+            String lastArg = args.isEmpty() ? "" : args.getLast();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
-import world.bentobox.bentobox.util.Util;
 
 
 public class PanelItemBuilder {

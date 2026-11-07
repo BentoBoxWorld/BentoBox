@@ -169,7 +169,7 @@ public class AdminRangePurgeBonusCommand extends CompositeCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         if (args.size() <= 1) {
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
+            String lastArg = args.isEmpty() ? "" : args.getLast();
             // Suggest the bonus ids that exist on currently-loaded islands in this world
             Collection<Island> cached = getIslands().getIslandCache().getCachedIslands();
             List<String> ids = cached.stream().filter(i -> getWorld().equals(i.getWorld()))

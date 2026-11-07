@@ -359,7 +359,7 @@ class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
-        verify(target, Mockito.never()).getInventory();
+        verify(target, never()).getInventory();
         verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true), eq(island));
     }
 

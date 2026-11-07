@@ -198,7 +198,7 @@ public class FancyNpcsHook extends NPCHook {
             }
             try {
                 actionList.add(new NpcAction.NpcActionData(Integer.parseInt(order), action, value));
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 BentoBox.getInstance().logWarning("Could not parse order: " + order);
             }
         }

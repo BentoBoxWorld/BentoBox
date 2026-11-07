@@ -94,7 +94,7 @@ public class BentoBoxHookRegistrar {
         try {
             Class.forName(className);
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException _) {
             return false;
         }
     }

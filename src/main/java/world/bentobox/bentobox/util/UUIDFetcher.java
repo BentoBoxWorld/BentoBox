@@ -62,7 +62,7 @@ public class UUIDFetcher {
                 return UUID.fromString(data.get("data").getAsJsonObject().get("player").getAsJsonObject().get("id") // Grab the UUID.
                         .getAsString());
             }
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Ignoring exception since this is usually caused by non-existent usernames.
         }
 

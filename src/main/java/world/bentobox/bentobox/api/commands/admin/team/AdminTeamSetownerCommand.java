@@ -174,7 +174,7 @@ public class AdminTeamSetownerCommand extends ConfirmableCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         // Both positions - the new owner and the current island owner - are player names
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
         List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         return Optional.of(Util.tabLimit(options, lastArg));
     }

@@ -211,7 +211,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
                     .map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).toList();
 
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
+            String lastArg = args.isEmpty() ? "" : args.getLast();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

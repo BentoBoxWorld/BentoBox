@@ -65,7 +65,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                     plugin.logError("JSON file created a null object: " + file.getPath());
                     reader.close(); // NOSONAR Required to keep OS file handlers low and not rely on GC
                 }
-            } catch (FileNotFoundException e) {
+            } catch (FileNotFoundException _) {
                 plugin.logError("Could not load file '" + file.getName() + "': File not found.");
 
             } catch (Exception e) {
@@ -88,7 +88,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         T result = null;
         try (FileReader reader = new FileReader(new File(plugin.getDataFolder(), fileName))) {
             result = getGson().fromJson(reader, dataObject);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException _) {
             plugin.logError("Could not load file '" + fileName + "': File not found.");
         } catch (Exception e) {
             plugin.logError("Could not load objects " + fileName + " " + e.getMessage());

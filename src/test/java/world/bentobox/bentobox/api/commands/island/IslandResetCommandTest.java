@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -356,7 +355,7 @@ class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    void testConfirmationDialogFallsBackWhenUnavailable() throws Exception {
+    void testConfirmationDialogFallsBackWhenUnavailable() {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         when(pm.getResetsLeft(world, uuid)).thenReturn(1);

@@ -23,7 +23,6 @@ import world.bentobox.bentobox.api.events.player.PlayerResetInventoryEvent;
 import world.bentobox.bentobox.api.events.player.PlayerResetMoneyEvent;
 import world.bentobox.bentobox.api.events.player.PlayerTamedRemovalEvent;
 
-import java.beans.IntrospectionException;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -559,7 +558,7 @@ class PlayersManagerTest extends CommonTestSetup {
      * it shadows the current one on a case sensitive file system.
      */
     @Test
-    void testSetPlayerNameRemovesDifferentlyCasedRecord() throws Exception {
+    void testSetPlayerNameRemovesDifferentlyCasedRecord() {
         when(user.getName()).thenReturn("TastyBento");
         pm.setPlayerName(user);
         verify(namesHandler).deleteID("tastybento");
@@ -571,7 +570,7 @@ class PlayersManagerTest extends CommonTestSetup {
      * Re-saving the same name must not delete the record that was just written.
      */
     @Test
-    void testSetPlayerNameKeepsUnchangedRecord() throws Exception {
+    void testSetPlayerNameKeepsUnchangedRecord() {
         pm.setPlayerName(user);
         verify(namesHandler, never()).deleteID("tastybento");
         assertEquals(uuid, pm.getUUID("tastybento"));

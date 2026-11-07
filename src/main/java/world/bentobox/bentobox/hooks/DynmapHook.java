@@ -62,7 +62,7 @@ public class DynmapHook extends MapHook implements Listener {
                 return false;
             }
             markerAPI = markers;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
         // Listen for island events and BentoBoxReadyEvent to populate island markers

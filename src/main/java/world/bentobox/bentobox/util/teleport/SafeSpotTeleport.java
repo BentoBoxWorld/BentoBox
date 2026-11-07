@@ -52,7 +52,7 @@ public class SafeSpotTeleport {
     private final AtomicBoolean checking = new AtomicBoolean();
     private BukkitTask task;
     private boolean portal;
-    private boolean cancelIfFail;
+    private final boolean cancelIfFail;
     // Locations
     private Location bestSpot;
     private Iterator<Pair<Integer, Integer>> chunksToScanIterator;
@@ -338,7 +338,7 @@ public class SafeSpotTeleport {
         private final BentoBox plugin;
         private final CompletableFuture<Boolean> result = new CompletableFuture<>();
         private Entity entity;
-        private int homeNumber = 0;
+        private final int homeNumber = 0;
         private String homeName = "";
         private boolean portal = false;
         private String failureMessage = "";

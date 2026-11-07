@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +106,7 @@ class GeoLimitMobsListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnProjectileLaunchDifferentWorld() {
-        when(location.getWorld()).thenReturn(org.mockito.Mockito.mock(World.class));
+        when(location.getWorld()).thenReturn(mock(World.class));
         when(iwm.inWorld(location)).thenReturn(false);
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(snowball);
         listener.onProjectileLaunch(e);

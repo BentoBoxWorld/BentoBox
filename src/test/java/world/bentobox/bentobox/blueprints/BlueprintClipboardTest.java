@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;

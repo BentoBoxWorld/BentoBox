@@ -147,7 +147,7 @@ public class HeadGetter {
         try {
             HeadCache cache = new HeadCache(userName, player.getUniqueId(), player.getPlayerProfile());
             return cache.hasTexture() ? cache : null;
-        } catch (Exception e) {
+        } catch (Exception _) {
             // An unreadable profile just means we fall back to the async resolver.
             return null;
         }
@@ -284,9 +284,9 @@ public class HeadGetter {
                 UUID resolvedId = profile.getUniqueId() != null ? profile.getUniqueId() : userId;
                 return new HeadCache(userName, resolvedId, profile);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Server could not complete the profile - fall back to the web-based lookups.
         }
 
@@ -320,7 +320,7 @@ public class HeadGetter {
                     .replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
 
             userId = UUID.fromString(userIdString);
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Return random if failed?
             userId = UUID.randomUUID();
         }
@@ -361,7 +361,7 @@ public class HeadGetter {
             }
 
             return decodedTexture;
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Failed to fetch texture from Mojang API; fall through to return null
         }
 
@@ -408,7 +408,7 @@ public class HeadGetter {
             }
 
             return new Pair<>(UUID.fromString(userIdString), decodedTexture);
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Failed to fetch texture from mc-heads.net; fall through to return default
         }
 
@@ -432,7 +432,7 @@ public class HeadGetter {
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             returnValue = br.lines().collect(Collectors.joining());
             br.close();
-        } catch (Exception e) {
+        } catch (Exception _) {
             returnValue = "";
         }
 
@@ -451,7 +451,7 @@ public class HeadGetter {
             JsonObject json = GSON.fromJson(decoded, JsonObject.class);
             String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
             return new URI(url).toURL();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return null;
         }
     }

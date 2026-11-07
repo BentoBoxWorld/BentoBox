@@ -217,7 +217,7 @@ class IslandGoCommandTest extends CommonTestSetup {
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
-        verify(ic, Mockito.never()).call(any(), any(), any());
+        verify(ic, never()).call(any(), any(), any());
     }
 
     /**
@@ -276,7 +276,7 @@ class IslandGoCommandTest extends CommonTestSetup {
         when(island.getHomes()).thenReturn(Map.of("Home", mock(Location.class)));
         when(s.isDialogGoPicker()).thenReturn(false);
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
-        verify(plugin, Mockito.never()).logError(Mockito.contains("go picker"));
+        verify(plugin, never()).logError(Mockito.contains("go picker"));
         verify(im).homeTeleportAsync(world, mockPlayer);
     }
 
@@ -427,7 +427,7 @@ class IslandGoCommandTest extends CommonTestSetup {
         when(mockPlayer.getLocation()).thenReturn(l);
         PlayerMoveEvent e = new PlayerMoveEvent(mockPlayer, l, l);
         igc.onPlayerMove(e);
-        verify(mockPlayer, Mockito.never()).sendMessage("commands.delay.moved-so-command-cancelled");
+        verify(mockPlayer, never()).sendMessage("commands.delay.moved-so-command-cancelled");
     }
 
     /**

@@ -112,7 +112,7 @@ class AdminRangeCommandTest extends CommonTestSetup {
         AdminRangeCommand arc = new AdminRangeCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help"
-        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
 }

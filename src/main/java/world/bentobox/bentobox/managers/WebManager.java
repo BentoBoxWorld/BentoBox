@@ -153,7 +153,7 @@ public class WebManager {
                         locale.set("catalog.tags." + entry.getKey(), translation.getAsString());
                     }
                 }));
-            } catch (JsonParseException e) {
+            } catch (JsonParseException _) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog Tags: the gathered JSON data is malformed.");
                 }
@@ -170,7 +170,7 @@ public class WebManager {
                         locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
                     }
                 }));
-            } catch (JsonParseException e) {
+            } catch (JsonParseException _) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog Topics: the gathered JSON data is malformed.");
                 }
@@ -190,7 +190,7 @@ public class WebManager {
                         .forEach(addon -> newAddons.add(new CatalogEntry(addon.getAsJsonObject())));
                 this.gamemodesCatalog.set(List.copyOf(newGamemodes));
                 this.addonsCatalog.set(List.copyOf(newAddons));
-            } catch (JsonParseException e) {
+            } catch (JsonParseException _) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
                 }
@@ -203,7 +203,7 @@ public class WebManager {
         try {
             String content = repo.getContent(fileName).getContent();
             return new String(DatatypeConverter.parseBase64Binary(content.replace("_", "/")));
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Silently fail
         }
         return "";
@@ -217,7 +217,7 @@ public class WebManager {
             if (!latestTag.isEmpty() && isNewerVersion(currentVersion, latestTag)) {
                 printUpdateBanner(currentVersion, latestTag);
             }
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Silently fail — same pattern as gatherContributors()
         }
     }
@@ -254,7 +254,7 @@ public class WebManager {
     }
 
     private static int parseIntSafe(String s) {
-        try { return Integer.parseInt(s); } catch (NumberFormatException e) { return 0; }
+        try { return Integer.parseInt(s); } catch (NumberFormatException _) { return 0; }
     }
 
     private void gatherContributors(@NonNull GitHubRepository repo) {
@@ -265,7 +265,7 @@ public class WebManager {
                         new Contributor(gitHubContributor.username(), gitHubContributor.contributionsAmount()));
             }
             contributors.put(repo.fullName(), List.copyOf(addonContributors));
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Silently fail
         }
     }

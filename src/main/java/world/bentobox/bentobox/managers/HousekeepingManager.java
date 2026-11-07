@@ -218,7 +218,7 @@ public class HousekeepingManager {
             saved.get(2, TimeUnit.MINUTES);
             plugin.log("Housekeeping: world save complete");
             return true;
-        } catch (TimeoutException e) {
+        } catch (TimeoutException _) {
             plugin.logError("Housekeeping: world save timed out after 2 minutes, aborting cycle");
             return false;
         } catch (InterruptedException e) {

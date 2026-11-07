@@ -652,7 +652,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             case null -> "null";
 
             // UUID has its own serialization, that is not picked up automatically
-            case UUID uuid -> object.toString();
+            case UUID _ -> object.toString();
 
             // Only the world name is needed for worlds
             case World w -> w.getName();
@@ -800,7 +800,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
             }
             return Enum.valueOf(enumClass, name);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // This value does not exist - probably admin typed it wrongly
             plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + enumClass.getCanonicalName() + "!");
             plugin.logError("Options are : ");

@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -234,8 +234,8 @@ class AdminTeleportCommandTest extends CommonTestSetup {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
         assertTrue(atc.canExecute(user, "tp", List.of("tastybento")));
         assertTrue(atc.execute(user, "tp", List.of("tastybento")));
-        verify(iwm, Mockito.never()).getNetherWorld(any());
-        verify(iwm, Mockito.never()).getEndWorld(any());
+        verify(iwm, never()).getNetherWorld(any());
+        verify(iwm, never()).getEndWorld(any());
         verify(user).getTranslation("commands.admin.tp.manual", "[location]", "0 0 0");
     }
 
@@ -247,7 +247,7 @@ class AdminTeleportCommandTest extends CommonTestSetup {
         assertTrue(atc.canExecute(user, "tpnether", List.of("tastybento")));
         assertTrue(atc.execute(user, "tpnether", List.of("tastybento")));
         verify(iwm).getNetherWorld(any());
-        verify(iwm, Mockito.never()).getEndWorld(any());
+        verify(iwm, never()).getEndWorld(any());
         verify(user).getTranslation("commands.admin.tp.manual", "[location]", "0 0 0");
     }
 
@@ -258,7 +258,7 @@ class AdminTeleportCommandTest extends CommonTestSetup {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
         assertTrue(atc.canExecute(user, "tpend", List.of("tastybento")));
         assertTrue(atc.execute(user, "tpend", List.of("tastybento")));
-        verify(iwm, Mockito.never()).getNetherWorld(any());
+        verify(iwm, never()).getNetherWorld(any());
         verify(iwm).getEndWorld(any());
         verify(user).getTranslation("commands.admin.tp.manual", "[location]", "0 0 0");
     }

@@ -65,7 +65,7 @@ public class BentoBoxListenerRegistrar {
         try {
             Class.forName(name, false, BentoBoxListenerRegistrar.class.getClassLoader());
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException _) {
             return false;
         }
     }

@@ -376,7 +376,7 @@ public class LangUtilsHook extends Hook {
             }
             return effects.stream().map(effect -> Util.prettifyText(effect.getType().getKey().getKey()))
                     .collect(Collectors.joining(", "));
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Older versions of Spigot pre-1.20.4 don't have getPotionEffects()
             return Util.prettifyText(potionType.getEffectType().getKey().getKey());
         }

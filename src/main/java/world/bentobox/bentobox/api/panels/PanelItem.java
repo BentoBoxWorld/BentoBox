@@ -153,7 +153,7 @@ public class PanelItem {
         if (meta != null) {
             try {
                 meta.setEnchantmentGlintOverride(glow);
-            } catch (NoSuchMethodError e) {
+            } catch (NoSuchMethodError _) {
                 // Try the old way
                 if (meta != null) {
                     if (glow) {
@@ -303,7 +303,7 @@ public class PanelItem {
     private static DataComponentType blockEntityData() {
         try {
             return Registry.DATA_COMPONENT_TYPE.get(NamespacedKey.minecraft("block_entity_data"));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException _) {
             // Registry not available, e.g., in a test environment
             return null;
         }

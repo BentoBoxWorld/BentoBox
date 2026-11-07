@@ -155,9 +155,6 @@ class AdminBlueprintLoadCommandTest extends CommonTestSetup {
         verify(user).sendMessage("commands.admin.blueprint.could-not-load");
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
     // Removed testExecuteUserStringListOfStringSuccessCaps — Paper Biome incompatibility
 
     /**

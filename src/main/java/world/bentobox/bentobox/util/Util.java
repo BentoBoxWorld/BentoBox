@@ -362,11 +362,6 @@ public class Util {
     }
 
     /**
-     * Convert world to an overworld
-     * @param world - world
-     * @return over world or null if world is null or a world cannot be found
-     */
-    /**
      * Cache of world name -> overworld name (suffixes replaced). Pure string
      * function, so entries never go stale. The World itself is still resolved
      * live via {@link Bukkit#getWorld(String)}.
@@ -450,7 +445,7 @@ public class Util {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             return format.parse(gitHubDate.replace('T', ' ').replace("Z", ""));
-        } catch (ParseException e) {
+        } catch (ParseException _) {
             return null;
         }
     }
@@ -548,7 +543,7 @@ public class Util {
                 // Invoke the method using reflection on the entity instance
                 return (CompletableFuture<Boolean>) method.invoke(entity, location, cause);
             }
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException _) {
             // Method does not exist, fallback to Spigot behavior
         } catch (Exception e) {
             plugin.logStacktrace(e); // Report other exceptions
@@ -609,7 +604,7 @@ public class Util {
                 // Invoke the method using reflection
                 return (CompletableFuture<Chunk>) method.invoke(world, x, z, gen);
             }
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException _) {
             // Method does not exist, fallback to default behavior
         } catch (Exception e) {
             BentoBox.getInstance().logStacktrace(e);
@@ -695,7 +690,7 @@ public class Util {
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
             return true; // Paper-specific class exists
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException _) {
             return false; // Not a Paper server
         }
     }
@@ -821,7 +816,7 @@ public class Util {
             try {
                 Integer.parseInt(nbr); // NOSONAR we don't care about the result of this operation
                 return true;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 return false;
             }
         }
@@ -843,7 +838,7 @@ public class Util {
         // Check if UUID is being used
         try {
             return UUID.fromString(nameOrUUID);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Do nothing
         }
         return null;
@@ -895,7 +890,7 @@ public class Util {
             // Paper
             double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
             player.setHealth(maxHealth);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Spigot
             player.setHealth(20D);
         }
@@ -1036,7 +1031,7 @@ public class Util {
             }
             // All parts checked are equal (e.g., 1.21.9 vs 1.21.9)
             return true;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             // Fallback for non-standard version strings
             return SERVER_VERSION.startsWith(targetVersion);
         }
@@ -1249,13 +1244,6 @@ public class Util {
         return result.toString();
     }
 
-    /**
-     * Parses a MiniMessage-formatted string into an Adventure Component.
-     *
-     * @param miniMessageString the MiniMessage string
-     * @return parsed Component
-     * @since 3.2.0
-     */
     /**
      * Replaces legacy {@code &X} and {@code §X} color/format codes with MiniMessage opening tags inline,
      * without adding closing tags. This is safe for strings that already contain MiniMessage tags

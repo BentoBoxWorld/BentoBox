@@ -149,6 +149,7 @@ public class Island implements DataObject, MetaDataAble {
     private long updatedDate;
 
     //// Team ////
+
     /**
      * Owner of the island. There can only be one per island. If it is {@code null},
      * then the island is considered as unowned.

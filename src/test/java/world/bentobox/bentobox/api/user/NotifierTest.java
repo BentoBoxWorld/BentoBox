@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.user;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,7 @@ class NotifierTest {
         User user = mock(User.class);
         String message = "a message";
         assertTrue(n.notify(user, message));
-        Mockito.verify(user).sendRawMessage(message);
+        verify(user).sendRawMessage(message);
     }
 
     /**
@@ -50,7 +52,7 @@ class NotifierTest {
         for (int i = 0; i< 10; i++) {
             assertFalse(n.notify(user, message));
         }
-        Mockito.verify(user).sendRawMessage(message);
+        verify(user).sendRawMessage(message);
     }
 
     /**
@@ -61,8 +63,8 @@ class NotifierTest {
         User user = mock(User.class);
         assertTrue(n.notify(user, "message one"));
         assertTrue(n.notify(user, "message two"));
-        Mockito.verify(user).sendRawMessage("message one");
-        Mockito.verify(user).sendRawMessage("message two");
+        verify(user).sendRawMessage("message one");
+        verify(user).sendRawMessage("message two");
     }
 
     /**
@@ -80,8 +82,8 @@ class NotifierTest {
             assertFalse(n.notify(user, "message one"));
             assertFalse(n.notify(user, "message two"));
         }
-        Mockito.verify(user).sendRawMessage("message one");
-        Mockito.verify(user).sendRawMessage("message two");
+        verify(user).sendRawMessage("message one");
+        verify(user).sendRawMessage("message two");
     }
 
     /**
@@ -96,8 +98,8 @@ class NotifierTest {
         assertTrue(n.notify(user2, message));
         assertFalse(n.notify(user1, message));
         assertFalse(n.notify(user2, message));
-        Mockito.verify(user1).sendRawMessage(message);
-        Mockito.verify(user2).sendRawMessage(message);
+        verify(user1).sendRawMessage(message);
+        verify(user2).sendRawMessage(message);
     }
 
     /**
@@ -115,7 +117,7 @@ class NotifierTest {
         for (int i = 0; i< 10; i++) {
             n.notify(user, message);
         }
-        Mockito.verify(user, Mockito.times(2)).sendRawMessage(message);
+        verify(user, times(2)).sendRawMessage(message);
     }
 
 }

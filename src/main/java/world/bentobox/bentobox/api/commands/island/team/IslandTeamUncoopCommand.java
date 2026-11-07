@@ -114,7 +114,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             List<String> options = island.getMembers().entrySet().stream()
                     .filter(e -> e.getValue() == RanksManager.COOP_RANK).map(e -> Bukkit.getOfflinePlayer(e.getKey()))
                     .map(OfflinePlayer::getName).toList();
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
+            String lastArg = args.isEmpty() ? "" : args.getLast();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

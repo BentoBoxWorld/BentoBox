@@ -92,7 +92,7 @@ public class DefaultPasteUtil {
     public static BlockData createBlockData(BlueprintBlock block) {
         try {
             return Bukkit.createBlockData(block.getBlockData());
-        } catch (Exception e) {
+        } catch (Exception _) {
             return convertBlockData(block);
         }
     }
@@ -112,7 +112,7 @@ public class DefaultPasteUtil {
                     break;
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             // This may happen if the block type is no longer supported by the server
             plugin.logWarning("Blueprint references materials not supported on this server version.");
             plugin.logWarning("Load blueprint manually, check and save to fix for this server version.");
@@ -256,7 +256,7 @@ public class DefaultPasteUtil {
                 && plugin.getHooks().getHook("FancyNpcs").filter(FancyNpcsHook.class::isInstance).map(mmh -> {
                     try {
                         return ((FancyNpcsHook) mmh).spawnNpc(k.getNpc(), location);
-                    } catch (InvalidConfigurationException e) {
+                    } catch (InvalidConfigurationException _) {
                         plugin.logError("FancyNpc loading failed in blueprint.");
                         return false;
                     }
@@ -268,7 +268,7 @@ public class DefaultPasteUtil {
                 && plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance).map(znpch -> {
                     try {
                         return ((ZNPCsPlusHook) znpch).spawnNpc(k.getNpc(), location);
-                    } catch (InvalidConfigurationException e) {
+                    } catch (InvalidConfigurationException _) {
                         plugin.logError("ZNPCsPlus loading failed in blueprint.");
                         return false;
                     }
@@ -277,7 +277,7 @@ public class DefaultPasteUtil {
         }
         // MythicMobs entity
         if (k.getMythicMobsRecord() != null && plugin.getHooks().getHook("MythicMobs")
-                .filter(mmh -> mmh instanceof MythicMobsHook)
+                .filter(MythicMobsHook.class::isInstance)
                 .map(mmh -> ((MythicMobsHook) mmh).spawnMythicMob(k.getMythicMobsRecord(), location))
                 .orElse(false)) {
             return true;

@@ -70,7 +70,7 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
         try {
             c.loadFromString(n);
             return c.getItemStack("is");
-        } catch (InvalidConfigurationException e) {
+        } catch (InvalidConfigurationException _) {
             BentoBox.getInstance().logError("Cannot load ItemStack serialized as " + n);
             return new ItemStack(Material.AIR);
         }

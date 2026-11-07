@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -264,7 +265,7 @@ class AdminTeamAddCommandTest extends CommonTestSetup {
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(user).sendMessage("commands.island.team.errors.teams-disabled");
-        verify(im, org.mockito.Mockito.never()).setJoinTeam(any(), any());
+        verify(im, never()).setJoinTeam(any(), any());
     }
 
     /**

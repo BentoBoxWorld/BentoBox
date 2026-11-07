@@ -119,7 +119,7 @@ public class AdminResetHomeCommand extends CompositeCommand
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
         if (args.size() == 2) {
             // Suggest player names
             return Optional.of(Util.getOnlinePlayerList(user));

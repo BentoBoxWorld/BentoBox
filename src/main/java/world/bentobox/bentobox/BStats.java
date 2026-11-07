@@ -297,7 +297,7 @@ public class BStats {
                     return FileVisitResult.CONTINUE;
                 }
             });
-        } catch (IOException e) {
+        } catch (IOException _) {
             // Partial total is still informative
         }
         return total[0];

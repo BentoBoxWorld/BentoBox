@@ -30,7 +30,6 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.FileLister;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento, Poslovitch

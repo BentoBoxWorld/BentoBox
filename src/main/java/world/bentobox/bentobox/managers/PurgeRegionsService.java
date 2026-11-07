@@ -895,7 +895,7 @@ public class PurgeRegionsService {
         if (parts.length != 2) return null;
         try {
             return new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException _) {
             return null;
         }
     }
@@ -1009,7 +1009,7 @@ public class PurgeRegionsService {
         try {
             Files.deleteIfExists(file.toPath());
             return true;
-        } catch (IOException e) {
+        } catch (IOException _) {
             plugin.logError("Failed to delete file: " + file.getAbsolutePath());
             return false;
         }
@@ -1063,7 +1063,7 @@ public class PurgeRegionsService {
     private void deletePlayerFile(File file, String description) {
         try {
             Files.deleteIfExists(file.toPath());
-        } catch (IOException ex) {
+        } catch (IOException _) {
             plugin.logError("Failed to delete " + description + ": " + file.getAbsolutePath());
         }
     }

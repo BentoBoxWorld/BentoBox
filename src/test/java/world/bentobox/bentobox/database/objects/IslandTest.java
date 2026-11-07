@@ -938,7 +938,6 @@ class IslandTest extends CommonTestSetup {
 
     @Test
     void testSetHistory() {
-        List<org.bukkit.event.entity.EntityExplodeEvent> empty = Collections.emptyList();
         island.setHistory(Collections.emptyList());
         assertTrue(island.getHistory().isEmpty());
     }

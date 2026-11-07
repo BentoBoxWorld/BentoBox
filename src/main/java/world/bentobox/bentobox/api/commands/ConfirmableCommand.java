@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.dialogs.BBDialog;
 import world.bentobox.bentobox.api.dialogs.DialogBuilder;
 import world.bentobox.bentobox.api.dialogs.DialogButton;
 import world.bentobox.bentobox.api.dialogs.Dialogs;

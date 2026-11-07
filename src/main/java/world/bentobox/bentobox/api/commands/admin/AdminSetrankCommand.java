@@ -227,14 +227,14 @@ public class AdminSetrankCommand extends CompositeCommand {
         try {
             return Optional.of(new Location(getWorld(), Integer.parseInt(parts[0].trim()),
                     Integer.parseInt(parts[1].trim()), Integer.parseInt(parts[2].trim())));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             return Optional.empty();
         }
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, @NonNull List<String> args) {
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
         if (args.size() == 1) {
             return Optional.of(Util.getOnlinePlayerList(user));
         }

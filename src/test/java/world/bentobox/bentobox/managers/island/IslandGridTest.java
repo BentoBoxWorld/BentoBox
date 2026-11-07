@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
 
@@ -449,7 +450,7 @@ class IslandGridTest extends CommonTestSetup {
     // ---- Helper ----
 
     private Island createMockIsland(String id, int minX, int minZ, int range) {
-        Island mock = org.mockito.Mockito.mock(Island.class);
+        Island mock = mock(Island.class);
         when(mock.getMinX()).thenReturn(minX);
         when(mock.getMinZ()).thenReturn(minZ);
         when(mock.getRange()).thenReturn(range);

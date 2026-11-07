@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -116,7 +117,7 @@ class AdminSetspawnCommandTest extends CommonTestSetup {
         when(im.getIslandAt(any(Location.class))).thenReturn(oi);
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
         assertTrue(c.execute(user, "setspawn", Collections.emptyList()));
-        Mockito.verify(user).getTranslation("commands.admin.setspawn.confirmation");
+        verify(user).getTranslation("commands.admin.setspawn.confirmation");
     }
 
     /**
@@ -127,7 +128,7 @@ class AdminSetspawnCommandTest extends CommonTestSetup {
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.empty());
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
         assertFalse(c.execute(user, "setspawn", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.setspawn.no-island-here");
+        verify(user).sendMessage("commands.admin.setspawn.no-island-here");
     }
 
     /**
@@ -142,6 +143,6 @@ class AdminSetspawnCommandTest extends CommonTestSetup {
         when(im.getIslandAt(any(Location.class))).thenReturn(oi);
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
         assertTrue(c.execute(user, "setspawn", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.setspawn.already-spawn");
+        verify(user).sendMessage("commands.admin.setspawn.already-spawn");
     }
 }

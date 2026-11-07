@@ -28,7 +28,7 @@ public class GitHubFile {
         JsonObject response;
         try {
             response = api.fetch(path);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException _) {
             // Cannot get a connection for some reason
             return "";
         }

@@ -307,8 +307,8 @@ public non-sealed class PlayerTeleportListener extends AbstractTeleportListener 
             return;
         }
         // To the nether/end or overworld.
-        World toWorld = !fromWorld.getEnvironment().equals(environment) ?
-                this.getNetherEndWorld(overWorld, environment) : overWorld;
+        World toWorld = fromWorld.getEnvironment().equals(environment) ? overWorld :
+                this.getNetherEndWorld(overWorld, environment);
 
         // Set whether portals should be created or not
         event.setCanCreatePortal(this.isMakePortals(overWorld, environment));
