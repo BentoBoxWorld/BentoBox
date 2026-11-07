@@ -32,7 +32,6 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.GrindstoneInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.JukeboxInventory;
 import org.bukkit.inventory.LecternInventory;

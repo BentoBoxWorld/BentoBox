@@ -514,12 +514,6 @@ class IslandWorldManagerTest extends CommonTestSetup {
         assertEquals(list, testIwm.getIvSettings(testWorld));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isWorldFlag(org.bukkit.World, world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    void testIsWorldFlag() {
-    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultGameMode(org.bukkit.World)}.

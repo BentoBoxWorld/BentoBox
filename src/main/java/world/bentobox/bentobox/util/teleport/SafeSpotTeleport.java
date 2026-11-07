@@ -338,7 +338,6 @@ public class SafeSpotTeleport {
         private final BentoBox plugin;
         private final CompletableFuture<Boolean> result = new CompletableFuture<>();
         private Entity entity;
-        private final int homeNumber = 0;
         private String homeName = "";
         private boolean portal = false;
         private String failureMessage = "";
@@ -514,7 +513,8 @@ public class SafeSpotTeleport {
          * @return the homeNumber
          */
         public int getHomeNumber() {
-            return homeNumber;
+            // Home numbers are legacy; homes are addressed by name
+            return 0;
         }
 
         /**

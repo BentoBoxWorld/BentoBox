@@ -191,20 +191,6 @@ class EntityTeleportListenerTest extends CommonTestSetup {
 
     }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityEnterPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
-     */
-    @Test
-    void testOnEntityEnterPortal() {
-    }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityExitPortal(org.bukkit.event.entity.EntityPortalExitEvent)}.
-     */
-    @Test
-    void testOnEntityExitPortal() {
-    }
 
 }
