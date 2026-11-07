@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 /**
  * Tests for block explosion methods in {@link ExplosionListener}.
@@ -143,7 +144,7 @@ class ExplosionListenerTest extends CommonTestSetup {
         Entity damagee = mock(Entity.class);
         when(damagee.getLocation()).thenReturn(location);
         when(damagee.getWorld()).thenReturn(world);
-        EntityDamageEvent e = new EntityDamageEvent(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
+        EntityDamageEvent e = TestEvents.damage(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -154,7 +155,7 @@ class ExplosionListenerTest extends CommonTestSetup {
         Entity damagee = mock(Entity.class);
         when(damagee.getLocation()).thenReturn(location);
         when(damagee.getWorld()).thenReturn(world);
-        EntityDamageEvent e = new EntityDamageEvent(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
+        EntityDamageEvent e = TestEvents.damage(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
@@ -165,7 +166,7 @@ class ExplosionListenerTest extends CommonTestSetup {
         Entity damagee = mock(Entity.class);
         when(damagee.getLocation()).thenReturn(location);
         when(damagee.getWorld()).thenReturn(world);
-        EntityDamageEvent e = new EntityDamageEvent(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
+        EntityDamageEvent e = TestEvents.damage(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
@@ -176,7 +177,7 @@ class ExplosionListenerTest extends CommonTestSetup {
         Entity damagee = mock(Entity.class);
         when(damagee.getLocation()).thenReturn(location);
         when(damagee.getWorld()).thenReturn(world);
-        EntityDamageEvent e = new EntityDamageEvent(damagee, DamageCause.FIRE, 10D);
+        EntityDamageEvent e = TestEvents.damage(damagee, DamageCause.FIRE, 10D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
@@ -188,7 +189,7 @@ class ExplosionListenerTest extends CommonTestSetup {
         Entity damagee = mock(Entity.class);
         when(damagee.getLocation()).thenReturn(location);
         when(damagee.getWorld()).thenReturn(world);
-        EntityDamageEvent e = new EntityDamageEvent(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
+        EntityDamageEvent e = TestEvents.damage(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -200,7 +201,7 @@ class ExplosionListenerTest extends CommonTestSetup {
         Entity damagee = mock(Entity.class);
         when(damagee.getLocation()).thenReturn(location);
         when(damagee.getWorld()).thenReturn(world);
-        EntityDamageEvent e = new EntityDamageEvent(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
+        EntityDamageEvent e = TestEvents.damage(damagee, DamageCause.BLOCK_EXPLOSION, 10D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }

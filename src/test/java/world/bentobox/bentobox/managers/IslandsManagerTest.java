@@ -1920,6 +1920,7 @@ class IslandsManagerTest extends CommonTestSetup {
 
     // ---- isOwner (deprecated, delegates to hasIsland) ----
 
+    @SuppressWarnings("java:S5738") // exercises the deprecated API until it is removed
     @Test
     void testIsOwner() {
         islandsManager.setIslandCache(islandCache);

@@ -432,6 +432,7 @@ public class BStats {
      * rejection) rate of that feature.
      * @since 3.22.0
      */
+    @SuppressWarnings("java:S5738") // telemetry deliberately reports how many servers still use deprecated settings
     private void registerFeaturesChart() {
         metrics.addCustomChart(new SimpleBarChart("features", () -> {
             Map<String, Integer> values = new HashMap<>();

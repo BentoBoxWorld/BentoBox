@@ -138,6 +138,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
     }
 
     /** Force DefaultPasteUtil.plugin to the current test's plugin mock via Unsafe. */
+    @SuppressWarnings("java:S5738") // sun.misc.Unsafe is the only way to rewrite a static final field in tests
     private void injectPlugin() throws Exception {
         java.lang.reflect.Field f = DefaultPasteUtil.class.getDeclaredField("plugin");
         f.setAccessible(true);

@@ -71,6 +71,7 @@ import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 /**
  * @author tastybento
@@ -207,7 +208,7 @@ class PVPListenerTest extends CommonTestSetup {
     }
 
     private EntityDamageByEntityEvent createDamageEvent(Entity damager, Entity damagee, DamageCause cause) {
-        return new EntityDamageByEntityEvent(damager, damagee, cause, null, 0);
+        return TestEvents.damageByEntity(damager, damagee, cause, 0);
     }
 
     /**
@@ -715,7 +716,7 @@ class PVPListenerTest extends CommonTestSetup {
         ThrownPotion tp = mock(ThrownPotion.class);
         ProjectileSource witch = mock(Witch.class);
         when(tp.getShooter()).thenReturn(witch);
-        PotionSplashEvent e = new PotionSplashEvent(tp, new HashMap<>());
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, new HashMap<>());
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
     }
@@ -735,7 +736,7 @@ class PVPListenerTest extends CommonTestSetup {
         map.put(creeper, 10D);
         when(zombie.getLocation()).thenReturn(location);
         when(creeper.getLocation()).thenReturn(location);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
     }
@@ -757,7 +758,7 @@ class PVPListenerTest extends CommonTestSetup {
         map.put(player2, 100D);
         map.put(zombie, 100D);
         map.put(creeper, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.getAffectedEntities().contains(player2));
         assertTrue(e.getAffectedEntities().contains(zombie));
@@ -766,7 +767,7 @@ class PVPListenerTest extends CommonTestSetup {
 
         // Wrong world
         wrongWorld();
-        e = new PotionSplashEvent(tp, map);
+        e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
     }
@@ -788,13 +789,13 @@ class PVPListenerTest extends CommonTestSetup {
         map.put(mockPlayer, 100D);
         map.put(zombie, 100D);
         map.put(creeper, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
 
         // Wrong world
         wrongWorld();
-        e = new PotionSplashEvent(tp, map);
+        e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
     }
@@ -816,7 +817,7 @@ class PVPListenerTest extends CommonTestSetup {
         map.put(player2, 100D);
         map.put(zombie, 100D);
         map.put(creeper, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertTrue(e.getAffectedEntities().contains(player2));
         assertTrue(e.getAffectedEntities().contains(zombie));
@@ -842,7 +843,7 @@ class PVPListenerTest extends CommonTestSetup {
         map.put(player2, 100D);
         map.put(zombie, 100D);
         map.put(creeper, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         // Protect visitors
         // This player is a visitor and any damage is not allowed
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
@@ -855,7 +856,7 @@ class PVPListenerTest extends CommonTestSetup {
 
         // Wrong world
         wrongWorld();
-        e = new PotionSplashEvent(tp, map);
+        e = new PotionSplashEvent(tp, null, null, null, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
     }
@@ -870,7 +871,7 @@ class PVPListenerTest extends CommonTestSetup {
         when(tp.getWorld()).thenReturn(world);
         when(tp.getLocation()).thenReturn(location);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         new PVPListener().onLingeringPotionSplash(e);
         // Verify
         verify(mockPlayer, times(5)).getUniqueId();
@@ -889,7 +890,7 @@ class PVPListenerTest extends CommonTestSetup {
         when(tp.getWorld()).thenReturn(world);
         when(tp.getLocation()).thenReturn(location);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         new PVPListener().onLingeringPotionSplash(e);
         // Verify
         verify(cloud, never()).getEntityId();
@@ -911,7 +912,7 @@ class PVPListenerTest extends CommonTestSetup {
         when(tp.getLocation()).thenReturn(location);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         PVPListener listener = new PVPListener();
         listener.onLingeringPotionSplash(e);
         List<LivingEntity> list = new ArrayList<>();
@@ -948,7 +949,7 @@ class PVPListenerTest extends CommonTestSetup {
         when(tp.getLocation()).thenReturn(location);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         PVPListener listener = new PVPListener();
         listener.onLingeringPotionSplash(e);
         List<LivingEntity> list = new ArrayList<>();
@@ -983,7 +984,7 @@ class PVPListenerTest extends CommonTestSetup {
         when(tp.getLocation()).thenReturn(location);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         PVPListener listener = new PVPListener();
         listener.onLingeringPotionSplash(e);
         List<LivingEntity> list = new ArrayList<>();
@@ -1024,7 +1025,7 @@ class PVPListenerTest extends CommonTestSetup {
         when(tp.getLocation()).thenReturn(location);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         PVPListener listener = new PVPListener();
         listener.onLingeringPotionSplash(e);
         List<LivingEntity> list = new ArrayList<>();
@@ -1064,8 +1065,7 @@ class PVPListenerTest extends CommonTestSetup {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, mockPlayer, DamageCause.ENTITY_ATTACK, null,
-                0);
+        EntityDamageByEntityEvent en = TestEvents.damageByEntity(firework, mockPlayer, DamageCause.ENTITY_ATTACK, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }
@@ -1081,7 +1081,7 @@ class PVPListenerTest extends CommonTestSetup {
         EntityShootBowEvent e = new EntityShootBowEvent(mockPlayer, bow, null, arrow, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, mockPlayer, DamageCause.ENTITY_ATTACK, null, 0);
+        EntityDamageByEntityEvent en = TestEvents.damageByEntity(arrow, mockPlayer, DamageCause.ENTITY_ATTACK, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }
@@ -1102,8 +1102,7 @@ class PVPListenerTest extends CommonTestSetup {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, mockPlayer, DamageCause.ENTITY_EXPLOSION,
-                null, 0);
+        EntityDamageByEntityEvent en = TestEvents.damageByEntity(firework, mockPlayer, DamageCause.ENTITY_EXPLOSION, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }
@@ -1125,8 +1124,7 @@ class PVPListenerTest extends CommonTestSetup {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION,
-                null, 0);
+        EntityDamageByEntityEvent en = TestEvents.damageByEntity(firework, player2, DamageCause.ENTITY_EXPLOSION, 0);
         listener.onEntityDamage(en);
         assertTrue(en.isCancelled());
     }
@@ -1147,8 +1145,7 @@ class PVPListenerTest extends CommonTestSetup {
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
-        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION,
-                null, 0);
+        EntityDamageByEntityEvent en = TestEvents.damageByEntity(firework, player2, DamageCause.ENTITY_EXPLOSION, 0);
         listener.onEntityDamage(en);
         assertFalse(en.isCancelled());
     }

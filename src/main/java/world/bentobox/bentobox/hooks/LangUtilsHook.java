@@ -468,7 +468,7 @@ public class LangUtilsHook extends Hook {
             return LanguageHelper.getPredefinedTropicalFishName(meta, getUserLocale(user));
         }
 
-        if (meta.hasVariant()) {
+        if (meta.hasPattern() && meta.hasBodyColor() && meta.hasPatternColor()) {
             TropicalFish.Pattern pattern = meta.getPattern();
 
             // https://minecraft.gamepedia.com/Tropical_Fish#Entity_data

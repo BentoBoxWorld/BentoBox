@@ -85,7 +85,7 @@ public class StructureListener implements Listener {
         if (!isGameModeWorld(event.getWorld())) {
             return;
         }
-        if (isDisabled(event.getStructure().getKey().getKey())) {
+        if (isDisabled(event.getStructure().key().value())) {
             event.setCancelled(true);
         }
     }
@@ -104,7 +104,7 @@ public class StructureListener implements Listener {
         boolean structurelessWorld = !generatesStructures(event.getWorld(), event.getOrigin());
         List<Structure> targets = event.getStructures();
         List<Structure> allowed = targets.stream()
-                .filter(structure -> !isSuppressed(structure.getKey().getKey(), structurelessWorld))
+                .filter(structure -> !isSuppressed(structure.key().value(), structurelessWorld))
                 .toList();
         if (allowed.size() == targets.size()) {
             // Nothing disabled in this search — let it run normally.

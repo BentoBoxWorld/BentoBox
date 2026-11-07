@@ -46,6 +46,7 @@ import org.mockito.Mock;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.TestEvents;
 
 /**
  * @author tastybento
@@ -427,7 +428,7 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mockPlayer;
         Entity damager = mockPlayer;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -440,15 +441,15 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         Entity damager = mockPlayer;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(ItemFrame.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(EnderCrystal.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -463,17 +464,17 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
         Entity damager = mockPlayer;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         damagee = mock(ItemFrame.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         damagee = mock(EnderCrystal.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
@@ -488,15 +489,15 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Entity damagee = mock(ArmorStand.class);
         Projectile damager = mock(Projectile.class);
         when(damager.getShooter()).thenReturn(mockPlayer);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(ItemFrame.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(EnderCrystal.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -511,15 +512,15 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         Projectile damager = mock(Projectile.class);
         Skeleton skeletonMock = mock(Skeleton.class);
         when(damager.getShooter()).thenReturn(skeletonMock);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(ItemFrame.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
         damagee = mock(EnderCrystal.class);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -535,21 +536,21 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         when(damagee.getLocation()).thenReturn(location);
         Projectile damager = mock(Projectile.class);
         when(damager.getShooter()).thenReturn(mockPlayer);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(damagee).setFireTicks(0);
 
         damagee = mock(ItemFrame.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(damagee).setFireTicks(0);
 
         damagee = mock(EnderCrystal.class);
         when(damagee.getLocation()).thenReturn(location);
-        e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
+        e = TestEvents.damageByEntity(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));

@@ -55,7 +55,7 @@ class TeleportationListenerTest extends CommonTestSetup {
 
     @Test
     void testOnChorusFruitAllowed() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location, TeleportCause.CHORUS_FRUIT);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location, TeleportCause.CONSUMABLE_EFFECT);
         listener.onPlayerTeleport(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), anyString());
@@ -64,7 +64,7 @@ class TeleportationListenerTest extends CommonTestSetup {
     @Test
     void testOnChorusFruitNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
-        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location, TeleportCause.CHORUS_FRUIT);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, location, location, TeleportCause.CONSUMABLE_EFFECT);
         listener.onPlayerTeleport(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));

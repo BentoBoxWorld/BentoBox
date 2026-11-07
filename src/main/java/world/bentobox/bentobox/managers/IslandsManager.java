@@ -483,7 +483,7 @@ public class IslandsManager {
      * @return Island or null
      */
     @Nullable
-    public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
+    public Island getIsland(World world, UUID uuid) {
         if (world == null || uuid == null) {
             return null;
         }

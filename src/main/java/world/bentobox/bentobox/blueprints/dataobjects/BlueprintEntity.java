@@ -236,8 +236,8 @@ public class BlueprintEntity {
         if (entity instanceof Hanging hanging) {
             this.setFacing(hanging.getFacing());
         }
-        if (entity instanceof Painting painting && painting.getArt() != null) {
-            this.setPaintingArt(painting.getArt().getKey().toString());
+        if (entity instanceof Painting painting) {
+            this.setPaintingArt(painting.getArt().key().asString());
         }
     }
 

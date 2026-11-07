@@ -67,6 +67,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
+import org.bukkit.damage.DamageSource;
 /**
  * Common items for testing. Don't forget to use super.setUp()!
  * <p>
@@ -233,7 +234,8 @@ public abstract class CommonTestSetup {
      * {@code isTagged()} returns {@code false} instead of throwing
      * {@code NotAMockException} at runtime.
      */
-    @SuppressWarnings({"unchecked", "java:S3011"})
+    // java:S5738 - sun.misc.Unsafe is the only way to rewrite a static final field in tests
+    @SuppressWarnings({"unchecked", "java:S3011", "java:S5738"})
     private void reinitTagFields() {
         sun.misc.Unsafe unsafe;
         try {
@@ -333,8 +335,7 @@ public abstract class CommonTestSetup {
     }
     public PlayerDeathEvent getPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp,
             int newTotalExp, int newLevel, @Nullable String deathMessage) {
-        //Technically this null is not allowed, but it works right now
-        return new PlayerDeathEvent(player, null, drops, droppedExp, newExp,
-                newTotalExp, newLevel, deathMessage);
+        return new PlayerDeathEvent(player, mock(DamageSource.class), drops, droppedExp, newExp, newTotalExp, newLevel,
+                deathMessage == null ? null : Component.text(deathMessage), true);
     }
 }

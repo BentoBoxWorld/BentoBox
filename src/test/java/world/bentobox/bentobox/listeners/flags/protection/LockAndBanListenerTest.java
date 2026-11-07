@@ -40,6 +40,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import net.kyori.adventure.text.Component;
 
 class LockAndBanListenerTest extends CommonTestSetup {
 
@@ -205,7 +206,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isBanned(uuid)).thenReturn(true);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, Component.text("join message")));
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
@@ -409,7 +410,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, Component.text("join message")));
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
@@ -436,7 +437,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(player, Component.text("join message")));
         // User should not see a message
         verify(notifier, never()).notify(any(), anyString());
         // User should not be teleported somewhere
@@ -461,7 +462,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(player, Component.text("join message")));
         // User should see a bypass message
         verify(notifier).notify(any(), anyString());
         // User should not be teleported somewhere
@@ -478,7 +479,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Place the player on the island
         when(player.getLocation()).thenReturn(inside);
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(player, Component.text("join message")));
         // User should not see a message
         verify(notifier, never()).notify(any(), anyString());
         // User should not be teleported somewhere

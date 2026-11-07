@@ -59,7 +59,8 @@ class BlockInteractionListenerTest extends CommonTestSetup {
      * Sets a Tag static field to a new MaterialTagMock containing the given materials.
      * Uses Unsafe to overwrite the static final field, same pattern as reinitTagFields().
      */
-    @SuppressWarnings("java:S3011")
+    // java:S5738 - sun.misc.Unsafe is the only way to rewrite a static final field in tests
+    @SuppressWarnings({"java:S3011", "java:S5738"})
     private static void setTagField(String fieldName, Material... materials) {
         try {
             java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");

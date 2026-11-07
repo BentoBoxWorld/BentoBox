@@ -41,7 +41,6 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Flying;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -77,6 +76,8 @@ import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.PasteHandlerImpl;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
+import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Phantom;
 
 
 /**
@@ -472,8 +473,7 @@ public class Util {
     public static boolean isHostileEntity(Entity entity) {
         // MagmaCube extends Slime
         // Slime extends Mob
-        // Ghast and Phantom extends Flying
-        // Flying extends Mob
+        // Ghast and Phantom are the flying hostiles (the Flying interface is deprecated for removal)
         // Shulker is Golem, but other Golems cannot be added here.
         // EnderDragon extends LivingEntity
         // Most of hostile mobs extends Monster.
@@ -481,7 +481,7 @@ public class Util {
 
         // Sulfur Cube (26.2) is slime-like but passive, so it must not be treated as hostile
         // even if it implements Slime at runtime.
-        return (entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
+        return (entity instanceof Monster || entity instanceof Ghast || entity instanceof Phantom || entity instanceof Slime ||
                 entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish)
                 && (SULFUR_CUBE == null || entity.getType() != SULFUR_CUBE);
     }

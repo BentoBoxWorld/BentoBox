@@ -48,6 +48,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 class TNTListenerTest extends CommonTestSetup {
 
@@ -339,16 +340,14 @@ class TNTListenerTest extends CommonTestSetup {
 
     @Test
     void testOnEntityExplosion() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION,
-                null, 20D);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
 
     @Test
     void testOnSulfurCubeEntityExplosion() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(sulfurCube(), mockPlayer,
-                DamageCause.ENTITY_EXPLOSION, null, 20D);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(sulfurCube(), mockPlayer, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -356,8 +355,7 @@ class TNTListenerTest extends CommonTestSetup {
     @Test
     void testOnSulfurCubeEntityExplosionAllowed() {
         when(island.isAllowed(Flags.TNT_DAMAGE)).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(sulfurCube(), mockPlayer,
-                DamageCause.ENTITY_EXPLOSION, null, 20D);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(sulfurCube(), mockPlayer, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
@@ -367,8 +365,7 @@ class TNTListenerTest extends CommonTestSetup {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
         assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
-                20D);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertTrue(e.isCancelled());
     }
@@ -378,8 +375,7 @@ class TNTListenerTest extends CommonTestSetup {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
         assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
-                20D);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
@@ -387,8 +383,7 @@ class TNTListenerTest extends CommonTestSetup {
     @Test
     void testOnEntityExplosionWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, null,
-                20D);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(entity, mockPlayer, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
     }
