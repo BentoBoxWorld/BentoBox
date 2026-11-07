@@ -106,7 +106,8 @@ class RemoveMobsListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnUserTeleportDifferentWorld() {
-        when(mockPlayer.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(mockPlayer.getWorld()).thenReturn(worldMock);
         PlayerTeleportEvent e = new PlayerTeleportEvent(mockPlayer, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
         verify(sch).runTask(any(), any(Runnable.class));

@@ -22,6 +22,23 @@ import world.bentobox.bentobox.util.Util;
  */
 public class MobLimitClickListener implements ClickHandler {
 
+    private final EntityLimitTabType type;
+
+    /**
+     * Opens the mob block list ({@link EntityLimitTabType#MOB_LIMIT})
+     */
+    public MobLimitClickListener() {
+        this(EntityLimitTabType.MOB_LIMIT);
+    }
+
+    /**
+     * @param type - which list this click handler opens
+     * @since 3.23.6
+     */
+    public MobLimitClickListener(EntityLimitTabType type) {
+        this.type = type;
+    }
+
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Get the world
@@ -32,7 +49,8 @@ public class MobLimitClickListener implements ClickHandler {
         World world = panel.getWorld().orElse(user.getWorld());
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
         World w = Objects.requireNonNull(Util.getWorld(world));
-        String reqPerm = iwm.getPermissionPrefix(w) + "admin.settings.LIMIT_MOBS";
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, type, world);
+        String reqPerm = iwm.getPermissionPrefix(w) + "admin.settings." + tab.getFlagKey();
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -40,19 +58,19 @@ public class MobLimitClickListener implements ClickHandler {
         }
 
         // Open the Sub Settings panel
-        openPanel(user, world);
+        openPanel(user, world, tab);
 
         return true;
     }
 
-    private void openPanel(User user, World world) {
+    private void openPanel(User user, World world, GeoMobLimitTab tab) {
         // Close the current panel
         user.closeInventory();
         // Open a new panel
         new TabbedPanelBuilder()
         .user(user)
         .world(world)
-        .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world))
+        .tab(1, tab)
         .startingSlot(1)
         .size(54)
         .build().openPanel();

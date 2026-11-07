@@ -1016,6 +1016,11 @@ protection:
       name: '<gray>與悅靈及銅傀儡交互</gray>'
       description: '<gray>允許/禁止 給予和提取物品自悅靈及銅傀儡</gray>'
       hint: '<red>已禁止與悅靈及銅傀儡交互</red>'
+    ALLOW_MOBS:
+      description: '<gray>即使動物或怪物生成已關閉，這些實體也永遠會生成</gray>'
+      name: '<dark_aqua><bold>永遠允許生成的實體</bold></dark_aqua>'
+      always: '<green>永遠生成</green>'
+      flags: '<gray>依生成旗標決定</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: 切換天然動物產卵
       name: 動物天然產卵

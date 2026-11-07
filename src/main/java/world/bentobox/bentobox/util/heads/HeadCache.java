@@ -98,7 +98,7 @@ public class HeadCache
         {
             return this.playerProfile != null && this.playerProfile.getTextures().getSkin() != null;
         }
-        catch (Exception e)
+        catch (Exception _)
         {
             // Treat an unreadable profile as having no texture.
             return false;
@@ -124,7 +124,7 @@ public class HeadCache
             try {
                 meta.setOwnerProfile(this.playerProfile);
                 item.setItemMeta(meta);
-            } catch (Exception e) {
+            } catch (Exception _) {
                 // Do nothing - there was an error getting the head
             }
         }

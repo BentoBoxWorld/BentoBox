@@ -42,7 +42,7 @@ public class CreditsPanel {
                 int slot = getFirstAvailableSlot(builder);
 
                 if (slot == -1) {
-                    break; //TODO support multi paging
+                    break; // Only the first page of contributors is shown
                 }
 
                 PanelItem contributorItem = new PanelItemBuilder()

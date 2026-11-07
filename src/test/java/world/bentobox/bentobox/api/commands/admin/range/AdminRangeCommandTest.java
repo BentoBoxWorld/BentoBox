@@ -60,7 +60,8 @@ class AdminRangeCommandTest extends CommonTestSetup {
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ac.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(ac.getWorld()).thenReturn(worldMock);
 
         // Island World Manager
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
@@ -112,7 +113,7 @@ class AdminRangeCommandTest extends CommonTestSetup {
         AdminRangeCommand arc = new AdminRangeCommand(ac);
         arc.execute(user, "", new ArrayList<>());
         // Show help"
-        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
 }

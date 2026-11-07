@@ -29,7 +29,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 
 /**
@@ -276,7 +275,7 @@ public class BrigadierCommandRegistrar {
      */
     private static String namespace(@NonNull CompositeCommand command) {
         return command.getAddon() == null ? "bentobox"
-                : ((Addon) command.getAddon()).getDescription().getName().toLowerCase(Locale.ENGLISH);
+                : command.getAddon().getDescription().getName().toLowerCase(Locale.ENGLISH);
     }
 
     /*

@@ -62,7 +62,7 @@ public record ItemTemplateRecord(
      * @param fallback the fallback
      */
     public ItemTemplateRecord(ItemStack icon, String title, String description, ItemTemplateRecord fallback) {
-        this(icon, title, description, new ArrayList<>(6), new HashMap<>(0), fallback);
+        this(icon, title, description, new ArrayList<>(6), new HashMap<>(), fallback);
     }
 
     /**

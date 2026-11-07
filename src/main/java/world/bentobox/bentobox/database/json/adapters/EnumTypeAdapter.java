@@ -39,7 +39,7 @@ public final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
                     name = annotation.value();
                 }
 
-            } catch (NoSuchFieldException e) {
+            } catch (NoSuchFieldException _) {
                 // Ignore
             }
 

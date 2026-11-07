@@ -49,6 +49,7 @@ import org.mockito.Mockito;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 /**
  * @author tastybento
@@ -100,7 +101,7 @@ class HurtingListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnEntityDamageMonsteronMonster() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, null, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(enderman, enderman, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -111,7 +112,7 @@ class HurtingListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnEntityDamagePlayeronMonster() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, enderman, null, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(mockPlayer, enderman, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertTrue(e.isCancelled());
@@ -125,7 +126,7 @@ class HurtingListenerTest extends CommonTestSetup {
     @Test
     void testOnEntityDamagePlayeronMonsterOp() {
         when(mockPlayer.isOp()).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(mockPlayer, enderman, null, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(mockPlayer, enderman, null, 0);
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -430,7 +431,7 @@ class HurtingListenerTest extends CommonTestSetup {
         Monster target = mock(Monster.class);
         when(target.getLocation()).thenReturn(location);
         map.put(target, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier, never()).notify(any(), any());
     }
@@ -445,7 +446,7 @@ class HurtingListenerTest extends CommonTestSetup {
         when(tp.getShooter()).thenReturn(mockPlayer);
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(mockPlayer, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier, never()).notify(any(), any());
     }
@@ -464,7 +465,7 @@ class HurtingListenerTest extends CommonTestSetup {
         when(monster.getType()).thenReturn(EntityType.ZOMBIE); // prevent isPassiveEntity null-type fallback
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(monster, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier).notify(user, "protection.protected");
         verify(monster).removePotionEffect(effectType);
@@ -485,7 +486,7 @@ class HurtingListenerTest extends CommonTestSetup {
         when(monster.getType()).thenReturn(EntityType.ZOMBIE); // prevent isPassiveEntity null-type fallback
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(monster, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier, never()).notify(any(), any());
         verify(monster, never()).removePotionEffect(any());
@@ -504,7 +505,7 @@ class HurtingListenerTest extends CommonTestSetup {
         when(animal.getLocation()).thenReturn(location);
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(animal, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier).notify(user, "protection.protected");
         verify(animal).removePotionEffect(effectType);
@@ -524,7 +525,7 @@ class HurtingListenerTest extends CommonTestSetup {
         when(villager.getType()).thenReturn(EntityType.VILLAGER);
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(villager, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier).notify(user, "protection.protected");
         verify(villager).removePotionEffect(effectType);
@@ -544,7 +545,7 @@ class HurtingListenerTest extends CommonTestSetup {
         when(parrot.getLocation()).thenReturn(location);
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(parrot, 10D);
-        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        PotionSplashEvent e = new PotionSplashEvent(tp, null, null, null, map);
         new HurtingListener().onSplashPotionSplash(e);
         verify(notifier).notify(user, "protection.protected");
         verify(parrot).removePotionEffect(effectType);
@@ -561,9 +562,10 @@ class HurtingListenerTest extends CommonTestSetup {
     @Test
     void testOnLingeringPotionSplashNonPlayerShooter() {
         ThrownPotion tp = mock(ThrownPotion.class);
-        when(tp.getShooter()).thenReturn(mock(Monster.class));
+        Monster monsterMock = mock(Monster.class);
+        when(tp.getShooter()).thenReturn(monsterMock);
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         new HurtingListener().onLingeringPotionSplash(e);
         verify(cloud, never()).getEntityId();
     }
@@ -579,7 +581,7 @@ class HurtingListenerTest extends CommonTestSetup {
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
         when(cloud.getEntityId()).thenReturn(42);
         when(cloud.getDuration()).thenReturn(200);
-        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         new HurtingListener().onLingeringPotionSplash(e);
         // Entity ID is called for storage + for duration lookup + for the scheduled removal
         verify(cloud, Mockito.atLeastOnce()).getEntityId();
@@ -597,7 +599,7 @@ class HurtingListenerTest extends CommonTestSetup {
     void testOnLingeringPotionDamageWrongCause() {
         Monster cloud = mock(Monster.class);
         when(cloud.getEntityId()).thenReturn(99);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloud, enderman, DamageCause.MAGIC, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(cloud, enderman, DamageCause.MAGIC, 5);
         new HurtingListener().onLingeringPotionDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -610,7 +612,7 @@ class HurtingListenerTest extends CommonTestSetup {
     void testOnLingeringPotionDamageNotInMap() {
         Monster cloud = mock(Monster.class);
         when(cloud.getEntityId()).thenReturn(99);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloud, enderman, DamageCause.ENTITY_ATTACK, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(cloud, enderman, DamageCause.ENTITY_ATTACK, 5);
         new HurtingListener().onLingeringPotionDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -627,7 +629,7 @@ class HurtingListenerTest extends CommonTestSetup {
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
         when(cloud.getEntityId()).thenReturn(7);
         when(cloud.getDuration()).thenReturn(100);
-        LingeringPotionSplashEvent splash = new LingeringPotionSplashEvent(tp, cloud);
+        LingeringPotionSplashEvent splash = new LingeringPotionSplashEvent(tp, null, null, null, cloud);
         HurtingListener hl = new HurtingListener();
         hl.onLingeringPotionSplash(splash);
 
@@ -635,7 +637,7 @@ class HurtingListenerTest extends CommonTestSetup {
         Monster cloudEntity = mock(Monster.class); // acts as the AreaEffectCloud entity in the damage event
         when(cloudEntity.getEntityId()).thenReturn(7);
         when(enderman.getLocation()).thenReturn(location);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloudEntity, enderman, DamageCause.ENTITY_ATTACK, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(cloudEntity, enderman, DamageCause.ENTITY_ATTACK, 5);
         hl.onLingeringPotionDamage(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(user, "protection.protected");
@@ -654,12 +656,12 @@ class HurtingListenerTest extends CommonTestSetup {
         when(cloud.getEntityId()).thenReturn(8);
         when(cloud.getDuration()).thenReturn(100);
         HurtingListener hl = new HurtingListener();
-        hl.onLingeringPotionSplash(new LingeringPotionSplashEvent(tp, cloud));
+        hl.onLingeringPotionSplash(new LingeringPotionSplashEvent(tp, null, null, null, cloud));
 
         Monster cloudEntity = mock(Monster.class);
         when(cloudEntity.getEntityId()).thenReturn(8);
         when(enderman.getLocation()).thenReturn(location);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloudEntity, enderman, DamageCause.ENTITY_ATTACK, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(cloudEntity, enderman, DamageCause.ENTITY_ATTACK, 5);
         hl.onLingeringPotionDamage(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), any());
@@ -677,11 +679,11 @@ class HurtingListenerTest extends CommonTestSetup {
         when(cloud.getEntityId()).thenReturn(9);
         when(cloud.getDuration()).thenReturn(100);
         HurtingListener hl = new HurtingListener();
-        hl.onLingeringPotionSplash(new LingeringPotionSplashEvent(tp, cloud));
+        hl.onLingeringPotionSplash(new LingeringPotionSplashEvent(tp, null, null, null, cloud));
 
         Monster cloudEntity = mock(Monster.class);
         when(cloudEntity.getEntityId()).thenReturn(9);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(cloudEntity, mockPlayer, DamageCause.ENTITY_ATTACK, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(cloudEntity, mockPlayer, DamageCause.ENTITY_ATTACK, 5);
         hl.onLingeringPotionDamage(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), any());
@@ -705,7 +707,7 @@ class HurtingListenerTest extends CommonTestSetup {
 
         // Verify nothing was stored: a subsequent onFireworkDamage should have no effect
         when(firework.getLocation()).thenReturn(location);
-        EntityDamageByEntityEvent dmg = new EntityDamageByEntityEvent(firework, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
+        EntityDamageByEntityEvent dmg = TestEvents.damageByEntity(firework, enderman, DamageCause.ENTITY_EXPLOSION, 5);
         hl.onFireworkDamage(dmg);
         assertFalse(dmg.isCancelled());
     }
@@ -737,7 +739,7 @@ class HurtingListenerTest extends CommonTestSetup {
 
         // Now the firework damages a monster
         when(enderman.getLocation()).thenReturn(location);
-        EntityDamageByEntityEvent dmg = new EntityDamageByEntityEvent(firework, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
+        EntityDamageByEntityEvent dmg = TestEvents.damageByEntity(firework, enderman, DamageCause.ENTITY_EXPLOSION, 5);
         hl.onFireworkDamage(dmg);
         assertTrue(dmg.isCancelled());
         verify(notifier).notify(user, "protection.protected");
@@ -753,7 +755,7 @@ class HurtingListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnFireworkDamageDamagerNotFirework() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(enderman, enderman, DamageCause.ENTITY_EXPLOSION, 5);
         new HurtingListener().onFireworkDamage(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), any());
@@ -767,7 +769,7 @@ class HurtingListenerTest extends CommonTestSetup {
     void testOnFireworkDamageFireworkNotInMap() {
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(200);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(firework, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(firework, enderman, DamageCause.ENTITY_EXPLOSION, 5);
         new HurtingListener().onFireworkDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -785,7 +787,7 @@ class HurtingListenerTest extends CommonTestSetup {
         hl.onPlayerShootEvent(shoot);
 
         when(enderman.getLocation()).thenReturn(location);
-        EntityDamageByEntityEvent dmg = new EntityDamageByEntityEvent(firework, enderman, DamageCause.ENTITY_EXPLOSION, null, 5);
+        EntityDamageByEntityEvent dmg = TestEvents.damageByEntity(firework, enderman, DamageCause.ENTITY_EXPLOSION, 5);
         hl.onFireworkDamage(dmg);
         assertFalse(dmg.isCancelled());
         verify(notifier, never()).notify(any(), any());

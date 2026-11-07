@@ -16,6 +16,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.awt.Color;
 import java.util.Collections;
@@ -206,8 +207,8 @@ class DynmapHookTest extends CommonTestSetup {
     void testRegisterGameModeWithIsland() {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
         hookAndReady();
-        verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
-                eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
+        verify(markerSet).createMarker(uuid.toString(), "tastybento",
+                "bskyblock_world", 0.0, 64.0, 0.0, defaultIcon, true);
     }
 
     @Test
@@ -228,8 +229,8 @@ class DynmapHookTest extends CommonTestSetup {
         when(im.getIslands(overWorld)).thenReturn(List.of(island));
         hookAndReady();
         // House icon still placed, but no area box
-        verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
-                eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
+        verify(markerSet).createMarker(uuid.toString(), "tastybento",
+                "bskyblock_world", 0.0, 64.0, 0.0, defaultIcon, true);
         verify(markerSet, never()).createAreaMarker(anyString(), anyString(), anyBoolean(), anyString(),
                 any(double[].class), any(double[].class), anyBoolean());
     }
@@ -321,8 +322,8 @@ class DynmapHookTest extends CommonTestSetup {
         when(event.getIsland()).thenReturn(island);
         hook.onNewIsland(event);
 
-        verify(markerSet).createMarker(eq(uuid.toString()), eq("tastybento"),
-                eq("bskyblock_world"), eq(0.0), eq(64.0), eq(0.0), eq(defaultIcon), eq(true));
+        verify(markerSet).createMarker(uuid.toString(), "tastybento",
+                "bskyblock_world", 0.0, 64.0, 0.0, defaultIcon, true);
     }
 
     @Test
@@ -331,8 +332,7 @@ class DynmapHookTest extends CommonTestSetup {
         when(iwm.getAddon(overWorld)).thenReturn(Optional.empty());
         IslandNewIslandEvent event = mock(IslandNewIslandEvent.class);
         when(event.getIsland()).thenReturn(island);
-        // Should not throw
-        hook.onNewIsland(event);
+        assertDoesNotThrow(() -> hook.onNewIsland(event));
     }
 
     @Test
@@ -358,8 +358,7 @@ class DynmapHookTest extends CommonTestSetup {
 
         IslandDeleteEvent event = mock(IslandDeleteEvent.class);
         when(event.getIsland()).thenReturn(island);
-        // Should not throw
-        hook.onIslandDelete(event);
+        assertDoesNotThrow(() -> hook.onIslandDelete(event));
     }
 
     @Test
@@ -413,8 +412,8 @@ class DynmapHookTest extends CommonTestSetup {
         // Old island marker removed
         verify(oldMarker).deleteMarker();
         // New island marker added
-        verify(markerSet).createMarker(eq(newUuid.toString()), eq("Reset Island"),
-                eq("bskyblock_world"), eq(100.0), eq(64.0), eq(100.0), eq(defaultIcon), eq(true));
+        verify(markerSet).createMarker(newUuid.toString(), "Reset Island",
+                "bskyblock_world", 100.0, 64.0, 100.0, defaultIcon, true);
     }
 
     // ---- Public addon API ----

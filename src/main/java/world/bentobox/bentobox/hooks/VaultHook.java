@@ -34,7 +34,7 @@ public class VaultHook extends Hook {
             }
             economy = rsp.getProvider();
             return true;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
     }

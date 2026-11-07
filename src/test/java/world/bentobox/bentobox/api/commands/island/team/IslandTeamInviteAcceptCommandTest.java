@@ -151,7 +151,6 @@ class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
      */
     @Test
     void testSetup() {
-        // TODO: test permission inheritance?
         assertTrue(c.isOnlyPlayer());
         assertEquals("commands.island.team.invite.accept.description", c.getDescription());
     }

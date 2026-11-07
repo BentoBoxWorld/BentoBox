@@ -120,7 +120,8 @@ class EnterExitListenerTest extends CommonTestSetup {
         when(inside.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE -2, Y, Z));
 
         // Same as inside, but another world
-        when(anotherWorld.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(anotherWorld.getWorld()).thenReturn(worldMock);
         when(anotherWorld.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
         when(anotherWorld.getBlockY()).thenReturn(Y);
         when(anotherWorld.getBlockZ()).thenReturn(Z);
@@ -377,5 +378,4 @@ class EnterExitListenerTest extends CommonTestSetup {
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
 
-    // TODO add tests to make sure the enter/exit messages work properly when on an island the player is part of.
 }

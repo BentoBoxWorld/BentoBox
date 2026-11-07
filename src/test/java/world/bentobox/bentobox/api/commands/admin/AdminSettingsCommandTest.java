@@ -273,7 +273,6 @@ class AdminSettingsCommandTest extends RanksManagerTestSetup {
     void testTabCompleteUserStringListOfStringFourArgs() {
         Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "b", "PVP_OVERWORLD", "t"));
         assertFalse(r.isEmpty());
-        // TODO - finish this.
     }
 
 

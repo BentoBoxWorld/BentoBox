@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 import java.util.UUID;
 
@@ -52,7 +54,7 @@ class ThrowingListenerTest extends CommonTestSetup {
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+        verify(notifier, never()).notify(Mockito.any(), Mockito.anyString());
     }
 
     /**
@@ -67,7 +69,7 @@ class ThrowingListenerTest extends CommonTestSetup {
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
     /**
@@ -86,7 +88,7 @@ class ThrowingListenerTest extends CommonTestSetup {
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+        verify(notifier, never()).notify(Mockito.any(), Mockito.anyString());
     }
 
     /**
@@ -106,7 +108,7 @@ class ThrowingListenerTest extends CommonTestSetup {
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
         tl.onPlayerThrowPotion(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+        verify(notifier, never()).notify(Mockito.any(), Mockito.anyString());
     }
 
 }

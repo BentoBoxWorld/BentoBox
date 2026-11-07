@@ -6,10 +6,11 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Base64;
-import java.util.HashSet;
+
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -123,7 +124,8 @@ public class HeadGetter {
         }
 
         // Queue for the async resolver
-        headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
+        // The async head task iterates this set while the main thread adds to it, so it must be concurrent
+        headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> ConcurrentHashMap.newKeySet()).add(requester);
         names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
     }
 
@@ -145,7 +147,7 @@ public class HeadGetter {
         try {
             HeadCache cache = new HeadCache(userName, player.getUniqueId(), player.getPlayerProfile());
             return cache.hasTexture() ? cache : null;
-        } catch (Exception e) {
+        } catch (Exception _) {
             // An unreadable profile just means we fall back to the async resolver.
             return null;
         }
@@ -282,9 +284,9 @@ public class HeadGetter {
                 UUID resolvedId = profile.getUniqueId() != null ? profile.getUniqueId() : userId;
                 return new HeadCache(userName, resolvedId, profile);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Server could not complete the profile - fall back to the web-based lookups.
         }
 
@@ -306,9 +308,7 @@ public class HeadGetter {
             JsonObject jsonObject = GSON.fromJson(
                     HeadGetter.getURLContent("https://api.mojang.com/users/profiles/minecraft/" + name),
                     JsonObject.class);
-            /*
-             * Returned Json Object: { name: USER_NAME, id: USER_ID }
-             */
+            // The returned JSON object carries the player name and id
 
             // Mojang returns ID without `-`. So it is necessary to insert them back.
             // Well technically it is not necessary and can use just a string instead of
@@ -318,7 +318,7 @@ public class HeadGetter {
                     .replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
 
             userId = UUID.fromString(userIdString);
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Return random if failed?
             userId = UUID.randomUUID();
         }
@@ -342,10 +342,7 @@ public class HeadGetter {
                             "https://sessionserver.mojang.com/session/minecraft/profile/" + userId.toString()),
                     JsonObject.class);
 
-            /*
-             * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
-             * "textures", value: ENCODED_BASE64_TEXTURE } ] }
-             */
+            // The returned JSON object carries id, name and a properties list whose "textures" entry holds the Base64 texture
 
             String decodedTexture = "";
 
@@ -359,7 +356,7 @@ public class HeadGetter {
             }
 
             return decodedTexture;
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Failed to fetch texture from Mojang API; fall through to return null
         }
 
@@ -386,10 +383,7 @@ public class HeadGetter {
                     "https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
                     JsonObject.class);
 
-            /*
-             * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
-             * "textures", value: ENCODED_BASE64_TEXTURE } ] }
-             */
+            // The returned JSON object carries id, name and a properties list whose "textures" entry holds the Base64 texture
 
             String decodedTexture = "";
 
@@ -406,7 +400,7 @@ public class HeadGetter {
             }
 
             return new Pair<>(UUID.fromString(userIdString), decodedTexture);
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Failed to fetch texture from mc-heads.net; fall through to return default
         }
 
@@ -430,7 +424,7 @@ public class HeadGetter {
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             returnValue = br.lines().collect(Collectors.joining());
             br.close();
-        } catch (Exception e) {
+        } catch (Exception _) {
             returnValue = "";
         }
 
@@ -439,17 +433,15 @@ public class HeadGetter {
 
     private static URL getSkinURLFromBase64(String base64) {
         /*
-         * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
-         * "profileName": "USERNAME", "textures": { "SKIN": { "url":
-         * "https://textures.minecraft.net/texture/TEXTURE_ID" }, "CAPE": { "url":
-         * "https://textures.minecraft.net/texture/TEXTURE_ID" } } }
+         * The Base64 string decodes to JSON with timestamp, profileId, profileName and a textures
+         * object whose SKIN (and optionally CAPE) entries carry the texture URL.
          */
         try {
             String decoded = new String(Base64.getDecoder().decode(base64));
             JsonObject json = GSON.fromJson(decoded, JsonObject.class);
             String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
             return new URI(url).toURL();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return null;
         }
     }

@@ -3,6 +3,8 @@ package world.bentobox.bentobox.listeners;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 import java.util.ArrayList;
 
@@ -56,7 +58,7 @@ class DeathListenerTest extends CommonTestSetup {
 
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
-        Mockito.verify(pm).addDeath(world, uuid);
+        verify(pm).addDeath(world, uuid);
     }
 
     @Test
@@ -67,7 +69,7 @@ class DeathListenerTest extends CommonTestSetup {
 
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
-        Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
+        verify(pm, never()).addDeath(world, uuid);
     }
 
     @Test
@@ -78,7 +80,7 @@ class DeathListenerTest extends CommonTestSetup {
 
         PlayerDeathEvent e = getPlayerDeathEvent(mockPlayer, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeath(e);
-        Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
+        verify(pm, never()).addDeath(world, uuid);
     }
 
 

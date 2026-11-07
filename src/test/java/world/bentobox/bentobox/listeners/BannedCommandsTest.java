@@ -53,7 +53,8 @@ class BannedCommandsTest extends CommonTestSetup {
         when(mockPlayer.isOp()).thenReturn(false);
         when(mockPlayer.hasPermission(Mockito.anyString())).thenReturn(false);
         when(mockPlayer.getWorld()).thenReturn(world);
-        when(mockPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(mockPlayer.getLocation()).thenReturn(locationMock);
         User.getInstance(mockPlayer);
 
         server.setPlayers(10);

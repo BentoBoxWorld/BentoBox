@@ -128,7 +128,8 @@ class DefaultHelpCommandTest extends CommonTestSetup {
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
-        when(parent.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(parent.getWorld()).thenReturn(worldMock);
         when(parent.getSubCommands()).thenReturn(new LinkedHashMap<>());
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
@@ -156,7 +157,8 @@ class DefaultHelpCommandTest extends CommonTestSetup {
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
-        when(parent.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(parent.getWorld()).thenReturn(worldMock);
         when(parent.getSubCommands()).thenReturn(new LinkedHashMap<>());
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
@@ -183,7 +185,8 @@ class DefaultHelpCommandTest extends CommonTestSetup {
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
-        when(parent.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(parent.getWorld()).thenReturn(worldMock);
 
         // Create enough sub-commands to exceed one page
         LinkedHashMap<String, CompositeCommand> subCommands = new LinkedHashMap<>();

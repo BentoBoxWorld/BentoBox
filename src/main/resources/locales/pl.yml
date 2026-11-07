@@ -1100,6 +1100,15 @@ protection:
       name: Interakcja z Allayem i Copper Golemem
       description: Zezwól na dawanie i zabieranie przedmiotów do/od Allaya i Copper Golema
       hint: Interakcja z Allayem i Copper Golemem wyłączona
+    ALLOW_MOBS:
+      description: |-
+        <green>Byty, które pojawiają się</green>
+        <green>zawsze, nawet gdy</green>
+        <green>pojawianie się zwierząt lub</green>
+        <green>potworów jest wyłączone.</green>
+      name: '<yellow>Zawsze dozwolone typy bytów</yellow>'
+      always: '<green>Zawsze się pojawia</green>'
+      flags: '<gray>Podlega flagom pojawiania</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Przełącz naturalne pojawianie się zwierząt
       name: Naturalne spawnowanie zwierząt

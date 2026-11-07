@@ -32,12 +32,9 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.GrindstoneInventory;
-import org.bukkit.inventory.HorseInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.JukeboxInventory;
 import org.bukkit.inventory.LecternInventory;
-import org.bukkit.inventory.LlamaInventory;
 import org.bukkit.inventory.LoomInventory;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.SmithingInventory;
@@ -90,7 +87,7 @@ public class InventoryListener extends FlagListener
         Player player = (Player) e.getWhoClicked();
 
         // Special inventory types
-        if (checkSpecificInventories(e, player, e.getInventory())) {
+        if (checkSpecificInventories(e, player)) {
             return;
         }
         // Inventory holders
@@ -165,7 +162,7 @@ public class InventoryListener extends FlagListener
     }
 
 
-    private boolean checkSpecificInventories(InventoryClickEvent e, Player player, Inventory inventory) {
+    private boolean checkSpecificInventories(InventoryClickEvent e, Player player) {
         if (e.getInventory() instanceof AbstractHorseInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
             return true;
@@ -196,17 +193,11 @@ public class InventoryListener extends FlagListener
         } else if (e.getInventory() instanceof GrindstoneInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.GRINDSTONE);
             return true;
-        } else if (e.getInventory() instanceof HorseInventory) {
-            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
-            return true;
         } else if (e.getInventory() instanceof JukeboxInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.JUKEBOX);
             return true;
         } else if (e.getInventory() instanceof LecternInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.LECTERN);
-            return true;
-        } else if (e.getInventory() instanceof LlamaInventory) {
-            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
             return true;
         } else if (e.getInventory() instanceof LoomInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.LOOM);

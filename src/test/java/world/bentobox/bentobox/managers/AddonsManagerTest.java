@@ -15,11 +15,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -84,8 +83,6 @@ class AddonsManagerTest extends CommonTestSetup {
         File f = new File(plugin.getDataFolder(), "addons");
         Files.deleteIfExists(f.toPath());
     }
-
-    // TODO - add test cases that actually load an addon
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#AddonsManager(world.bentobox.bentobox.BentoBox)}.
@@ -650,7 +647,7 @@ class AddonsManagerTest extends CommonTestSetup {
     // ---- disable with loaders ----
 
     @Test
-    void testDisableClosesLoaders() throws IOException {
+    void testDisableClosesLoaders() {
         Addon addon = mock(Addon.class);
         AddonDescription desc = new AddonDescription.Builder("main", "LoaderAddon", "1.0")
                 .authors("Author1").build();
@@ -733,9 +730,8 @@ class AddonsManagerTest extends CommonTestSetup {
 
     @Test
     void testAllLoadedNoEnabledAddons() {
-        // No addons - should not throw
-        am.allLoaded();
-        // Just verify it completes without error
+        // No addons - must complete without error
+        assertDoesNotThrow(() -> am.allLoaded());
     }
 
     // ---- getDefaultWorldGenerator with world name match ----

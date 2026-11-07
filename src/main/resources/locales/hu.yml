@@ -1133,6 +1133,15 @@ protection:
       name: Allay és Copper Golem interakció
       description: Engedélyezze az Allay és Copper Golem számára tárgyak átadását és elvitelét
       hint: Allay és Copper Golem interakció letiltva
+    ALLOW_MOBS:
+      description: |-
+        <green>Entitások, amelyek mindig</green>
+        <green>megjelennek, akkor is, ha az</green>
+        <green>állatok vagy szörnyek</green>
+        <green>megjelenése ki van kapcsolva.</green>
+      name: '<yellow>Mindig engedélyezett entitástípusok</yellow>'
+      always: '<green>Mindig megjelenik</green>'
+      flags: '<gray>A megjelenési zászlókat követi</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Természetes állat megjelenés váltása
       name: Állatok természetes megjelenése

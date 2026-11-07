@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -73,7 +72,8 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
 
         when(mockPlayer.getLocation()).thenReturn(location);
 
-        when(mockPlayer.getInventory()).thenReturn(mock(PlayerInventory.class));
+        PlayerInventory playerInventoryMock = mock(PlayerInventory.class);
+        when(mockPlayer.getInventory()).thenReturn(playerInventoryMock);
 
         // Worlds
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);

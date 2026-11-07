@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -225,13 +224,13 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
-        // TODO Verify that panel was shown
         // Verify event (13 * 2)
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
@@ -264,7 +263,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         // Test with unlimited resets
@@ -297,7 +297,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
         // Test with unlimited resets
@@ -331,7 +332,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
@@ -356,11 +358,12 @@ class IslandResetCommandTest extends CommonTestSetup {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    void testConfirmationDialogFallsBackWhenUnavailable() throws Exception {
+    void testConfirmationDialogFallsBackWhenUnavailable() {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         when(pm.getResetsLeft(world, uuid)).thenReturn(1);
-        when(im.getIsland(any(), eq(uuid))).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(islandMock);
 
         // Require confirmation, and prefer a dialog for an online player
         when(s.isResetConfirmation()).thenReturn(true);
@@ -427,7 +430,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
@@ -507,7 +511,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
@@ -545,7 +550,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 
@@ -586,7 +592,8 @@ class IslandResetCommandTest extends CommonTestSetup {
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
         MockedStatic<NewIsland> mockedNewIsland = Mockito.mockStatic(NewIsland.class);
         mockedNewIsland.when(NewIsland::builder).thenReturn(builder);
 

@@ -29,7 +29,7 @@ public final class Dialogs {
         try {
             Class.forName(name, false, Dialogs.class.getClassLoader());
             return true;
-        } catch (Throwable e) {
+        } catch (ClassNotFoundException | LinkageError _) {
             return false;
         }
     }

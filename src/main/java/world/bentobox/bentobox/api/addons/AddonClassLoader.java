@@ -112,7 +112,7 @@ public class AddonClassLoader extends URLClassLoader {
         try {
             // Check if the main class extends Addon.
             addonClass = javaClass.asSubclass(Addon.class);
-        } catch (ClassCastException e) {
+        } catch (ClassCastException _) {
             throw new InvalidAddonInheritException("Main class does not extend 'Addon'");
         }
 
@@ -243,7 +243,7 @@ public class AddonClassLoader extends URLClassLoader {
             // Try to find the class in this addon's jar.
             try {
                 result = super.findClass(name);
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            } catch (ClassNotFoundException | NoClassDefFoundError _) {
                 // Do nothing. The class is not in this jar.
             }
             if (result != null) {

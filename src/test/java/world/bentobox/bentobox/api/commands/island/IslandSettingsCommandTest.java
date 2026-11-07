@@ -73,7 +73,8 @@ class IslandSettingsCommandTest extends CommonTestSetup {
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
         when(user.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(mockPlayer);
-        when(user.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(user.getLocation()).thenReturn(locationMock);
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
 
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());

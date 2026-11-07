@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -690,7 +692,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
     // -----------------------------------------------------------------------
 
     @Test
-    void testSaveBlueprintBundlesSavesAll() throws IOException {
+    void testSaveBlueprintBundlesSavesAll() {
         blueprintsFolder.mkdirs();
 
         BlueprintBundle bb1 = new BlueprintBundle();
@@ -741,7 +743,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
         bp.setName("other");
         manager.addBlueprint(addon, bp);
 
-        boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
+        manager.paste(addon, island, BUNDLE_NAME, null, true);
         // Should log error about no default blueprint
         verify(plugin).logError("Blueprint bundle has no normal world blueprint, using default");
     }
@@ -836,11 +838,70 @@ class BlueprintsManagerTest extends CommonTestSetup {
     @Test
     void testIsBlueprintsLoadedFalseDuringLoad() {
         // Override scheduler to NOT run the task, simulating async in-progress
-        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(mock(BukkitTask.class));
+        BukkitTask bukkitTaskMock = mock(BukkitTask.class);
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(bukkitTaskMock);
 
         manager.loadBlueprintBundles(addon);
 
         // Loading flag should be set (not yet cleared since task didn't run)
         assertFalse(manager.isBlueprintsLoaded());
+    }
+
+    @Test
+    void testIsBlueprintsLoadedTrueAfterLoaderThrows() {
+        // Make the loader fail hard: a file where the blueprints folder should be
+        blueprintsFolder.getParentFile().mkdirs();
+        assertDoesNotThrow(() -> Files.writeString(blueprintsFolder.toPath(), "not a folder"));
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            Runnable r = inv.getArgument(1);
+            // A throwing loader must not propagate and must still clear the flag
+            assertDoesNotThrow(r::run);
+            return mock(BukkitTask.class);
+        });
+
+        manager.loadBlueprintBundles(addon);
+
+        assertTrue(manager.isBlueprintsLoaded());
+    }
+
+    @Test
+    void testConcurrentLoadersAllClearLoadingFlag() throws Exception {
+        // Seven game modes finish loading on seven threads at the same instant (#3114)
+        int gameModes = 7;
+        List<Runnable> loaders = new ArrayList<>();
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            loaders.add(inv.getArgument(1));
+            return mock(BukkitTask.class);
+        });
+        for (int i = 0; i < gameModes; i++) {
+            GameModeAddon gm = mock(GameModeAddon.class);
+            AddonDescription d = new AddonDescription.Builder("main", "GM" + i, "1.0").build();
+            when(gm.getDescription()).thenReturn(d);
+            when(gm.getDataFolder()).thenReturn(new File(dataFolder, "gm" + i));
+            manager.loadBlueprintBundles(gm);
+        }
+        assertFalse(manager.isBlueprintsLoaded());
+
+        // Release every loader at the same instant
+        CountDownLatch start = new CountDownLatch(1);
+        List<Thread> threads = new ArrayList<>();
+        for (Runnable r : loaders) {
+            Thread t = new Thread(() -> {
+                try {
+                    start.await();
+                } catch (InterruptedException _) {
+                    Thread.currentThread().interrupt();
+                }
+                r.run();
+            });
+            t.start();
+            threads.add(t);
+        }
+        start.countDown();
+        for (Thread t : threads) {
+            t.join(10_000);
+        }
+
+        assertTrue(manager.isBlueprintsLoaded(), "a racing removal was lost");
     }
 }

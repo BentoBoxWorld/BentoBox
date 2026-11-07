@@ -5,14 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -643,22 +642,21 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
     void testDeleteIDNull() {
         when(plugin.isEnabled()).thenReturn(false);
         // Should not throw
-        handler.deleteID(null);
+        assertDoesNotThrow(() -> handler.deleteID(null));
     }
 
     @Test
     void testDeleteIDNoFolder() {
         when(plugin.isEnabled()).thenReturn(false);
         // Folder doesn't exist - should not throw
-        handler.deleteID("nonexistent");
+        assertDoesNotThrow(() -> handler.deleteID("nonexistent"));
     }
 
     // ---- close() ----
 
     @Test
     void testClose() {
-        // Should not throw
-        handler.close();
+        assertDoesNotThrow(() -> handler.close());
     }
 
     // ---- loadObject with map containing dots ----

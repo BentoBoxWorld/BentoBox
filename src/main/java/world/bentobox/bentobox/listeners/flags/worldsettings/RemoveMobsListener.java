@@ -20,7 +20,7 @@ public class RemoveMobsListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onUserTeleport(PlayerTeleportEvent e) {
         // Return if this isn't a genuine teleport
-        if (e.getCause().equals(TeleportCause.CHORUS_FRUIT) || e.getCause().equals(TeleportCause.ENDER_PEARL)
+        if (e.getCause().equals(TeleportCause.CONSUMABLE_EFFECT) || e.getCause().equals(TeleportCause.ENDER_PEARL)
                 || e.getCause().equals(TeleportCause.SPECTATE)) {
             return;
         }

@@ -1106,6 +1106,15 @@ protection:
       name: Interaksi Allay & Copper Golem
       description: Izinkan memberi dan mengambil barang ke/dari Allay dan Copper Golem
       hint: Interaksi Allay & Copper Golem dinonaktifkan
+    ALLOW_MOBS:
+      description: |-
+        <green>Entitas yang selalu</green>
+        <green>muncul, bahkan saat</green>
+        <green>kemunculan hewan atau</green>
+        <green>monster dimatikan.</green>
+      name: '<yellow>Tipe entitas yang selalu diizinkan</yellow>'
+      always: '<green>Selalu muncul</green>'
+      flags: '<gray>Mengikuti flag kemunculan</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Alihkan pemijahan hewan secara alami
       name: Pemijahan alami hewan

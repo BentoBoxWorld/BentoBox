@@ -120,7 +120,8 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         TestWorldSettings worldSettings = new TestWorldSettings();
         when(iwm.getWorldSettings(any())).thenReturn(worldSettings);
 
-        when(island.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(island.getWorld()).thenReturn(worldMock);
 
         // Locales
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
@@ -332,7 +333,8 @@ class IslandExpelCommandTest extends RanksManagerTestSetup {
         Player t = mock(Player.class);
         when(t.isOnline()).thenReturn(true);
         when(t.getUniqueId()).thenReturn(target);
-        when(t.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(t.getLocation()).thenReturn(locationMock);
         when(t.performCommand(anyString())).thenReturn(true);
         when(t.getName()).thenReturn("target");
         when(t.getDisplayName()).thenReturn("&Ctarget");

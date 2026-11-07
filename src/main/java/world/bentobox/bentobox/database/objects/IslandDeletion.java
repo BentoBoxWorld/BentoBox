@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 
 import com.google.gson.annotations.Expose;
 

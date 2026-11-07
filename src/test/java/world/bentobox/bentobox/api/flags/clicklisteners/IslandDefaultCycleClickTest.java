@@ -58,13 +58,16 @@ class IslandDefaultCycleClickTest extends RanksManagerTestSetup {
         listener = new IslandDefaultCycleClick("test");
 
         // Panel
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        Inventory inventoryMock = mock(Inventory.class);
+        when(panel.getInventory()).thenReturn(inventoryMock);
         when(panel.getWorld()).thenReturn(Optional.of(world));
 
         // User
         when(user.getWorld()).thenReturn(world);
-        when(user.getLocation()).thenReturn(mock(Location.class));
-        when(user.getPlayer()).thenReturn(mock(Player.class));
+        Location locationMock = mock(Location.class);
+        when(user.getLocation()).thenReturn(locationMock);
+        Player playerMock = mock(Player.class);
+        when(user.getPlayer()).thenReturn(playerMock);
         when(user.isOp()).thenReturn(false);
 
         // Util

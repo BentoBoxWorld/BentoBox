@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
-import world.bentobox.bentobox.util.Util;
 
 
 public class PanelItemBuilder {
@@ -31,7 +30,7 @@ public class PanelItemBuilder {
     private int amount = 1;
 
     public PanelItemBuilder icon(@Nullable Material icon) {
-        this.icon = icon == null ? new ItemStack(Material.PAPER) : new ItemStack(icon);
+        this.icon = new ItemStack(icon == null ? Material.PAPER : icon);
         return this;
     }
 

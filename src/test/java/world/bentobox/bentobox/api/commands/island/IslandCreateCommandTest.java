@@ -132,7 +132,8 @@ class IslandCreateCommandTest extends CommonTestSetup {
         when(builder.name(Mockito.anyString())).thenReturn(builder);
         when(builder.addon(addon)).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+        Island islandMock = mock(Island.class);
+        when(builder.build()).thenReturn(islandMock);
 
         // Bundles manager
 

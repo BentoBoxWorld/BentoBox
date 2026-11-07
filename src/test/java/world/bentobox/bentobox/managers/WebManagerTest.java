@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -15,6 +14,11 @@ import org.junit.jupiter.api.Test;
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.web.catalog.CatalogEntry;
 import world.bentobox.bentobox.web.credits.Contributor;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 class WebManagerTest extends CommonTestSetup {
 
@@ -142,7 +146,55 @@ class WebManagerTest extends CommonTestSetup {
 
     @Test
     void testRequestGitHubDataNoGitHub() {
-        // Should not throw when gitHub is not present
-        wm.requestGitHubData();
+        // Must not throw when gitHub is not present
+        assertDoesNotThrow(() -> wm.requestGitHubData());
     }
+
+    // ---- Catalog refresh is a snapshot swap, not an in-place clear/refill ----
+
+    private void parseCatalog(String json) throws Exception {
+        Method m = WebManager.class.getDeclaredMethod("parseCatalogContent", String.class, String.class,
+                String.class);
+        m.setAccessible(true);
+        m.invoke(wm, "", "", json);
+    }
+
+    private static final String CATALOG_ONE = """
+            {"gamemodes":[{"slot":0,"icon":"GRASS_BLOCK","description":"d","name":"GM1","repository":"BentoBoxWorld/GM1","topic":"Gamemode","tag":"BentoBoxWorld/GM1@1"}],
+             "addons":[{"slot":0,"icon":"CHEST","description":"d","name":"A1","repository":"BentoBoxWorld/A1","topic":"Addon","tag":"BentoBoxWorld/A1@1"}]}
+            """;
+    private static final String CATALOG_TWO = """
+            {"gamemodes":[{"slot":0,"icon":"GRASS_BLOCK","description":"d","name":"GM1","repository":"BentoBoxWorld/GM1","topic":"Gamemode","tag":"BentoBoxWorld/GM1@1"},
+                          {"slot":1,"icon":"STONE","description":"d","name":"GM2","repository":"BentoBoxWorld/GM2","topic":"Gamemode","tag":"BentoBoxWorld/GM2@1"}],
+             "addons":[]}
+            """;
+
+    @Test
+    void testCatalogRefreshDoesNotDisturbListHeldByReader() throws Exception {
+        parseCatalog(CATALOG_ONE);
+        List<CatalogEntry> heldByPanel = wm.getGamemodesCatalog();
+        assertEquals(1, heldByPanel.size());
+        // A panel is iterating the list on the main thread...
+        Iterator<CatalogEntry> it = heldByPanel.iterator();
+
+        // ...while the GitHub thread refreshes the catalog
+        parseCatalog(CATALOG_TWO);
+
+        // The reader's list is untouched and its iterator is still valid
+        assertEquals(1, heldByPanel.size());
+        assertNotNull(it.next());
+        assertFalse(it.hasNext());
+        // New readers see the complete new snapshot
+        assertNotSame(heldByPanel, wm.getGamemodesCatalog());
+        assertEquals(2, wm.getGamemodesCatalog().size());
+        assertTrue(wm.getAddonsCatalog().isEmpty());
+    }
+
+    @Test
+    void testCatalogGetterReturnsSameSnapshotUntilRefresh() throws Exception {
+        parseCatalog(CATALOG_ONE);
+        assertSame(wm.getAddonsCatalog(), wm.getAddonsCatalog());
+        assertEquals(1, wm.getAddonsCatalog().size());
+    }
+
 }

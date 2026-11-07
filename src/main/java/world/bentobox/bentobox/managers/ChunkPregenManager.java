@@ -162,7 +162,7 @@ public class ChunkPregenManager implements Listener {
                     (double) plugin.getIWM().getIslandZOffset(overworld) + plugin.getIWM().getIslandStartZ(overworld));
         }
 
-        List<Location> predicted = predictNextLocations(overworld, last, islandsAhead, islandDistance);
+        List<Location> predicted = predictNextLocations(last, islandsAhead, islandDistance);
 
         // Determine which worlds need chunks
         List<World> worlds = new ArrayList<>();
@@ -234,13 +234,12 @@ public class ChunkPregenManager implements Listener {
      * Predicts the next N island locations by walking the spiral grid.
      * This is a pure function — it does not modify any state.
      *
-     * @param world the world
      * @param start the starting location (last known island position)
      * @param count number of locations to predict
      * @param islandDistance the distance between island centers (island distance * 2)
      * @return list of predicted island center locations
      */
-    static List<Location> predictNextLocations(World world, Location start, int count, int islandDistance) {
+    static List<Location> predictNextLocations(Location start, int count, int islandDistance) {
         List<Location> locations = new ArrayList<>(count);
         // Clone to avoid mutating the original
         Location pos = start.clone();
@@ -331,7 +330,7 @@ public class ChunkPregenManager implements Listener {
 
             // Dispatch a fair share for this world
             int batchSize = Math.max(1, chunksPerTick / activeWorlds.size());
-            for (int i = 0; i < batchSize && dispatched < chunksPerTick && !queue.isEmpty(); i++) {
+            for (int i = 0; i < batchSize && dispatched < chunksPerTick && !queue.isEmpty(); i++, dispatched++) {
                 ChunkCoord coord = queue.poll();
                 // Async probe first (gen=false). If the chunk doesn't yet exist the
                 // future completes with null — then we fire the real generation call.
@@ -342,7 +341,6 @@ public class ChunkPregenManager implements Listener {
                             Util.getChunkAtAsync(coord.world(), coord.chunkX(), coord.chunkZ(), true);
                         }
                     });
-                dispatched++;
             }
 
             roundRobinIndex++;

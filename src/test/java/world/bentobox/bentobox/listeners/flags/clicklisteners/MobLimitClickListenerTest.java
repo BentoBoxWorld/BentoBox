@@ -25,6 +25,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab.EntityLimitTabType;
 import world.bentobox.bentobox.util.Util;
 
 class MobLimitClickListenerTest extends CommonTestSetup {
@@ -93,6 +94,23 @@ class MobLimitClickListenerTest extends CommonTestSetup {
     void testOnClickWithPermission() {
         assertTrue(listener.onClick(panel, user, ClickType.LEFT, 0));
         verify(user, never()).sendMessage("general.errors.wrong-world");
+        verify(user, never()).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
+        verify(user).closeInventory();
+    }
+
+    @Test
+    void testOnClickAllowListNoPermission() {
+        listener = new MobLimitClickListener(EntityLimitTabType.MOB_ALLOW);
+        when(user.hasPermission(anyString())).thenReturn(false);
+        assertTrue(listener.onClick(panel, user, ClickType.LEFT, 0));
+        verify(user).sendMessage("general.errors.no-permission", "[permission]",
+                "bskyblock.admin.settings.ALLOW_MOBS");
+    }
+
+    @Test
+    void testOnClickAllowListWithPermission() {
+        listener = new MobLimitClickListener(EntityLimitTabType.MOB_ALLOW);
+        assertTrue(listener.onClick(panel, user, ClickType.LEFT, 0));
         verify(user, never()).sendMessage(eq("general.errors.no-permission"), anyString(), anyString());
         verify(user).closeInventory();
     }

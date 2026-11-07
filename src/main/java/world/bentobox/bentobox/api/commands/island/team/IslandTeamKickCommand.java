@@ -139,7 +139,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                     .filter(uuid -> island.getRank(uuid) >= RanksManager.MEMBER_RANK).map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).toList();
 
-            String lastArg = !args.isEmpty() ? args.getLast() : "";
+            String lastArg = args.isEmpty() ? "" : args.getLast();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

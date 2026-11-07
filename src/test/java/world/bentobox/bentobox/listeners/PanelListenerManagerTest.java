@@ -49,6 +49,7 @@ import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
+import net.kyori.adventure.text.Component;
 
 /**
  * Test class for PanelListenerManager.java
@@ -127,6 +128,7 @@ class PanelListenerManagerTest extends CommonTestSetup {
         super.tearDown();
     }
 
+    @SuppressWarnings("java:S5738") // must implement the deprecated InventoryView methods to compile
     class MyView implements InventoryView {
 
         private final Inventory top;
@@ -488,12 +490,12 @@ class PanelListenerManagerTest extends CommonTestSetup {
 
         Player unknown = mock(Player.class);
         when(unknown.getUniqueId()).thenReturn(UUID.randomUUID());
-        PlayerQuitEvent event = new PlayerQuitEvent(unknown, "");
+        PlayerQuitEvent event = new PlayerQuitEvent(unknown, Component.empty(), PlayerQuitEvent.QuitReason.DISCONNECTED);
         plm.onLogOut(event);
         assertFalse(PanelListenerManager.getOpenPanels().isEmpty());
 
         // Real log out
-        event = new PlayerQuitEvent(mockPlayer, "");
+        event = new PlayerQuitEvent(mockPlayer, Component.empty(), PlayerQuitEvent.QuitReason.DISCONNECTED);
         plm.onLogOut(event);
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
     }

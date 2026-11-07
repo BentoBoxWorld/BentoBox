@@ -1,0 +1,82 @@
+# bStats keeps no history for pie and bar charts: the API returns only the sum of
+# the latest 30-minute submissions. To see how the custom charts (command failures,
+# world size, non-default settings) move over time, this job records them every
+# six hours on the orphan branch `bstats-data`, one JSON file per snapshot.
+name: bStats snapshot
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bstats-snapshot
+  cancel-in-progress: false
+
+env:
+  PLUGIN_ID: 3555
+  DATA_BRANCH: bstats-data
+  CHARTS: servers players islands pluginVersion commandFailures commandFailurePaths commandFailureReasons worldSize features
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Switch to the data branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$DATA_BRANCH" >/dev/null; then
+            git fetch --depth=1 origin "$DATA_BRANCH"
+            git checkout "$DATA_BRANCH"
+          else
+            git checkout --orphan "$DATA_BRANCH"
+            git rm -rfq .
+            git clean -fdxq
+            printf '%s\n' \
+              '# bStats snapshots' \
+              '' \
+              'Snapshots of the BentoBox bStats custom charts, taken every six hours by the' \
+              '`bStats snapshot` workflow on the `develop` branch. bStats itself keeps no history' \
+              'for pie and bar charts, so this branch is the only record of how they change.' \
+              '' \
+              'One file per snapshot under `snapshots/<year>/<month>/`, each a JSON object with the' \
+              'UTC `timestamp` and a `charts` map of chart id to the raw API response.' \
+              > README.md
+          fi
+
+      - name: Fetch the charts
+        run: |
+          ts="$(date -u +%Y-%m-%dT%H%MZ)"
+          dir="snapshots/$(date -u +%Y/%m)"
+          mkdir -p "$dir"
+          out="$dir/$ts.json"
+          python3 - "$out" "$ts" $CHARTS <<'PY'
+          import json, sys, urllib.request
+          out, ts, *charts = sys.argv[1:]
+          base = f"https://bstats.org/api/v1/plugins/{'${{ env.PLUGIN_ID }}'}/charts/"
+          data = {}
+          for chart in charts:
+              url = base + chart + "/data" + ("?maxElements=1" if chart in ("servers", "players", "islands") else "")
+              try:
+                  with urllib.request.urlopen(url, timeout=30) as r:
+                      data[chart] = json.load(r)
+              except Exception as e:  # keep the other charts if one is missing
+                  data[chart] = {"error": str(e)}
+          with open(out, "w") as f:
+              json.dump({"timestamp": ts, "charts": data}, f, indent=1, sort_keys=True)
+          print("wrote", out)
+          PY
+
+      - name: Commit and push
+        run: |
+          git add README.md snapshots
+          git commit -qm "Snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push origin "$DATA_BRANCH"

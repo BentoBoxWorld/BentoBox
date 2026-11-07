@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.managers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
@@ -40,18 +41,19 @@ public class WebManager {
     private final BentoBox plugin;
     @Nullable
     private GitHubWebAPI gitHub;
+    // The catalogs are rebuilt on the async GitHub download thread while panels read them on
+    // the main thread. Each refresh builds a new immutable list and swaps it in atomically, so
+    // readers always see a complete snapshot and never a list being cleared and refilled.
     @NonNull
-    private final List<CatalogEntry> addonsCatalog;
+    private final AtomicReference<List<CatalogEntry>> addonsCatalog = new AtomicReference<>(List.of());
     @NonNull
-    private final List<CatalogEntry> gamemodesCatalog;
+    private final AtomicReference<List<CatalogEntry>> gamemodesCatalog = new AtomicReference<>(List.of());
     @NonNull
     private final Map<String, List<Contributor>> contributors;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        this.addonsCatalog = new ArrayList<>();
-        this.gamemodesCatalog = new ArrayList<>();
-        this.contributors = new HashMap<>();
+        this.contributors = new ConcurrentHashMap<>();
 
         // Set up the GitHub connection
         if (plugin.getSettings().isGithubDownloadData()) {
@@ -151,7 +153,7 @@ public class WebManager {
                         locale.set("catalog.tags." + entry.getKey(), translation.getAsString());
                     }
                 }));
-            } catch (JsonParseException e) {
+            } catch (JsonParseException _) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog Tags: the gathered JSON data is malformed.");
                 }
@@ -168,7 +170,7 @@ public class WebManager {
                         locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
                     }
                 }));
-            } catch (JsonParseException e) {
+            } catch (JsonParseException _) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog Topics: the gathered JSON data is malformed.");
                 }
@@ -180,14 +182,15 @@ public class WebManager {
             try {
                 JsonObject catalog = JsonParser.parseString(catalogContent).getAsJsonObject();
 
-                this.addonsCatalog.clear();
-                this.gamemodesCatalog.clear();
-
+                List<CatalogEntry> newGamemodes = new ArrayList<>();
+                List<CatalogEntry> newAddons = new ArrayList<>();
                 catalog.getAsJsonArray("gamemodes")
-                        .forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
+                        .forEach(gamemode -> newGamemodes.add(new CatalogEntry(gamemode.getAsJsonObject())));
                 catalog.getAsJsonArray("addons")
-                        .forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
-            } catch (JsonParseException e) {
+                        .forEach(addon -> newAddons.add(new CatalogEntry(addon.getAsJsonObject())));
+                this.gamemodesCatalog.set(List.copyOf(newGamemodes));
+                this.addonsCatalog.set(List.copyOf(newAddons));
+            } catch (JsonParseException _) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
                 }
@@ -200,7 +203,7 @@ public class WebManager {
         try {
             String content = repo.getContent(fileName).getContent();
             return new String(DatatypeConverter.parseBase64Binary(content.replace("_", "/")));
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Silently fail
         }
         return "";
@@ -214,7 +217,7 @@ public class WebManager {
             if (!latestTag.isEmpty() && isNewerVersion(currentVersion, latestTag)) {
                 printUpdateBanner(currentVersion, latestTag);
             }
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Silently fail — same pattern as gatherContributors()
         }
     }
@@ -251,7 +254,7 @@ public class WebManager {
     }
 
     private static int parseIntSafe(String s) {
-        try { return Integer.parseInt(s); } catch (NumberFormatException e) { return 0; }
+        try { return Integer.parseInt(s); } catch (NumberFormatException _) { return 0; }
     }
 
     private void gatherContributors(@NonNull GitHubRepository repo) {
@@ -261,8 +264,8 @@ public class WebManager {
                 addonContributors.add(
                         new Contributor(gitHubContributor.username(), gitHubContributor.contributionsAmount()));
             }
-            contributors.put(repo.fullName(), addonContributors);
-        } catch (Exception e) {
+            contributors.put(repo.fullName(), List.copyOf(addonContributors));
+        } catch (Exception _) {
             // Silently fail
         }
     }
@@ -275,7 +278,7 @@ public class WebManager {
      */
     @NonNull
     public List<CatalogEntry> getAddonsCatalog() {
-        return addonsCatalog;
+        return addonsCatalog.get();
     }
 
     /**
@@ -286,7 +289,7 @@ public class WebManager {
      */
     @NonNull
     public List<CatalogEntry> getGamemodesCatalog() {
-        return gamemodesCatalog;
+        return gamemodesCatalog.get();
     }
 
     /**

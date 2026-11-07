@@ -1017,6 +1017,15 @@ protection:
       name: Взаємодія з алаєм і Copper Golem
       description: Дозволити давати/забирати предмети алаю і Copper Golem
       hint: Взаємодію з алаєм і Copper Golem вимкнено
+    ALLOW_MOBS:
+      description: |-
+        <green>Сутності, які з'являються</green>
+        <green>завжди, навіть якщо поява</green>
+        <green>тварин або монстрів</green>
+        <green>вимкнена.</green>
+      name: '<yellow>Завжди дозволені типи сутностей</yellow>'
+      always: '<green>З''являється завжди</green>'
+      flags: '<gray>Залежить від прапорців появи</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Перемикає природний спавн тварин
       name: Природний спавн тварин

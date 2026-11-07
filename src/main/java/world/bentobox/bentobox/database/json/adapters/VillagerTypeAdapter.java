@@ -29,7 +29,7 @@ public class VillagerTypeAdapter extends TypeAdapter<Villager.Type> {
         String id = reader.nextString();
         try {
             return Villager.Type.valueOf(id);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Do nothing
         }
         return Villager.Type.PLAINS;

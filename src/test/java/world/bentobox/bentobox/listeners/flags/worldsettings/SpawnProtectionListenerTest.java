@@ -23,6 +23,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 import static org.mockito.Mockito.mock;
 
@@ -76,7 +77,7 @@ class SpawnProtectionListenerTest extends CommonTestSetup {
     @Test
     void testOnPlayerVoidDamageNotPlayer() {
         LivingEntity le = mock(LivingEntity.class);
-        EntityDamageEvent e = new EntityDamageEvent(le, DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(le, DamageCause.VOID, 0D);
         Flags.SPAWN_PROTECTION.setSetting(world, true);
         listener.onPlayerVoidDamage(e);
         assertFalse(e.isCancelled());
@@ -87,7 +88,7 @@ class SpawnProtectionListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnPlayerVoidDamageNotVoid() {
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, DamageCause.FALL, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, DamageCause.FALL, 0D);
         Flags.SPAWN_PROTECTION.setSetting(world, true);
         listener.onPlayerVoidDamage(e);
         assertFalse(e.isCancelled());
@@ -101,7 +102,7 @@ class SpawnProtectionListenerTest extends CommonTestSetup {
     void testOnPlayerVoidDamageNotInWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         Flags.SPAWN_PROTECTION.setSetting(world, true);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, DamageCause.VOID, 0D);
         listener.onPlayerVoidDamage(e);
         assertFalse(e.isCancelled());
         verify(im, never()).spawnTeleport(any(), any());
@@ -113,7 +114,7 @@ class SpawnProtectionListenerTest extends CommonTestSetup {
     @Test
     void testOnPlayerVoidDamageFlagDisabled() {
         // Flag is false by default in setUp
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, DamageCause.VOID, 0D);
         listener.onPlayerVoidDamage(e);
         assertFalse(e.isCancelled());
         verify(im, never()).spawnTeleport(any(), any());
@@ -126,7 +127,7 @@ class SpawnProtectionListenerTest extends CommonTestSetup {
     void testOnPlayerVoidDamageNotAtSpawn() {
         Flags.SPAWN_PROTECTION.setSetting(world, true);
         when(im.isAtSpawn(any())).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, DamageCause.VOID, 0D);
         listener.onPlayerVoidDamage(e);
         assertFalse(e.isCancelled());
         verify(im, never()).spawnTeleport(any(), any());
@@ -138,7 +139,7 @@ class SpawnProtectionListenerTest extends CommonTestSetup {
     @Test
     void testOnPlayerVoidDamageAtSpawn() {
         Flags.SPAWN_PROTECTION.setSetting(world, true);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, DamageCause.VOID, 0D);
         listener.onPlayerVoidDamage(e);
         assertTrue(e.isCancelled());
         verify(im).spawnTeleport(world, mockPlayer);

@@ -54,7 +54,7 @@ class CushionListenerTest extends CommonTestSetup {
             Class.forName("org.bukkit.entity.Cushion");
             Class.forName("io.papermc.paper.event.entity.EntityBreakByEntityEvent");
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException _) {
             return false;
         }
     }

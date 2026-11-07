@@ -72,7 +72,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
             String thirdElement = args.get(2);
             try {
                 rankValue = Integer.parseInt(thirdElement);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 // Show help
                 showHelp(this, user);
                 return false;

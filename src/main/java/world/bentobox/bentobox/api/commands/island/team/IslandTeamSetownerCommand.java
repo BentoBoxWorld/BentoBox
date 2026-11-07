@@ -162,7 +162,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
      */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
         if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()) == null) {
             return Optional.empty();
         }

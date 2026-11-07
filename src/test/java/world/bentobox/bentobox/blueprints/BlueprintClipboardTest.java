@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -264,8 +263,9 @@ class BlueprintClipboardTest extends CommonTestSetup {
             return mock(BukkitTask.class);
         });
         // Mock the copy task timer
+        BukkitTask bukkitTaskMock = mock(BukkitTask.class);
         when(sch.runTaskTimer(any(), any(Runnable.class), Mockito.anyLong(), Mockito.anyLong()))
-                .thenReturn(mock(BukkitTask.class));
+                .thenReturn(bukkitTaskMock);
 
         assertTrue(bc.copy(user, false, false, false));
         verify(user).sendMessage("commands.admin.blueprint.copying");
@@ -284,8 +284,9 @@ class BlueprintClipboardTest extends CommonTestSetup {
             ((Runnable) inv.getArgument(1)).run();
             return mock(BukkitTask.class);
         });
+        BukkitTask bukkitTaskMock = mock(BukkitTask.class);
         when(sch.runTaskTimer(any(), any(Runnable.class), Mockito.anyLong(), Mockito.anyLong()))
-                .thenReturn(mock(BukkitTask.class));
+                .thenReturn(bukkitTaskMock);
 
         assertTrue(bc.copy(user, true, true, false));
         // Origin was already set, so user.getLocation() should NOT be called

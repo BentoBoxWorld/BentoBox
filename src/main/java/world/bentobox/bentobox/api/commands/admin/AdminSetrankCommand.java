@@ -40,6 +40,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminSetrankCommand extends CompositeCommand {
 
+    private static final String CANNOT_SET_OWNER = "commands.admin.setrank.cannot-set-owner";
+
     private static final String RANK_PREFIX = "ranks.";
 
     private int rankValue;
@@ -84,7 +86,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             return false;
         }
         if (rankValue >= RanksManager.OWNER_RANK) {
-            user.sendMessage("commands.admin.setrank.cannot-set-owner");
+            user.sendMessage(CANNOT_SET_OWNER);
             return false;
         }
         // Island
@@ -93,7 +95,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             return false;
         }
         if (targetUUID.equals(island.getOwner())) {
-            user.sendMessage("commands.admin.setrank.cannot-set-owner");
+            user.sendMessage(CANNOT_SET_OWNER);
             return false;
         }
         if (island.getRank(targetUUID) == rankValue) {
@@ -167,7 +169,7 @@ public class AdminSetrankCommand extends CompositeCommand {
                 .filter(i -> !Objects.equals(targetUUID, i.getOwner())).toList();
         if (memberOf.isEmpty()) {
             if (getIslands().hasIsland(getWorld(), targetUUID)) {
-                user.sendMessage("commands.admin.setrank.cannot-set-owner");
+                user.sendMessage(CANNOT_SET_OWNER);
             } else {
                 user.sendMessage("general.errors.player-has-no-island");
             }
@@ -227,14 +229,14 @@ public class AdminSetrankCommand extends CompositeCommand {
         try {
             return Optional.of(new Location(getWorld(), Integer.parseInt(parts[0].trim()),
                     Integer.parseInt(parts[1].trim()), Integer.parseInt(parts[2].trim())));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             return Optional.empty();
         }
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, @NonNull List<String> args) {
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
         if (args.size() == 1) {
             return Optional.of(Util.getOnlinePlayerList(user));
         }

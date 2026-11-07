@@ -235,7 +235,7 @@ class IslandCacheTest extends CommonTestSetup {
         UUID newOwnerUUID = UUID.randomUUID();
         ic.setOwner(island, newOwnerUUID);
 
-        Mockito.verify(island).setOwner(newOwnerUUID);
+        verify(island).setOwner(newOwnerUUID);
         assertEquals(island, ic.getIsland(world, newOwnerUUID));
     }
 

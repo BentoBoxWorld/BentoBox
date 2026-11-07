@@ -43,19 +43,6 @@ public class MyWorldsHook extends Hook implements WorldManagementHook {
         try {
             WorldConfigStore.get(world).setChunkGeneratorName(name);
 
-            // Alternative Reflection way to do it, if a MyWorlds dependency isn't available at
-            // compile time.
-            /*
-            // WorldConfigStore -> public static WorldConfig get(World world);
-            Object worldConfig = Class.forName("com.bergerkiller.bukkit.mw.WorldConfigStore")
-                    .getMethod("get", World.class)
-                    .invoke(null, world);
-
-            // WorldConfig -> public void setChunkGeneratorName(String name);
-            Class.forName("com.bergerkiller.bukkit.mw.WorldConfig")
-                    .getMethod("setChunkGeneratorName", String.class)
-                    .invoke(worldConfig, name);
-             */
         } catch (Exception t) {
             BentoBox.getInstance().logError("Failed to register world " + world.getName() + " with MyWorlds " + t.getMessage());
         }

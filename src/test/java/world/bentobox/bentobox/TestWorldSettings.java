@@ -31,12 +31,14 @@ public class TestWorldSettings implements WorldSettings {
     }
 
     @Override
+    @SuppressWarnings("java:S5738") // implements the deprecated WorldSettings method until it is removed
     public Map<Flag, Integer> getDefaultIslandFlags() {
 
         return Collections.emptyMap();
     }
 
     @Override
+    @SuppressWarnings("java:S5738") // implements the deprecated WorldSettings method until it is removed
     public Map<Flag, Integer> getDefaultIslandSettings() {
 
         return Collections.emptyMap();
@@ -55,8 +57,7 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-
-
+        // Not needed for tests
     }
 
     @Override

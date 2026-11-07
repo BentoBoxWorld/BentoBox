@@ -69,7 +69,6 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.AXOLOTL, Collections.singletonList(Material.TROPICAL_FISH_BUCKET));
         bi.put(EntityType.GOAT, Collections.singletonList(Material.WHEAT));
         // 1.19+
-        // TODO: remove one 1.18 is dropped.
         if (Arrays.stream(EntityType.values()).anyMatch(e -> e.name().equals("FROG"))) {
             bi.put(EntityType.FROG, Collections.singletonList(Material.SLIME_BALL));
             bi.put(EntityType.ALLAY, Collections.singletonList(Material.AMETHYST_SHARD));

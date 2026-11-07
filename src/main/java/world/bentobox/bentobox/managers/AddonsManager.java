@@ -214,7 +214,7 @@ public class AddonsManager {
                 // Add to the list of loaders
                 loaders.put(addon, addonClassLoader);
             }
-        } catch (Exception ex) {
+        } catch (Exception _) {
             // Addon not pladdon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
             // Get the addon itself
@@ -593,7 +593,7 @@ public class AddonsManager {
         try {
             return classes.getOrDefault(name, loaders.values().stream().filter(Objects::nonNull)
                     .map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
-        } catch (Exception ignored) {
+        } catch (Exception _) {
             // Ignored.
         }
         return null;
@@ -739,7 +739,7 @@ public class AddonsManager {
         addons.remove(addon);
     }
 
-    /*
+    /**
      * Get an unmodifiable list of addon classes that are of type {@link DataObject}
      * but not {@link ConfigObject}. Configs are not transitioned to database.
      * Used in database transition.

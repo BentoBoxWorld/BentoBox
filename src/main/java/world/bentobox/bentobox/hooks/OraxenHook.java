@@ -306,7 +306,7 @@ public class OraxenHook extends Hook {
         return OraxenFurniture.isBaseEntity(entity);
     }
 
-    /*
+    /**
      * @param baseEntity The entity at which the Furniture should be removed
      * @param player     The player who removed the Furniture, can be null
      * @return true if the Furniture was removed, false otherwise

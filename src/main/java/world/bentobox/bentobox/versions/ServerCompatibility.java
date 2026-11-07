@@ -278,7 +278,7 @@ public class ServerCompatibility {
         String serverSoftware = Bukkit.getServer().getVersion().split("-")[1];
         try {
             return ServerSoftware.valueOf(serverSoftware.toUpperCase(Locale.ENGLISH));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             return ServerSoftware.UNKNOWN.setName(serverSoftware.toUpperCase(Locale.ENGLISH));
         }
     }
@@ -296,7 +296,7 @@ public class ServerCompatibility {
         serverVersion = serverVersion.replace(".", "_");
         try {
             return ServerVersion.valueOf("V" + serverVersion.toUpperCase(Locale.ENGLISH));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             return null;
         }
     }

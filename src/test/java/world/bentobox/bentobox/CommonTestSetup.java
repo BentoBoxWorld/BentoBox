@@ -67,6 +67,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
+import org.bukkit.damage.DamageSource;
 /**
  * Common items for testing. Don't forget to use super.setUp()!
  * <p>
@@ -207,7 +208,8 @@ public abstract class CommonTestSetup {
         when(plugin.getSettings()).thenReturn(settings);
         //Util
         mockedUtil = Mockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
         Util.setPlugin(plugin);
         // Util
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
@@ -232,14 +234,15 @@ public abstract class CommonTestSetup {
      * {@code isTagged()} returns {@code false} instead of throwing
      * {@code NotAMockException} at runtime.
      */
-    @SuppressWarnings({"unchecked", "java:S3011"})
+    // java:S5738 - sun.misc.Unsafe is the only way to rewrite a static final field in tests
+    @SuppressWarnings({"unchecked", "java:S3011", "java:S5738"})
     private void reinitTagFields() {
         sun.misc.Unsafe unsafe;
         try {
             java.lang.reflect.Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
             unsafe = (sun.misc.Unsafe) unsafeField.get(null);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return; // Cannot obtain Unsafe – skip tag reinit
         }
         for (java.lang.reflect.Field field : Tag.class.getDeclaredFields()) {
@@ -271,7 +274,7 @@ public abstract class CommonTestSetup {
                 field.setAccessible(true);
                 long offset = unsafe.staticFieldOffset(field);
                 unsafe.putObject(unsafe.staticFieldBase(field), offset, tag);
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // If Unsafe write fails, leave the field as-is
             }
         }
@@ -332,8 +335,7 @@ public abstract class CommonTestSetup {
     }
     public PlayerDeathEvent getPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp,
             int newTotalExp, int newLevel, @Nullable String deathMessage) {
-        //Technically this null is not allowed, but it works right now
-        return new PlayerDeathEvent(player, null, drops, droppedExp, newExp,
-                newTotalExp, newLevel, deathMessage);
+        return new PlayerDeathEvent(player, mock(DamageSource.class), drops, droppedExp, newExp, newTotalExp, newLevel,
+                deathMessage == null ? null : Component.text(deathMessage), true);
     }
 }

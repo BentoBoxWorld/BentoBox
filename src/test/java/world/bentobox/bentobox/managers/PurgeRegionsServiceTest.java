@@ -21,7 +21,6 @@ import java.util.Set;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -137,7 +136,8 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(active.isDeletable()).thenReturn(false);
 
         when(islandCache.getIslands(world)).thenReturn(List.of(active));
-        when(islandCache.getIslandGrid(world)).thenReturn(mock(IslandGrid.class));
+        IslandGrid islandGridMock = mock(IslandGrid.class);
+        when(islandCache.getIslandGrid(world)).thenReturn(islandGridMock);
 
         PurgeScanResult result = service.scanDeleted(world);
         assertTrue(result.isEmpty());
@@ -653,7 +653,7 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
      * appear in a region blocked by a non-deletable neighbour.
      */
     @Test
-    void testScanDeletedPopulatesStraddlingIslandIds() throws IOException {
+    void testScanDeletedPopulatesStraddlingIslandIds() {
         Island deletable = mock(Island.class);
         when(deletable.getUniqueId()).thenReturn("del");
         when(deletable.isDeletable()).thenReturn(true);

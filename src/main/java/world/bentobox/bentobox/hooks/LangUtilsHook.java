@@ -376,7 +376,7 @@ public class LangUtilsHook extends Hook {
             }
             return effects.stream().map(effect -> Util.prettifyText(effect.getType().getKey().getKey()))
                     .collect(Collectors.joining(", "));
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Older versions of Spigot pre-1.20.4 don't have getPotionEffects()
             return Util.prettifyText(potionType.getEffectType().getKey().getKey());
         }
@@ -468,7 +468,7 @@ public class LangUtilsHook extends Hook {
             return LanguageHelper.getPredefinedTropicalFishName(meta, getUserLocale(user));
         }
 
-        if (meta.hasVariant()) {
+        if (meta.hasPattern() && meta.hasBodyColor() && meta.hasPatternColor()) {
             TropicalFish.Pattern pattern = meta.getPattern();
 
             // https://minecraft.gamepedia.com/Tropical_Fish#Entity_data
@@ -548,6 +548,7 @@ public class LangUtilsHook extends Hook {
                 return "Yellow Tang";
             }
             default -> {
+                // Not a named variant; fall through to the generic name
             }
             }
         }

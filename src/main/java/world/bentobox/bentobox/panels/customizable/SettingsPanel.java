@@ -65,6 +65,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class SettingsPanel extends AbstractRefreshingPanel {
 
+    private static final String MODE_PREFIX = "mode.";
+
     /** Name of the template file, without extension. */
     public static final String SETTINGS_PANEL = "settings_panel";
     /** Button type: tab selector. */
@@ -561,13 +563,14 @@ public class SettingsPanel extends AbstractRefreshingPanel {
         default -> Material.IRON_INGOT;
         };
         Object modeIcon = template.dataMap().get(key + "-icon");
+        ItemStack templateIcon = template.icon() != null ? template.icon().clone() : new ItemStack(defaultIcon);
         ItemStack icon = modeIcon != null ? ItemParser.parse(String.valueOf(modeIcon), new ItemStack(defaultIcon))
-                : template.icon() != null ? template.icon().clone() : new ItemStack(defaultIcon);
+                : templateIcon;
         PanelItemBuilder builder = new PanelItemBuilder().icon(icon)
-                .name(user.getTranslation(PROTECTION_PANEL + "mode." + key + ".name"))
-                .description(user.getTranslation(PROTECTION_PANEL + "mode." + key + DESCRIPTION), "",
+                .name(user.getTranslation(PROTECTION_PANEL + MODE_PREFIX + key + ".name"))
+                .description(user.getTranslation(PROTECTION_PANEL + MODE_PREFIX + key + DESCRIPTION), "",
                         user.getTranslation(CLICK_TO_SWITCH, TextVariables.NEXT,
-                                user.getTranslation(PROTECTION_PANEL + "mode." + nextKey + ".name")))
+                                user.getTranslation(PROTECTION_PANEL + MODE_PREFIX + nextKey + ".name")))
                 .clickHandler((p, u, clickType, s) -> {
                     if (clickAllowed(template, clickType)) {
                         // One mode for every tab, remembered for the next time the player opens it

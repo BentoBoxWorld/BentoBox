@@ -135,6 +135,8 @@ public class MobSpawnListener extends FlagListener
 
     /**
      * This method checks if entity should be cancelled from spawning in given location base on flag values.
+     * Entities on the world's allow list ({@link world.bentobox.bentobox.api.configuration.WorldSettings#getMobAllowSettings()})
+     * are never cancelled here.
      * @param entity Entity that is checked.
      * @param loc location where entity is spawned.
      * @param animalSpawnFlag Animal Spawn Flag.
@@ -143,6 +145,13 @@ public class MobSpawnListener extends FlagListener
      */
     private boolean shouldCancel(Entity entity, Location loc, Flag animalSpawnFlag, Flag monsterSpawnFlag)
     {
+        // Admin allow list: these mobs are not gated by the animal/monster flags at all.
+        // The block list (Flags.LIMIT_MOBS) is enforced separately and still wins.
+        if (getIWM().getMobAllowSettings(entity.getWorld()).contains(entity.getType().name()))
+        {
+            return false;
+        }
+
         Optional<Island> island = getIslands().getIslandAt(loc);
 
         if (Util.isHostileEntity(entity) && !(entity instanceof PufferFish))

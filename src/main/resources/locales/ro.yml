@@ -1123,6 +1123,15 @@ protection:
       name: Interacțiunea Allay și Copper Golem
       description: Permiteți să dați și să luați articole către/de la Allay și Copper Golem
       hint: Interacțiunea Allay și Copper Golem a fost dezactivată
+    ALLOW_MOBS:
+      description: |-
+        <green>Entități care apar</green>
+        <green>întotdeauna, chiar dacă</green>
+        <green>apariția animalelor sau a</green>
+        <green>monștrilor este oprită.</green>
+      name: '<yellow>Tipuri de entități permise mereu</yellow>'
+      always: '<green>Apare întotdeauna</green>'
+      flags: '<gray>Urmează flag-urile de apariție</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Comutați reproducerea animalelor naturale
       name: Spawn natural animal

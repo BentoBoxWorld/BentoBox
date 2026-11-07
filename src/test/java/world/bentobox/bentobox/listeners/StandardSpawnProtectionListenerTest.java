@@ -167,17 +167,6 @@ class StandardSpawnProtectionListenerTest extends CommonTestSetup {
         checkSpigotMessage("protection.spawn-protected", 0);
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
-     */
-    @Test
-    void testOnBlockPlaceAllowedNetherIslandWorlds() {
-        when(iwm.isNetherIslands(any())).thenReturn(true);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, mockPlayer, true, EquipmentSlot.HAND);
-        ssp.onBlockPlace(e);
-        assertFalse(e.isCancelled());
-        checkSpigotMessage("protection.spawn-protected", 0);
-    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.

@@ -8,13 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -521,7 +519,7 @@ class SettingsPanelTest extends RanksManagerTestSetup {
         SettingsPanel sp = openWithIsland();
 
         assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items(sp), LOCK));
-        verify(plugin).logWarning(eq("Settings panel template pins unknown flag NO_SUCH_FLAG"));
+        verify(plugin).logWarning("Settings panel template pins unknown flag NO_SUCH_FLAG");
     }
 
     // ---------------------------------------------------------------------

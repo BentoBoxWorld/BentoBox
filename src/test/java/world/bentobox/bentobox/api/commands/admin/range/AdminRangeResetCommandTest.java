@@ -71,7 +71,8 @@ class AdminRangeResetCommandTest extends CommonTestSetup {
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ac.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(ac.getWorld()).thenReturn(worldMock);
 
         // Island World Manager
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");

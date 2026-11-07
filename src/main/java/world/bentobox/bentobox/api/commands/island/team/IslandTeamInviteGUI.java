@@ -300,7 +300,7 @@ public class IslandTeamInviteGUI {
             // Set the search item to what was entered
             searchName = input;
             // Return to the GUI but give a second for the error to show
-            // TODO: return the failed input and display the options in the GUI.
+            // The failed input is not carried back into the GUI; the player sees the error then the GUI reopens
             Bukkit.getScheduler().runTaskLater(BentoBox.getInstance(), () -> build(user), 20L);
             return Prompt.END_OF_CONVERSATION;
         }

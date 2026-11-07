@@ -74,8 +74,8 @@ class FireListenerTest extends CommonTestSetup {
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
         User.setPlugin(plugin);
@@ -99,7 +99,8 @@ class FireListenerTest extends CommonTestSetup {
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
 
-       mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+       World worldMock = mock(World.class);
+       mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
     }
 
     @Override

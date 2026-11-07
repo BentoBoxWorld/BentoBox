@@ -266,7 +266,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         String active = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
         String disabled = Util.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();
-        String lastArg = !args.isEmpty() ? args.getLast() : "";
+        String lastArg = args.isEmpty() ? "" : args.getLast();
         if (args.size() == 2) {
             // Player names or world settings
             options = Util.tabLimit(Util.getOnlinePlayerList(user), lastArg);

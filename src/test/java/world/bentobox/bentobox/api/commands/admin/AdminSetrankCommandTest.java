@@ -276,7 +276,7 @@ class AdminSetrankCommandTest extends RanksManagerTestSetup {
         addSecondIsland(ownerUUID);
         when(im.getIslandAt(any())).thenAnswer(inv -> {
             Location l = inv.getArgument(0);
-            return l.getBlockX() == 100 ? Optional.of(island) : Optional.of(island2);
+            return Optional.of(l.getBlockX() == 100 ? island : island2);
         });
         assertTrue(c.canExecute(user, "", List.of(TARGET, "member", XYZ2)));
         assertTrue(c.execute(user, "", List.of(TARGET, "member", XYZ2)));

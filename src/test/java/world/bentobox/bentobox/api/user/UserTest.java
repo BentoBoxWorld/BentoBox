@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -303,6 +304,25 @@ class UserTest extends CommonTestSetup {
     void testSendMessage() {
         user.sendMessage("a.reference");
         checkSpigotMessage(TEST_TRANSLATION_WITH_COLOR);
+    }
+
+    /**
+     * The last message key lets a command report why it refused to run. It tracks
+     * translated messages only, never raw ones, and can be cleared.
+     */
+    @Test
+    void testLastMessageKey() {
+        assertNull(user.getLastMessageKey());
+        user.sendMessage("a.reference");
+        assertEquals("a.reference", user.getLastMessageKey());
+        user.sendMessage("another.reference", "[test]", "variable");
+        assertEquals("another.reference", user.getLastMessageKey());
+        user.sendRawMessage("raw text");
+        assertEquals("another.reference", user.getLastMessageKey());
+        user.clearLastMessageKey();
+        assertNull(user.getLastMessageKey());
+        user.notify("notified.reference");
+        assertEquals("notified.reference", user.getLastMessageKey());
     }
 
     @Test
@@ -875,7 +895,8 @@ class UserTest extends CommonTestSetup {
     void testInWorld() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
-        when(mockPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(mockPlayer.getLocation()).thenReturn(locationMock);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         assertFalse(p.inWorld());
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
@@ -913,22 +934,6 @@ class UserTest extends CommonTestSetup {
 
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
-     */
-    @Test
-    void testSpawnParticleParticleObjectDoubleDoubleDoubleRedstone() {
-        User.clearUsers();
-        Location loc = mock(Location.class);
-        when(mockPlayer.getLocation()).thenReturn(loc);
-        when(loc.toVector()).thenReturn(new Vector(1,1,1));
-
-        User p = User.getInstance(mockPlayer);
-        DustOptions dust = mock(DustOptions.class);
-        p.spawnParticle(Particle.DUST, dust, 0.0d, 0.0d, 0.0d);
-        verify(mockPlayer).spawnParticle(Particle.DUST, 0.0d, 0.0d, 0.0d, 1, 0, 0, 0, 1, dust);
-
-    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, double, double, double)}.

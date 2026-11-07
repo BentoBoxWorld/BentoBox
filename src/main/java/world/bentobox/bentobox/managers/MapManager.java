@@ -22,6 +22,8 @@ import world.bentobox.bentobox.api.hooks.MapHook;
  */
 public class MapManager {
 
+    private static final String MAP_HOOK = "Map hook ";
+
     private final BentoBox plugin;
 
     public MapManager(BentoBox plugin) {
@@ -55,7 +57,7 @@ public class MapManager {
             try {
                 hook.createMarkerSet(id, label);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed createMarkerSet: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed createMarkerSet: " + e.getMessage());
             }
         }
     }
@@ -70,7 +72,7 @@ public class MapManager {
             try {
                 hook.removeMarkerSet(id);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed removeMarkerSet: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed removeMarkerSet: " + e.getMessage());
             }
         }
     }
@@ -85,7 +87,7 @@ public class MapManager {
             try {
                 hook.clearMarkerSet(id);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed clearMarkerSet: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed clearMarkerSet: " + e.getMessage());
             }
         }
     }
@@ -145,7 +147,7 @@ public class MapManager {
             try {
                 hook.addPointMarker(markerSetId, markerId, label, location, iconName);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed addPointMarker: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed addPointMarker: " + e.getMessage());
             }
         }
     }
@@ -161,7 +163,7 @@ public class MapManager {
             try {
                 hook.removePointMarker(markerSetId, markerId);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed removePointMarker: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed removePointMarker: " + e.getMessage());
             }
         }
     }
@@ -189,7 +191,7 @@ public class MapManager {
                 hook.addAreaMarker(markerSetId, markerId, label, world, minX, minZ, maxX, maxZ, lineColor, fillColor,
                         lineWidth);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed addAreaMarker: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed addAreaMarker: " + e.getMessage());
             }
         }
     }
@@ -215,7 +217,7 @@ public class MapManager {
                 hook.addPolygonMarker(markerSetId, markerId, label, world, xPoints, zPoints, lineColor, fillColor,
                         lineWidth);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed addPolygonMarker: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed addPolygonMarker: " + e.getMessage());
             }
         }
     }
@@ -231,7 +233,7 @@ public class MapManager {
             try {
                 hook.removeAreaMarker(markerSetId, markerId);
             } catch (Exception e) {
-                plugin.logError("Map hook " + hook.getPluginName() + " failed removeAreaMarker: " + e.getMessage());
+                plugin.logError(MAP_HOOK + hook.getPluginName() + " failed removeAreaMarker: " + e.getMessage());
             }
         }
     }

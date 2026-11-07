@@ -1141,6 +1141,15 @@ protection:
       name: Allay & Copper Golem Interaktion
       description: Geben und Nehmen von Gegenständen an/von einem Allay oder Copper Golem
       hint: Allay & Copper Golem Interaktion deaktiviert
+    ALLOW_MOBS:
+      description: |-
+        <green>Entitäten, die immer</green>
+        <green>spawnen, auch wenn das</green>
+        <green>Spawnen von Tieren oder</green>
+        <green>Monstern aus ist.</green>
+      name: '<yellow>Immer erlaubte Entitätstypen</yellow>'
+      always: '<green>Spawnt immer</green>'
+      flags: '<gray>Folgt den Spawn-Flags</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Natürliches Spawnen von Tieren umschalten
       name: Natürliches Tier-Spawnen

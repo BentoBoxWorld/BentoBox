@@ -74,8 +74,8 @@ class ChestDamageListenerTest extends CommonTestSetup
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
         User.setPlugin(plugin);
@@ -106,7 +106,8 @@ class ChestDamageListenerTest extends CommonTestSetup
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
         // Util
-        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(worldMock);
     }
 
     @Override

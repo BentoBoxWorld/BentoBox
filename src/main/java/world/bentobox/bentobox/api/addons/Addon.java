@@ -371,7 +371,7 @@ public abstract class Addon {
                     return in;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException _) {
             BentoBox.getInstance().logError("Could not open from jar file. " + jarResource);
         }
         return null;

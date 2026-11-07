@@ -3,8 +3,14 @@ package world.bentobox.bentobox.managers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -31,9 +37,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.CoreWorldSettings;
 
 /**
  * @author tastybento
@@ -443,7 +452,8 @@ class IslandWorldManagerTest extends CommonTestSetup {
         WorldSettings localWs = mock(WorldSettings.class);
         when(localWs.getFriendlyName()).thenReturn("fri2");
         when(gm2.getWorldSettings()).thenReturn(localWs);
-        when(gm2.getOverWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(gm2.getOverWorld()).thenReturn(worldMock);
         testIwm.addGameMode(gm2);
         // String can be in any order
         String result = testIwm.getFriendlyNames();
@@ -504,13 +514,6 @@ class IslandWorldManagerTest extends CommonTestSetup {
         assertEquals(list, testIwm.getIvSettings(testWorld));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isWorldFlag(org.bukkit.World, world.bentobox.bentobox.api.flags.Flag)}.
-     */
-    @Test
-    void testIsWorldFlag() {
-        // TODO
-    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultGameMode(org.bukkit.World)}.
@@ -674,6 +677,62 @@ class IslandWorldManagerTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMobAllowSettings(org.bukkit.World)}.
+     */
+    @Test
+    void testGetMobAllowSettingsSeeded() {
+        @SuppressWarnings("unchecked")
+        Database<CoreWorldSettings> db = mock(Database.class);
+        testIwm.setCoreWorldSettingsDb(db);
+        AddonDescription desc = mock(AddonDescription.class);
+        when(desc.getName()).thenReturn("BSkyBlock");
+        when(gm.getDescription()).thenReturn(desc);
+        when(gm.getDefaultAllowedMobs()).thenReturn(List.of("IRON_GOLEM"));
+        when(db.objectExists("BSkyBlock")).thenReturn(false);
+
+        List<String> list = testIwm.getMobAllowSettings(testWorld);
+        assertEquals(List.of("IRON_GOLEM"), list);
+        // A missing record is never loaded, which would log an error
+        verify(db, never()).loadObject(anyString());
+        // Seeded record is saved
+        verify(db).saveObjectAsync(any(CoreWorldSettings.class));
+        // Same list on every call: cached, loaded once
+        list.add("COW");
+        assertSame(list, testIwm.getMobAllowSettings(testWorld));
+        verify(db, times(1)).objectExists(anyString());
+
+        testIwm.saveCoreWorldSettings(testWorld);
+        verify(db, times(2)).saveObjectAsync(any(CoreWorldSettings.class));
+    }
+
+    @Test
+    void testGetMobAllowSettingsLoaded() {
+        @SuppressWarnings("unchecked")
+        Database<CoreWorldSettings> db = mock(Database.class);
+        testIwm.setCoreWorldSettingsDb(db);
+        AddonDescription desc = mock(AddonDescription.class);
+        when(desc.getName()).thenReturn("BSkyBlock");
+        when(gm.getDescription()).thenReturn(desc);
+        CoreWorldSettings stored = new CoreWorldSettings("BSkyBlock");
+        stored.setAllowedMobs(new ArrayList<>(List.of("COW")));
+        when(db.objectExists("BSkyBlock")).thenReturn(true);
+        when(db.loadObject("BSkyBlock")).thenReturn(stored);
+
+        assertSame(stored.getAllowedMobs(), testIwm.getMobAllowSettings(testWorld));
+        assertEquals(List.of("COW"), testIwm.getMobAllowSettings(testWorld));
+        verify(db, never()).saveObjectAsync(any());
+        verify(gm, never()).getDefaultAllowedMobs();
+    }
+
+    @Test
+    void testGetMobAllowSettingsNotGameWorld() {
+        World other = mock(World.class);
+        assertTrue(testIwm.getMobAllowSettings(other).isEmpty());
+        assertTrue(testIwm.getCoreWorldSettings(other).isEmpty());
+        testIwm.saveCoreWorldSettings(other); // no-op
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetLimit(org.bukkit.World)}.
      */
     @Test
@@ -695,7 +754,7 @@ class IslandWorldManagerTest extends CommonTestSetup {
     @Test
     void testSetResetEpoch() {
         testIwm.setResetEpoch(testWorld);
-        Mockito.verify(ws).setResetEpoch(Mockito.anyLong());
+        verify(ws).setResetEpoch(Mockito.anyLong());
     }
 
     /**

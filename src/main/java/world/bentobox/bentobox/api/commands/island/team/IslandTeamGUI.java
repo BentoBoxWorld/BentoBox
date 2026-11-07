@@ -23,7 +23,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
-import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -448,7 +447,7 @@ public class IslandTeamGUI {
                         lastSeenSuffix))
                 .description(desc)
                 .clickHandler(
-                        (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, member, actions))
+                        (panel, user, clickType, i) -> clickListener(user, clickType, member, actions))
                 .build();
     }
 
@@ -487,16 +486,13 @@ public class IslandTeamGUI {
 
     /**
      * Click listener
-     * @param panel panel
      * @param clickingUser clicking user
      * @param clickType click type
-     * @param i slot
      * @param target target user
      * @param actions actions
      * @return true if the inventory item should not be removed - always true
      */
-    private boolean clickListener(Panel panel, User clickingUser, ClickType clickType, int i, User target,
-            List<ActionRecords> actions) {
+    private boolean clickListener(User clickingUser, ClickType clickType, User target, List<ActionRecords> actions) {
         if (actions.stream().noneMatch(ar -> clickType.equals(ar.clickType()))) {
             // If the click type is not in the template, don't do anything
             return true;
@@ -643,7 +639,7 @@ public class IslandTeamGUI {
         String lastSeen = lastSeen(offlineMember);
         if (island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(offlineMember.getUniqueId())) {
             return user.getTranslation("commands.island.team.info.member-layout.offline", TextVariables.NAME,
-                    offlineMember.getName(), "[last_seen]", lastSeen);
+                    offlineMember.getName(), LAST_SEEN, lastSeen);
         } else {
             // This will prevent anyone that is trusted or below to not have a last-seen status
             return user.getTranslation("commands.island.team.info.member-layout.offline-not-last-seen",

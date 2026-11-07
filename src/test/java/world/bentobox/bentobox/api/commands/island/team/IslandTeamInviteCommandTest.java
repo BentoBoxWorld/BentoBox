@@ -222,10 +222,6 @@ class IslandTeamInviteCommandTest extends RanksManagerTestSetup {
         verify(user).sendMessage("general.errors.no-island");
     }
 
-    /**
-     * Test method for
-     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
-     */
     // Removed testCanExecuteNoTarget — PaperAPI Material.get incompatibility
 
     /**

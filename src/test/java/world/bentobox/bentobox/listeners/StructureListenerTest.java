@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.world.AsyncStructureSpawnEvent;
 import org.bukkit.generator.ChunkGenerator;
@@ -37,6 +36,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import net.kyori.adventure.key.Key;
 
 /**
  * Tests for {@link StructureListener}.
@@ -58,7 +58,7 @@ class StructureListenerTest {
     private StructureListener listener;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockBukkit.mock();
         lenient().when(plugin.getSettings()).thenReturn(settings);
         // Global default disables ancient_city and trial_chambers everywhere.
@@ -74,13 +74,13 @@ class StructureListenerTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         MockBukkit.unmock();
     }
 
     private AsyncStructureSpawnEvent spawnEvent(String structureKey) {
         Structure structure = mock(Structure.class);
-        lenient().when(structure.getKey()).thenReturn(NamespacedKey.minecraft(structureKey));
+        lenient().when(structure.key()).thenReturn(Key.key(Key.MINECRAFT_NAMESPACE, structureKey));
         AsyncStructureSpawnEvent e = mock(AsyncStructureSpawnEvent.class);
         lenient().when(e.getWorld()).thenReturn(world);
         lenient().when(e.getStructure()).thenReturn(structure);
@@ -90,13 +90,14 @@ class StructureListenerTest {
     private StructuresLocateEvent locateEvent(String... structureKeys) {
         List<Structure> structures = Arrays.stream(structureKeys).map(key -> {
             Structure structure = mock(Structure.class);
-            lenient().when(structure.getKey()).thenReturn(NamespacedKey.minecraft(key));
+            lenient().when(structure.key()).thenReturn(Key.key(Key.MINECRAFT_NAMESPACE, key));
             return structure;
         }).map(Structure.class::cast).toList();
         StructuresLocateEvent e = mock(StructuresLocateEvent.class);
         lenient().when(e.getWorld()).thenReturn(world);
         lenient().when(e.getStructures()).thenReturn(structures);
-        lenient().when(e.getOrigin()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        lenient().when(e.getOrigin()).thenReturn(locationMock);
         return e;
     }
 
@@ -180,7 +181,7 @@ class StructureListenerTest {
         ArgumentCaptor<List<Structure>> captor = ArgumentCaptor.forClass(List.class);
         verify(e).setStructures(captor.capture());
         assertEquals(1, captor.getValue().size());
-        assertEquals("ancient_city", captor.getValue().get(0).getKey().getKey());
+        assertEquals("ancient_city", captor.getValue().get(0).key().value());
     }
 
     @Test
@@ -225,7 +226,7 @@ class StructureListenerTest {
         ArgumentCaptor<List<Structure>> captor = ArgumentCaptor.forClass(List.class);
         verify(e).setStructures(captor.capture());
         assertEquals(1, captor.getValue().size());
-        assertEquals("ancient_city", captor.getValue().get(0).getKey().getKey());
+        assertEquals("ancient_city", captor.getValue().get(0).key().value());
     }
 
     @Test

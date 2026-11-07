@@ -1090,6 +1090,15 @@ protection:
       name: Allay i Copper Golem interakcija
       description: Dopusti davanje i uzimanje predmeta Allayu/Copper Golemu ili od njega
       hint: Interakcija Allay i Copper Golem onemogućena
+    ALLOW_MOBS:
+      description: |-
+        <green>Entiteti koji se uvijek</green>
+        <green>stvaraju, čak i kada je</green>
+        <green>stvaranje životinja ili</green>
+        <green>čudovišta isključeno.</green>
+      name: '<yellow>Uvijek dopušteni tipovi entiteta</yellow>'
+      always: '<green>Uvijek se stvara</green>'
+      flags: '<gray>Prati zastavice stvaranja</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: Uključi/isključi prirodno mriještenje životinja
       name: Prirodno pojavljivanje životinja

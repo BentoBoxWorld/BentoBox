@@ -17,7 +17,7 @@ public abstract class PlayerBaseEvent extends BentoBoxEvent implements Cancellab
     protected final UUID playerUUID;
     protected final World world;
 
-    public PlayerBaseEvent(UUID playerUUID, Island island, World world) {
+    protected PlayerBaseEvent(UUID playerUUID, Island island, World world) {
         super();
         this.playerUUID = playerUUID;
         this.world = world;

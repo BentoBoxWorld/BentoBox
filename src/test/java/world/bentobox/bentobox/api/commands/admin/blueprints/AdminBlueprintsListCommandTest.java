@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +125,7 @@ class AdminBlueprintsListCommandTest extends CommonTestSetup {
     @Test
     void testExecuteUserStringListOfStringNoBlueprintsFolder() {
         assertFalse(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
+        verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
     }
 
     /**
@@ -134,7 +136,7 @@ class AdminBlueprintsListCommandTest extends CommonTestSetup {
         File blueprintFolder = new File(dataFolder, "blueprints");
         blueprintFolder.mkdirs();
         assertFalse(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
+        verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
     }
 
     /**
@@ -146,7 +148,7 @@ class AdminBlueprintsListCommandTest extends CommonTestSetup {
         blueprintFolder.mkdirs();
         new File(blueprintFolder, "random.txt").createNewFile();
         assertFalse(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
+        verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
     }
 
     /**
@@ -162,11 +164,11 @@ class AdminBlueprintsListCommandTest extends CommonTestSetup {
         new File(blueprintFolder, "random.txt").createNewFile();
 
         assertTrue(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.available-blueprints");
-        Mockito.verify(user).sendRawMessage("island");
-        Mockito.verify(user).sendRawMessage("nether-island");
-        Mockito.verify(user).sendRawMessage("end-island");
-        Mockito.verify(user, Mockito.times(3)).sendRawMessage(Mockito.anyString());
+        verify(user).sendMessage("commands.admin.blueprint.list.available-blueprints");
+        verify(user).sendRawMessage("island");
+        verify(user).sendRawMessage("nether-island");
+        verify(user).sendRawMessage("end-island");
+        verify(user, times(3)).sendRawMessage(Mockito.anyString());
     }
 
 }

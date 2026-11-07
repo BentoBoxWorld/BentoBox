@@ -39,7 +39,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     public boolean hook() {
         try {
             this.bentoboxExpansion = new BentoBoxPlaceholderExpansion(BentoBox.getInstance());
-        } catch (Exception | NoClassDefFoundError | NoSuchMethodError e) {
+        } catch (Exception | NoClassDefFoundError | NoSuchMethodError _) {
             return false;
         }
 
@@ -262,7 +262,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
 
     private String removeGMPlaceholder(@NonNull String string) {
         String newString = string;
-        // Get placeholders - TODO: my regex moh=jo isn't good enough to grab only placeholders with [gamemode] in yet!
+        // Get all placeholders; those without [gamemode] are filtered below
         Matcher m = Pattern.compile("(%)(.*?)(%)").matcher(string);
         while (m.find()) {
             String ph = m.group();

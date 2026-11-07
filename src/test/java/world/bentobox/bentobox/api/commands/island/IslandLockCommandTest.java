@@ -71,7 +71,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         when(user.getName()).thenReturn("tastybento");
         when(user.isOnline()).thenReturn(true);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
-        when(user.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(user.getLocation()).thenReturn(locationMock);
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -218,7 +219,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         UUID visitorUUID = UUID.randomUUID();
         Player visitorPlayer = mock(Player.class);
         when(visitorPlayer.getUniqueId()).thenReturn(visitorUUID);
-        when(visitorPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(visitorPlayer.getLocation()).thenReturn(locationMock);
         when(visitorPlayer.getWorld()).thenReturn(world);
         when(visitorPlayer.spigot()).thenReturn(spigot);
         User.getInstance(visitorPlayer);
@@ -253,7 +255,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         UUID visitorUUID = UUID.randomUUID();
         Player visitorPlayer = mock(Player.class);
         when(visitorPlayer.getUniqueId()).thenReturn(visitorUUID);
-        when(visitorPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(visitorPlayer.getLocation()).thenReturn(locationMock);
         when(visitorPlayer.getWorld()).thenReturn(world);
         when(visitorPlayer.spigot()).thenReturn(spigot);
         User.getInstance(visitorPlayer);
@@ -289,7 +292,8 @@ class IslandLockCommandTest extends RanksManagerTestSetup {
         UUID memberUUID = UUID.randomUUID();
         Player memberPlayer = mock(Player.class);
         when(memberPlayer.getUniqueId()).thenReturn(memberUUID);
-        when(memberPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(memberPlayer.getLocation()).thenReturn(locationMock);
         when(memberPlayer.getWorld()).thenReturn(world);
         mockedBukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(memberPlayer));
 

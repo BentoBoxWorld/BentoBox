@@ -59,14 +59,14 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 config.load(yamlFile);
             } catch (Exception e) {
                 /*
-                 * TODO: Temporary fix for removing UUID tags. Remove in a few versions
+                 * Legacy fix: removes UUID tags left by old versions
                  */
                 if (e.getMessage().contains("!!java.util.UUID")) {
                     removeStringFromFile(yamlFile);
                     // Try again
                     try {
                         Objects.requireNonNull(config).load(yamlFile);
-                    } catch (IOException | InvalidConfigurationException e1) {
+                    } catch (IOException | InvalidConfigurationException _) {
                         plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
                     }
                 } else {
@@ -86,7 +86,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 } else {
                     config.save(yamlFile);
                 }
-            } catch (Exception e) {
+            } catch (Exception _) {
                 plugin.logError("Could not create the " + fileName + " file!");
             }
         }

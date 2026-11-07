@@ -75,12 +75,12 @@ public abstract class BentoBoxEvent extends Event {
                     if (value != null) {
                         map.put(pd.getName(), value);
                     }
-                } catch (Exception ignore) {
+                } catch (Exception _) {
                     // Ignored.
                 }
             });
             return map;
-        } catch (IntrospectionException e) {
+        } catch (IntrospectionException _) {
             // Oh well, nothing
             return Collections.emptyMap();
         }
@@ -105,7 +105,7 @@ public abstract class BentoBoxEvent extends Event {
                     }
                 }
             });
-        } catch (IntrospectionException ignore) {
+        } catch (IntrospectionException _) {
             // Ignored.
         }
     }

@@ -56,6 +56,8 @@ import world.bentobox.level.Level;
  */
 public class PurgeRegionsService {
 
+    private static final String ISLAND_ID = "Island ID ";
+
     private static final String REGION = "region";
     private static final String ENTITIES = "entities";
     private static final String POI = "poi";
@@ -279,7 +281,7 @@ public class PurgeRegionsService {
                     // Retaining the DB row (deletable=true) lets the next
                     // deleted-sweep retry once the blocker is itself gone.
                     islandsDeferred++;
-                    plugin.log("Island ID " + islandID
+                    plugin.log(ISLAND_ID + islandID
                             + " straddles a blocked region \u2014 DB row retained for next purge sweep");
                     continue;
                 }
@@ -289,7 +291,7 @@ public class PurgeRegionsService {
                 // cache is guaranteed clear.
                 pendingDeletions.add(islandID);
                 islandsDeferred++;
-                plugin.log("Island ID " + islandID
+                plugin.log(ISLAND_ID + islandID
                         + " region files deleted \u2014 DB row deferred to shutdown");
             } else {
                 // Age sweep: regions are old enough that Paper won't have
@@ -299,7 +301,7 @@ public class PurgeRegionsService {
                 List<Pair<Integer, Integer>> residual = findResidualRegions(island, scan.world());
                 if (!residual.isEmpty()) {
                     islandsDeferred++;
-                    plugin.log("Island ID " + islandID + " has " + residual.size()
+                    plugin.log(ISLAND_ID + islandID + " has " + residual.size()
                             + " residual region(s) still on disk: " + residual
                             + " \u2014 DB row retained for a future purge");
                     continue;
@@ -387,7 +389,7 @@ public class PurgeRegionsService {
             }
             plugin.getIslands().getIslandCache().deleteIslandFromCache(islandID);
             if (plugin.getIslands().deleteIslandId(islandID)) {
-                plugin.log("Island ID " + islandID + " deleted from cache and database");
+                plugin.log(ISLAND_ID + islandID + " deleted from cache and database");
                 removed++;
                 // Fire PURGED so addons that track physical storage state know
                 // the region files and DB row are both gone.
@@ -456,14 +458,12 @@ public class PurgeRegionsService {
         File overworldRegionDir = new File(base, REGION);
 
         World netherWorld = plugin.getIWM().getNetherWorld(overworld);
-        File netherRegionDir = plugin.getIWM().isNetherIslands(overworld)
-                ? new File(netherWorld != null ? resolveDataFolder(netherWorld) : resolveNetherFallback(base), REGION)
-                : null;
+        File netherFolder = netherWorld != null ? resolveDataFolder(netherWorld) : resolveNetherFallback(base);
+        File netherRegionDir = plugin.getIWM().isNetherIslands(overworld) ? new File(netherFolder, REGION) : null;
 
         World endWorld = plugin.getIWM().getEndWorld(overworld);
-        File endRegionDir = plugin.getIWM().isEndIslands(overworld)
-                ? new File(endWorld != null ? resolveDataFolder(endWorld) : resolveEndFallback(base), REGION)
-                : null;
+        File endFolder = endWorld != null ? resolveDataFolder(endWorld) : resolveEndFallback(base);
+        File endRegionDir = plugin.getIWM().isEndIslands(overworld) ? new File(endFolder, REGION) : null;
 
         List<Pair<Integer, Integer>> residual = new ArrayList<>();
         for (int rx = rxMin; rx <= rxMax; rx++) {
@@ -895,7 +895,7 @@ public class PurgeRegionsService {
         if (parts.length != 2) return null;
         try {
             return new Pair<>(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException _) {
             return null;
         }
     }
@@ -1009,7 +1009,7 @@ public class PurgeRegionsService {
         try {
             Files.deleteIfExists(file.toPath());
             return true;
-        } catch (IOException e) {
+        } catch (IOException _) {
             plugin.logError("Failed to delete file: " + file.getAbsolutePath());
             return false;
         }
@@ -1063,7 +1063,7 @@ public class PurgeRegionsService {
     private void deletePlayerFile(File file, String description) {
         try {
             Files.deleteIfExists(file.toPath());
-        } catch (IOException ex) {
+        } catch (IOException _) {
             plugin.logError("Failed to delete " + description + ": " + file.getAbsolutePath());
         }
     }

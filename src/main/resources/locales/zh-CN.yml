@@ -1021,6 +1021,11 @@ protection:
       name: '<aqua><bold>悦灵与铜傀儡</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>对悦灵和铜傀儡使用物品或取回物品</color:#FAFAD2>'
       hint: 禁止与悦灵和铜傀儡交互
+    ALLOW_MOBS:
+      description: '<color:#FAFAD2>即使动物或怪物生成已关闭，这些实体也始终会生成</color:#FAFAD2>'
+      name: '<yellow><bold>始终允许生成的实体</bold></yellow>'
+      always: '<green>始终生成</green>'
+      flags: '<gray>遵循生成标志</gray>'
     ANIMAL_NATURAL_SPAWN:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>动物自然生成</color:#FAFAD2>'
       name: '<aqua><bold>动物自然生成</bold></aqua>'

@@ -21,7 +21,6 @@ import java.util.UUID;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -110,7 +109,8 @@ class AdminTeamDisbandAllCommandTest extends CommonTestSetup {
 
         // Scheduler — capture and run runnables on demand for confirmation flow.
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
-        when(scheduler.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(mock(BukkitTask.class));
+        BukkitTask bukkitTaskMock = mock(BukkitTask.class);
+        when(scheduler.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(bukkitTaskMock);
 
         // Owner + ranks setup
         ownerUUID = uuid;

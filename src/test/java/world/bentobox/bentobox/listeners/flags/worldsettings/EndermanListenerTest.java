@@ -73,8 +73,8 @@ class EndermanListenerTest extends CommonTestSetup {
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -82,7 +82,8 @@ class EndermanListenerTest extends CommonTestSetup {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
-         mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+         World worldMock = mock(World.class);
+         mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(worldMock);
         // Not allowed to start
         Flags.ENDERMAN_GRIEFING.setSetting(world, false);
     }

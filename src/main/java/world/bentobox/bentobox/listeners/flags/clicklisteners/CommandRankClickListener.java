@@ -68,7 +68,6 @@ public class CommandRankClickListener implements ClickHandler {
         }
 
         // Check if user has rank enough on the island
-        //Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
         if (!island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
             String rank = user.getTranslation(RanksManager.getInstance().getRank(Objects.requireNonNull(island).getRank(user)));
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, rank);

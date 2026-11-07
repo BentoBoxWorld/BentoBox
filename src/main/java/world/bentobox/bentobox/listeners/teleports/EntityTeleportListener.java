@@ -237,8 +237,8 @@ public non-sealed class EntityTeleportListener extends AbstractTeleportListener 
         }
 
         // To the nether/end or overworld.
-        World toWorld = !fromWorld.getEnvironment().equals(environment) ?
-            this.getNetherEndWorld(overWorld, environment) : overWorld;
+        World toWorld = fromWorld.getEnvironment().equals(environment) ? overWorld :
+            this.getNetherEndWorld(overWorld, environment);
         
         // Set the destination location
         // If portals cannot be created, then destination is the spawn point, otherwise it's the vector

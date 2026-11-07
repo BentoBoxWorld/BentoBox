@@ -116,7 +116,8 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     private HeadGetter headGetter;
 
-    private boolean isLoaded;
+    // Read from async threads (database handlers, HeadGetter), so must be volatile
+    private volatile boolean isLoaded;
 
     // Metrics
     @Nullable
@@ -126,7 +127,8 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     private BukkitTask blueprintLoadingTask;
 
-    private boolean shutdown;
+    // Read from async threads (database handlers, HeadGetter), so must be volatile
+    private volatile boolean shutdown;
 
     @Override
     public void onEnable(){
@@ -273,9 +275,6 @@ public class BentoBox extends JavaPlugin implements Listener {
         islandWorldManager.registerWorldsToMultiverse(true);
 
         hookRegistrar.registerLateHooks();
-
-        // TODO: re-enable after implementation
-        // TODO: re-enable after rework
 
         webManager = new WebManager(this);
 

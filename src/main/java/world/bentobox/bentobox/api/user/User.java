@@ -33,7 +33,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -69,7 +68,22 @@ import world.bentobox.bentobox.util.Util;
  */
 public class User implements MetaDataAble {
 
+    private static final String FRIENDLY_NAME = "[friendly_name]";
+
     private static final Map<UUID, User> users = new HashMap<>();
+
+    /**
+     * Locale key of the last message sent to this user through
+     * {@link #sendMessage(String, String...)} or {@link #notify(String, String...)},
+     * or {@code null} if none has been sent since {@link #clearLastMessageKey()}.
+     * <p>
+     * Commands use this to report <em>why</em> they refused to run, without
+     * recording anything the player typed - see
+     * {@link world.bentobox.bentobox.BStats#recordCommandFailure(world.bentobox.bentobox.BStats.CommandFailure, String, String)}.
+     * @since 3.23.6
+     */
+    @Nullable
+    private String lastMessageKey;
 
     // Patterns for message delivery type tags in locale strings
     private static final Pattern ACTIONBAR_PATTERN = Pattern.compile("^\\[actionbar]", Pattern.CASE_INSENSITIVE);
@@ -675,10 +689,10 @@ public class User implements MetaDataAble {
         if (translation.contains("[gamemode]") && addon != null && addon.getDescription() != null) {
             translation = translation.replace("[gamemode]", addon.getDescription().getName());
         }
-        if (player != null && translation.contains("[friendly_name]")) {
+        if (player != null && translation.contains(FRIENDLY_NAME)) {
             // Replace the [friendly_name] text variable
-            translation = translation.replace("[friendly_name]",
-                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+            translation = translation.replace(FRIENDLY_NAME,
+                    isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : FRIENDLY_NAME);
         }
         return translation;
     }
@@ -725,11 +739,35 @@ public class User implements MetaDataAble {
      * @param variables - CharSequence target, replacement pairs
      */
     public void sendMessage(String reference, String... variables) {
+        lastMessageKey = reference;
         String message = getTranslation(reference, variables);
         String noColors = message.replaceAll("(?i)§[0-9A-FK-ORX]", "").trim();
         if (!noColors.isEmpty()) {
             sendRawMessage(message);
         }
+    }
+
+    /**
+     * Returns the locale key of the last message sent to this user with
+     * {@link #sendMessage(String, String...)} or {@link #notify(String, String...)}.
+     * Raw messages sent with {@link #sendRawMessage(String)} are not tracked.
+     *
+     * @return the locale key, or {@code null} if nothing has been sent since the
+     *         last {@link #clearLastMessageKey()}
+     * @since 3.23.6
+     */
+    @Nullable
+    public String getLastMessageKey() {
+        return lastMessageKey;
+    }
+
+    /**
+     * Forgets the last message key, so that {@link #getLastMessageKey()} only
+     * reports messages sent from now on. Called at the start of each command.
+     * @since 3.23.6
+     */
+    public void clearLastMessageKey() {
+        lastMessageKey = null;
     }
 
     /**
@@ -778,8 +816,8 @@ public class User implements MetaDataAble {
         if (ACTIONBAR_PATTERN.matcher(remaining).find()) {
             String text = ACTIONBAR_PATTERN.matcher(remaining).replaceFirst("");
             Component component = parseToComponent(text);
-            if (sender instanceof Player player) {
-                player.sendActionBar(component);
+            if (sender instanceof Player p) {
+                p.sendActionBar(component);
             } else {
                 sender.sendMessage(component);
             }
@@ -796,8 +834,8 @@ public class User implements MetaDataAble {
             } else {
                 titleComponent = parseToComponent(text);
             }
-            if (sender instanceof Player player) {
-                player.showTitle(Title.title(titleComponent, subtitleComponent));
+            if (sender instanceof Player p) {
+                p.showTitle(Title.title(titleComponent, subtitleComponent));
             } else {
                 sender.sendMessage(titleComponent);
             }
@@ -873,8 +911,8 @@ public class User implements MetaDataAble {
             String soundName = matcher.group(1).toLowerCase(Locale.ENGLISH).replace('_', '.');
             float volume = parseFloatOrDefault(matcher.group(2), 1.0f);
             float pitch = parseFloatOrDefault(matcher.group(3), 1.0f);
-            if (sender instanceof Player player) {
-                player.playSound(player.getLocation(), soundName, volume, pitch);
+            if (sender instanceof Player p) {
+                p.playSound(p.getLocation(), soundName, volume, pitch);
             }
             matcher.appendReplacement(sb, "");
         }
@@ -896,7 +934,7 @@ public class User implements MetaDataAble {
         }
         try {
             return Float.parseFloat(value);
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException _) {
             return defaultValue;
         }
     }
@@ -976,6 +1014,7 @@ public class User implements MetaDataAble {
      * @see Notifier
      */
     public void notify(String reference, String... variables) {
+        lastMessageKey = reference;
         String message = getTranslation(reference, variables);
         if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
@@ -994,6 +1033,7 @@ public class User implements MetaDataAble {
      * @since 1.3.0
      */
     public void notify(World world, String reference, String... variables) {
+        lastMessageKey = reference;
         String message = getTranslation(world, reference, variables);
         if (!Util.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);

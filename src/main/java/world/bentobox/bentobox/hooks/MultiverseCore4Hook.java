@@ -41,7 +41,7 @@ public class MultiverseCore4Hook extends Hook implements WorldManagementHook {
                 core.getMVWorldManager().getMVWorld(world.getName()).setAutoLoad(false);
                 core.getMVWorldManager().saveWorldsConfig();
             }
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Do nothing
         }
     }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,6 +65,7 @@ class GeoMobLimitTabTest extends CommonTestSetup {
         list.add("COW");
         when(iwm.getMobLimitSettings(any())).thenReturn(list);
         when(iwm.getGeoLimitSettings(any())).thenReturn(list);
+        when(iwm.getMobAllowSettings(any())).thenReturn(list);
         // The click handler mutates the live world settings lists via the game mode addon
         WorldSettings ws = mock(WorldSettings.class);
         when(gma.getWorldSettings()).thenReturn(ws);
@@ -136,6 +138,17 @@ class GeoMobLimitTabTest extends CommonTestSetup {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
+     */
+    @Test
+    void testGetIconMobAllow() {
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_ALLOW, world);
+        PanelItem icon = tab.getIcon();
+        assertEquals("protection.flags.ALLOW_MOBS.name", icon.getName());
+        assertEquals(Material.IRON_INGOT, icon.getItem().getType());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getName()}.
      */
     @Test
@@ -144,6 +157,56 @@ class GeoMobLimitTabTest extends CommonTestSetup {
         assertEquals("protection.flags.LIMIT_MOBS.name", tab.getName());
         tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         assertEquals("protection.flags.GEO_LIMIT_MOBS.name", tab.getName());
+        tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_ALLOW, world);
+        assertEquals("protection.flags.ALLOW_MOBS.name", tab.getName());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getFlagKey()}.
+     */
+    @Test
+    void testGetFlagKey() {
+        assertEquals("LIMIT_MOBS", new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world).getFlagKey());
+        assertEquals("GEO_LIMIT_MOBS", new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world).getFlagKey());
+        assertEquals("ALLOW_MOBS", new GeoMobLimitTab(user, EntityLimitTabType.MOB_ALLOW, world).getFlagKey());
+    }
+
+    /**
+     * Clicking on the allow tab toggles the allow list and saves it
+     */
+    @Test
+    void testOnClickMobAllow() {
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_ALLOW, world);
+        assertEquals(4, list.size());
+        // Click on ARMADILLO removes it
+        tab.onClick(panel, user, ClickType.LEFT, 10);
+        assertEquals(3, list.size());
+        assertFalse(list.contains("ARMADILLO"));
+        // Click again adds it back
+        tab.onClick(panel, user, ClickType.LEFT, 10);
+        assertEquals(4, list.size());
+        assertTrue(list.contains("ARMADILLO"));
+        // Stored by BentoBox, not the game mode
+        verify(iwm, times(2)).saveCoreWorldSettings(world);
+        verify(gma, never()).saveWorldSettings();
+    }
+
+    /**
+     * Allow-listed entities show green, the rest red
+     */
+    @Test
+    void testGetPanelItemsMobAllow() {
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_ALLOW, world);
+        List<@Nullable PanelItem> items = tab.getPanelItems();
+        assertFalse(items.isEmpty());
+        items.forEach(i -> {
+            if (i.getName().equals("Armadillo") || i.getName().equals("Axolotl") || i.getName().equals("Cow")
+                    || i.getName().equals("Bat")) {
+                assertEquals(Material.GREEN_SHULKER_BOX, i.getItem().getType(), "Name : " + i.getName());
+            } else {
+                assertEquals(Material.RED_SHULKER_BOX, i.getItem().getType(), "Name : " + i.getName());
+            }
+        });
     }
 
     /**

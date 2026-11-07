@@ -73,7 +73,7 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
             int y = Integer.parseInt(args.get(1));
             int z = Integer.parseInt(args.get(2));
             return new Location(getWorld(), x, y, z);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return null;
         }
     }
@@ -98,7 +98,7 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
             // Set
             island.setProtectionCenter(targetLoc);
             user.sendMessage("commands.admin.setprotectionlocation.success", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
-        } catch (Exception e) {
+        } catch (Exception _) {
             user.sendMessage("commands.admin.setprotectionlocation.failure", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
             getAddon().logError("Protection location could not be changed because the island does not exist");
         }

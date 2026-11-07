@@ -56,16 +56,21 @@ class IslandToggleClickTest extends CommonTestSetup {
         listener = new IslandToggleClick("test");
 
         // Panel
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        Inventory inventoryMock = mock(Inventory.class);
+        when(panel.getInventory()).thenReturn(inventoryMock);
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
-        when(user.getWorld()).thenReturn(mock(World.class));
-        when(user.getLocation()).thenReturn(mock(Location.class));
-        when(user.getPlayer()).thenReturn(mock(Player.class));
+        World worldMock = mock(World.class);
+        when(user.getWorld()).thenReturn(worldMock);
+        Location locationMock = mock(Location.class);
+        when(user.getLocation()).thenReturn(locationMock);
+        Player playerMock = mock(Player.class);
+        when(user.getPlayer()).thenReturn(playerMock);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock2 = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock2);
         mockedUtil.when(() ->Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
 
         FlagsManager fm = mock(FlagsManager.class);

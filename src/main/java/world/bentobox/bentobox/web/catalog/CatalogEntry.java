@@ -38,7 +38,7 @@ public class CatalogEntry {
         this.description = object.get("description").getAsString();
         this.repository = object.get("repository").getAsString();
         this.topic = object.get("topic").getAsString();
-        this.tag = (!(object.get("tag") instanceof JsonNull)) ? object.get("tag").getAsString() : null;
+        this.tag = object.get("tag") instanceof JsonNull ? null : object.get("tag").getAsString();
     }
 
     public int getSlot() {

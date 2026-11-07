@@ -53,7 +53,8 @@ public abstract class AbstractDatabaseHandler<T> {
     private BukkitTask asyncSaveTask;
     private boolean inSave;
 
-    protected boolean shutdown;
+    // Set on the main thread during disable, polled by the async save task every tick
+    protected volatile boolean shutdown;
 
     /**
      * True while {@link #flush()} is draining the queue on the calling thread. Queued writes

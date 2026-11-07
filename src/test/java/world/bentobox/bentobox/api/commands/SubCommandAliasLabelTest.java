@@ -37,7 +37,8 @@ class SubCommandAliasLabelTest extends CommonTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
+        CommandsManager commandsManagerMock = mock(CommandsManager.class);
+        when(plugin.getCommandsManager()).thenReturn(commandsManagerMock);
         top = new TopCommand();
         sender = mock(CommandSender.class);
     }

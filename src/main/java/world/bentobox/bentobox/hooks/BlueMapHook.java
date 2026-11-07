@@ -217,7 +217,7 @@ public class BlueMapHook extends MapHook implements Listener {
                     int g = Integer.parseInt(h.substring(2, 4), 16);
                     int b = Integer.parseInt(h.substring(4, 6), 16);
                     return new de.bluecolored.bluemap.api.math.Color(r, g, b, alpha);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException _) {
                     plugin.logError("Invalid BlueMap colour in config: '" + hex + "'. Using default.");
                 }
             } else {
@@ -369,10 +369,8 @@ public class BlueMapHook extends MapHook implements Listener {
 
     @Override
     public void removeAreaMarker(@NonNull String markerSetId, @NonNull String markerId) {
-        MarkerSet markerSet = markerSets.get(markerSetId);
-        if (markerSet != null) {
-            markerSet.remove(markerId);
-        }
+        // Area and point markers share one marker set in BlueMap
+        removePointMarker(markerSetId, markerId);
     }
 
     private static de.bluecolored.bluemap.api.math.Color toBlueMapColor(java.awt.Color c) {

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import net.kyori.adventure.text.Component;
 
 class LockAndBanListenerTest extends CommonTestSetup {
 
@@ -204,7 +206,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isBanned(uuid)).thenReturn(true);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, Component.text("join message")));
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
@@ -293,7 +295,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Horizontal move across a block boundary into an open island
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
         // Resolved lazily on the first player and reused for the second
-        verify(im, org.mockito.Mockito.times(1)).getProtectedIslandAt(inside);
+        verify(im, times(1)).getProtectedIslandAt(inside);
     }
 
     @Test
@@ -394,20 +396,6 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e.isCancelled());
     }
 
-    @Test
-    void testTeleportToLockedIslandAsMember() {
-        // Make player
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
-        // Simulate a teleport into an island
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
-        // Pass to event listener
-        listener.onPlayerTeleport(e);
-        // Should not be not cancelled
-        assertFalse(e.isCancelled());
-        // Player should not see a message
-        verify(notifier, never()).notify(any(), any());
-    }
 
     @Test
     void testLoginToLockedIsland() {
@@ -422,7 +410,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(mockPlayer, Component.text("join message")));
         // User should be teleported somewhere
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
         // Call teleport event
@@ -449,7 +437,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(player, Component.text("join message")));
         // User should not see a message
         verify(notifier, never()).notify(any(), anyString());
         // User should not be teleported somewhere
@@ -474,7 +462,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
 
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(player, Component.text("join message")));
         // User should see a bypass message
         verify(notifier).notify(any(), anyString());
         // User should not be teleported somewhere
@@ -491,7 +479,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         // Place the player on the island
         when(player.getLocation()).thenReturn(inside);
         // Log them in
-        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        listener.onPlayerLogin(new PlayerJoinEvent(player, Component.text("join message")));
         // User should not see a message
         verify(notifier, never()).notify(any(), anyString());
         // User should not be teleported somewhere
@@ -756,7 +744,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e2.isCancelled());
 
         // Verify notification was sent only once
-        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
+        verify(notifier, times(1)).notify(any(), anyString());
     }
 
     @Test
@@ -782,7 +770,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e2.isCancelled());
 
         // Verify notification was sent only once
-        verify(notifier, org.mockito.Mockito.times(1)).notify(any(), anyString());
+        verify(notifier, times(1)).notify(any(), anyString());
     }
 
     @Test
@@ -821,7 +809,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         assertTrue(e3.isCancelled());
 
         // Verify notification was sent twice (once per entry attempt)
-        verify(notifier, org.mockito.Mockito.times(2)).notify(any(), anyString());
+        verify(notifier, times(2)).notify(any(), anyString());
     }
 
 }

@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -241,7 +240,6 @@ class AdminPurgeDeletedCommandTest extends CommonTestSetup {
     @Test
     void testExecuteStrictFilterBlocksMixedRegion() {
         UUID owner1 = UUID.randomUUID();
-        UUID owner2 = UUID.randomUUID();
 
         // Deletable island straddling r.0.0
         Island deletable = mock(Island.class);

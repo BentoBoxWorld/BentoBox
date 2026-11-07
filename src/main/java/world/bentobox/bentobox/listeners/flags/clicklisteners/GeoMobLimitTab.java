@@ -63,7 +63,12 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
 
     public enum EntityLimitTabType {
         GEO_LIMIT,
-        MOB_LIMIT
+        MOB_LIMIT,
+        /**
+         * Mobs that may always spawn, regardless of the animal/monster spawning flags
+         * @since 3.23.6
+         */
+        MOB_ALLOW
     }
 
     private final BentoBox plugin = BentoBox.getInstance();
@@ -94,16 +99,23 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         // Mutate the game mode's live list - the IWM getters return an immutable
         // empty list when the world is not a game world (java:S6322)
         plugin.getIWM().getAddon(Util.getWorld(world)).ifPresent(gameModeAddon -> {
-            List<String> settings = type == EntityLimitTabType.MOB_LIMIT
-                    ? gameModeAddon.getWorldSettings().getMobLimitSettings()
-                    : gameModeAddon.getWorldSettings().getGeoLimitSettings();
+            // The allow list is stored by BentoBox, not in the game mode's config
+            List<String> settings = switch (type) {
+                case MOB_LIMIT -> gameModeAddon.getWorldSettings().getMobLimitSettings();
+                case MOB_ALLOW -> plugin.getIWM().getMobAllowSettings(world);
+                case GEO_LIMIT -> gameModeAddon.getWorldSettings().getGeoLimitSettings();
+            };
             if (settings.contains(c.name())) {
                 settings.remove(c.name());
             } else {
                 settings.add(c.name());
             }
             // Save settings
-            gameModeAddon.saveWorldSettings();
+            if (type == EntityLimitTabType.MOB_ALLOW) {
+                plugin.getIWM().saveCoreWorldSettings(world);
+            } else {
+                gameModeAddon.saveWorldSettings();
+            }
         });
         // Apply change to panel
         panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
@@ -112,18 +124,29 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
 
     @Override
     public PanelItem getIcon() {
-        if (type == EntityLimitTabType.MOB_LIMIT) {
-            return new PanelItemBuilder().icon(Material.IRON_BOOTS).name(getName()).build();
-        } else {
-            return new PanelItemBuilder().icon(Material.CHAINMAIL_CHESTPLATE).name(getName()).build();
-
-        }
+        Material icon = switch (type) {
+            case MOB_LIMIT -> Material.IRON_BOOTS;
+            case MOB_ALLOW -> Material.IRON_INGOT;
+            case GEO_LIMIT -> Material.CHAINMAIL_CHESTPLATE;
+        };
+        return new PanelItemBuilder().icon(icon).name(getName()).build();
     }
 
     @Override
     public String getName() {
-        return type == EntityLimitTabType.MOB_LIMIT ? user.getTranslation("protection.flags.LIMIT_MOBS.name")
-                : user.getTranslation("protection.flags.GEO_LIMIT_MOBS.name");
+        return user.getTranslation("protection.flags." + getFlagKey() + ".name");
+    }
+
+    /**
+     * @return the flag reference used for this tab's locale keys and permission
+     * @since 3.23.6
+     */
+    public String getFlagKey() {
+        return switch (type) {
+            case MOB_LIMIT -> "LIMIT_MOBS";
+            case MOB_ALLOW -> "ALLOW_MOBS";
+            case GEO_LIMIT -> "GEO_LIMIT_MOBS";
+        };
     }
 
     @Override
@@ -141,7 +164,8 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(LangUtilsHook.getEntityName(c, user));
         pib.clickHandler(this);
-        if (type == EntityLimitTabType.MOB_LIMIT) {
+        switch (type) {
+        case MOB_LIMIT -> {
             if (!BentoBox.getInstance().getIWM().getMobLimitSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.can"));
@@ -149,7 +173,17 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 pib.icon(Material.RED_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.cannot"));
             }
-        } else {
+        }
+        case MOB_ALLOW -> {
+            if (BentoBox.getInstance().getIWM().getMobAllowSettings(world).contains(c.name())) {
+                pib.icon(Material.GREEN_SHULKER_BOX);
+                pib.description(user.getTranslation("protection.flags.ALLOW_MOBS.always"));
+            } else {
+                pib.icon(Material.RED_SHULKER_BOX);
+                pib.description(user.getTranslation("protection.flags.ALLOW_MOBS.flags"));
+            }
+        }
+        default -> {
             if (BentoBox.getInstance().getIWM().getGeoLimitSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
@@ -158,13 +192,14 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled"));
             }
         }
+        }
         return pib.build();
     }
 
     /**
      * Returns the list of entity types shown in this tab.
      * The GEO_LIMIT tab includes both living entities and projectiles;
-     * the MOB_LIMIT tab includes only living entities.
+     * the MOB_LIMIT and MOB_ALLOW tabs include only living entities.
      * @return list of entity types for this tab
      */
     private List<EntityType> getEntityTypes() {

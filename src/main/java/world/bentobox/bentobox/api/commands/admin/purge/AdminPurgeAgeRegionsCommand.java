@@ -63,7 +63,7 @@ public class AdminPurgeAgeRegionsCommand extends CompositeCommand implements Lis
                 user.sendMessage("commands.admin.purge.days-one-or-more");
                 return false;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             user.sendMessage("commands.admin.purge.days-one-or-more");
             return false;
         }

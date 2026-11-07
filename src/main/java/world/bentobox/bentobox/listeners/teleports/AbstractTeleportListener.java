@@ -250,7 +250,7 @@ public abstract sealed class AbstractTeleportListener
         }
 
         // Limit Y to the min/max world height.
-        toLocation.setY(Math.max(Math.min(toLocation.getY(), toWorld.getMaxHeight()), toWorld.getMinHeight()));
+        toLocation.setY(Math.clamp(toLocation.getY(), toWorld.getMinHeight(), toWorld.getMaxHeight()));
 
         if (!canCreatePortal)
         {
@@ -332,7 +332,7 @@ public abstract sealed class AbstractTeleportListener
         // OBSIDIAN
         // and player is placed on second air block above obsidian.
         // If Y coordinate is below 2, then obsidian platform is not generated and player falls in void.
-        return new Location(toWorld, i - 0.5, Math.min(toWorld.getMaxHeight() - 2, Math.max(toWorld.getMinHeight() + 2, k)), j - 0.5);
+        return new Location(toWorld, i - 0.5, Math.clamp(k, toWorld.getMinHeight() + 2, toWorld.getMaxHeight() - 2), j - 0.5);
     }
 
 

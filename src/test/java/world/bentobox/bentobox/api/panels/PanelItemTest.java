@@ -234,7 +234,7 @@ class PanelItemTest extends CommonTestSetup {
         when(pib.getIcon()).thenReturn(itemStack);
         when(pib.getName()).thenReturn("<red>Test Name</red>");
 
-        PanelItem item = new PanelItem(pib);
+        new PanelItem(pib);
 
         ArgumentCaptor<Component> captor = ArgumentCaptor.forClass(Component.class);
         verify(itemMeta).displayName(captor.capture());
@@ -256,7 +256,7 @@ class PanelItemTest extends CommonTestSetup {
         when(pib.getIcon()).thenReturn(itemStack);
         when(pib.getDescription()).thenReturn(List.of("<green>Line 1</green>", "<red>Line 2</red>"));
 
-        PanelItem item = new PanelItem(pib);
+        new PanelItem(pib);
 
         ArgumentCaptor<List<Component>> captor = ArgumentCaptor.forClass(List.class);
         verify(itemMeta).lore(captor.capture());

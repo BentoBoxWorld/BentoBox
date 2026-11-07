@@ -1086,6 +1086,15 @@ protection:
         <green>Позволяет забирать или давать предметы</green>
         <green>тихоне или медному голему</green>
       hint: Взаимодействие с тихоней и медным големом запрещено!
+    ALLOW_MOBS:
+      description: |-
+        <green>Сущности, которые появляются</green>
+        <green>всегда, даже если появление</green>
+        <green>животных или монстров</green>
+        <green>отключено.</green>
+      name: '<yellow>Всегда разрешённые типы сущностей</yellow>'
+      always: '<green>Появляется всегда</green>'
+      flags: '<gray>Зависит от флагов появления</gray>'
     ANIMAL_NATURAL_SPAWN:
       name: Появление животных
       description: |-

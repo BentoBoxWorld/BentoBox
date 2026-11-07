@@ -242,7 +242,7 @@ class AdminDeleteCommandTest extends CommonTestSetup {
         itl.execute(user, itl.getLabel(), List.of("tastybento"));
         itl.execute(user, itl.getLabel(), List.of("tastybento"));
 
-        verify(im).deleteIsland(eq(island), eq(true), eq(notUUID));
+        verify(im).deleteIsland(island, true, notUUID);
         verify(im, never()).hardDeleteIsland(any());
     }
 
@@ -265,7 +265,8 @@ class AdminDeleteCommandTest extends CommonTestSetup {
     @Test
     void testNoArgWrongWorld() {
         when(user.isPlayer()).thenReturn(true);
-        when(user.getWorld()).thenReturn(mock(org.bukkit.World.class));
+        org.bukkit.World worldMock = mock(org.bukkit.World.class);
+        when(user.getWorld()).thenReturn(worldMock);
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("general.errors.wrong-world");

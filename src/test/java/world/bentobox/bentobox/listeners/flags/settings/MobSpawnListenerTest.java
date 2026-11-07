@@ -7,12 +7,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Cow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
@@ -71,13 +73,17 @@ class MobSpawnListenerTest extends CommonTestSetup {
         when(zombie.getWorld()).thenReturn(world);
         when(slime.getWorld()).thenReturn(world);
         when(cow.getWorld()).thenReturn(world);
+        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
+        when(slime.getType()).thenReturn(EntityType.SLIME);
+        when(cow.getType()).thenReturn(EntityType.COW);
 
         // Worlds
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
 
         // Util class
-        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(worldMock);
         mockedUtil.when(() -> Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
         mockedUtil.when(() -> Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
 
@@ -251,6 +257,49 @@ class MobSpawnListenerTest extends CommonTestSetup {
         checkUnBlocked(slime,l);
         // Check animal
         checkUnBlocked(cow,l);
+    }
+
+    /**
+     * An entity on the world's allow list spawns even when the island has turned the flags off
+     */
+    @Test
+    void testAllowListOverridesIslandFlags() {
+        IslandsManager im = mock(IslandsManager.class);
+        when(plugin.getIslands()).thenReturn(im);
+        Island island = mock(Island.class);
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+        when(island.isAllowed(Mockito.any())).thenReturn(false);
+        when(iwm.getMobAllowSettings(any())).thenReturn(List.of("COW"));
+
+        MobSpawnListener l = new MobSpawnListener();
+        l.setPlugin(plugin);
+
+        checkUnBlocked(cow, l);
+        // Other entities are still gated by the flags
+        checkBlocked(zombie, l);
+        checkBlocked(slime, l);
+    }
+
+    /**
+     * An entity on the world's allow list spawns off-island even when the world flags are off
+     */
+    @Test
+    void testAllowListOverridesWorldFlags() {
+        IslandsManager im = mock(IslandsManager.class);
+        when(plugin.getIslands()).thenReturn(im);
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        Flags.MONSTER_NATURAL_SPAWN.setDefaultSetting(false);
+        Flags.ANIMAL_NATURAL_SPAWN.setDefaultSetting(false);
+        Flags.MONSTER_SPAWNERS_SPAWN.setDefaultSetting(false);
+        Flags.ANIMAL_SPAWNERS_SPAWN.setDefaultSetting(false);
+        when(iwm.getMobAllowSettings(any())).thenReturn(List.of("ZOMBIE", "COW"));
+
+        MobSpawnListener l = new MobSpawnListener();
+        l.setPlugin(plugin);
+
+        checkUnBlocked(zombie, l);
+        checkUnBlocked(cow, l);
+        checkBlocked(slime, l);
     }
 
 }

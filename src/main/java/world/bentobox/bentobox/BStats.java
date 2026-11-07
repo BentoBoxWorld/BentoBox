@@ -1,5 +1,11 @@
 package world.bentobox.bentobox;
 
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,7 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.bstats.bukkit.Metrics;
@@ -16,7 +24,10 @@ import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimpleBarChart;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -43,8 +54,52 @@ public class BStats {
      */
     private static final int REPORTED_COMMANDS = 20;
 
+    /**
+     * Reason reported when a failing command sent no message, or sent one whose
+     * reference does not look like a locale key (for example an addon that passes
+     * already-translated text to {@code User#sendMessage}).
+     * @since 3.23.6
+     */
+    static final String UNKNOWN_REASON = "unknown";
+
+    /**
+     * Longest reason accepted. Real locale keys are far shorter than this.
+     * @since 3.23.6
+     */
+    private static final int MAX_REASON_LENGTH = 100;
+
+    /**
+     * Characters allowed in a locale key. See {@link #isLocaleKey(String)}.
+     * @since 3.23.6
+     */
+    private static final Pattern KEY_CHARACTERS = Pattern.compile("[A-Za-z0-9_.-]+");
+
+    /**
+     * Delay before the island worlds are first measured on disk, in ticks (one minute).
+     * Gives the game modes time to finish creating their worlds.
+     * @since 3.23.6
+     */
+    private static final long WORLD_SIZE_INITIAL_DELAY = 20L * 60;
+
+    /**
+     * Interval between measurements of the island worlds on disk, in ticks (six hours).
+     * World size changes slowly, and walking a large world folder is not free.
+     * @since 3.23.6
+     */
+    private static final long WORLD_SIZE_INTERVAL = 20L * 60 * 60 * 6;
+
+    private static final long GB = 1_000_000_000L;
+
     private final BentoBox plugin;
     private Metrics metrics;
+
+    /**
+     * Size bracket of the island worlds on disk, measured off the main thread by
+     * {@link #measureWorldSize()}. {@code null} until the first measurement completes,
+     * in which case the chart is skipped for that submission.
+     * @since 3.23.6
+     */
+    private volatile String worldSizeBucket;
 
     /**
      * Counts of the islands that got created.
@@ -71,6 +126,13 @@ public class BStats {
      */
     private final Map<String, Integer> commandFailurePaths = new HashMap<>();
 
+    /**
+     * Counts of command failures by the locale key of the message the command sent
+     * when it refused, since the last data send.
+     * @since 3.23.6
+     */
+    private final Map<String, Integer> commandFailureReasons = new HashMap<>();
+
 
     BStats(BentoBox plugin) {
         this.plugin = plugin;
@@ -90,6 +152,8 @@ public class BStats {
         registerPlayersPerServerChart();
         registerAddonApiVersionsChart();
         registerCommandFailuresChart();
+        registerCommandFailureReasonsChart();
+        registerWorldSizeChart();
 
         // Drilldown Pie Charts
         registerAddonVersionsChart();
@@ -165,6 +229,104 @@ public class BStats {
             else if (players <= 200) return "151-200";
             else return "201+";
         }));
+    }
+
+    /**
+     * Sends the total size on disk of all island worlds (overworld, nether and end of
+     * every game mode) as a bracket, e.g. {@code 10-50 GB}.
+     * <p>
+     * bStats collects chart data on the main thread, so the folders are not walked in
+     * the callable. A repeating asynchronous task measures them and caches the bracket;
+     * the callable only reads the cache. Until the first measurement completes the
+     * chart is skipped. This is the data behind the question of whether island storage
+     * (Slime worlds, database-backed islands) is a problem anyone actually has.
+     * @since 3.23.6
+     */
+    private void registerWorldSizeChart() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::measureWorldSize, WORLD_SIZE_INITIAL_DELAY,
+                WORLD_SIZE_INTERVAL);
+        metrics.addCustomChart(new SimplePie("worldSize", () -> worldSizeBucket));
+    }
+
+    /**
+     * Walks every island world folder and caches the size bracket. Runs off the main
+     * thread.
+     * @since 3.23.6
+     */
+    void measureWorldSize() {
+        Set<Path> folders = new HashSet<>();
+        for (GameModeAddon gm : plugin.getAddonsManager().getGameModeAddons()) {
+            Stream.of(gm.getOverWorld(), gm.getNetherWorld(), gm.getEndWorld())
+                    .filter(Objects::nonNull)
+                    .map(World::getWorldFolder)
+                    .filter(Objects::nonNull)
+                    .forEach(f -> folders.add(f.toPath()));
+        }
+        long bytes = 0;
+        for (Path folder : folders) {
+            bytes += folderSize(folder);
+        }
+        worldSizeBucket = worldSizeBucket(bytes);
+    }
+
+    /**
+     * Sums the size of every regular file under the folder. Files that vanish or cannot
+     * be read while walking are skipped rather than aborting the measurement, because
+     * region files are being written while the server runs.
+     * @param folder folder to measure
+     * @return total size in bytes, or 0 if the folder does not exist
+     * @since 3.23.6
+     */
+    static long folderSize(@NonNull Path folder) {
+        if (!Files.isDirectory(folder)) {
+            return 0;
+        }
+        long[] total = { 0 };
+        try {
+            Files.walkFileTree(folder, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile()) {
+                        total[0] += attrs.size();
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException _) {
+            // Partial total is still informative
+        }
+        return total[0];
+    }
+
+    /**
+     * Bracket label for a size in bytes, using decimal gigabytes.
+     * @param bytes size in bytes
+     * @return bracket label such as {@code 1-5 GB}
+     * @since 3.23.6
+     */
+    static @NonNull String worldSizeBucket(long bytes) {
+        if (bytes < GB) return "0-1 GB";
+        else if (bytes < 5 * GB) return "1-5 GB";
+        else if (bytes < 10 * GB) return "5-10 GB";
+        else if (bytes < 50 * GB) return "10-50 GB";
+        else if (bytes < 100 * GB) return "50-100 GB";
+        else if (bytes < 500 * GB) return "100-500 GB";
+        else if (bytes < 1000 * GB) return "500-1000 GB";
+        else return "1 TB+";
+    }
+
+    /**
+     * @return the cached world size bracket, or {@code null} if not yet measured
+     * @since 3.23.6
+     */
+    @Nullable
+    String getWorldSizeBucket() {
+        return worldSizeBucket;
     }
 
     /**
@@ -270,6 +432,7 @@ public class BStats {
      * rejection) rate of that feature.
      * @since 3.22.0
      */
+    @SuppressWarnings("java:S5738") // telemetry deliberately reports how many servers still use deprecated settings
     private void registerFeaturesChart() {
         metrics.addCustomChart(new SimpleBarChart("features", () -> {
             Map<String, Integer> values = new HashMap<>();
@@ -337,23 +500,70 @@ public class BStats {
     }
 
     /**
-     * Sends the commands that failed most often since the last data send. Only the
-     * busiest {@value #REPORTED_COMMANDS} are sent.
-     * @since 3.22.0
+     * Sends the locale keys of the messages that failing commands sent most often
+     * since the last data send - the <em>reason</em> each command refused, such as
+     * {@code general.errors.no-island} or {@code general.errors.insufficient-rank}.
+     * <p>
+     * Like {@link #registerCommandFailurePathsChart()}, each reason is reported once
+     * per server, so the chart shows how many servers saw each reason rather than
+     * how many times it happened.
+     * @since 3.23.6
      */
-    private void registerCommandFailurePathsChart() {
-        metrics.addCustomChart(new SimpleBarChart("commandFailurePaths", () -> {
-            Map<String, Integer> values = commandFailurePaths.entrySet().stream()
-                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
-                    .limit(REPORTED_COMMANDS)
-                    .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
-            commandFailurePaths.clear();
-            return values;
-        }));
+    private void registerCommandFailureReasonsChart() {
+        metrics.addCustomChart(new AdvancedPie("commandFailureReasons", this::commandFailureReasonsData));
     }
 
     /**
-     * Records that a command could not be run to completion.
+     * Sends the commands that failed most often since the last data send.
+     * <p>
+     * Each command is reported once per server, not once per failure. bStats sums the
+     * values of every server into one bar, so if raw counts were sent a single server
+     * with one player hammering a command would dominate the chart. Reporting presence
+     * instead makes the chart read "how many servers had this command fail", which is
+     * what matters when deciding what to improve. The raw count is still used to pick
+     * the busiest {@value #REPORTED_COMMANDS} to send.
+     * @since 3.22.0
+     */
+    private void registerCommandFailurePathsChart() {
+        metrics.addCustomChart(new SimpleBarChart("commandFailurePaths", this::commandFailurePathsData));
+    }
+
+    /**
+     * Builds the data for the failing commands chart and resets the counts.
+     * @return the busiest {@value #REPORTED_COMMANDS} command keys, each with the value 1
+     * @since 3.23.6
+     */
+    Map<String, Integer> commandFailurePathsData() {
+        Map<String, Integer> values = presenceOfBusiest(commandFailurePaths);
+        commandFailurePaths.clear();
+        return values;
+    }
+
+    /**
+     * Builds the data for the failure reasons chart and resets the counts.
+     * @return the busiest {@value #REPORTED_COMMANDS} reasons, each with the value 1
+     * @since 3.23.6
+     */
+    Map<String, Integer> commandFailureReasonsData() {
+        Map<String, Integer> values = presenceOfBusiest(commandFailureReasons);
+        commandFailureReasons.clear();
+        return values;
+    }
+
+    /**
+     * Picks the {@value #REPORTED_COMMANDS} entries with the highest counts and maps
+     * each of them to 1, so that what is sent is "this happened here" rather than
+     * "this happened this many times here".
+     */
+    private static Map<String, Integer> presenceOfBusiest(Map<String, Integer> counts) {
+        return counts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
+                .limit(REPORTED_COMMANDS)
+                .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), 1), Map::putAll);
+    }
+
+    /**
+     * Records that a command could not be run to completion, with no reason given.
      * <p>
      * Only the failure kind and the command's stable key are recorded - never what
      * the player typed - because bStats data is public.
@@ -363,12 +573,64 @@ public class BStats {
      * @since 3.22.0
      */
     public void recordCommandFailure(@NonNull CommandFailure failure, @NonNull String commandKey) {
+        recordCommandFailure(failure, commandKey, null);
+    }
+
+    /**
+     * Records that a command could not be run to completion, and why.
+     * <p>
+     * Only the failure kind, the command's stable key and the locale key of the
+     * message the command sent are recorded - never what the player typed - because
+     * bStats data is public. A reason that does not look like a locale key is
+     * replaced with {@value #UNKNOWN_REASON} rather than sent as is.
+     * @param failure kind of failure
+     * @param commandKey stable identifier of the command, see
+     *        {@link world.bentobox.bentobox.api.commands.CompositeCommand#getStatsKey()}
+     * @param reason locale key of the message the command sent when it refused, usually
+     *        {@link world.bentobox.bentobox.api.user.User#getLastMessageKey()}, or
+     *        {@code null} if it sent none
+     * @since 3.23.6
+     */
+    public void recordCommandFailure(@NonNull CommandFailure failure, @NonNull String commandKey,
+            @Nullable String reason) {
         commandFailures.merge(failure.name().toLowerCase(Locale.ENGLISH), 1, Integer::sum);
         // Only track a new command if there is room, otherwise a badly behaved addon
         // could grow this map without limit between submissions.
-        if (commandFailurePaths.containsKey(commandKey) || commandFailurePaths.size() < MAX_TRACKED_COMMANDS) {
-            commandFailurePaths.merge(commandKey, 1, Integer::sum);
+        countIfRoom(commandFailurePaths, commandKey);
+        countIfRoom(commandFailureReasons, sanitizeReason(reason));
+    }
+
+    private static void countIfRoom(Map<String, Integer> counts, String key) {
+        if (counts.containsKey(key) || counts.size() < MAX_TRACKED_COMMANDS) {
+            counts.merge(key, 1, Integer::sum);
         }
+    }
+
+    /**
+     * Accepts a reason only if it has the shape of a locale key.
+     * @param reason candidate reason, may be null
+     * @return the reason, or {@value #UNKNOWN_REASON} if it is missing or does not look like a locale key
+     * @since 3.23.6
+     */
+    static @NonNull String sanitizeReason(@Nullable String reason) {
+        return isLocaleKey(reason) ? reason : UNKNOWN_REASON;
+    }
+
+    /**
+     * Shape of a locale key: dot-separated segments of letters, digits, hyphens and
+     * underscores, at least two of them. Anything else could be free text, which must
+     * never reach bStats because the data there is public.
+     * <p>
+     * The regex only checks the character set; a single repeated character class
+     * cannot make the regex engine recurse (Sonar S5998). The segment rules are plain
+     * string checks.
+     */
+    private static boolean isLocaleKey(@Nullable String reason) {
+        if (reason == null || reason.length() > MAX_REASON_LENGTH || !KEY_CHARACTERS.matcher(reason).matches()) {
+            return false;
+        }
+        // At least two segments, and none of them empty
+        return reason.contains(".") && !reason.startsWith(".") && !reason.endsWith(".") && !reason.contains("..");
     }
 
     /**

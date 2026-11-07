@@ -37,6 +37,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 /**
  * @author tastybento
@@ -72,8 +73,8 @@ class ItemFrameListenerTest extends CommonTestSetup  {
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -86,7 +87,8 @@ class ItemFrameListenerTest extends CommonTestSetup  {
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
         // Util
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
 
         // Item Frame
         when(entity.getWorld()).thenReturn(world);
@@ -110,7 +112,7 @@ class ItemFrameListenerTest extends CommonTestSetup  {
     void testOnItemFrameDamageEntityDamageByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(enderman, entity, cause, 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
     }
@@ -124,7 +126,7 @@ class ItemFrameListenerTest extends CommonTestSetup  {
         Creeper creeper = mock(Creeper.class);
         when(creeper.getLocation()).thenReturn(location);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, creeper, cause, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(enderman, creeper, cause, 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -138,7 +140,7 @@ class ItemFrameListenerTest extends CommonTestSetup  {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(enderman);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(p, entity, cause, 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
     }
@@ -153,7 +155,7 @@ class ItemFrameListenerTest extends CommonTestSetup  {
         Projectile p = mock(Projectile.class);
         Player player = mock(Player.class);
         when(p.getShooter()).thenReturn(player);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause, null, 0);
+        EntityDamageByEntityEvent e = TestEvents.damageByEntity(p, entity, cause, 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());
     }

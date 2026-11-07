@@ -94,7 +94,8 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         // location.getBlock
         when(location.getBlock()).thenReturn(block);
         // default block state: generic BlockState (not a special subtype)
-        when(block.getState()).thenReturn(mock(BlockState.class));
+        BlockState blockStateMock = mock(BlockState.class);
+        when(block.getState()).thenReturn(blockStateMock);
         when(block.getWorld()).thenReturn(world);
         when(block.getBlockData()).thenReturn(signBlockData);
 
@@ -137,6 +138,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
     }
 
     /** Force DefaultPasteUtil.plugin to the current test's plugin mock via Unsafe. */
+    @SuppressWarnings("java:S5738") // sun.misc.Unsafe is the only way to rewrite a static final field in tests
     private void injectPlugin() throws Exception {
         java.lang.reflect.Field f = DefaultPasteUtil.class.getDeclaredField("plugin");
         f.setAccessible(true);

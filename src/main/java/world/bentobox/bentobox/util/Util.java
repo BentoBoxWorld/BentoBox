@@ -41,7 +41,6 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Flying;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -77,6 +76,8 @@ import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.PasteHandlerImpl;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
+import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Phantom;
 
 
 /**
@@ -86,6 +87,18 @@ import world.bentobox.bentobox.nms.WorldRegeneratorImpl;
  * @author Poslovitch
  */
 public class Util {
+
+    private static final String RESET = "reset";
+
+    private static final String ITALIC = "italic";
+
+    private static final String UNDERLINED = "underlined";
+
+    private static final String STRIKETHROUGH = "strikethrough";
+
+    private static final String OBFUSCATED = "obfuscated";
+
+    private static final String COLOR_HEX_OPEN = "<color:#";
     /**
      * The section sign character used for legacy color codes, replacing ChatColor.COLOR_CHAR.
      */
@@ -151,12 +164,12 @@ public class Util {
             java.util.Map.entry('d', "light_purple"),
             java.util.Map.entry('e', "yellow"),
             java.util.Map.entry('f', "white"),
-            java.util.Map.entry('k', "obfuscated"),
+            java.util.Map.entry('k', OBFUSCATED),
             java.util.Map.entry('l', "bold"),
-            java.util.Map.entry('m', "strikethrough"),
-            java.util.Map.entry('n', "underlined"),
-            java.util.Map.entry('o', "italic"),
-            java.util.Map.entry('r', "reset")
+            java.util.Map.entry('m', STRIKETHROUGH),
+            java.util.Map.entry('n', UNDERLINED),
+            java.util.Map.entry('o', ITALIC),
+            java.util.Map.entry('r', RESET)
     );
 
     /**
@@ -208,7 +221,7 @@ public class Util {
         long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
         long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
         int y = plugin.getIWM().getIslandHeight(location.getWorld());
-        return new Location(location.getWorld(), x, y, z);
+        return new Location(location.getWorld(), (double) x, y, (double) z);
     }
 
     /**
@@ -362,11 +375,6 @@ public class Util {
     }
 
     /**
-     * Convert world to an overworld
-     * @param world - world
-     * @return over world or null if world is null or a world cannot be found
-     */
-    /**
      * Cache of world name -> overworld name (suffixes replaced). Pure string
      * function, so entries never go stale. The World itself is still resolved
      * live via {@link Bukkit#getWorld(String)}.
@@ -450,7 +458,7 @@ public class Util {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             return format.parse(gitHubDate.replace('T', ' ').replace("Z", ""));
-        } catch (ParseException e) {
+        } catch (ParseException _) {
             return null;
         }
     }
@@ -465,8 +473,7 @@ public class Util {
     public static boolean isHostileEntity(Entity entity) {
         // MagmaCube extends Slime
         // Slime extends Mob
-        // Ghast and Phantom extends Flying
-        // Flying extends Mob
+        // Ghast and Phantom are the flying hostiles (the Flying interface is deprecated for removal)
         // Shulker is Golem, but other Golems cannot be added here.
         // EnderDragon extends LivingEntity
         // Most of hostile mobs extends Monster.
@@ -474,7 +481,7 @@ public class Util {
 
         // Sulfur Cube (26.2) is slime-like but passive, so it must not be treated as hostile
         // even if it implements Slime at runtime.
-        return (entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
+        return (entity instanceof Monster || entity instanceof Ghast || entity instanceof Phantom || entity instanceof Slime ||
                 entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish)
                 && (SULFUR_CUBE == null || entity.getType() != SULFUR_CUBE);
     }
@@ -548,7 +555,7 @@ public class Util {
                 // Invoke the method using reflection on the entity instance
                 return (CompletableFuture<Boolean>) method.invoke(entity, location, cause);
             }
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException _) {
             // Method does not exist, fallback to Spigot behavior
         } catch (Exception e) {
             plugin.logStacktrace(e); // Report other exceptions
@@ -609,7 +616,7 @@ public class Util {
                 // Invoke the method using reflection
                 return (CompletableFuture<Chunk>) method.invoke(world, x, z, gen);
             }
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException _) {
             // Method does not exist, fallback to default behavior
         } catch (Exception e) {
             BentoBox.getInstance().logStacktrace(e);
@@ -695,7 +702,7 @@ public class Util {
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
             return true; // Paper-specific class exists
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException _) {
             return false; // Not a Paper server
         }
     }
@@ -821,7 +828,7 @@ public class Util {
             try {
                 Integer.parseInt(nbr); // NOSONAR we don't care about the result of this operation
                 return true;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 return false;
             }
         }
@@ -843,7 +850,7 @@ public class Util {
         // Check if UUID is being used
         try {
             return UUID.fromString(nameOrUUID);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Do nothing
         }
         return null;
@@ -895,7 +902,7 @@ public class Util {
             // Paper
             double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
             player.setHealth(maxHealth);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Spigot
             player.setHealth(20D);
         }
@@ -1036,7 +1043,7 @@ public class Util {
             }
             // All parts checked are equal (e.g., 1.21.9 vs 1.21.9)
             return true;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             // Fallback for non-standard version strings
             return SERVER_VERSION.startsWith(targetVersion);
         }
@@ -1118,7 +1125,7 @@ public class Util {
                 // Expand 3-digit to 6-digit
                 hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
             }
-            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+            hexMatcher.appendReplacement(sb, COLOR_HEX_OPEN + hex + ">");
         }
         hexMatcher.appendTail(sb);
         text = sb.toString();
@@ -1146,11 +1153,11 @@ public class Util {
                             || Character.isWhitespace(text.charAt(i - 1));
                     i += 2;
                     // &r is a format terminator; any following space is always intentional.
-                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
+                    if (!RESET.equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
                     justConsumedCode = true;
-                    if ("reset".equals(mmTag)) {
+                    if (RESET.equals(mmTag)) {
                         // Close all open tags
                         for (int j = openTags.size() - 1; j >= 0; j--) {
                             result.append("</").append(openTags.get(j)).append(">");
@@ -1159,9 +1166,9 @@ public class Util {
                     } else {
                         // Color codes reset previous colors but not decorations
                         // Decorations (bold, italic, etc.) are additive until reset
-                        boolean isDecoration = mmTag.equals("bold") || mmTag.equals("italic")
-                                || mmTag.equals("underlined") || mmTag.equals("strikethrough")
-                                || mmTag.equals("obfuscated");
+                        boolean isDecoration = mmTag.equals("bold") || mmTag.equals(ITALIC)
+                                || mmTag.equals(UNDERLINED) || mmTag.equals(STRIKETHROUGH)
+                                || mmTag.equals(OBFUSCATED);
                         if (!isDecoration) {
                             // Close previous color tags (not decorations).
                             // To maintain proper MiniMessage nesting, close any decoration
@@ -1169,8 +1176,8 @@ public class Util {
                             List<String> decorationsToReopen = new ArrayList<>();
                             for (int j = openTags.size() - 1; j >= 0; j--) {
                                 String tag = openTags.get(j);
-                                if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
-                                        || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                                if (tag.equals("bold") || tag.equals(ITALIC) || tag.equals(UNDERLINED)
+                                        || tag.equals(STRIKETHROUGH) || tag.equals(OBFUSCATED)) {
                                     // Close decoration temporarily to maintain nesting
                                     result.append("</").append(tag).append(">");
                                     decorationsToReopen.addFirst(tag);
@@ -1194,7 +1201,7 @@ public class Util {
                 }
             }
             // Handle <color:#RRGGBB> that we already inserted
-            if (text.charAt(i) == '<' && text.substring(i).startsWith("<color:#")) {
+            if (text.charAt(i) == '<' && text.startsWith(COLOR_HEX_OPEN, i)) {
                 int end = text.indexOf('>', i);
                 if (end != -1) {
                     // Same boundary check as named &X codes — hex was originally &#RRGGBB
@@ -1206,8 +1213,8 @@ public class Util {
                     List<String> decorationsToReopen = new ArrayList<>();
                     for (int j = openTags.size() - 1; j >= 0; j--) {
                         String tag = openTags.get(j);
-                        if (tag.equals("bold") || tag.equals("italic") || tag.equals("underlined")
-                                || tag.equals("strikethrough") || tag.equals("obfuscated")) {
+                        if (tag.equals("bold") || tag.equals(ITALIC) || tag.equals(UNDERLINED)
+                                || tag.equals(STRIKETHROUGH) || tag.equals(OBFUSCATED)) {
                             // Close decoration temporarily to maintain nesting
                             result.append("</").append(tag).append(">");
                             decorationsToReopen.addFirst(tag);
@@ -1250,13 +1257,6 @@ public class Util {
     }
 
     /**
-     * Parses a MiniMessage-formatted string into an Adventure Component.
-     *
-     * @param miniMessageString the MiniMessage string
-     * @return parsed Component
-     * @since 3.2.0
-     */
-    /**
      * Replaces legacy {@code &X} and {@code §X} color/format codes with MiniMessage opening tags inline,
      * without adding closing tags. This is safe for strings that already contain MiniMessage tags
      * (mixed content), because MiniMessage handles unclosed tags correctly — they apply until
@@ -1283,7 +1283,7 @@ public class Util {
             if (hex.length() == 3) {
                 hex = "" + hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
             }
-            hexMatcher.appendReplacement(sb, "<color:#" + hex + ">");
+            hexMatcher.appendReplacement(sb, COLOR_HEX_OPEN + hex + ">");
         }
         hexMatcher.appendTail(sb);
         text = sb.toString();
@@ -1303,7 +1303,7 @@ public class Util {
                     i += 2;
                     // Legacy locale hack — only strip at a boundary, and never after &r.
                     // See https://github.com/BentoBoxWorld/AOneBlock/issues/495.
-                    if (!"reset".equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
+                    if (!RESET.equals(mmTag) && atBoundary && i < text.length() && text.charAt(i) == ' ') {
                         i++;
                     }
                     justConsumedCode = true;

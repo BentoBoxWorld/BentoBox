@@ -54,6 +54,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.TestEvents;
 
 class InvincibleVisitorsListenerTest extends CommonTestSetup {
 
@@ -80,7 +81,8 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
 
         listener = new InvincibleVisitorsListener();
 
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        Inventory inventoryMock = mock(Inventory.class);
+        when(panel.getInventory()).thenReturn(inventoryMock);
         when(panel.getName()).thenReturn("panel");
         Map<Integer, PanelItem> map = new HashMap<>();
         List<String> sortedNames = Arrays.stream(EntityDamageEvent.DamageCause.values()).map(DamageCause::name)
@@ -108,7 +110,8 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
 
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
         mockedUtil.when(() -> Util.prettifyText(anyString())).thenCallRealMethod();
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
@@ -118,7 +121,8 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
-        when(item.getItem()).thenReturn(mock(ItemStack.class));
+        ItemStack itemStackMock = mock(ItemStack.class);
+        when(item.getItem()).thenReturn(itemStackMock);
         when(flag.toPanelItem(any(), eq(user), any(), any(), eq(false))).thenReturn(item);
         when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
@@ -212,7 +216,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
     @Test
     void testOnVisitorGetDamageNotPlayer() {
         LivingEntity le = mock(LivingEntity.class);
-        EntityDamageEvent e = new EntityDamageEvent(le, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(le, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -221,7 +225,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
     void testOnVisitorGetDamageNotInWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -230,14 +234,14 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
     void testOnVisitorGetDamageNotInIvSettings() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
     void testOnVisitorGetDamageNotVisitor() {
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         when(im.userIsOnIsland(any(), any())).thenReturn(true);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
@@ -245,7 +249,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
 
     @Test
     void testOnVisitorGetDamageNotVoid() {
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
         verify(mockPlayer, never()).setGameMode(GameMode.SPECTATOR);
@@ -255,7 +259,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
     @Test
     void testOnVisitorGetDamageNPC() {
         when(mockPlayer.hasMetadata("NPC")).thenReturn(true);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -264,7 +268,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
     @Test
     void testOnVisitorGetDamageVoidIslandHere() {
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should be teleported to this island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
@@ -275,7 +279,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
     void testOnVisitorGetDamageVoidNoIslandHerePlayerHasNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should die
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
@@ -288,7 +292,7 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Player has an island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        EntityDamageEvent e = new EntityDamageEvent(mockPlayer, EntityDamageEvent.DamageCause.VOID, null, 0D);
+        EntityDamageEvent e = TestEvents.damage(mockPlayer, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should be teleported to their island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());

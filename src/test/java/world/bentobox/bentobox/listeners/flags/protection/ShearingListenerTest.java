@@ -17,6 +17,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import java.util.List;
 
 class ShearingListenerTest extends CommonTestSetup {
 
@@ -41,7 +45,7 @@ class ShearingListenerTest extends CommonTestSetup {
     void testOnShearAllowed() {
         Sheep sheep = mock(Sheep.class);
         when(sheep.getLocation()).thenReturn(location);
-        PlayerShearEntityEvent e = new PlayerShearEntityEvent(mockPlayer, sheep);
+        PlayerShearEntityEvent e = new PlayerShearEntityEvent(mockPlayer, sheep, new ItemStack(Material.SHEARS), EquipmentSlot.HAND, List.of());
         listener.onShear(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), anyString());
@@ -52,7 +56,7 @@ class ShearingListenerTest extends CommonTestSetup {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Sheep sheep = mock(Sheep.class);
         when(sheep.getLocation()).thenReturn(location);
-        PlayerShearEntityEvent e = new PlayerShearEntityEvent(mockPlayer, sheep);
+        PlayerShearEntityEvent e = new PlayerShearEntityEvent(mockPlayer, sheep, new ItemStack(Material.SHEARS), EquipmentSlot.HAND, List.of());
         listener.onShear(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));

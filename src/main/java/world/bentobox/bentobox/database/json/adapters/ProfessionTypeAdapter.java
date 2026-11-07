@@ -29,7 +29,7 @@ public class ProfessionTypeAdapter extends TypeAdapter<Profession> {
         String id = reader.nextString();
         try {
             return Profession.valueOf(id);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // Do nothing
         }
         return Profession.NONE;

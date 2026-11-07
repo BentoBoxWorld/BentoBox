@@ -222,7 +222,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
         settings.setHousekeepingAgeEnabled(true);
         settings.setHousekeepingRegionAgeDays(30);
 
-        when(purgeService.scan(eq(world), eq(30))).thenReturn(emptyScan(30));
+        when(purgeService.scan(world, 30)).thenReturn(emptyScan(30));
         when(purgeService.scanDeleted(world)).thenReturn(emptyScan(0));
 
         HousekeepingManager hm = new HousekeepingManager(plugin);
@@ -243,7 +243,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
         settings.setHousekeepingRegionAgeDays(30);
         settings.setHousekeepingDeletedIntervalHours(0); // disabled
 
-        when(purgeService.scan(eq(world), eq(30))).thenReturn(emptyScan(30));
+        when(purgeService.scan(world, 30)).thenReturn(emptyScan(30));
 
         HousekeepingManager hm = new HousekeepingManager(plugin);
         invokeCheckAndMaybeRun(hm);

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -180,7 +179,7 @@ public class PlayersManager {
         if (name.length() == 36 && name.contains("-")) {
             try {
                 return UUID.fromString(name);
-            } catch (Exception ignored) {
+            } catch (Exception _) {
                 // Not used
             }
         }
@@ -485,76 +484,70 @@ public class PlayersManager {
         }
 
         // Clear ender chest – skipped if the ENDERCHEST_RESET event is cancelled
-        if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
-            if (!PlayerEvent.builder()
+        if ((plugin.getIWM().isOnLeaveResetEnderChest(world))
+                && !PlayerEvent.builder()
                     .world(world).island(island).involvedPlayer(target.getUniqueId())
                     .reason(PlayerEvent.Reason.ENDERCHEST_RESET).build().isCancelled()) {
-                if (target.isOnline()) {
-                    target.getPlayer().getEnderChest().clear();
-                } else {
-                    Players p = getPlayer(target.getUniqueId());
-                    if (p != null) {
-                        p.addToPendingKick(world);
-                    }
+            if (target.isOnline()) {
+                target.getPlayer().getEnderChest().clear();
+            } else {
+                Players p = getPlayer(target.getUniqueId());
+                if (p != null) {
+                    p.addToPendingKick(world);
                 }
             }
         }
 
         // Clear inventory – skipped if the INVENTORY_RESET event is cancelled
-        if ((kicked && plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world))
-                || (!kicked && plugin.getIWM().isOnLeaveResetInventory(world))) {
-            if (!PlayerEvent.builder()
+        if (((kicked && plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world))
+                || (!kicked && plugin.getIWM().isOnLeaveResetInventory(world)))
+                && !PlayerEvent.builder()
                     .world(world).island(island).involvedPlayer(target.getUniqueId())
                     .reason(PlayerEvent.Reason.INVENTORY_RESET).build().isCancelled()) {
-                if (target.isOnline()) {
-                    target.getPlayer().getInventory().clear();
-                } else {
-                    Players p = getPlayer(target.getUniqueId());
-                    if (p != null) {
-                        p.addToPendingKick(world);
-                    }
+            if (target.isOnline()) {
+                target.getPlayer().getInventory().clear();
+            } else {
+                Players p = getPlayer(target.getUniqueId());
+                if (p != null) {
+                    p.addToPendingKick(world);
                 }
             }
         }
 
         // Withdraw money – skipped if the MONEY_RESET event is cancelled
-        if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world)) {
-            if (!PlayerEvent.builder()
+        if ((plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world))
+                && !PlayerEvent.builder()
                     .world(world).island(island).involvedPlayer(target.getUniqueId())
                     .reason(PlayerEvent.Reason.MONEY_RESET).build().isCancelled()) {
-                plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
-            }
+            plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
         }
 
         // Reset health – skipped if the HEALTH_RESET event is cancelled
-        if (plugin.getIWM().isOnLeaveResetHealth(world) && target.isPlayer()) {
-            if (!PlayerEvent.builder()
+        if ((plugin.getIWM().isOnLeaveResetHealth(world) && target.isPlayer())
+                && !PlayerEvent.builder()
                     .world(world).island(island).involvedPlayer(target.getUniqueId())
                     .reason(PlayerEvent.Reason.HEALTH_RESET).build().isCancelled()) {
-                Util.resetHealth(target.getPlayer());
-            }
+            Util.resetHealth(target.getPlayer());
         }
 
         // Reset hunger – skipped if the HUNGER_RESET event is cancelled
-        if (plugin.getIWM().isOnLeaveResetHunger(world) && target.isPlayer()) {
-            if (!PlayerEvent.builder()
+        if ((plugin.getIWM().isOnLeaveResetHunger(world) && target.isPlayer())
+                && !PlayerEvent.builder()
                     .world(world).island(island).involvedPlayer(target.getUniqueId())
                     .reason(PlayerEvent.Reason.HUNGER_RESET).build().isCancelled()) {
-                target.getPlayer().setFoodLevel(20);
-            }
+            target.getPlayer().setFoodLevel(20);
         }
 
         // Reset XP – skipped if the EXP_RESET event is cancelled
-        if (plugin.getIWM().isOnLeaveResetXP(world) && target.isPlayer()) {
-            if (!PlayerEvent.builder()
+        if ((plugin.getIWM().isOnLeaveResetXP(world) && target.isPlayer())
+                && !PlayerEvent.builder()
                     .world(world).island(island).involvedPlayer(target.getUniqueId())
                     .reason(PlayerEvent.Reason.EXP_RESET).build().isCancelled()) {
-                // Player collected XP (displayed)
-                target.getPlayer().setLevel(0);
-                target.getPlayer().setExp(0);
-                // Player total XP (not displayed)
-                target.getPlayer().setTotalExperience(0);
-            }
+            // Player collected XP (displayed)
+            target.getPlayer().setLevel(0);
+            target.getPlayer().setExp(0);
+            // Player total XP (not displayed)
+            target.getPlayer().setTotalExperience(0);
         }
     }
 
