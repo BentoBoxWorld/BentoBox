@@ -51,7 +51,8 @@ class HeadGetterTest extends CommonTestSetup {
     public void setUp() throws Exception {
         super.setUp();
 
-        when(itemFactory.getItemMeta(any())).thenReturn(mock(SkullMeta.class));
+        SkullMeta skullMetaMock = mock(SkullMeta.class);
+        when(itemFactory.getItemMeta(any())).thenReturn(skullMetaMock);
 
         when(mockPlayer.getPlayerProfile()).thenReturn(profile);
         when(profile.getTextures()).thenReturn(textures);

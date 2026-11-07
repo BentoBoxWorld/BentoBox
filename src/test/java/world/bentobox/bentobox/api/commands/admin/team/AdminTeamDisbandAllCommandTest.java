@@ -109,7 +109,8 @@ class AdminTeamDisbandAllCommandTest extends CommonTestSetup {
 
         // Scheduler — capture and run runnables on demand for confirmation flow.
         mockedBukkit.when(Bukkit::getScheduler).thenReturn(scheduler);
-        when(scheduler.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(mock(BukkitTask.class));
+        BukkitTask bukkitTaskMock = mock(BukkitTask.class);
+        when(scheduler.runTaskLater(any(), any(Runnable.class), anyLong())).thenReturn(bukkitTaskMock);
 
         // Owner + ranks setup
         ownerUUID = uuid;

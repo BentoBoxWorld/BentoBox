@@ -452,7 +452,8 @@ class IslandWorldManagerTest extends CommonTestSetup {
         WorldSettings localWs = mock(WorldSettings.class);
         when(localWs.getFriendlyName()).thenReturn("fri2");
         when(gm2.getWorldSettings()).thenReturn(localWs);
-        when(gm2.getOverWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(gm2.getOverWorld()).thenReturn(worldMock);
         testIwm.addGameMode(gm2);
         // String can be in any order
         String result = testIwm.getFriendlyNames();

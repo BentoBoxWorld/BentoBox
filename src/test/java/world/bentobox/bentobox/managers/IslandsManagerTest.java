@@ -809,7 +809,8 @@ class IslandsManagerTest extends CommonTestSetup {
         // ----- CHECK WORLD -----
         // Assertions above succeeded, so let's check that again with the User being a
         // MEMBER and being in the wrong world.
-        when(user.getLocation().getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(user.getLocation().getWorld()).thenReturn(worldMock);
         members.put(user.getUniqueId(), RanksManager.MEMBER_RANK);
         assertFalse(islandsManager.userIsOnIsland(world, user));
     }

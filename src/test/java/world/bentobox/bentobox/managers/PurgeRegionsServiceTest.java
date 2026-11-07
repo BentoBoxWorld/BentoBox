@@ -136,7 +136,8 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         when(active.isDeletable()).thenReturn(false);
 
         when(islandCache.getIslands(world)).thenReturn(List.of(active));
-        when(islandCache.getIslandGrid(world)).thenReturn(mock(IslandGrid.class));
+        IslandGrid islandGridMock = mock(IslandGrid.class);
+        when(islandCache.getIslandGrid(world)).thenReturn(islandGridMock);
 
         PurgeScanResult result = service.scanDeleted(world);
         assertTrue(result.isEmpty());

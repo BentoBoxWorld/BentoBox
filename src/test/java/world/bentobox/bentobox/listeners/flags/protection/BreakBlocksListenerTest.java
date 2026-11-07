@@ -219,7 +219,8 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.PHYSICS;
         Arrow arrow = mock(Arrow.class);
-        when(arrow.getShooter()).thenReturn(mock(Skeleton.class));
+        Skeleton skeletonMock = mock(Skeleton.class);
+        when(arrow.getShooter()).thenReturn(skeletonMock);
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, mock(DamageSource.class), cause);
         bbl.onBreakHanging(e);
         assertFalse(e.isCancelled());
@@ -508,7 +509,8 @@ class BreakBlocksListenerTest extends CommonTestSetup {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         Projectile damager = mock(Projectile.class);
-        when(damager.getShooter()).thenReturn(mock(Skeleton.class));
+        Skeleton skeletonMock = mock(Skeleton.class);
+        when(damager.getShooter()).thenReturn(skeletonMock);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, null, 10);
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());

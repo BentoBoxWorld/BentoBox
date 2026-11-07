@@ -80,7 +80,8 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
 
         listener = new InvincibleVisitorsListener();
 
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        Inventory inventoryMock = mock(Inventory.class);
+        when(panel.getInventory()).thenReturn(inventoryMock);
         when(panel.getName()).thenReturn("panel");
         Map<Integer, PanelItem> map = new HashMap<>();
         List<String> sortedNames = Arrays.stream(EntityDamageEvent.DamageCause.values()).map(DamageCause::name)
@@ -108,7 +109,8 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         when(mockPlayer.getUniqueId()).thenReturn(uuid);
 
 
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
         mockedUtil.when(() -> Util.prettifyText(anyString())).thenCallRealMethod();
         mockedUtil.when(() -> Util.findFirstMatchingEnum(any(), any())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
@@ -118,7 +120,8 @@ class InvincibleVisitorsListenerTest extends CommonTestSetup {
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
-        when(item.getItem()).thenReturn(mock(ItemStack.class));
+        ItemStack itemStackMock = mock(ItemStack.class);
+        when(item.getItem()).thenReturn(itemStackMock);
         when(flag.toPanelItem(any(), eq(user), any(), any(), eq(false))).thenReturn(item);
         when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);

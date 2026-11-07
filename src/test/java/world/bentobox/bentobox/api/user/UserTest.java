@@ -895,7 +895,8 @@ class UserTest extends CommonTestSetup {
     void testInWorld() {
         User.clearUsers();
         User p = User.getInstance(mockPlayer);
-        when(mockPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(mockPlayer.getLocation()).thenReturn(locationMock);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         assertFalse(p.inWorld());
         when(iwm.inWorld(any(Location.class))).thenReturn(true);

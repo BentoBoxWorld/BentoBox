@@ -561,7 +561,8 @@ class HurtingListenerTest extends CommonTestSetup {
     @Test
     void testOnLingeringPotionSplashNonPlayerShooter() {
         ThrownPotion tp = mock(ThrownPotion.class);
-        when(tp.getShooter()).thenReturn(mock(Monster.class));
+        Monster monsterMock = mock(Monster.class);
+        when(tp.getShooter()).thenReturn(monsterMock);
         org.bukkit.entity.AreaEffectCloud cloud = mock(org.bukkit.entity.AreaEffectCloud.class);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
         new HurtingListener().onLingeringPotionSplash(e);

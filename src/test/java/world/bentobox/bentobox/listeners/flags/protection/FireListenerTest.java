@@ -99,7 +99,8 @@ class FireListenerTest extends CommonTestSetup {
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
 
-       mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+       World worldMock = mock(World.class);
+       mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
     }
 
     @Override

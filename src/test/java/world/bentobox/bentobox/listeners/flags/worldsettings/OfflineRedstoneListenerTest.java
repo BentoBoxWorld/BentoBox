@@ -125,7 +125,8 @@ class OfflineRedstoneListenerTest extends CommonTestSetup {
         // Offline redstone not allowed
         Flags.OFFLINE_REDSTONE.setSetting(world, false);
         // Members are online
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
+        Player playerMock = mock(Player.class);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(playerMock);
 
         orl.onBlockRedstone(e);
         // Current remains 10

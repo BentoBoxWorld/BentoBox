@@ -217,7 +217,8 @@ class DidYouMeanScenarioTest extends CommonTestSetup {
         island.setWorld(mock(World.class));
         registeredCommands.put("island", island);
         // Player stands in a world that belongs to neither game mode
-        when(mockPlayer.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(mockPlayer.getWorld()).thenReturn(worldMock);
         listener.onUnknownCommand(unknownCommand("teams"));
         checkSpigotMessage("Did you mean one of these");
         checkSpigotMessage("/oneblock team");
@@ -284,7 +285,8 @@ class DidYouMeanScenarioTest extends CommonTestSetup {
         GameModeCommand island = new GameModeCommand("island", "is");
         island.setWorld(mock(World.class));
         registeredCommands.put("island", island);
-        when(mockPlayer.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(mockPlayer.getWorld()).thenReturn(worldMock);
         listener.onUnknownCommand(unknownCommand("teams"));
         // No message may leak MiniMessage tags as literal text
         ArgumentCaptor<Component> captor = ArgumentCaptor.forClass(Component.class);

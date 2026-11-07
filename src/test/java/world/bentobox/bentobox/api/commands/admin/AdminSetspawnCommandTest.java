@@ -52,7 +52,8 @@ class AdminSetspawnCommandTest extends CommonTestSetup {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(mockPlayer);
         when(user.getName()).thenReturn("tastybento");
-        when(user.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(user.getLocation()).thenReturn(locationMock);
         User.setPlugin(plugin);
 
         // Parent command has no aliases

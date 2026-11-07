@@ -66,7 +66,8 @@ class IslandRespawnListenerTest extends CommonTestSetup {
         // Player
         when(mockPlayer.getWorld()).thenReturn(world);
         when(mockPlayer.getUniqueId()).thenReturn(UUID.randomUUID());
-        when(mockPlayer.getLocation()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        when(mockPlayer.getLocation()).thenReturn(locationMock);
         when(mockPlayer.getServer()).thenReturn(server);
         when(mockPlayer.getName()).thenReturn("tasty");
 

@@ -100,7 +100,8 @@ class AdminUndeleteCommandTest extends CommonTestSetup {
 
     @Test
     void testCanExecuteWrongWorld() {
-        when(user.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(user.getWorld()).thenReturn(worldMock);
         assertFalse(cmd.canExecute(user, cmd.getLabel(), new ArrayList<>()));
         verify(user).sendMessage("general.errors.wrong-world");
     }

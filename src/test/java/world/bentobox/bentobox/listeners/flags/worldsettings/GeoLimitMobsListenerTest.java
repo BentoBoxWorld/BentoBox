@@ -106,7 +106,8 @@ class GeoLimitMobsListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnProjectileLaunchDifferentWorld() {
-        when(location.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(location.getWorld()).thenReturn(worldMock);
         when(iwm.inWorld(location)).thenReturn(false);
         ProjectileLaunchEvent e = new ProjectileLaunchEvent(snowball);
         listener.onProjectileLaunch(e);

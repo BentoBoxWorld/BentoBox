@@ -120,7 +120,8 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
         // Offline Growth not allowed
         Flags.OFFLINE_GROWTH.setSetting(world, false);
         // Members are online
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
+        Player playerMock = mock(Player.class);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(playerMock);
 
         orl.onCropGrow(e);
         // Allow growth
@@ -201,7 +202,8 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
         // Offline Growth not allowed
         Flags.OFFLINE_GROWTH.setSetting(world, false);
         // Members are online
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
+        Player playerMock = mock(Player.class);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(playerMock);
 
         orl.onSpread(e);
         // Allow growth
@@ -313,7 +315,8 @@ class OfflineGrowthListenerTest extends CommonTestSetup {
         StructureGrowEvent e = new StructureGrowEvent(inside, TreeType.TREE, false, null, new ArrayList<>());
         OfflineGrowthListener orl = new OfflineGrowthListener();
         Flags.OFFLINE_GROWTH.setSetting(world, false);
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
+        Player playerMock = mock(Player.class);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(playerMock);
         orl.onStructureGrow(e);
         // Allow growth
         assertFalse(e.isCancelled());

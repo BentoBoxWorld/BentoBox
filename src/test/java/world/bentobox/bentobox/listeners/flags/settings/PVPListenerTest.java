@@ -101,7 +101,8 @@ class PVPListenerTest extends CommonTestSetup {
         when(iwm.getIvSettings(any())).thenReturn(new ArrayList<>());
 
         Panel panel = mock(Panel.class);
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        Inventory inventoryMock = mock(Inventory.class);
+        when(panel.getInventory()).thenReturn(inventoryMock);
 
 
         // World
@@ -127,14 +128,16 @@ class PVPListenerTest extends CommonTestSetup {
         User.getInstance(player2);
 
         // Util
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
 
         // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
-        when(item.getItem()).thenReturn(mock(ItemStack.class));
+        ItemStack itemStackMock = mock(ItemStack.class);
+        when(item.getItem()).thenReturn(itemStackMock);
         when(flag.toPanelItem(any(), any(), any(), any(), eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);

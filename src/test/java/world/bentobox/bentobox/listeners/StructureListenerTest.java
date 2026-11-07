@@ -96,7 +96,8 @@ class StructureListenerTest {
         StructuresLocateEvent e = mock(StructuresLocateEvent.class);
         lenient().when(e.getWorld()).thenReturn(world);
         lenient().when(e.getStructures()).thenReturn(structures);
-        lenient().when(e.getOrigin()).thenReturn(mock(Location.class));
+        Location locationMock = mock(Location.class);
+        lenient().when(e.getOrigin()).thenReturn(locationMock);
         return e;
     }
 

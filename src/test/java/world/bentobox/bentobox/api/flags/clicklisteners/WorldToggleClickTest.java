@@ -55,14 +55,17 @@ class WorldToggleClickTest extends CommonTestSetup {
         listener = new WorldToggleClick("test");
 
         // Panel
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        Inventory inventoryMock = mock(Inventory.class);
+        when(panel.getInventory()).thenReturn(inventoryMock);
         when(panel.getWorld()).thenReturn(Optional.of(world));
 
         // User
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.getWorld()).thenReturn(world);
-        when(user.getLocation()).thenReturn(mock(Location.class));
-        when(user.getPlayer()).thenReturn(mock(Player.class));
+        Location locationMock = mock(Location.class);
+        when(user.getLocation()).thenReturn(locationMock);
+        Player playerMock = mock(Player.class);
+        when(user.getPlayer()).thenReturn(playerMock);
 
         // Util
         mockedUtil.when(() -> Util.getWorld(any())).thenReturn(world);

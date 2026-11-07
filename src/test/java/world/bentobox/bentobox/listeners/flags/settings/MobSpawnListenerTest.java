@@ -82,7 +82,8 @@ class MobSpawnListenerTest extends CommonTestSetup {
         when(iwm.inWorld(any(World.class))).thenReturn(true);
 
         // Util class
-        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(Mockito.any())).thenReturn(worldMock);
         mockedUtil.when(() -> Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
         mockedUtil.when(() -> Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
 

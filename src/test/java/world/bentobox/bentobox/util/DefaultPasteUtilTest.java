@@ -94,7 +94,8 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         // location.getBlock
         when(location.getBlock()).thenReturn(block);
         // default block state: generic BlockState (not a special subtype)
-        when(block.getState()).thenReturn(mock(BlockState.class));
+        BlockState blockStateMock = mock(BlockState.class);
+        when(block.getState()).thenReturn(blockStateMock);
         when(block.getWorld()).thenReturn(world);
         when(block.getBlockData()).thenReturn(signBlockData);
 

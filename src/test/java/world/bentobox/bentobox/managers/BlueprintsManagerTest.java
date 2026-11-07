@@ -839,7 +839,8 @@ class BlueprintsManagerTest extends CommonTestSetup {
     @Test
     void testIsBlueprintsLoadedFalseDuringLoad() {
         // Override scheduler to NOT run the task, simulating async in-progress
-        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(mock(BukkitTask.class));
+        BukkitTask bukkitTaskMock = mock(BukkitTask.class);
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(bukkitTaskMock);
 
         manager.loadBlueprintBundles(addon);
 

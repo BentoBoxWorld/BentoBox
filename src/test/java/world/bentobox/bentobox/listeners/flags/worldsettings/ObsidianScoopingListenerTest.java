@@ -72,7 +72,8 @@ class ObsidianScoopingListenerTest extends CommonTestSetup {
 
         when(mockPlayer.getLocation()).thenReturn(location);
 
-        when(mockPlayer.getInventory()).thenReturn(mock(PlayerInventory.class));
+        PlayerInventory playerInventoryMock = mock(PlayerInventory.class);
+        when(mockPlayer.getInventory()).thenReturn(playerInventoryMock);
 
         // Worlds
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);

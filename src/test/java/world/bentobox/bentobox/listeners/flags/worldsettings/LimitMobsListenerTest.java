@@ -82,7 +82,8 @@ class LimitMobsListenerTest extends CommonTestSetup {
      */
     @Test
     void testOnMobSpawnNotInWorld() {
-        when(location.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(location.getWorld()).thenReturn(worldMock);
         CreatureSpawnEvent e = new CreatureSpawnEvent(skelly, SpawnReason.NATURAL);
         lml.onMobSpawn(e);
         assertFalse(e.isCancelled());

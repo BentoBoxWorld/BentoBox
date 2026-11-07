@@ -86,7 +86,8 @@ class ItemFrameListenerTest extends CommonTestSetup  {
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
         // Util
-        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        mockedUtil.when(() -> Util.getWorld(any())).thenReturn(worldMock);
 
         // Item Frame
         when(entity.getWorld()).thenReturn(world);

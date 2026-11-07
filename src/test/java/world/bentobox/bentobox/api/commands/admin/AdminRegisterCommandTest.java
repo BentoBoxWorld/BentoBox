@@ -150,7 +150,8 @@ class AdminRegisterCommandTest extends CommonTestSetup {
      */
     @Test
     void testCanExecuteWrongWorld() {
-        when(user.getWorld()).thenReturn(mock(World.class));
+        World worldMock = mock(World.class);
+        when(user.getWorld()).thenReturn(worldMock);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage("general.errors.wrong-world");
     }

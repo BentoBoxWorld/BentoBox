@@ -265,7 +265,8 @@ class AdminDeleteCommandTest extends CommonTestSetup {
     @Test
     void testNoArgWrongWorld() {
         when(user.isPlayer()).thenReturn(true);
-        when(user.getWorld()).thenReturn(mock(org.bukkit.World.class));
+        org.bukkit.World worldMock = mock(org.bukkit.World.class);
+        when(user.getWorld()).thenReturn(worldMock);
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("general.errors.wrong-world");
