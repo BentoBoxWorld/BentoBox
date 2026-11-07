@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
@@ -41,19 +42,17 @@ public class WebManager {
     @Nullable
     private GitHubWebAPI gitHub;
     // The catalogs are rebuilt on the async GitHub download thread while panels read them on
-    // the main thread. Each refresh builds a new list and swaps it in with one volatile write,
-    // so readers always see a complete snapshot and never a list being cleared and refilled.
+    // the main thread. Each refresh builds a new immutable list and swaps it in atomically, so
+    // readers always see a complete snapshot and never a list being cleared and refilled.
     @NonNull
-    private volatile List<CatalogEntry> addonsCatalog;
+    private final AtomicReference<List<CatalogEntry>> addonsCatalog = new AtomicReference<>(List.of());
     @NonNull
-    private volatile List<CatalogEntry> gamemodesCatalog;
+    private final AtomicReference<List<CatalogEntry>> gamemodesCatalog = new AtomicReference<>(List.of());
     @NonNull
     private final Map<String, List<Contributor>> contributors;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        this.addonsCatalog = List.of();
-        this.gamemodesCatalog = List.of();
         this.contributors = new ConcurrentHashMap<>();
 
         // Set up the GitHub connection
@@ -189,8 +188,8 @@ public class WebManager {
                         .forEach(gamemode -> newGamemodes.add(new CatalogEntry(gamemode.getAsJsonObject())));
                 catalog.getAsJsonArray("addons")
                         .forEach(addon -> newAddons.add(new CatalogEntry(addon.getAsJsonObject())));
-                this.gamemodesCatalog = List.copyOf(newGamemodes);
-                this.addonsCatalog = List.copyOf(newAddons);
+                this.gamemodesCatalog.set(List.copyOf(newGamemodes));
+                this.addonsCatalog.set(List.copyOf(newAddons));
             } catch (JsonParseException e) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
@@ -279,7 +278,7 @@ public class WebManager {
      */
     @NonNull
     public List<CatalogEntry> getAddonsCatalog() {
-        return addonsCatalog;
+        return addonsCatalog.get();
     }
 
     /**
@@ -290,7 +289,7 @@ public class WebManager {
      */
     @NonNull
     public List<CatalogEntry> getGamemodesCatalog() {
-        return gamemodesCatalog;
+        return gamemodesCatalog.get();
     }
 
     /**

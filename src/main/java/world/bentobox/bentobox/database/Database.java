@@ -37,7 +37,14 @@ public class Database<T> {
     @SuppressWarnings("unchecked")
     public Database(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = databaseSetup.getHandler(type);
+        AbstractDatabaseHandler<T> h = databaseSetup.getHandler(type);
+        if (h == null) {
+            // MongoDBDatabase returns null (after disabling BentoBox) when the BsbMongo plugin is
+            // missing. Fail here with a clear message instead of a NullPointerException on first use.
+            throw new IllegalStateException("No database handler available for " + type.getSimpleName()
+                    + " using database type " + plugin.getSettings().getDatabaseType());
+        }
+        handler = h;
         // Log any database classes
         dataObjects.add((Class<? extends DataObject>) type);
     }
