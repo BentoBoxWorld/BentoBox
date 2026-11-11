@@ -1,0 +1,32 @@
+{
+ "charts": {
+  "commandFailurePaths": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "commandFailureReasons": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "commandFailures": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "features": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "islands": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "players": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "pluginVersion": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "servers": {
+   "error": "HTTP Error 403: Forbidden"
+  },
+  "worldSize": {
+   "error": "HTTP Error 403: Forbidden"
+  }
+ },
+ "timestamp": "2026-11-11T1941Z"
+}
