@@ -668,7 +668,7 @@ public class Flag implements Comparable<Flag> {
      * @param key - locale reference of the rank line
      * @param rankName - translated rank name
      * @return the rank line, as a legacy color-coded string
-     * @since 3.23.6
+     * @since 3.23.7
      */
     public static String getRankLine(User user, String key, String rankName) {
         String translation = user.getTranslation(key, TextVariables.RANK, rankName);
