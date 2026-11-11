@@ -1975,13 +1975,27 @@ protection:
         border: |-
           <green>Seleziona il rango che può</green>
           <green>usare il comando border</green>
-      description-layout: '<green>[description]  </green><gray>Permesso per:</gray>'
+      description-layout: |
+        [description]
+
+        <yellow>Clic sinistro </yellow><gray>per scorrere verso il basso.</gray>
+        <yellow>Clic destro </yellow><gray>per scorrere verso l'alto.</gray>
+
+        <gray>Permesso per:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>Clicca </yellow><gray>per aprire.</gray>
       setting-cooldown: '<red>Impostazioni in cooldown</red>'
-      setting-layout: '<green>[description]  </green><gray>Impostazione corrente: [setting]</gray>'
+      setting-layout: |
+        [description]
+
+        <yellow>Clicca </yellow><gray>per attivare/disattivare.</gray>
+
+        <gray>Impostazione corrente: [setting]</gray>
       setting-active: '<green>Attivo</green>'
       setting-disabled: '<red>Disabilitato</red>'
 management:

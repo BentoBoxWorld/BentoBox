@@ -2005,14 +2005,22 @@ protection:
       description-layout: |-
         [description]
 
+        <yellow>Clic gauche </yellow><gray>pour descendre.</gray>
+        <yellow>Clic droit </yellow><gray>pour monter.</gray>
+
         <gray>Autorisé pour :</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |-
+        [description]
+
+        <yellow>Clic </yellow><gray>pour ouvrir.</gray>
       setting-cooldown: '<red>Le paramètre est en cours de recharge</red>'
       setting-layout: |-
         [description]
+
+        <yellow>Clic </yellow><gray>pour basculer.</gray>
 
         <gray>Réglage actuel : [setting]</gray>
       setting-active: '<green>actif</green>'

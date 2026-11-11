@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
@@ -238,15 +239,10 @@ public class IslandTeamGUI {
     }
 
     /**
-     * Gets a rank translation, supporting both MiniMessage format (with [rank] placeholder)
-     * and legacy format (without placeholder, rank name concatenated at end).
+     * @see Flag#getRankLine(User, String, String)
      */
     private String getRankTranslation(String key, String rankName) {
-        String translation = user.getTranslation(key, TextVariables.RANK, rankName);
-        if (!translation.contains(rankName)) {
-            translation = user.getTranslation(key) + rankName;
-        }
-        return translation;
+        return Flag.getRankLine(user, key, rankName);
     }
 
     /**

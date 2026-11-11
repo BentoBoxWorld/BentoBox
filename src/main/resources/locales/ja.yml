@@ -1833,14 +1833,22 @@ protection:
       description-layout: |
         [description]
 
+        <yellow>左クリック</yellow><gray>で下に切り替え</gray>
+        <yellow>右クリック</yellow><gray>で上に切り替え</gray>
+
         <gray>許可:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>クリック</yellow><gray>で開く</gray>
       setting-cooldown: '<red>クールダウン中です</red>'
       setting-layout: |
         [description]
+
+        <yellow>クリック</yellow><gray>で切り替え</gray>
 
         <gray>現在の設定: [setting]</gray>
       setting-active: 有効

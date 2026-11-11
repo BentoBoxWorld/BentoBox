@@ -1967,14 +1967,23 @@ protection:
           <green>usar el comando de borde</green>
       description-layout: |
         [description]
+
+        <yellow>Clic izquierdo </yellow><gray>para bajar.</gray>
+        <yellow>Clic derecho </yellow><gray>para subir.</gray>
+
         <gray>Permitido para:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>Haz clic </yellow><gray>para abrir.</gray>
       setting-cooldown: '<red>La configuración está en enfriamiento</red>'
       setting-layout: |
         [description]
+
+        <yellow>Haz clic </yellow><gray>para alternar.</gray>
 
         <gray>Configuración actual: [setting]</gray>
       setting-active: '<green>Activo</green>'
