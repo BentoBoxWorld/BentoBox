@@ -1948,14 +1948,22 @@ protection:
       description-layout: |
         [description]
 
+        <yellow>Lewy klik </yellow><gray>aby przełączyć w dół.</gray>
+        <yellow>Prawy klik </yellow><gray>aby przełączyć w górę.</gray>
+
         <gray>Dozwolony dla:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>Kliknij </yellow><gray>aby otworzyć.</gray>
       setting-cooldown: '<red>To ustawienie jest na cooldownie.</red>'
       setting-layout: |
         [description]
+
+        <yellow>Kliknij </yellow><gray>aby przełączyć.</gray>
 
         <gray>Obecne ustawienie: [setting]</gray>
       setting-active: '<green>Aktywny</green>'

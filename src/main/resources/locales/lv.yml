@@ -1995,14 +1995,22 @@ protection:
       description-layout: |
         [description]
 
+        <yellow>Kreisais klikšķis</yellow><gray> – pārslēgt uz leju.</gray>
+        <yellow>Labais klikšķis</yellow><gray> – pārslēgt uz augšu.</gray>
+
         <gray>Atļauts priekš:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>Klikšķini</yellow><gray>, lai atvērtu.</gray>
       setting-cooldown: '<red>Iestatījumu maiņa ir ierobežota.</red>'
       setting-layout: |
         [description]
+
+        <yellow>Klikšķini</yellow><gray>, lai pārslēgtu.</gray>
 
         <gray>Šībrīža iestatījumi: [setting]</gray>
       setting-active: '<green>Aktīvs</green>'

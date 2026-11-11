@@ -2004,14 +2004,22 @@ protection:
       description-layout: |-
         [description]
 
+        <yellow>Linksklick </yellow><gray>zum Abwärtsschalten.</gray>
+        <yellow>Rechtsklick </yellow><gray>zum Aufwärtsschalten.</gray>
+
         <gray>Erlaubt für:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |-
+        [description]
+
+        <yellow>Klicke </yellow><gray>zum Öffnen.</gray>
       setting-cooldown: '<red>Einstellung ist auf Abklingzeit</red>'
       setting-layout: |-
         [description]
+
+        <yellow>Klicke </yellow><gray>zum Umschalten.</gray>
 
         <gray>Aktuelle Einstellung: [setting]</gray>
       setting-active: '<green>Aktiviert</green>'

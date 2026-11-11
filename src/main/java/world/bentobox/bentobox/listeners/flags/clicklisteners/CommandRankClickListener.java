@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -159,24 +160,17 @@ public class CommandRankClickListener implements ClickHandler {
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             String rankName = user.getTranslation(reference);
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
-                pib.description(getRankTranslation(user, "protection.panel.flag-item.blocked-rank", rankName));
+                pib.description(Flag.getRankLine(user, "protection.panel.flag-item.blocked-rank", rankName));
             } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {
-                pib.description(getRankTranslation(user, "protection.panel.flag-item.allowed-rank", rankName));
+                pib.description(Flag.getRankLine(user, "protection.panel.flag-item.allowed-rank", rankName));
             } else if (score == island.getRankCommand(c)) {
-                pib.description(getRankTranslation(user, "protection.panel.flag-item.minimal-rank", rankName));
+                pib.description(Flag.getRankLine(user, "protection.panel.flag-item.minimal-rank", rankName));
             }
         });
         pib.invisible(plugin.getIWM().getHiddenFlags(world).contains(CommandCycleClick.COMMAND_RANK_PREFIX + c));
         return pib;
     }
 
-    private String getRankTranslation(User user, String key, String rankName) {
-        String translation = user.getTranslation(key, TextVariables.RANK, rankName);
-        if (!translation.contains(rankName)) {
-            translation = user.getTranslation(key) + rankName;
-        }
-        return translation;
-    }
 
     /**
      * Gets the commands whose rank can be set in this world and that the user may see: they have

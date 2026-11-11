@@ -32,6 +32,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.ItemParser;
+import world.bentobox.bentobox.util.Util;
 
 
 public class Flag implements Comparable<Flag> {
@@ -645,28 +646,41 @@ public class Flag implements Comparable<Flag> {
         RanksManager.getInstance().getRanks().forEach((reference, score) -> {
             String rankName = user.getTranslation(reference);
             if (score > RanksManager.BANNED_RANK && score < rank) {
-                lines.add(getRankTranslation(user, FLAG_ITEM + "blocked-rank", rankName));
+                lines.add(getRankLine(user, FLAG_ITEM + "blocked-rank", rankName));
             } else if (score <= RanksManager.OWNER_RANK && score > rank) {
-                lines.add(getRankTranslation(user, FLAG_ITEM + "allowed-rank", rankName));
+                lines.add(getRankLine(user, FLAG_ITEM + "allowed-rank", rankName));
             } else if (score == rank) {
-                lines.add(getRankTranslation(user, FLAG_ITEM + "minimal-rank", rankName));
+                lines.add(getRankLine(user, FLAG_ITEM + "minimal-rank", rankName));
             }
         });
         return String.join("\n", lines);
     }
 
     /**
-     * Gets a rank translation, supporting both MiniMessage format (with [rank] placeholder)
-     * and legacy format (without placeholder, rank name concatenated at end).
+     * Translates one rank line of a rank list, such as {@code protection.panel.flag-item.allowed-rank}.
+     * Current locale entries carry a {@code [rank]} placeholder, e.g.
+     * {@code <dark_aqua>- </dark_aqua><green>[rank]</green>}. Locale files written before
+     * that placeholder existed end in a bare color code instead, e.g. {@code &3 - &a}, and the rank
+     * name is appended. The name must be appended <em>before</em> the colors are converted: a color
+     * code with no text after it is dropped by the conversion, so translating first and appending
+     * after would show every rank in the prefix color, whether allowed or blocked.
+     * @param user - viewer
+     * @param key - locale reference of the rank line
+     * @param rankName - translated rank name
+     * @return the rank line, as a legacy color-coded string
+     * @since 3.23.6
      */
-    private String getRankTranslation(User user, String key, String rankName) {
+    public static String getRankLine(User user, String key, String rankName) {
         String translation = user.getTranslation(key, TextVariables.RANK, rankName);
-        // If [rank] placeholder was not in the locale string (legacy format),
-        // the rank name won't appear in the result — fall back to concatenation
-        if (!translation.contains(rankName)) {
-            translation = user.getTranslation(key) + rankName;
+        if (translation.contains(rankName)) {
+            return translation;
         }
-        return translation;
+        // No [rank] placeholder: an old-style locale entry
+        String raw = user.getTranslationNoColor(key);
+        if (raw == null) {
+            return user.getTranslation(key) + rankName;
+        }
+        return Util.componentToLegacy(Util.parseMiniMessageOrLegacy(raw + rankName));
     }
 
     /**

@@ -1926,14 +1926,22 @@ protection:
       description-layout: |
         [description]
 
+        <yellow>Levé kliknutí </yellow><gray>pro posun dolů.</gray>
+        <yellow>Pravé kliknutí </yellow><gray>pro posun nahoru.</gray>
+
         <gray>Povoleno pro:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
       blocked-rank: '<dark_aqua>- </dark_aqua><red>[rank]</red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>Klikni </yellow><gray>pro otevření.</gray>
       setting-cooldown: '<red>Nastavení má cooldown</red>'
       setting-layout: |
         [description]
+
+        <yellow>Klikni </yellow><gray>pro přepnutí.</gray>
 
         <gray>Nynější nastavení: [setting]</gray>
       setting-active: '<green>Povoleno</green>'

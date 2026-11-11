@@ -471,6 +471,35 @@ class FlagTest extends RanksManagerTestSetup {
     }
 
     /**
+     * A rank line with a {@code [rank]} placeholder is translated with the rank name substituted.
+     */
+    @Test
+    void testGetRankLineWithPlaceholder() {
+        User user = mock(User.class);
+        when(user.getTranslation("key", "[rank]", "Visitor")).thenReturn("§3- §aVisitor");
+
+        assertEquals("§3- §aVisitor", Flag.getRankLine(user, "key", "Visitor"));
+        verify(user, never()).getTranslationNoColor(anyString());
+    }
+
+    /**
+     * An old-style rank line ends in a bare color code that colors the rank name appended to it.
+     * The name must keep that color: translating the line first drops the trailing code, which
+     * showed every rank in the prefix color whether it was allowed or blocked.
+     */
+    @Test
+    void testGetRankLineLegacyKeepsRankColor() {
+        User user = mock(User.class);
+        // Translating on its own loses the trailing &a, as the real conversion does
+        when(user.getTranslation("key", "[rank]", "Visitor")).thenReturn("§3 - ");
+        when(user.getTranslation("key")).thenReturn("§3 - ");
+        when(user.getTranslationNoColor("key")).thenReturn("&3 - &a");
+
+        // The space after a legacy code is dropped by the old-format conversion, as for any legacy entry
+        assertEquals("§3- §aVisitor", Flag.getRankLine(user, "key", "Visitor"));
+    }
+
+    /**
      * A user whose translations come from the given map, with placeholder pairs applied. Keys not
      * in the map translate to themselves. Ranks are ordered as the real ranks manager orders them.
      */

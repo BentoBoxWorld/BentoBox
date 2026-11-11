@@ -1860,14 +1860,22 @@ protection:
       description-layout: |
         [description]
 
+        <yellow>Sol tık: </yellow><gray>aşağı doğru değiştir.</gray>
+        <yellow>Sağ tık: </yellow><gray>yukarı doğru değiştir.</gray>
+
         <gray>İzin verilenler:</gray>
       allowed-rank: '<dark_aqua>- </dark_aqua><green>[rank]</green>'
-      blocked-rank: '<dark_aqua>- </dark_aqua><dark_red></dark_red>'
+      blocked-rank: '<dark_aqua>- </dark_aqua><dark_red>[rank]</dark_red>'
       minimal-rank: '<dark_aqua>- </dark_aqua><dark_green>[rank]</dark_green>'
-      menu-layout: '[description]'
+      menu-layout: |
+        [description]
+
+        <yellow>Tıkla: </yellow><gray>aç.</gray>
       setting-cooldown: '<red>Ayar bekleme süresinde!</red>'
       setting-layout: |
         [description]
+
+        <yellow>Tıkla: </yellow><gray>değiştir.</gray>
 
         <gray>Geçerli ayar: [setting]</gray>
       setting-active: '<blue>Aktif</blue>'
