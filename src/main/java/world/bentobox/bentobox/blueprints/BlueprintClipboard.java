@@ -134,9 +134,10 @@ public class BlueprintClipboard {
         index = 0;
         lastPercentage = 0;
         BoundingBox toCopy = BoundingBox.of(pos1, pos2);
-        blueprint.setxSize((int)toCopy.getWidthX());
-        blueprint.setySize((int)toCopy.getHeight());
-        blueprint.setzSize((int)toCopy.getWidthZ());
+        // Copying includes both corner blocks, so each side is one longer than the box width
+        blueprint.setxSize((int)toCopy.getWidthX() + 1);
+        blueprint.setySize((int)toCopy.getHeight() + 1);
+        blueprint.setzSize((int)toCopy.getWidthZ() + 1);
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
@@ -188,6 +189,8 @@ public class BlueprintClipboard {
                 blueprint.setAttached(bpAttachable);
                 blueprint.setBlocks(bpBlocks);
                 blueprint.setEntities(bpEntities);
+                // Store the most common plain block (usually air) once instead of at every position
+                BlueprintFill.compact(blueprint);
                 user.sendMessage("general.success");
                 user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
             }
