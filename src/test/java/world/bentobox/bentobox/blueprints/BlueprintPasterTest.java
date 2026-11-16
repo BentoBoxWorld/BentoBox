@@ -479,4 +479,13 @@ class BlueprintPasterTest extends CommonTestSetup {
 
         verify(mockPaster, Mockito.times(1)).pasteBlocks(any(), any(), any());
     }
+
+    @Test
+    void testNoEstimatedTimeWithBudget() {
+        // With a time budget the paste time can't be predicted, so only the block count is shown
+        plugin.getSettings().setPasteTimeBudget(10);
+        bp.paste();
+        checkSpigotMessage("commands.island.create.pasting.estimated-time", 0);
+        checkSpigotMessage("commands.island.create.pasting.blocks", 1);
+    }
 }
