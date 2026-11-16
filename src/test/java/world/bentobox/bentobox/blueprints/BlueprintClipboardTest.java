@@ -308,8 +308,9 @@ class BlueprintClipboardTest extends CommonTestSetup {
         when(world.getMaxHeight()).thenReturn(320);
         when(world.getEntities()).thenReturn(List.of());
         when(plugin.namespace()).thenReturn("bentobox"); // for the display entity NamespacedKey
-        bc.setPos1(new Location(world, 0, 64, 0));
-        bc.setPos2(new Location(world, 2, 66, 2));
+        // Fractional positions, as when set from where a player stands: blocks 0-2 on each axis
+        bc.setPos1(new Location(world, 0.3, 64.9, 0.7));
+        bc.setPos2(new Location(world, 2.1, 66.2, 2.6));
         bc.setOrigin(new Vector(0, 64, 0));
 
         Block airBlock = mockBlock(Material.AIR, "minecraft:air");

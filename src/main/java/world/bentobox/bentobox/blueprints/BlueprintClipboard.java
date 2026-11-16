@@ -134,10 +134,10 @@ public class BlueprintClipboard {
         index = 0;
         lastPercentage = 0;
         BoundingBox toCopy = BoundingBox.of(pos1, pos2);
-        // Copying includes both corner blocks, so each side is one longer than the box width
-        blueprint.setxSize((int)toCopy.getWidthX() + 1);
-        blueprint.setySize((int)toCopy.getHeight() + 1);
-        blueprint.setzSize((int)toCopy.getWidthZ() + 1);
+        // Count the blocks copied along each side, including both corners (see getVectors)
+        blueprint.setxSize(blockCount(toCopy.getMinX(), toCopy.getMaxX()));
+        blueprint.setySize(blockCount(toCopy.getMinY(), toCopy.getMaxY()));
+        blueprint.setzSize(blockCount(toCopy.getMinZ(), toCopy.getMaxZ()));
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
@@ -213,6 +213,13 @@ public class BlueprintClipboard {
             }
         }
         return r;
+    }
+
+    /**
+     * @return the number of blocks between two coordinates, including both ends, as copied by {@link #getVectors}
+     */
+    private static int blockCount(double min, double max) {
+        return (int) (Math.floor(max) - Math.floor(min)) + 1;
     }
 
     private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, List<Entity> ents, boolean noWater) {
