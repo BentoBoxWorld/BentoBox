@@ -63,35 +63,45 @@
 
     "VectorKeyedBlockMap": {
       "title": "Vector-keyed block map",
-      "description": "Gson complex-map-key form: an array of [VectorKey, BlueprintBlock] pairs.",
-      "type": "array",
-      "items": {
-        "type": "array",
-        "prefixItems": [
-          { "$ref": "#/$defs/Vector" },
-          { "$ref": "#/$defs/BlueprintBlock" }
-        ],
-        "minItems": 2,
-        "maxItems": 2
-      }
+      "description": "Gson complex-map-key form: an array of [VectorKey, BlueprintBlock] pairs. Gson writes an empty map as an empty object `{}`.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "$ref": "#/$defs/Vector" },
+              { "$ref": "#/$defs/BlueprintBlock" }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        { "type": "object", "maxProperties": 0 }
+      ]
     },
 
     "VectorKeyedEntityListMap": {
       "title": "Vector-keyed entity-list map",
-      "description": "Gson complex-map-key form: an array of [VectorKey, BlueprintEntity[]] pairs. Multiple entities can share the same tile (e.g. a villager and an item frame in one block space).",
-      "type": "array",
-      "items": {
-        "type": "array",
-        "prefixItems": [
-          { "$ref": "#/$defs/Vector" },
-          {
+      "description": "Gson complex-map-key form: an array of [VectorKey, BlueprintEntity[]] pairs. Multiple entities can share the same tile (e.g. a villager and an item frame in one block space). Gson writes an empty map as an empty object `{}`.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
             "type": "array",
-            "items": { "$ref": "#/$defs/BlueprintEntity" }
+            "prefixItems": [
+              { "$ref": "#/$defs/Vector" },
+              {
+                "type": "array",
+                "items": { "$ref": "#/$defs/BlueprintEntity" }
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
           }
-        ],
-        "minItems": 2,
-        "maxItems": 2
-      }
+        },
+        { "type": "object", "maxProperties": 0 }
+      ]
     },
 
     "InventoryMap": {
@@ -126,7 +136,7 @@
           "$ref": "#/$defs/Vector"
         },
         "xSize": {
-          "description": "Width of the bounding box in blocks (X axis).",
+          "description": "Width of the copied area in blocks (X axis), counting both corner blocks.",
           "type": "integer",
           "minimum": 0
         },
@@ -145,8 +155,20 @@
           "type": "boolean"
         },
         "blocks": {
-          "description": "Primary blocks of the blueprint, keyed by position relative to the blueprint origin (0..size-1 on each axis).",
+          "description": "Primary blocks of the blueprint, keyed by position relative to the blueprint origin (0..size-1 on each axis). In a blueprint with a `fill`, positions inside the fill box that are missing here are pasted as the fill block.",
           "$ref": "#/$defs/VectorKeyedBlockMap"
+        },
+        "fill": {
+          "description": "Since 3.23.8. Block pasted at every position from `fillMin` to `fillMax` (inclusive) that has no entry in `blocks`; usually plain air or water. Written when a copy covers every position of its box, so the most common plain block is stored once instead of at every position. Absent means no fill: positions missing from `blocks` leave the world unchanged.",
+          "$ref": "#/$defs/BlueprintBlock"
+        },
+        "fillMin": {
+          "description": "Since 3.23.8. Minimum corner of the fill box, relative to the blueprint origin. Present together with `fill`.",
+          "$ref": "#/$defs/Vector"
+        },
+        "fillMax": {
+          "description": "Since 3.23.8. Maximum corner of the fill box (inclusive), relative to the blueprint origin. Present together with `fill`.",
+          "$ref": "#/$defs/Vector"
         },
         "attached": {
           "description": "Blocks that must be pasted AFTER `blocks` because they attach to a supporting block (torches, ladders, rails, beds, doors, signs, etc.). Same coordinate conventions as `blocks`.",
@@ -417,7 +439,10 @@
           "description": "Fine offset within the position cell (typically 0.0 ≤ x < 1.0 for relative placement, but absolute values are allowed).",
           "type": "number"
         },
-        "y": { "type": "number" },
+        "y": {
+          "description": "Height within the position cell. Since 3.23.8, ordinary entities (not display or hanging entities) record the height they were copied at and spawn at it, so a boat floats on water. 0 spawns at the bottom of the cell.",
+          "type": "number"
+        },
         "z": { "type": "number" },
 
         "glowing":      { "type": "boolean", "description": "Glow effect on the entity." },
