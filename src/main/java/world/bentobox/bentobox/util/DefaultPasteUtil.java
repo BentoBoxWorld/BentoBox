@@ -230,7 +230,7 @@ public class DefaultPasteUtil {
             // Paintings are spawned with art and facing pre-applied at their anchor block,
             // otherwise the art is randomized and even-sized paintings shift position
             e = k.getType() == EntityType.PAINTING ? k.spawnPainting(location)
-                    : location.getWorld().spawnEntity(location, k.getType());
+                    : location.getWorld().spawnEntity(k.getSpawnLocation(location), k.getType());
         } catch (IllegalArgumentException ex) {
             // Hanging entities (item frames, paintings) cannot spawn without a block to attach to
             plugin.logWarning("Could not paste entity " + k.getType() + " at "
