@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -75,6 +76,7 @@ public class BlueprintClipboard {
     private final Optional<MythicMobsHook> mmh;
     private final Optional<FancyNpcsHook> npc;
     private final Optional<ZNPCsPlusHook> znpc;
+    private final Optional<?> itemsAdder;
 
 
     /**
@@ -96,6 +98,8 @@ public class BlueprintClipboard {
         // ZNPCs Plus Hook
         znpc = plugin.getHooks().getHook("ZNPCsPlus").filter(ZNPCsPlusHook.class::isInstance)
                 .map(ZNPCsPlusHook.class::cast);
+        // ItemsAdder hook, looked up once rather than for every copied block
+        itemsAdder = plugin.getHooks().getHook("ItemsAdder");
     }
 
     /**
@@ -141,13 +145,17 @@ public class BlueprintClipboard {
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
+        // Entities are found in the box that holds every copied block
+        BoundingBox entityBox = new BoundingBox(Math.floor(toCopy.getMinX()), Math.floor(toCopy.getMinY()),
+                Math.floor(toCopy.getMinZ()), Math.floor(toCopy.getMaxX()) + 1, Math.floor(toCopy.getMaxY()) + 1,
+                Math.floor(toCopy.getMaxZ()) + 1);
         Bukkit.getScheduler().runTaskAsynchronously(plugin,
-                () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome, noWater));
+                () -> copyAsync(world, user, vectorsToCopy, entityBox, speed, copyAir, copyBiome, noWater));
         return true;
     }
 
-    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir,
-            boolean copyBiome, boolean noWater) {
+    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, BoundingBox entityBox, int speed,
+            boolean copyAir, boolean copyBiome, boolean noWater) {
         copying = false;
         // FancyNpcs
         // Add all the citizens for the area in one go. This is pretty fast.
@@ -155,35 +163,32 @@ public class BlueprintClipboard {
         // ZNPCsPlus NPCs
         znpc.ifPresent(znpCsPlusHook -> bpEntities.putAll(znpCsPlusHook.getNpcsInArea(world, vectorsToCopy, origin)));
 
+        // Entities in the copy area by block position, found once on the main thread at the start of the copy
+        Map<Vector, List<Entity>> entitiesByBlock = new HashMap<>();
         // Repeating copy task
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (copying) {
                 return;
             }
             copying = true;
-            NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
-            // Index the world's entities by block position once per tick instead of scanning
-            // the full entity list for every copied block
-            Map<Vector, List<Entity>> entitiesByBlock = world.getEntities().stream()
-                    .filter(Objects::nonNull)
-                    .filter(e -> !(e instanceof Player))
-                    .filter(e -> !e.getPersistentDataContainer().has(key, PersistentDataType.STRING)) // Do not copy hidden display entities
-                    .collect(Collectors.groupingBy(e -> new Vector(e.getLocation().getBlockX(),
-                            e.getLocation().getBlockY(), e.getLocation().getBlockZ())));
-            vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                List<Entity> ents = entitiesByBlock.getOrDefault(v, List.of());
-                if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents, noWater)) {
-                    count++;
-                }
-            });
-
-            index += speed;
-            int percent = (int)(index * 100 / (double)vectorsToCopy.size());
-            if (percent != lastPercentage && percent % 10 == 0) {
-                user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
-                lastPercentage = percent;
+            if (index == 0) {
+                entitiesByBlock.putAll(getEntitiesByBlock(world, entityBox));
             }
-            if (index > vectorsToCopy.size()) {
+            // Copy batches of blocks until this tick's time budget is used up. A budget of 0 copies one batch per tick.
+            final long budget = TimeUnit.MILLISECONDS.toNanos(Math.max(0, plugin.getSettings().getPasteTimeBudget()));
+            final long start = System.nanoTime();
+            do {
+                int end = Math.min(index + speed, vectorsToCopy.size());
+                for (; index < end; index++) {
+                    Vector v = vectorsToCopy.get(index);
+                    if (copyBlock(v.toLocation(world), copyAir, copyBiome, entitiesByBlock.getOrDefault(v, List.of()), noWater)) {
+                        count++;
+                    }
+                }
+            } while (index < vectorsToCopy.size() && System.nanoTime() - start < budget);
+
+            reportProgress(user, vectorsToCopy.size());
+            if (index >= vectorsToCopy.size()) {
                 copyTask.cancel();
                 assert blueprint != null;
                 blueprint.setAttached(bpAttachable);
@@ -196,6 +201,32 @@ public class BlueprintClipboard {
             }
             copying = false;
         }, 0L, 1L);
+    }
+
+    /**
+     * Finds the entities to copy in the box, indexed by the block they are in. Players and hidden display
+     * entities are not copied.
+     */
+    private Map<Vector, List<Entity>> getEntitiesByBlock(World world, BoundingBox box) {
+        NamespacedKey key = new NamespacedKey(BentoBox.getInstance(), "associatedDisplayEntity");
+        return world.getNearbyEntities(box).stream()
+                .filter(Objects::nonNull)
+                .filter(e -> !(e instanceof Player))
+                .filter(e -> !e.getPersistentDataContainer().has(key, PersistentDataType.STRING)) // Do not copy hidden display entities
+                .collect(Collectors.groupingBy(e -> new Vector(e.getLocation().getBlockX(),
+                        e.getLocation().getBlockY(), e.getLocation().getBlockZ())));
+    }
+
+    /**
+     * Tells the user each time another 10% of the copy is done
+     */
+    private void reportProgress(User user, int total) {
+        int percent = total == 0 ? 100 : (int) (index * 100L / total);
+        int tens = percent / 10 * 10;
+        if (tens > lastPercentage && tens > 0) {
+            user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(tens));
+            lastPercentage = tens;
+        }
     }
 
     /**
@@ -315,7 +346,7 @@ public class BlueprintClipboard {
     }
 
     private void setItemsAdder(BlueprintBlock b, Block block) {
-        plugin.getHooks().getHook("ItemsAdder").ifPresent(hook -> {
+        itemsAdder.ifPresent(hook -> {
             String iab = ItemsAdderHook.getInCustomRegion(block.getLocation());
             if (iab != null) {
                 b.setItemsAdderBlock(iab);

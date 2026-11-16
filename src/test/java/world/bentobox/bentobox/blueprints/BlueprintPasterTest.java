@@ -103,6 +103,9 @@ class BlueprintPasterTest extends CommonTestSetup {
         // Clipboard
         when(clipboard.getBlueprint()).thenReturn(blueprint);
 
+        // One batch per tick, so the state machine tests can step through each state
+        plugin.getSettings().setPasteTimeBudget(0);
+
         // Construct instances (after all mocks are ready)
         bp = new BlueprintPaster(plugin, blueprint, world, island);
         bp2 = new BlueprintPaster(plugin, clipboard, location);
@@ -429,5 +432,51 @@ class BlueprintPasterTest extends CommonTestSetup {
 
         assertEquals(4, runCompactPaste().size());
         verify(world, never()).getBlockAt(anyInt(), anyInt(), anyInt());
+    }
+
+    // ===================== Time budget =====================
+
+    private Map<Vector, BlueprintBlock> manyBlocks(int n) {
+        Map<Vector, BlueprintBlock> blocks = new java.util.HashMap<>();
+        for (int i = 0; i < n; i++) {
+            blocks.put(new Vector(i, 0, 0), new BlueprintBlock("minecraft:stone"));
+        }
+        return blocks;
+    }
+
+    @Test
+    void testNoBudgetPastesOneBatchPerTick() {
+        when(blueprint.getBlocks()).thenReturn(manyBlocks(200));
+        Runnable task = startPaste(bp, true);
+        task.run(); // CHUNK_LOAD → BLOCKS
+        task.run(); // one batch of 64
+        verify(mockPaster, Mockito.times(1)).pasteBlocks(any(), any(), any());
+    }
+
+    @Test
+    void testBudgetPastesManyBatchesInOneTick() {
+        plugin.getSettings().setPasteTimeBudget(60_000); // plenty of time
+        when(blueprint.getBlocks()).thenReturn(manyBlocks(200));
+        Runnable task = startPaste(bp, true);
+        task.run(); // CHUNK_LOAD → BLOCKS
+        task.run(); // all 200 blocks: 64 + 64 + 64 + 8, then on through the empty states
+
+        verify(mockPaster, Mockito.times(4)).pasteBlocks(any(), any(), any());
+        // Attachments and entities were empty, so the paste finished in the same tick
+        checkSpigotMessage("commands.island.create.pasting.dimension-done", 1);
+    }
+
+    @Test
+    void testBudgetStopsWhileWaitingForChunk() {
+        plugin.getSettings().setPasteTimeBudget(60_000);
+        when(blueprint.getBlocks()).thenReturn(manyBlocks(200));
+        // The first batch waits for a chunk to load
+        when(mockPaster.pasteBlocks(any(), any(), any())).thenReturn(new CompletableFuture<>());
+        Runnable task = startPaste(bp, true);
+        task.run(); // CHUNK_LOAD → BLOCKS
+        task.run(); // one batch, then stop because it is not done
+        task.run(); // still waiting: nothing happens
+
+        verify(mockPaster, Mockito.times(1)).pasteBlocks(any(), any(), any());
     }
 }
