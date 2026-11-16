@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.bukkit.Bukkit;
@@ -219,15 +220,11 @@ public class BlueprintPaster {
 
         final int pasteSpeed = plugin.getSettings().getPasteSpeed();
 
-        int count = 0;
         if (pasteState.equals(PasteState.CHUNK_LOAD)) {
             loadChunk();
         }
-        else if (pasteState.equals(PasteState.BLOCKS) || pasteState.equals(PasteState.ATTACHMENTS)) {
-            pasteBlocks(bits, count, owner, pasteSpeed, useNMS);
-        }
-        else if (pasteState.equals(PasteState.ENTITIES)) {
-            pasteEntities(bits, count, owner, pasteSpeed, useNMS);
+        else if (isPasting()) {
+            pasteWithinBudget(bits, owner, pasteSpeed, useNMS);
         }
         else if (pasteState.equals(PasteState.DONE)) {
             // All done. Cancel task
@@ -237,6 +234,28 @@ public class BlueprintPaster {
             pastingTask.cancel();
             result.complete(true);
         }
+    }
+
+    private boolean isPasting() {
+        return pasteState.equals(PasteState.BLOCKS) || pasteState.equals(PasteState.ATTACHMENTS)
+                || pasteState.equals(PasteState.ENTITIES);
+    }
+
+    /**
+     * Pastes batches of paste-speed blocks or entities until this tick's time budget is used up,
+     * the paste is finished, or a batch is waiting for a chunk to load.
+     * A budget of 0 pastes one batch per tick.
+     */
+    private void pasteWithinBudget(Bits bits, Optional<User> owner, int pasteSpeed, boolean useNMS) {
+        final long budget = TimeUnit.MILLISECONDS.toNanos(Math.max(0, plugin.getSettings().getPasteTimeBudget()));
+        final long start = System.nanoTime();
+        do {
+            if (pasteState.equals(PasteState.ENTITIES)) {
+                pasteEntities(bits, 0, owner, pasteSpeed, useNMS);
+            } else {
+                pasteBlocks(bits, 0, owner, pasteSpeed, useNMS);
+            }
+        } while (isPasting() && currentTask.isDone() && System.nanoTime() - start < budget);
     }
 
     private void cancelTask(CompletableFuture<Boolean> result) {
@@ -374,10 +393,13 @@ public class BlueprintPaster {
     }
 
     private void tellOwner(User user, long blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
-        // Estimated time:
-        double total = (double) blocksSize + attachedSize + entitiesSize;
-        BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime.get() / 1000.0D)).setScale(1, RoundingMode.UP);
-        user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
+        // Estimated time. Only predictable when pasting one batch per tick; with a time budget, pasting
+        // is limited by how much spare time the server has, and usually finishes almost at once.
+        if (plugin.getSettings().getPasteTimeBudget() <= 0) {
+            double total = (double) blocksSize + attachedSize + entitiesSize;
+            BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime.get() / 1000.0D)).setScale(1, RoundingMode.UP);
+            user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
+        }
         // We're pasting blocks!
         user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocksSize + attachedSize));
     }

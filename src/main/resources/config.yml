@@ -281,6 +281,11 @@ island:
   # On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the
   # resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.
   paste-speed: 64
+  # Milliseconds per tick that pasting and copying blueprints may use. Blocks are pasted in batches of
+  # paste-speed until this time is used up, so larger islands paste much faster when the server has spare time.
+  # A tick is 50 ms. Lower this if island creation causes lag. 0 pastes a single batch per tick (the old behavior).
+  # Added since 3.23.8.
+  paste-time-budget: 10
   # Island deletion: Number of chunks per world to regenerate per second.
   # If there is a nether and end then 3x this number will be regenerated per second.
   # Smaller values will help reduce noticeable lag but will make deleting take longer.

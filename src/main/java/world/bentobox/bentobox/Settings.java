@@ -414,6 +414,12 @@ public class Settings implements ConfigObject {
     @ConfigComment("resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.")
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 64;
+
+    @ConfigComment("Milliseconds per tick that pasting and copying blueprints may use. Blocks are pasted in batches of")
+    @ConfigComment("paste-speed until this time is used up, so larger islands paste much faster when the server has spare time.")
+    @ConfigComment("A tick is 50 ms. Lower this if island creation causes lag. 0 pastes a single batch per tick (the old behavior).")
+    @ConfigEntry(path = "island.paste-time-budget", since = "3.23.8")
+    private int pasteTimeBudget = 10;
     
     @ConfigComment("Island Level Purge Protection")
     @ConfigComment("Islands above this level will not be purged even if they are old. Requires the Level Addon.")
@@ -877,6 +883,22 @@ public class Settings implements ConfigObject {
      */
     public int getPasteSpeed() {
         return this.pasteSpeed;
+    }
+
+    /**
+     * @return milliseconds per tick that pasting and copying blueprints may use; 0 means one batch per tick
+     * @since 3.23.8
+     */
+    public int getPasteTimeBudget() {
+        return pasteTimeBudget;
+    }
+
+    /**
+     * @param pasteTimeBudget milliseconds per tick that pasting and copying blueprints may use
+     * @since 3.23.8
+     */
+    public void setPasteTimeBudget(int pasteTimeBudget) {
+        this.pasteTimeBudget = pasteTimeBudget;
     }
 
     /**
