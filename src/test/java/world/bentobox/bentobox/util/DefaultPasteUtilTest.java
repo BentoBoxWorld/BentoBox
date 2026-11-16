@@ -119,6 +119,7 @@ class DefaultPasteUtilTest extends CommonTestSetup {
         when(blueprintEntity.getMythicMobsRecord()).thenReturn(null);
         when(blueprintEntity.getType()).thenReturn(null);
         when(blueprintEntity.getCustomName()).thenReturn(null);
+        when(blueprintEntity.getSpawnLocation(any())).thenAnswer(inv -> inv.getArgument(0));
 
         // World environment
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);

@@ -514,4 +514,44 @@ class BlueprintEntityTest extends CommonTestSetup {
         assertNotNull(blueprint.displayRec);
     }
 
+
+    // ===================== Height within the block =====================
+
+    @Test
+    void testBoatKeepsHeightWithinBlock() {
+        org.bukkit.entity.Boat boat = org.mockito.Mockito.mock(org.bukkit.entity.Boat.class);
+        when(boat.getType()).thenReturn(EntityType.OAK_BOAT);
+        when(boat.getLocation()).thenReturn(new Location(world, 16.3, 17.45, 14.8));
+
+        BlueprintEntity bpe = new BlueprintEntity(boat);
+        Location pasteAt = new Location(world, 100.5, 70, 200.5);
+        Location spawn = bpe.getSpawnLocation(pasteAt);
+
+        // Floats at the same height as when copied; horizontally still the block centre
+        assertEquals(70.45, spawn.getY(), 0.0001);
+        assertEquals(100.5, spawn.getX(), 0.0001);
+        assertEquals(200.5, spawn.getZ(), 0.0001);
+        assertEquals(70, pasteAt.getY(), 0.0001, "Paste location must not be modified");
+    }
+
+    @Test
+    void testOldBlueprintEntitySpawnsAtBlock() {
+        // Entities saved before the height was stored have y = 0 and paste where they always did
+        BlueprintEntity bpe = new BlueprintEntity();
+        bpe.setType(EntityType.OAK_BOAT);
+        Location pasteAt = new Location(world, 100.5, 70, 200.5);
+        assertEquals(pasteAt, bpe.getSpawnLocation(pasteAt));
+    }
+
+    @Test
+    void testDisplayEntityNotMovedBySpawnLocation() {
+        Display display = org.mockito.Mockito.mock(org.bukkit.entity.TextDisplay.class);
+        when(display.getType()).thenReturn(EntityType.TEXT_DISPLAY);
+        when(display.getLocation()).thenReturn(new Location(world, 1.25, 2.75, 3.5));
+
+        BlueprintEntity bpe = new BlueprintEntity(display);
+        Location pasteAt = new Location(world, 100.5, 70, 200.5);
+        // Displays place themselves using their stored offset in setDisplay
+        assertEquals(pasteAt, bpe.getSpawnLocation(pasteAt));
+    }
 }
