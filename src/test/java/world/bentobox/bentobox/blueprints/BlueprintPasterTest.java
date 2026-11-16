@@ -1,9 +1,12 @@
 package world.bentobox.bentobox.blueprints;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -17,6 +20,8 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
@@ -32,6 +38,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.fallback.PasteHandlerImpl;
+import world.bentobox.bentobox.util.DefaultPasteUtil;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -355,5 +362,72 @@ class BlueprintPasterTest extends CommonTestSetup {
         task.run(); // CHUNK_LOAD → loadChunk → sink logic fires
 
         verify(world).getHighestBlockYAt(any(Location.class), any());
+    }
+
+    // ===================== Compact (fill) blueprint Tests =====================
+
+    @SuppressWarnings("unchecked")
+    private Map<Location, BlueprintBlock> runCompactPaste() {
+        Runnable task = startPaste(bp, true);
+        task.run(); // CHUNK_LOAD → BLOCKS
+        task.run(); // BLOCKS → pasteBlocks
+        ArgumentCaptor<Map<Location, BlueprintBlock>> captor = ArgumentCaptor.forClass(Map.class);
+        verify(mockPaster).pasteBlocks(any(), any(), captor.capture());
+        return captor.getValue();
+    }
+
+    private BlueprintBlock setUpCompactBlueprint(BlueprintBlock stone) {
+        BlueprintBlock fill = new BlueprintBlock("minecraft:air");
+        when(blueprint.getFill()).thenReturn(fill);
+        when(blueprint.getFillMin()).thenReturn(new Vector(0, 0, 0));
+        when(blueprint.getFillMax()).thenReturn(new Vector(1, 0, 1));
+        when(blueprint.getBlocks()).thenReturn(Map.of(new Vector(0, 0, 0), stone));
+        return fill;
+    }
+
+    @Test
+    void testPasteCompactBlueprintPastesFillAndBlocks() {
+        BlueprintBlock stone = new BlueprintBlock("minecraft:stone");
+        BlueprintBlock fill = setUpCompactBlueprint(stone);
+
+        Map<Location, BlueprintBlock> pasted = runCompactPaste();
+
+        // 2x1x2 box: 1 explicit block + 3 fill positions
+        assertEquals(4, pasted.size());
+        assertEquals(3, pasted.values().stream().filter(b -> b == fill).count());
+        assertEquals(1, pasted.values().stream().filter(b -> b == stone).count());
+        // Estimated block count includes the fill
+        checkSpigotMessage("commands.island.create.pasting.blocks", 1);
+    }
+
+    @Test
+    void testPasteCompactBlueprintSkipsFillAlreadyInPlace() {
+        BlueprintBlock stone = new BlueprintBlock("minecraft:stone");
+        setUpCompactBlueprint(stone);
+        BlockData air = mock(BlockData.class);
+        Block worldBlock = mock(Block.class);
+        when(worldBlock.getBlockData()).thenReturn(air);
+        when(world.isChunkLoaded(anyInt(), anyInt())).thenReturn(true);
+        when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(worldBlock);
+
+        try (MockedStatic<DefaultPasteUtil> dpu = Mockito.mockStatic(DefaultPasteUtil.class)) {
+            dpu.when(() -> DefaultPasteUtil.createBlockData(any())).thenReturn(air);
+
+            Map<Location, BlueprintBlock> pasted = runCompactPaste();
+
+            // The world is already air, so only the stone is pasted
+            assertEquals(1, pasted.size());
+            assertSame(stone, pasted.values().iterator().next());
+        }
+    }
+
+    @Test
+    void testPasteCompactBlueprintPastesFillWhenChunkNotLoaded() {
+        BlueprintBlock stone = new BlueprintBlock("minecraft:stone");
+        setUpCompactBlueprint(stone);
+        when(world.isChunkLoaded(anyInt(), anyInt())).thenReturn(false);
+
+        assertEquals(4, runCompactPaste().size());
+        verify(world, never()).getBlockAt(anyInt(), anyInt(), anyInt());
     }
 }

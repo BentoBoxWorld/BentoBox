@@ -24,6 +24,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.blueprints.BlueprintFill;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 
@@ -142,6 +143,8 @@ public class BlueprintClipboardManager {
             bp.getBlocks().put(bp.getBedrock(), new BlueprintBlock(Material.BEDROCK.createBlockData().getAsString()));
             plugin.logWarning("Blueprint " + fileName + " had no bedrock block in it so one was added automatically in the center. You should check it.");
         }
+        // Blueprints copied with air before compact storage existed hold every air block; drop them from memory
+        BlueprintFill.compact(bp);
         return bp;
     }
 

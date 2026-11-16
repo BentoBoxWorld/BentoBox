@@ -17,10 +17,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.collect.Iterators;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -29,6 +33,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.nms.PasteHandler;
+import world.bentobox.bentobox.util.DefaultPasteUtil;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -58,6 +63,12 @@ public class BlueprintPaster {
      */
     private static final AtomicLong chunkLoadTime = new AtomicLong(0);
 
+    /**
+     * How many fill blocks may be checked per block pasted in one tick, so that skipping
+     * blocks that are already in place does not stall a tick
+     */
+    private static final int MAX_FILL_CHECKS_PER_BLOCK = 8;
+
     private final BentoBox plugin;
     private final PasteHandler paster = Util.getPasteHandler();
     private final PasteHandler fallback = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
@@ -71,6 +82,7 @@ public class BlueprintPaster {
     private BlueprintClipboard clipboard;
     private CompletableFuture<Void> currentTask = CompletableFuture.completedFuture(null);
     private boolean sink;
+    private BlockData fillBlockData;
 
     /**
      * The Blueprint to paste.
@@ -186,10 +198,16 @@ public class BlueprintPaster {
         // If this is an island OVERWORLD paste, get the island owner.
         final Optional<User> owner = Optional.ofNullable(island).map(i -> User.getInstance(i.getOwner()));
 
+        // Compact blueprints paste their fill block at every box position without an explicit block
+        final long fillCount = BlueprintFill.countFill(blueprint);
+        final Iterator<Entry<Vector, BlueprintBlock>> blockIterator = fillCount > 0
+                ? Iterators.concat(BlueprintFill.fillIterator(blueprint), blocks.entrySet().iterator())
+                : blocks.entrySet().iterator();
+
         // Tell the owner we're pasting blocks and how much time it might take
-        owner.ifPresent(user -> tellOwner(user, blocks.size(), attached.size(), entities.size(), plugin.getSettings().getPasteSpeed()));
+        owner.ifPresent(user -> tellOwner(user, blocks.size() + fillCount, attached.size(), entities.size(), plugin.getSettings().getPasteSpeed()));
         Bits bits = new Bits(blocks, attached, entities,
-                blocks.entrySet().iterator(), attached.entrySet().iterator(), entities.entrySet().iterator(),
+                blockIterator, attached.entrySet().iterator(), entities.entrySet().iterator(),
                 plugin.getSettings().getPasteSpeed());
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> pasterTask(result, owner, bits, useNMS), 0L, 1L);
 
@@ -288,8 +306,10 @@ public class BlueprintPaster {
 
     private void pasteBlocksNow(Iterator<Entry<Vector, BlueprintBlock>> it, int count, int pasteSpeed, boolean useNMS) {
         Map<Location, BlueprintBlock> blockMap = new HashMap<>();
+        // Fill blocks that are already in place are skipped, but bound how many are checked in one tick
+        int checked = 0;
         // Paste blocks
-        while (count < pasteSpeed) {
+        while (count < pasteSpeed && checked < pasteSpeed * MAX_FILL_CHECKS_PER_BLOCK) {
             if (!it.hasNext()) {
                 break;
             }
@@ -299,6 +319,12 @@ public class BlueprintPaster {
             updatePos(pasteTo);
 
             BlueprintBlock block = entry.getValue();
+            if (block == blueprint.getFill()) {
+                checked++;
+                if (isAlreadyFilled(pasteTo, block)) {
+                    continue;
+                }
+            }
             blockMap.put(pasteTo, block);
             count++;
         }
@@ -307,6 +333,25 @@ public class BlueprintPaster {
                     : fallback.pasteBlocks(island, world, blockMap);
         }
 
+    }
+
+    /**
+     * Checks if the world already has the fill block at this location, e.g., air in a void world.
+     * Chunks that are not loaded are not loaded just to check; the block is pasted instead.
+     * @param l location
+     * @param fill fill block
+     * @return true if pasting the fill block here would change nothing
+     */
+    private boolean isAlreadyFilled(Location l, BlueprintBlock fill) {
+        if (!world.isChunkLoaded(l.getBlockX() >> 4, l.getBlockZ() >> 4)) {
+            return false;
+        }
+        if (fillBlockData == null) {
+            fillBlockData = DefaultPasteUtil.createBlockData(fill);
+        }
+        Block block = world.getBlockAt(l.getBlockX(), l.getBlockY(), l.getBlockZ());
+        return block.getBlockData().equals(fillBlockData)
+                && (fill.getBiome() == null || fill.getBiome().equals(block.getBiome()));
     }
 
     private void loadChunk() {
@@ -328,7 +373,7 @@ public class BlueprintPaster {
 
     }
 
-    private void tellOwner(User user, int blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
+    private void tellOwner(User user, long blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
         // Estimated time:
         double total = (double) blocksSize + attachedSize + entitiesSize;
         BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime.get() / 1000.0D)).setScale(1, RoundingMode.UP);

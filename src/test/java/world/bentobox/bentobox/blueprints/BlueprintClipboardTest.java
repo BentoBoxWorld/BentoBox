@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -23,6 +27,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -291,6 +296,61 @@ class BlueprintClipboardTest extends CommonTestSetup {
         assertTrue(bc.copy(user, true, true, false));
         // Origin was already set, so user.getLocation() should NOT be called
         verify(user, never()).getLocation();
+    }
+
+    /**
+     * Copying with air captures the whole box, so the air is stored once as the fill block
+     * and the sizes include both corner blocks.
+     */
+    @Test
+    void testCopyWithAirCompactsBlueprint() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+        when(world.getEntities()).thenReturn(List.of());
+        when(plugin.namespace()).thenReturn("bentobox"); // for the display entity NamespacedKey
+        bc.setPos1(new Location(world, 0, 64, 0));
+        bc.setPos2(new Location(world, 2, 66, 2));
+        bc.setOrigin(new Vector(0, 64, 0));
+
+        Block airBlock = mockBlock(Material.AIR, "minecraft:air");
+        Block stoneBlock = mockBlock(Material.STONE, "minecraft:stone");
+        when(world.getBlockAt(any(Location.class))).thenAnswer(inv -> {
+            Location l = inv.getArgument(0);
+            return l.getBlockX() == 1 && l.getBlockY() == 64 && l.getBlockZ() == 1 ? stoneBlock : airBlock;
+        });
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return mock(BukkitTask.class);
+        });
+        ArgumentCaptor<Runnable> copyTask = ArgumentCaptor.forClass(Runnable.class);
+        when(sch.runTaskTimer(any(), copyTask.capture(), Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(mock(BukkitTask.class));
+
+        assertTrue(bc.copy(user, true, false, false));
+        copyTask.getValue().run();
+
+        Blueprint copied = bc.getBlueprint();
+        assertNotNull(copied);
+        assertEquals(3, copied.getxSize());
+        assertEquals(3, copied.getySize());
+        assertEquals(3, copied.getzSize());
+        assertEquals("minecraft:air", copied.getFill().getBlockData());
+        assertEquals(new Vector(0, 0, 0), copied.getFillMin());
+        assertEquals(new Vector(2, 2, 2), copied.getFillMax());
+        assertEquals(1, copied.getBlocks().size());
+        assertEquals("minecraft:stone", copied.getBlocks().get(new Vector(1, 0, 1)).getBlockData());
+    }
+
+    private Block mockBlock(Material material, String data) {
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(material);
+        BlockData bd = mock(BlockData.class);
+        when(bd.getAsString()).thenReturn(data);
+        when(block.getBlockData()).thenReturn(bd);
+        BlockState state = mock(BlockState.class);
+        when(state.getBlockData()).thenReturn(bd);
+        when(block.getState()).thenReturn(state);
+        return block;
     }
 
     // ---- setPos1 / setPos2 height clamping ----
