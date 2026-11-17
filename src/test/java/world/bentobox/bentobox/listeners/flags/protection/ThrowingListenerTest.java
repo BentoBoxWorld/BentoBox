@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 
 import java.util.UUID;
 
+import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Witch;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
@@ -109,6 +112,36 @@ class ThrowingListenerTest extends CommonTestSetup {
         tl.onPlayerThrowPotion(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(Mockito.any(), Mockito.anyString());
+    }
+
+    /**
+     * Exp bottles must be checked against {@link Flags#EXPERIENCE_BOTTLE_THROWING}.
+     */
+    @Test
+    void testOnPlayerThrowExpBottleNotAllowed() {
+        // Resolve the flag first: Flags' static initializer must not run inside a matcher
+        Flag flag = Flags.EXPERIENCE_BOTTLE_THROWING;
+        when(island.isAllowed(Mockito.any(), Mockito.eq(flag))).thenReturn(false);
+        ThrownExpBottle entity = mock(ThrownExpBottle.class);
+        when(entity.getLocation()).thenReturn(location);
+        when(entity.getShooter()).thenReturn(mockPlayer);
+        ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
+        tl.onPlayerThrowPotion(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+    }
+
+    /**
+     * Exp bottles are allowed when {@link Flags#EXPERIENCE_BOTTLE_THROWING} allows them.
+     */
+    @Test
+    void testOnPlayerThrowExpBottleAllowed() {
+        ThrownExpBottle entity = mock(ThrownExpBottle.class);
+        when(entity.getLocation()).thenReturn(location);
+        when(entity.getShooter()).thenReturn(mockPlayer);
+        ProjectileLaunchEvent e = new ProjectileLaunchEvent(entity);
+        tl.onPlayerThrowPotion(e);
+        assertFalse(e.isCancelled());
     }
 
 }
