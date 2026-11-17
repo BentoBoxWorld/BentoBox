@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,20 +17,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -240,6 +246,27 @@ class AdminTeamKickCommandTest extends CommonTestSetup {
                 any());
         // 3 events: TeamEvent + IslandEvent (IslandEvent.build fires 2 callEvent calls)
         verify(pim, times(3)).callEvent(any());
+    }
+
+    /**
+     * The rank change event reports the rank the kicked player had before the kick.
+     */
+    @Test
+    void testExecuteRankChangeEvent() {
+        when(island2.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
+        Mockito.doAnswer(inv -> when(island2.getRank(notUUID)).thenReturn(RanksManager.VISITOR_RANK)).when(im)
+                .removePlayer(island2, notUUID);
+        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        IslandRankChangeEvent e = events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).findFirst().orElseThrow();
+        assertEquals(notUUID, e.getPlayerUUID());
+        assertEquals(RanksManager.MEMBER_RANK, e.getOldRank());
+        assertEquals(RanksManager.VISITOR_RANK, e.getNewRank());
     }
 
     /**
