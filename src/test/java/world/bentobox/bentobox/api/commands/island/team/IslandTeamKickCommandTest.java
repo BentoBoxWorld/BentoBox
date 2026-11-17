@@ -21,9 +21,11 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -35,6 +37,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -313,6 +316,31 @@ class IslandTeamKickCommandTest extends RanksManagerTestSetup {
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(Island.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
+    }
+
+    /**
+     * The rank change event is about the kicked player, with the rank they had before the kick.
+     */
+    @Test
+    void testExecuteRankChangeEvent() {
+        when(s.isKickConfirmation()).thenReturn(false);
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getName(notUUID)).thenReturn("poslovitch");
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(notUUID));
+        // Once removed, the target is a visitor
+        Mockito.doAnswer(inv -> when(island.getRank(notUUID)).thenReturn(RanksManager.VISITOR_RANK)).when(im)
+                .removePlayer(any(Island.class), eq(notUUID));
+
+        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        IslandRankChangeEvent rankEvent = events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).findFirst().orElseThrow();
+        assertEquals(notUUID, rankEvent.getPlayerUUID());
+        assertEquals(RanksManager.MEMBER_RANK, rankEvent.getOldRank());
+        assertEquals(RanksManager.VISITOR_RANK, rankEvent.getNewRank());
     }
 
     /**
