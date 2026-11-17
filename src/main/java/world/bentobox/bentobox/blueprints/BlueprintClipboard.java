@@ -66,7 +66,10 @@ public class BlueprintClipboard {
     private @Nullable Vector origin;
     private BukkitTask copyTask;
     private int count;
-    private boolean copying;
+    /**
+     * True from the start of a copy until it finishes, so that a second copy cannot start meanwhile
+     */
+    private volatile boolean copying;
     private int index;
     private int lastPercentage;
     private final Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
@@ -149,6 +152,7 @@ public class BlueprintClipboard {
         BoundingBox entityBox = new BoundingBox(Math.floor(toCopy.getMinX()), Math.floor(toCopy.getMinY()),
                 Math.floor(toCopy.getMinZ()), Math.floor(toCopy.getMaxX()) + 1, Math.floor(toCopy.getMaxY()) + 1,
                 Math.floor(toCopy.getMaxZ()) + 1);
+        copying = true;
         Bukkit.getScheduler().runTaskAsynchronously(plugin,
                 () -> copyAsync(world, user, vectorsToCopy, entityBox, speed, copyAir, copyBiome, noWater));
         return true;
@@ -156,21 +160,22 @@ public class BlueprintClipboard {
 
     private void copyAsync(World world, User user, List<Vector> vectorsToCopy, BoundingBox entityBox, int speed,
             boolean copyAir, boolean copyBiome, boolean noWater) {
-        copying = false;
-        // FancyNpcs
-        // Add all the citizens for the area in one go. This is pretty fast.
-        npc.ifPresent(fancyNpcsHook -> bpEntities.putAll(fancyNpcsHook.getNpcsInArea(world, vectorsToCopy, origin)));
-        // ZNPCsPlus NPCs
-        znpc.ifPresent(znpCsPlusHook -> bpEntities.putAll(znpCsPlusHook.getNpcsInArea(world, vectorsToCopy, origin)));
+        try {
+            // FancyNpcs
+            // Add all the citizens for the area in one go. This is pretty fast.
+            npc.ifPresent(fancyNpcsHook -> bpEntities.putAll(fancyNpcsHook.getNpcsInArea(world, vectorsToCopy, origin)));
+            // ZNPCsPlus NPCs
+            znpc.ifPresent(znpCsPlusHook -> bpEntities.putAll(znpCsPlusHook.getNpcsInArea(world, vectorsToCopy, origin)));
+        } catch (RuntimeException e) {
+            // The copy will not run, so do not leave it marked as in progress
+            copying = false;
+            throw e;
+        }
 
         // Entities in the copy area by block position, found once on the main thread at the start of the copy
         Map<Vector, List<Entity>> entitiesByBlock = new HashMap<>();
         // Repeating copy task
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (copying) {
-                return;
-            }
-            copying = true;
             if (index == 0) {
                 entitiesByBlock.putAll(getEntitiesByBlock(world, entityBox));
             }
@@ -198,8 +203,8 @@ public class BlueprintClipboard {
                 BlueprintFill.compact(blueprint);
                 user.sendMessage("general.success");
                 user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+                copying = false;
             }
-            copying = false;
         }, 0L, 1L);
     }
 

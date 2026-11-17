@@ -359,6 +359,24 @@ class BlueprintClipboardTest extends CommonTestSetup {
     }
 
     /**
+     * A second copy cannot start while one is in progress, and can once it has finished.
+     */
+    @Test
+    void testCopyRefusedWhileCopying() {
+        plugin.getSettings().setPasteSpeed(4);
+        plugin.getSettings().setPasteTimeBudget(0);
+        Runnable task = startAirCopy();
+        task.run(); // One batch: the copy is still in progress
+        assertFalse(bc.copy(user, true, false, false));
+        verify(user).sendMessage("commands.admin.blueprint.mid-copy");
+        for (int i = 0; i < 6; i++) {
+            task.run();
+        }
+        verify(user).sendMessage("general.success");
+        assertTrue(bc.copy(user, true, false, false));
+    }
+
+    /**
      * Sets up a 3x3x3 copy with air of a box that is all air except one stone block, and returns the copy task.
      */
     private Runnable startAirCopy() {
