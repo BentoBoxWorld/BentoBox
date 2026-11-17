@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,21 +14,25 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -141,6 +146,28 @@ class IslandTeamLeaveCommandTest extends RanksManagerTestSetup {
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(im).removePlayer(island,uuid);
         verify(user).sendMessage("commands.island.team.leave.success");
+    }
+
+    /**
+     * The rank change event reports the rank the player had before leaving.
+     */
+    @Test
+    void testExecuteRankChangeEvent() {
+        when(s.isLeaveConfirmation()).thenReturn(false);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
+        Mockito.doAnswer(inv -> when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK)).when(im)
+                .removePlayer(island, uuid);
+
+        IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
+        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        IslandRankChangeEvent e = events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).findFirst().orElseThrow();
+        assertEquals(uuid, e.getPlayerUUID());
+        assertEquals(RanksManager.MEMBER_RANK, e.getOldRank());
+        assertEquals(RanksManager.VISITOR_RANK, e.getNewRank());
     }
 
     /**
