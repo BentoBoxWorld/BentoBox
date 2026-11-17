@@ -223,12 +223,14 @@ public class IslandWorldManager {
             }
             world.setDifficulty(diff);
 
-            // Handle nether and end difficulty levels
-            if (settings.isNetherGenerate()) {
-                this.getNetherWorld(world).setDifficulty(diff);
+            // Handle nether and end difficulty levels. A game mode may enable them without providing the world.
+            World netherWorld = this.getNetherWorld(world);
+            if (settings.isNetherGenerate() && netherWorld != null) {
+                netherWorld.setDifficulty(diff);
             }
-            if (settings.isEndGenerate()) {
-                this.getEndWorld(world).setDifficulty(diff);
+            World endWorld = this.getEndWorld(world);
+            if (settings.isEndGenerate() && endWorld != null) {
+                endWorld.setDifficulty(diff);
             }
             plugin.log("Added world " + friendlyName + " (" + world.getDifficulty() + ")");
         });
