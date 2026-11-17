@@ -23,9 +23,11 @@ import com.google.common.collect.ImmutableSet;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -35,6 +37,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent.TeamEventBuilder;
 import world.bentobox.bentobox.api.user.User;
@@ -321,6 +324,79 @@ class IslandTeamInviteAcceptCommandTest extends RanksManagerTestSetup {
         when(invite.getType()).thenReturn(Type.TRUST);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
+    }
+
+    /**
+     * Accepting a trust invite reports the rank the player had before being trusted.
+     */
+    @Test
+    void testAcceptTrustInviteRankChangeEvent() {
+        Island inviteIsland = mockInviteIsland(RanksManager.VISITOR_RANK);
+        Mockito.doAnswer(inv -> when(inviteIsland.getRank(any(User.class))).thenReturn(RanksManager.TRUSTED_RANK))
+                .when(inviteIsland).setRank(any(User.class), anyInt());
+        c.acceptTrustInvite(user, invite);
+        IslandRankChangeEvent e = getRankChangeEvent();
+        assertEquals(uuid, e.getPlayerUUID());
+        assertEquals(RanksManager.VISITOR_RANK, e.getOldRank());
+        assertEquals(RanksManager.TRUSTED_RANK, e.getNewRank());
+    }
+
+    /**
+     * Accepting a coop invite reports the rank the player had before becoming a coop.
+     */
+    @Test
+    void testAcceptCoopInviteRankChangeEvent() {
+        Island inviteIsland = mockInviteIsland(RanksManager.VISITOR_RANK);
+        Mockito.doAnswer(inv -> when(inviteIsland.getRank(any(User.class))).thenReturn(RanksManager.COOP_RANK))
+                .when(inviteIsland).setRank(any(User.class), anyInt());
+        c.acceptCoopInvite(user, invite);
+        IslandRankChangeEvent e = getRankChangeEvent();
+        assertEquals(uuid, e.getPlayerUUID());
+        assertEquals(RanksManager.VISITOR_RANK, e.getOldRank());
+        assertEquals(RanksManager.COOP_RANK, e.getNewRank());
+    }
+
+    /**
+     * Joining a team reports the rank the player had on the island before joining.
+     */
+    @Test
+    void testAcceptTeamInviteRankChangeEvent() {
+        when(itc.getWorld()).thenReturn(world);
+        when(iwm.getOnJoinCommands(any())).thenReturn(Collections.emptyList());
+        Island teamIsland = mockInviteIsland(RanksManager.COOP_RANK);
+        when(teamIsland.getOwner()).thenReturn(notUUID);
+        when(im.getIslands(any(), any(UUID.class))).thenReturn(Collections.emptyList());
+        when(im.homeTeleportAsync(any(World.class), any(Player.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+        Mockito.doAnswer(inv -> when(teamIsland.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK))
+                .when(im).setJoinTeam(teamIsland, uuid);
+        c.acceptTeamInvite(user, invite);
+        IslandRankChangeEvent e = getRankChangeEvent();
+        assertEquals(uuid, e.getPlayerUUID());
+        assertEquals(RanksManager.COOP_RANK, e.getOldRank());
+        assertEquals(RanksManager.MEMBER_RANK, e.getNewRank());
+    }
+
+    /**
+     * Makes the invite point at a new island on which the player has the given rank.
+     */
+    private Island mockInviteIsland(int rank) {
+        String islandId = UUID.randomUUID().toString();
+        when(invite.getIslandID()).thenReturn(islandId);
+        when(invite.getInviter()).thenReturn(notUUID);
+        Island inviteIsland = mock(Island.class);
+        when(inviteIsland.getMemberSet(anyInt(), anyBoolean())).thenReturn(ImmutableSet.of());
+        when(inviteIsland.getRank(any(User.class))).thenReturn(rank);
+        when(im.getIslandById(islandId)).thenReturn(Optional.of(inviteIsland));
+        when(im.getMaxMembers(any(), anyInt())).thenReturn(4);
+        return inviteIsland;
+    }
+
+    private IslandRankChangeEvent getRankChangeEvent() {
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        return events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).findFirst().orElseThrow();
     }
 
     /**
