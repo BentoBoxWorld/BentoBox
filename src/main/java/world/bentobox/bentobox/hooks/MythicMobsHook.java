@@ -85,6 +85,9 @@ public class MythicMobsHook extends Hook {
      * {@code MythicMobCustomBlock}) can pass {@code 0} to spawn immediately on
      * the current tick. When {@code delayTicks <= 0} the spawn runs inline and
      * the {@code onSpawn} callback is invoked synchronously.
+     * <p>
+     * If the record's display name is {@code null} or blank the mob keeps the
+     * display name from its MythicMobs config.
      *
      * @param mmr MythicMobRecord
      * @param spawnLocation location
@@ -101,7 +104,10 @@ public class MythicMobsHook extends Hook {
         return MythicBukkit.inst().getMobManager().getMythicMob(mmr.type()).map(mob -> {
             Runnable spawn = () -> {
                 ActiveMob activeMob = mob.spawn(BukkitAdapter.adapt(spawnLocation), mmr.level());
-                activeMob.setDisplayName(mmr.displayName());
+                // A blank name keeps the display name from the mob's MythicMobs config
+                if (mmr.displayName() != null && !mmr.displayName().isBlank()) {
+                    activeMob.setDisplayName(mmr.displayName());
+                }
                 activeMob.setPower(mmr.power());
                 activeMob.setStance(mmr.stance());
                 if (onSpawn != null) {

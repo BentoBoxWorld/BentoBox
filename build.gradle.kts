@@ -289,6 +289,7 @@ dependencies {
         exclude(group = "org.spigotmc", module = "spigot-api")
     }
     compileOnly("io.lumine:Mythic-Dist:$mythicDistVersion")
+    testImplementation("io.lumine:Mythic-Dist:$mythicDistVersion")
     compileOnly("org.mvplugins.multiverse.core:multiverse-core:$multiverseCore5Version")
     compileOnly("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
         exclude(group = "org.spigotmc", module = "spigot-api")
