@@ -114,7 +114,8 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-yourself");
             return false;
         }
-        if (getIslands().getPrimaryIsland(getWorld(), user.getUniqueId()).inTeam(targetUUID)) {
+        // Check the island the ban applies to, which may not be the player's primary island
+        if (island.inTeam(targetUUID)) {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false;
         }

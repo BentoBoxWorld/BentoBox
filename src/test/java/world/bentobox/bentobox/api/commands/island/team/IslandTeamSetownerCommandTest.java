@@ -17,11 +17,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -33,11 +35,13 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -292,6 +296,32 @@ class IslandTeamSetownerCommandTest extends RanksManagerTestSetup {
         assertTrue(its.canExecute(user, "", List.of("tastybento")));
         assertTrue(its.execute(user, "", List.of("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
+    }
+
+    /**
+     * The new owner's rank change event reports the rank they had before the transfer.
+     */
+    @Test
+    void testExecuteRankChangeEvent() {
+        when(im.inTeam(any(), any())).thenReturn(true);
+        UUID target = UUID.randomUUID();
+        mockedBukkit.when(() -> Bukkit.getPlayer(target)).thenReturn(null);
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(island.inTeam(any())).thenReturn(true);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(island.getRank(target)).thenReturn(RanksManager.SUB_OWNER_RANK);
+        Mockito.doAnswer(inv -> when(island.getRank(target)).thenReturn(RanksManager.OWNER_RANK)).when(im)
+                .setOwner(any(), eq(user), eq(target));
+        assertTrue(its.canExecute(user, "", List.of("tastybento")));
+        assertTrue(its.execute(user, "", List.of("tastybento")));
+
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        IslandRankChangeEvent e = events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).filter(ev -> target.equals(ev.getPlayerUUID())).findFirst()
+                .orElseThrow();
+        assertEquals(RanksManager.SUB_OWNER_RANK, e.getOldRank());
+        assertEquals(RanksManager.OWNER_RANK, e.getNewRank());
     }
 
     /**

@@ -141,11 +141,13 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         if (e.isCancelled()) {
             return false;
         }
+        // Get the new owner's rank before the transfer, for the rank change event
+        int targetOldRank = island.getRank(targetUUID2);
         getIslands().setOwner(getWorld(), user, targetUUID2);
         // Call the event for the new owner
         IslandEvent.builder().island(island).involvedPlayer(targetUUID2).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(User.getInstance(targetUUID2)), RanksManager.OWNER_RANK).build();
+                .rankChange(targetOldRank, RanksManager.OWNER_RANK).build();
         // Call the event for the previous owner
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK)

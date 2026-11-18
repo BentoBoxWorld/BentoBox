@@ -117,9 +117,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 user.sendMessage("commands.island.team.trust.is-full");
                 return;
             }
+            int oldRank = island.getRank(user);
             island.setRank(user, RanksManager.TRUSTED_RANK);
             IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
-                    .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
+                    .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(oldRank, RanksManager.TRUSTED_RANK)
                     .build();
             if (inviter.isOnline()) {
                 inviter.sendMessage("commands.island.team.trust.success", TextVariables.NAME, user.getName(),
@@ -146,9 +147,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 user.sendMessage("commands.island.team.coop.is-full");
                 return;
             }
+            int oldRank = island.getRank(user);
             island.setRank(user, RanksManager.COOP_RANK);
             IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
-                    .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(user), RanksManager.COOP_RANK)
+                    .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(oldRank, RanksManager.COOP_RANK)
                     .build();
             if (inviter.isOnline()) {
                 inviter.sendMessage("commands.island.team.coop.success", TextVariables.NAME, user.getName(),
@@ -177,6 +179,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }
+        // Get the player's rank on the team island before it changes, for the rank change event
+        int oldRank = teamIsland.getRank(user);
         boolean disallowTeamMemberIslands = getIWM().getWorldSettings(getWorld()).isDisallowTeamMemberIslands();
         if (disallowTeamMemberIslands) {
             // Remove the player's other islands
@@ -222,7 +226,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         TeamEvent.builder().island(teamIsland).reason(TeamEvent.Reason.JOINED).involvedPlayer(user.getUniqueId())
                 .build();
         IslandEvent.builder().island(teamIsland).involvedPlayer(user.getUniqueId()).admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(teamIsland.getRank(user), RanksManager.MEMBER_RANK)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(oldRank, RanksManager.MEMBER_RANK)
                 .build();
     }
 

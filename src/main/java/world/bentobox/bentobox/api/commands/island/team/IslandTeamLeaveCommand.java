@@ -88,6 +88,8 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME,
                     user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
+        // Get the player's rank before they are removed, for the rank change event
+        int oldRank = island.getRank(user);
         getIslands().removePlayer(island, user.getUniqueId());
         // Clean the player
         getPlayers().cleanLeavingPlayer(getWorld(), user, false, island);
@@ -107,7 +109,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         }
         user.sendMessage("commands.island.team.leave.success");
         IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(oldRank, RanksManager.VISITOR_RANK)
                 .build();
         return true;
     }

@@ -131,6 +131,8 @@ public class AdminTeamKickCommand extends CompositeCommand {
         Objects.requireNonNull(targetUUID);
         User target = User.getInstance(targetUUID);
         target.sendMessage("commands.admin.team.kick.admin-kicked");
+        // Get the target's rank before they are removed, for the rank change event
+        int oldRank = island.getRank(targetUUID);
         getIslands().removePlayer(island, targetUUID);
         user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]",
                 getPlayers().getName(island.getOwner()));
@@ -138,7 +140,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(targetUUID).admin(true).build();
         IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
                 .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(target), RanksManager.VISITOR_RANK).build();
+                .rankChange(oldRank, RanksManager.VISITOR_RANK).build();
         return true;
     }
 

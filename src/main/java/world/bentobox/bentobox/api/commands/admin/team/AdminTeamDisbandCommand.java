@@ -97,11 +97,13 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             mUser.sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
+                // Get the member's rank before they are removed, for the rank change event
+                int oldRank = island.getRank(m);
                 getIslands().removePlayer(island, m);
                 TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(m).admin(true).build();
-                IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                IslandEvent.builder().island(island).involvedPlayer(m).admin(true)
                         .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK).build();
+                        .rankChange(oldRank, RanksManager.VISITOR_RANK).build();
             }
         });
         user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.getFirst());

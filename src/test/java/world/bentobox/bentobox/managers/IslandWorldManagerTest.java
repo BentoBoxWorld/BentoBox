@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -195,6 +196,32 @@ class IslandWorldManagerTest extends CommonTestSetup {
         when(localGm.getOverWorld()).thenReturn(testWorld);
 
         testIwm.addGameMode(localGm);
+    }
+
+    /**
+     * A game mode that enables the nether and end but provides no worlds for them does not break
+     * setting the difficulty, and the provided worlds still get it.
+     */
+    @Test
+    void testAddGameModeNetherEndEnabledWithoutWorlds() {
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        when(sch.runTask(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return null;
+        });
+        mockedBukkit.when(Bukkit::getScheduler).thenReturn(sch);
+        GameModeAddon localGm = mock(GameModeAddon.class);
+        WorldSettings localWs = mock(WorldSettings.class);
+        when(localWs.getFriendlyName()).thenReturn("friendly2");
+        when(localWs.getDifficulty()).thenReturn(Difficulty.HARD);
+        when(localWs.isNetherGenerate()).thenReturn(true);
+        when(localWs.isEndGenerate()).thenReturn(true);
+        when(localGm.getWorldSettings()).thenReturn(localWs);
+        when(localGm.getOverWorld()).thenReturn(testWorld);
+
+        testIwm.addGameMode(localGm);
+
+        verify(testWorld).setDifficulty(Difficulty.HARD);
     }
 
     /**

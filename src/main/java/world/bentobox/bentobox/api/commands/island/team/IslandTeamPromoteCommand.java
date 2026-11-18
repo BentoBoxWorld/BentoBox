@@ -166,7 +166,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
                 user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
-                .involvedPlayer(user.getUniqueId())
+                .involvedPlayer(target.getUniqueId())
                 .admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE)
                 .rankChange(currentRank, nextRank)
@@ -186,7 +186,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
                 user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
-                .involvedPlayer(user.getUniqueId())
+                .involvedPlayer(target.getUniqueId())
                 .admin(false)
                 .reason(IslandEvent.Reason.RANK_CHANGE)
                 .rankChange(currentRank, prevRank)

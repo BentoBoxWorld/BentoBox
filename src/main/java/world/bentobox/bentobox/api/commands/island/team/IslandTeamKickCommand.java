@@ -112,14 +112,16 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 getAddon().getDescription().getName(), TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME,
                 user.getDisplayName());
 
+        // Get the target's rank before they are removed, for the rank change event
+        int oldRank = oldIsland.getRank(targetUUID);
         getIslands().removePlayer(oldIsland, targetUUID);
         // Clean the target player
         getPlayers().cleanLeavingPlayer(getWorld(), target, true, oldIsland);
 
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName(),
                 TextVariables.DISPLAY_NAME, target.getDisplayName());
-        IslandEvent.builder().island(oldIsland).involvedPlayer(user.getUniqueId()).admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(oldIsland.getRank(user), RanksManager.VISITOR_RANK)
+        IslandEvent.builder().island(oldIsland).involvedPlayer(targetUUID).admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(oldRank, RanksManager.VISITOR_RANK)
                 .build();
 
         // Add cooldown for this player and target

@@ -40,6 +40,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
@@ -202,6 +203,22 @@ class IslandBanCommandTest extends RanksManagerTestSetup {
         when(pm.getUUID(anyString())).thenReturn(teamMate);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid, teamMate));
         when(island.inTeam(teamMate)).thenReturn(true);
+        assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
+        verify(user).sendMessage("commands.island.ban.cannot-ban-member");
+    }
+
+    /**
+     * A member of the island being banned from cannot be banned, even if they are not in the
+     * team of the banning player's primary island.
+     */
+    @Test
+    void testBanTeamMateOfNonPrimaryIsland() {
+        UUID teamMate = UUID.randomUUID();
+        when(pm.getUUID(anyString())).thenReturn(teamMate);
+        when(island.inTeam(teamMate)).thenReturn(true);
+        Island primary = mock(Island.class);
+        when(primary.inTeam(teamMate)).thenReturn(false);
+        when(im.getPrimaryIsland(any(), any())).thenReturn(primary);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban-member");
     }

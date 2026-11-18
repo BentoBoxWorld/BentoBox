@@ -140,11 +140,11 @@ public class PlaceBlocksListener extends FlagListener
                     e.getMaterial() == Enums.getIfPresent(Material.class, "COPPER_CHEST").or(Material.CHEST) ||
                     e.getMaterial() == Material.TRAPPED_CHEST)
             {
-                this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
+                this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
             }
             else if (Tag.ITEMS_BOATS.isTagged(e.getMaterial()))
             {
-                this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.BOAT);
+                this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BOAT);
             }
         }
         }

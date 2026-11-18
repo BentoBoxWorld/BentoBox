@@ -17,16 +17,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.RanksManagerTestSetup;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.TestWorldSettings;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -249,6 +253,47 @@ class IslandTeamPromoteCommandTest extends RanksManagerTestSetup {
         verify(user).sendMessage("commands.island.team.promote.success", TextVariables.NAME, "target",
                 TextVariables.RANK, "", TextVariables.DISPLAY_NAME, "Target");
 
+    }
+
+    /**
+     * The promote rank change event is about the promoted player.
+     */
+    @Test
+    void testExecutePromoteRankChangeEvent() {
+        UUID targetUUID = UUID.randomUUID();
+        when(target.getUniqueId()).thenReturn(targetUUID);
+        when(island.getRank(target)).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankUpValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.SUB_OWNER_RANK);
+        ipc.canExecute(user, "promote", List.of("target"));
+        assertTrue(ipc.execute(user, "promote", List.of("target")));
+        IslandRankChangeEvent e = getRankChangeEvent();
+        assertEquals(targetUUID, e.getPlayerUUID());
+        assertEquals(RanksManager.MEMBER_RANK, e.getOldRank());
+        assertEquals(RanksManager.SUB_OWNER_RANK, e.getNewRank());
+    }
+
+    /**
+     * The demote rank change event is about the demoted player.
+     */
+    @Test
+    void testExecuteDemoteRankChangeEvent() {
+        UUID targetUUID = UUID.randomUUID();
+        when(target.getUniqueId()).thenReturn(targetUUID);
+        when(island.getRank(target)).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(rm.getRankDownValue(RanksManager.SUB_OWNER_RANK)).thenReturn(RanksManager.MEMBER_RANK);
+        idc.canExecute(user, "demote", List.of("target"));
+        assertTrue(idc.execute(user, "demote", List.of("target")));
+        IslandRankChangeEvent e = getRankChangeEvent();
+        assertEquals(targetUUID, e.getPlayerUUID());
+        assertEquals(RanksManager.SUB_OWNER_RANK, e.getOldRank());
+        assertEquals(RanksManager.MEMBER_RANK, e.getNewRank());
+    }
+
+    private IslandRankChangeEvent getRankChangeEvent() {
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        return events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).findFirst().orElseThrow();
     }
 
     /**
