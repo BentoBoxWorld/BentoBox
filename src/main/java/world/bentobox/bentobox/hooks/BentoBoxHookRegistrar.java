@@ -29,7 +29,13 @@ public class BentoBoxHookRegistrar {
      */
     public void registerEarlyHooks() {
         hooksManager.registerHook(new MultipaperHook());
-        hooksManager.registerHook(new VaultHook());
+        // Only hook Vault now if an economy is already registered. Otherwise an addon may provide one
+        // during its onEnable (e.g. InvSwitcher), so defer to registerVaultHookIfNeeded() rather than
+        // logging a misleading "no plugin supporting economy" error that is resolved seconds later.
+        VaultHook vaultHook = new VaultHook();
+        if (vaultHook.isEconomyRegistered()) {
+            hooksManager.registerHook(vaultHook);
+        }
         hooksManager.registerHook(new FancyNpcsHook());
         hooksManager.registerHook(new ZNPCsPlusHook());
         hooksManager.registerHook(new MythicMobsHook());
@@ -39,12 +45,11 @@ public class BentoBoxHookRegistrar {
     /**
      * Re-attempts the Vault economy hook after addons have been enabled.
      * <p>
-     * BentoBox hooks Vault during {@link #registerEarlyHooks()}, before addons are enabled. An addon
-     * may register a Vault economy provider in its own {@code onEnable()} (e.g. InvSwitcher, which
-     * provides per-world balances), after that early attempt already failed for lack of any economy.
-     * A failed hook is discarded by {@link HooksManager}, so {@link BentoBox#getVault()} would stay
-     * empty even though an economy now exists. This gives the now-present economy a chance to be
-     * picked up. No-op if Vault is already hooked.
+     * {@link #registerEarlyHooks()} only hooks Vault if an economy provider is already registered.
+     * An addon may register a Vault economy provider in its own {@code onEnable()} (e.g. InvSwitcher,
+     * which provides per-world balances), so the hook is deferred to here, after addons are enabled.
+     * If Vault is installed and there is still no economy, this is where the failure is reported.
+     * No-op if Vault is already hooked.
      */
     public void registerVaultHookIfNeeded() {
         if (plugin.getVault().isEmpty()) {
