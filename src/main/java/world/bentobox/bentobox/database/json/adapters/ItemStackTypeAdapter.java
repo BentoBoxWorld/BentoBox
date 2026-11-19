@@ -38,14 +38,23 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
             value = value.clone();
             value.setAmount(MAX_AMOUNT);
         } else if (value.getAmount() < 1) {
-            BentoBox.getInstance().logWarning("ItemStack " + value.getType() + " has quantity " + value.getAmount()
-                    + " which is less than 1. Clamping to 1.");
+            // Bukkit uses AIR with amount 0 as its canonical empty-stack sentinel. It is
+            // valid application state, not malformed item data, so normalizing it for
+            // YAML must not emit an operational warning on every database save.
+            if (isUnexpectedLowAmount(value.getType(), value.getAmount())) {
+                BentoBox.getInstance().logWarning("ItemStack " + value.getType() + " has quantity " + value.getAmount()
+                        + " which is less than 1. Clamping to 1.");
+            }
             value = value.clone();
             value.setAmount(1);
         }
         YamlConfiguration c = new YamlConfiguration();
         c.set("is", value);
         out.value(c.saveToString());
+    }
+
+    static boolean isUnexpectedLowAmount(Material type, int amount) {
+        return amount < 1 && type != Material.AIR && type != Material.CAVE_AIR && type != Material.VOID_AIR;
     }
 
     @Override
@@ -56,24 +65,43 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
         }
         YamlConfiguration c = new YamlConfiguration();
         String n = reader.nextString();
-        // Verify material type because yaml loading errors of unknown materials cannot be trapped by try clause.
-        if (n.contains("type:")) {
-            String type = n.substring(n.indexOf("type:") + 6);
-            type = type.substring(0, type.indexOf('\n'));
-            Material m = Material.matchMaterial(type);            
-            if (m == null) {
-                BentoBox.getInstance().logWarning("Unknown material: " + type);
-                return new ItemStack(Material.AIR);
-            }
 
-        }
+        // 1. Primary deserialization: delegate directly to Bukkit/Paper's native YAML loader
+        // so modern 1.20.5+ / 1.21+ Data Components (which can contain nested `type:` keys
+        // such as `minecraft:attribute_modifiers`) are preserved without false-positive
+        // unknown-material rejections.
         try {
             c.loadFromString(n);
-            return c.getItemStack("is");
-        } catch (InvalidConfigurationException _) {
-            BentoBox.getInstance().logError("Cannot load ItemStack serialized as " + n);
-            return new ItemStack(Material.AIR);
+            ItemStack is = c.getItemStack("is");
+            if (is != null) {
+                return is;
+            }
+        } catch (InvalidConfigurationException | RuntimeException ignored) {
+            // Fall through to legacy material recovery
         }
+
+        // 2. Fallback: attempt best-effort material recovery if native deserialization failed
+        if (n.contains("type:")) {
+            try {
+                String type = n.substring(n.indexOf("type:") + 5);
+                int end = type.indexOf('\n');
+                if (end >= 0) {
+                    type = type.substring(0, end);
+                }
+                type = type.trim().replace("\"", "").replace("'", "");
+                Material m = Material.matchMaterial(type);
+                if (m != null) {
+                    return new ItemStack(m);
+                }
+            } catch (RuntimeException ignored) {
+                // Fall through to AIR sentinel
+            }
+        }
+
+        BentoBox.getInstance().logWarning(
+                "Cannot load ItemStack safely from data, falling back to AIR: "
+                        + (n.length() > 80 ? n.substring(0, 80) + "..." : n));
+        return new ItemStack(Material.AIR);
     }
 
 }
