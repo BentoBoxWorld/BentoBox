@@ -497,7 +497,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
     void testPasteBundleNotRegistered() {
         boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
         assertFalse(result);
-        verify(plugin).logError("Tried to paste 'default' but the bundle is not loaded!");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("there is no blueprint bundle called 'default'"));
     }
 
     @Test
@@ -509,7 +509,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
         assertFalse(result);
-        verify(plugin).logError("No blueprints loaded for bundle 'default'!");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("no blueprints are loaded"));
     }
 
     // -----------------------------------------------------------------------
@@ -745,7 +745,29 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         manager.paste(addon, island, BUNDLE_NAME, null, true);
         // Should log error about no default blueprint
-        verify(plugin).logError("Blueprint bundle has no normal world blueprint, using default");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("points at overworld blueprint 'nonexistent'"));
+    }
+
+    // -----------------------------------------------------------------------
+    // defaultBundleName (#1917)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testDefaultBundleNamePrefersDefault() {
+        assertEquals("default", BlueprintsManager.defaultBundleName(
+                Map.of("default", new BlueprintBundle(), "custom", new BlueprintBundle())));
+    }
+
+    @Test
+    void testDefaultBundleNameUsesOnlyBundleWhenNoDefault() {
+        assertEquals("custom", BlueprintsManager.defaultBundleName(Map.of("custom", new BlueprintBundle())));
+    }
+
+    @Test
+    void testDefaultBundleNameAmbiguousFallsBackToDefault() {
+        assertEquals("default", BlueprintsManager.defaultBundleName(Map.of()));
+        assertEquals("default", BlueprintsManager.defaultBundleName(
+                Map.of("a", new BlueprintBundle(), "b", new BlueprintBundle())));
     }
 
     @Test
@@ -758,7 +780,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         // No blueprints loaded
         manager.paste(addon, island, BUNDLE_NAME);
-        verify(plugin).logError("No blueprints loaded for bundle 'default'!");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("no blueprints are loaded"));
     }
 
     // -----------------------------------------------------------------------
