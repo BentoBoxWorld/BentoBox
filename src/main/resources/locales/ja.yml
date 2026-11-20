@@ -899,6 +899,8 @@ commands:
           name-rejected-your-invite: '[name]はあなたの島の招待を拒否!'
         cancel:
           description: あなたの島に参加する保留中の招待をキャンセル
+          success: '<aqua>[name]</aqua><green>への招待を取り消しました。</green>'
+          no-invite: '<red>[name]にはあなたの島への保留中の招待がありません。</red>'
       leave:
         cannot-leave: チームリーダーは去ることができない!最初にメンバーになるか、すべてのメンバーを蹴る。
         description: 島を残す

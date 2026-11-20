@@ -996,6 +996,8 @@ commands:
           name-rejected-your-invite: '<red>[name] menolak undangan pulau Anda!</red>'
         cancel:
           description: batalkan undangan yang tertunda untuk bergabung dengan pulau Anda
+          success: '<green>Undangan untuk </green><aqua>[name]</aqua><green> telah ditarik.</green>'
+          no-invite: '<red>[name] tidak memiliki undangan tertunda ke pulaumu.</red>'
       leave:
         cannot-leave: >-
           <red>Pemilik tidak bisa pergi! Jadilah anggota terlebih dahulu, atau</red>

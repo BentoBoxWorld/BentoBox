@@ -1028,6 +1028,8 @@ commands:
           name-rejected-your-invite: '<red>[name] a rejeté votre invitation sur l''île!</red>'
         cancel:
           description: annuler l'invitation en attente
+          success: '<green>Invitation envoyée à </green><aqua>[name]</aqua><green> annulée.</green>'
+          no-invite: '<red>[name] n''a aucune invitation en attente pour votre île.</red>'
       leave:
         cannot-leave: >-
           <red>Les propriétaires ne peuvent pas partir! Devenez d'abord un membre</red>

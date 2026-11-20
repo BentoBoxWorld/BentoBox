@@ -156,6 +156,18 @@ class IslandTeamCommandTest extends RanksManagerTestSetup {
     }
 
     /**
+     * Invites run out after the configured number of hours, and never when it is 0 (#11).
+     */
+    @Test
+    void testHasExpired() {
+        long hour = 3_600_000L;
+        long made = 1_000_000L;
+        assertFalse(IslandTeamCommand.hasExpired(made, 24, made + 23 * hour));
+        org.junit.jupiter.api.Assertions.assertTrue(IslandTeamCommand.hasExpired(made, 24, made + 25 * hour));
+        assertFalse(IslandTeamCommand.hasExpired(made, 0, made + 1000 * hour));
+    }
+
+    /**
      * Test method for
      * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand#isInvited(java.util.UUID)}.
      */

@@ -919,6 +919,8 @@ commands:
           you-rejected-invite: '<green>你拒绝了对方的邀请.</green>'
           name-rejected-your-invite: '<aqua>[name]</aqua><red>拒绝了你的邀请!</red>'
         cancel:
+          success: '<green>已撤回对</green><aqua>[name]</aqua><green>的邀请.</green>'
+          no-invite: '<aqua>[name]</aqua><red>没有尚未回应的岛屿邀请.</red>'
           description: 取消尚未得到回应的邀请
       leave:
         cannot-leave: '<red>岛主无法退出, 除非转让岛屿, 或踢出全部成员.</red>'

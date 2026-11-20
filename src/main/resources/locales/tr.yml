@@ -969,6 +969,8 @@ commands:
           you-rejected-invite: '<blue>Ada katılma istegini reddettin!</blue>'
           name-rejected-your-invite: '<light_purple>[name] </light_purple><dark_red>davetini reddetti!</dark_red>'
         cancel:
+          success: '<aqua>[name]</aqua><green> adlı oyuncuya gönderilen davet geri çekildi.</green>'
+          no-invite: '<red>[name] adlı oyuncunun adana bekleyen bir daveti yok.</red>'
           description: Adanıza davet ettiğin birisinin davetiyesini iptal ettin!
       leave:
         cannot-leave: '<dark_red>Ada sahibi cıkamaz! İlk önce adadan herkesi atması gerekir!</dark_red>'

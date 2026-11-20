@@ -967,6 +967,8 @@ commands:
           name-rejected-your-invite: '<red>[name] odmítnul tvou pozvánku!</red>'
         cancel:
           description: zrušit čekající pozvánku na tvůj ostrov
+          success: '<green>Pozvánka pro hráče </green><aqua>[name]</aqua><green> byla stažena.</green>'
+          no-invite: '<red>[name] nemá žádnou čekající pozvánku na tvůj ostrov.</red>'
       leave:
         cannot-leave: >-
           <red>Vlastník nemůže odejít! Nejdříve se staň členem, nebo vykopni</red>

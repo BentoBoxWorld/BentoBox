@@ -1025,6 +1025,8 @@ commands:
           name-rejected-your-invite: '<red>[name] elutasította a szigetre szóló meghívást!</red>'
         cancel:
           description: törölje a függőben lévő meghívást, hogy csatlakozzon a szigetéhez
+          success: '<green>A(z) </green><aqua>[name]</aqua><green> számára küldött meghívó visszavonva.</green>'
+          no-invite: '<red>[name] számára nincs függőben lévő meghívó a szigetedre.</red>'
       leave:
         cannot-leave: >-
           <red>A tulajdonosok nem távozhatnak! Legyél először tag, vagy rúgj ki</red>

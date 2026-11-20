@@ -1005,6 +1005,8 @@ commands:
           name-rejected-your-invite: '<red>[name] rechazó tu invitacion!</red>'
         cancel:
           description: Cancela la invitación pendiente para unirte a tu isla.
+          success: '<green>Invitación a </green><aqua>[name]</aqua><green> retirada.</green>'
+          no-invite: '<red>[name] no tiene ninguna invitación pendiente a tu isla.</red>'
       leave:
         cannot-leave: >-
           <red>Los propietarios no pueden irse! Conviértete en un miembro primero o</red>

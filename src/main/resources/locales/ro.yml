@@ -1015,6 +1015,8 @@ commands:
           name-rejected-your-invite: '<red>[name] a respins invitația dvs. la insulă!</red>'
         cancel:
           description: anulați invitația în așteptare pentru a vă alătura insulei
+          success: '<green>Invitația pentru </green><aqua>[name]</aqua><green> a fost retrasă.</green>'
+          no-invite: '<red>[name] nu are nicio invitație în așteptare pe insula ta.</red>'
       leave:
         cannot-leave: >-
           <red>Proprietarii nu pot pleca! Deveniți mai întâi membru sau dați cu</red>

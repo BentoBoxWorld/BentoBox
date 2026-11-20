@@ -919,6 +919,8 @@ commands:
           name-rejected-your-invite: '<red>[name] 이(가) 섬원 초대를 거절했습니다!</red>'
         cancel:
           description: 보류중인 초대를 취소하여 섬에 갈수 있습니다!
+          success: '<aqua>[name]</aqua><green>님에게 보낸 초대를 취소했습니다.</green>'
+          no-invite: '<red>[name]님에게는 당신의 섬으로의 대기 중인 초대가 없습니다.</red>'
       leave:
         cannot-leave: '<red>주인은 섬을 버리고 떠날수 없습니다! 섬원이 되거나 모든 섬원을 추방하세요!</red>'
         description: 섬을 떠납니다

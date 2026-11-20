@@ -204,6 +204,11 @@ island:
   # If this is true, then ones that are used up will not be shown in the island create menu.
   # Added since 2.3.0.
   hide-used-blueprints: false
+  # How long a team, trust or coop invite stays open, in hours.
+  # An invite that is not accepted or declined in this time is withdrawn automatically.
+  # Set to 0 for invites that never expire.
+  # Added since 3.23.8.
+  invite-expiry-hours: 24
   cooldown:
     time:
       # How long a player must wait until they can rejoin a team island after being kicked in minutes.

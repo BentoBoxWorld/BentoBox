@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -100,6 +101,7 @@ public class IslandTeamCommand extends CompositeCommand {
         kickCommand = new IslandTeamKickCommand(this);
         acceptCommand = new IslandTeamInviteAcceptCommand(this);
         rejectCommand = new IslandTeamInviteRejectCommand(this);
+        new IslandTeamUninviteCommand(this);
         if (RanksManager.getInstance().rankExists(RanksManager.COOP_RANK_REF)) {
             coopCommand = new IslandTeamCoopCommand(this);
             uncoopCommand = new IslandTeamUncoopCommand(this);
@@ -205,13 +207,45 @@ public class IslandTeamCommand extends CompositeCommand {
                     && !island.isDeleted() // Not deleted
                     && !island.isDeletable() // Not deletable
                     && island.getMemberSet().contains(invite.getInviter()) // the inviter is still a member of the island
-            ).orElse(false);
+            ).orElse(false) && !isExpired(invite);
             if (!valid) {
                 // Remove invite
                 handler.deleteObject(invite);
             }
         }
         return valid;
+    }
+
+    /**
+     * Whether an invite has been open for longer than the configured
+     * {@code island.invite-expiry-hours}. An invite stored before invites were
+     * timestamped is stamped now, so it gets one full expiry period from the
+     * first time it is looked at instead of lingering forever.
+     *
+     * @param invite the invite to check
+     * @return true if the invite has run out
+     */
+    private boolean isExpired(@NonNull TeamInvite invite) {
+        int hours = getSettings().getInviteExpiryHours();
+        if (hours <= 0) {
+            return false;
+        }
+        if (invite.getCreated() <= 0) {
+            invite.setCreated(System.currentTimeMillis());
+            handler.saveObjectAsync(invite);
+            return false;
+        }
+        return hasExpired(invite.getCreated(), hours, System.currentTimeMillis());
+    }
+
+    /**
+     * @param created when the invite was made, epoch milliseconds
+     * @param hours how long invites stay open; 0 or less means forever
+     * @param now the current time, epoch milliseconds
+     * @return true if an invite made at {@code created} has run out by {@code now}
+     */
+    static boolean hasExpired(long created, int hours, long now) {
+        return hours > 0 && now - created > TimeUnit.HOURS.toMillis(hours);
     }
 
     /**
