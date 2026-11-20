@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import io.papermc.paper.entity.TeleportFlag;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -677,6 +678,66 @@ class LockAndBanListenerTest extends CommonTestSetup {
         verify(notifier, never()).notify(any(), anyString());
         // User should not be teleported somewhere
         verify(im, never()).homeTeleportAsync(any(), eq(player));
+    }
+
+    /**
+     * A vehicle whose only rider is locked out is turned back with the rider still
+     * aboard, so no boat is left stranded on the locked island (#2958).
+     */
+    @Test
+    void testVehicleWithOnlyLockedOutRiderIsTurnedBack() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(true);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+
+        verify(vehicle).teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS);
+        verify(mockPlayer, never()).leaveVehicle();
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
+    }
+
+    /**
+     * If the server will not move the loaded vehicle, the rider is put back where
+     * they came from and the empty vehicle is brought out too, so it is recoverable.
+     */
+    @Test
+    void testVehicleTurnBackFallsBackToMovingRiderAndVehicleSeparately() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(false);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+
+        verify(mockPlayer).leaveVehicle();
+        verify(mockPlayer).teleport(outside);
+        verify(vehicle).teleport(outside);
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
+    }
+
+    /**
+     * A rider who is already inside an island they may not be on (it was locked
+     * around them) is sent home rather than shuffled within the island.
+     */
+    @Test
+    void testVehicleRiderAlreadyInsideLockedIslandIsSentHome() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, inside, inside2));
+
+        verify(mockPlayer).leaveVehicle();
+        verify(im).homeTeleportAsync(any(), eq(mockPlayer));
+        verify(vehicle, never()).teleport(any(Location.class), any(TeleportFlag[].class));
+    }
+
+    private Vehicle lockedOutRiderIn(Player rider) {
+        when(rider.getUniqueId()).thenReturn(uuid);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
+        Vehicle vehicle = mock(Vehicle.class);
+        List<Entity> passengers = new ArrayList<>();
+        passengers.add(rider);
+        when(vehicle.getPassengers()).thenReturn(passengers);
+        when(vehicle.getWorld()).thenReturn(world);
+        return vehicle;
     }
 
     @Test

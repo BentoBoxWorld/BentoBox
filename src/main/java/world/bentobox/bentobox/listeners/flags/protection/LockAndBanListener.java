@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -19,6 +22,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
+
+import io.papermc.paper.entity.TeleportFlag;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -106,6 +111,22 @@ public class LockAndBanListener extends FlagListener {
     }
 
     // Vehicle move check
+    /**
+     * Keeps locked-out and banned players from riding a vehicle onto an island.
+     *
+     * <p>{@link VehicleMoveEvent} cannot be cancelled, so the equivalent of
+     * cancelling a player's move is to put the vehicle back where it came from:
+     * <ul>
+     *   <li>If nobody aboard may enter, the whole vehicle is turned back with its
+     *       riders still in it. Nothing is left behind on territory the riders
+     *       cannot reach, and nobody is dropped into whatever the vehicle was
+     *       crossing (#2958).</li>
+     *   <li>If someone aboard may enter, the vehicle carries on and only the
+     *       riders who may not are taken off and sent home.</li>
+     *   <li>A rider who is already somewhere they may not be (the island was
+     *       locked around them) is sent home, as with walking players.</li>
+     * </ul>
+     */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent e) {
         // Ignore only vertical movement
@@ -117,20 +138,48 @@ public class LockAndBanListener extends FlagListener {
         // any further player passengers (the rare multi-player case).
         Optional<Island> island = Optional.empty();
         boolean islandResolved = false;
+        boolean someoneMayEnter = false;
+        List<Player> denied = new ArrayList<>();
         for (Entity passenger : e.getVehicle().getPassengers()) {
             if (passenger instanceof Player p) {
                 if (!islandResolved) {
                     island = getIslands().getProtectedIslandAt(e.getTo());
                     islandResolved = true;
                 }
-                if (!checkAndNotify(p, e.getTo(), island).isAllowed()) {
-                    p.leaveVehicle();
-                    p.teleport(e.getFrom());
-                    e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
-                    eject(p);
+                if (checkAndNotify(p, e.getTo(), island).isAllowed()) {
+                    someoneMayEnter = true;
+                } else {
+                    denied.add(p);
                 }
             }
         }
+        if (denied.isEmpty()) {
+            return;
+        }
+        Vehicle vehicle = e.getVehicle();
+        vehicle.getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+
+        // Turn the whole vehicle back when nobody aboard may enter and they all came
+        // from somewhere they are allowed to be.
+        if (!someoneMayEnter && denied.stream().allMatch(p -> check(p, e.getFrom()).isAllowed())) {
+            vehicle.setVelocity(new Vector(0, 0, 0));
+            if (vehicle.teleport(e.getFrom(), TeleportFlag.EntityState.RETAIN_PASSENGERS)) {
+                return;
+            }
+            // The server refused to move the loaded vehicle. Take the riders off and
+            // bring the empty vehicle back out so it can still be recovered.
+            denied.forEach(p -> {
+                p.leaveVehicle();
+                p.teleport(e.getFrom());
+            });
+            vehicle.teleport(e.getFrom());
+            return;
+        }
+        // Otherwise the vehicle carries on (or is already inside) without them.
+        denied.forEach(p -> {
+            p.leaveVehicle();
+            eject(p);
+        });
     }
 
     // Login check
