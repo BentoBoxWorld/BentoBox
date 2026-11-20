@@ -429,12 +429,15 @@ public abstract class FlagListener implements Listener {
     }
 
     /**
-     * Check if PVP is allowed here or not
+     * Check if PVP is allowed here or not. On an island, the island's PVP setting for
+     * this dimension decides. Where there is no island, the world setting
+     * {@link Flags#PVP_OUTSIDE_ISLANDS} decides.
      * @param location location where action is taking
      * @return true if PVP is allowed, false if not
      */
     protected boolean isPvpAllowed(Location location) {
-        return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld()))).orElse(false);
+        return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld())))
+                .orElseGet(() -> Flags.PVP_OUTSIDE_ISLANDS.isSetForWorld(location.getWorld()));
     }
 
     protected Flag getFlag(World w) {

@@ -1487,6 +1487,14 @@ protection:
       name: 이름표
       description: 사용가능 여부 설정
       hint: 이름표를 사용할 수 없습니다
+    PVP_OUTSIDE_ISLANDS:
+      name: 섬 밖 PVP
+      description: |-
+        <red>섬이 없는 곳에서의 PVP를</red>
+        <red>켜거나 끕니다.</red>
+
+        <green>섬 위에서는 항상 그 섬의</green>
+        <green>PVP 설정이 적용됩니다.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 범위 밖에서 생성되는 자연 생물
       description: |-

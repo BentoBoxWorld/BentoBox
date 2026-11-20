@@ -1595,6 +1595,14 @@ protection:
       name: Etiquetas de nombres
       description: Modificar uso
       hint: No uso de Etiquetas de nombres
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fuera de las islas
+      description: |-
+        <red>Activar/desactivar el PVP donde</red>
+        <red>no hay ninguna isla.</red>
+
+        <green>En una isla siempre se aplica</green>
+        <green>su propia configuración de PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 'Spawneo de criaturas naturales afuera del rango '
       description: |-

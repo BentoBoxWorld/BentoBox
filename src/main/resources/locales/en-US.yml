@@ -1557,6 +1557,14 @@ protection:
       name: Name tags
       description: Toggle use
       hint: Name tag interaction disabled
+    PVP_OUTSIDE_ISLANDS:
+      name: "PVP outside [prefix_islands]"
+      description: |-
+        <red>Enable/Disable PVP where</red>
+        <red>there is no [prefix_island].</red>
+
+        <green>On [prefix_an-island], its own PVP</green>
+        <green>setting always applies.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Natural creature spawning outside range
       description: |-

@@ -1603,6 +1603,14 @@ protection:
       name: Crachás
       description: Alternar uso
       hint: Interação com tag de nome desativada
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fora das ilhas
+      description: |-
+        <red>Ativar/desativar o PVP onde</red>
+        <red>não existe nenhuma ilha.</red>
+
+        <green>Numa ilha, aplica-se sempre a</green>
+        <green>definição de PVP da própria ilha.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Criatura natural surgindo fora do alcance
       description: |-

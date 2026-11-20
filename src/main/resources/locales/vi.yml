@@ -1572,6 +1572,14 @@ protection:
       name: Nhãn ghi tên
       description: Bật/Tắt sử dụng
       hint: Đã tắt tương tác với nhãn ghi tên
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP ngoài đảo
+      description: |-
+        <red>Bật/Tắt PVP ở nơi</red>
+        <red>không có đảo nào.</red>
+
+        <green>Trên một hòn đảo, thiết lập PVP</green>
+        <green>của chính đảo đó luôn được áp dụng.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Sinh quái tự nhiên ngoài đảo
       description: |-

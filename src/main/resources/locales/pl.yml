@@ -1581,6 +1581,14 @@ protection:
       name: Znaczniki
       description: Przełącz interakcje
       hint: Interakcja ze znacznikami jest wyłączona.
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP poza wyspami
+      description: |-
+        <red>Włącz/wyłącz PVP tam,</red>
+        <red>gdzie nie ma żadnej wyspy.</red>
+
+        <green>Na wyspie zawsze obowiązuje jej</green>
+        <green>własne ustawienie PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Naturalne spawnowanie poza zasięgiem wyspy
       description: |-

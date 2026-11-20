@@ -1619,6 +1619,14 @@ protection:
       name: Etichete de nume
       description: Comutați utilizarea
       hint: Interacțiunea etichetei de nume a fost dezactivată
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP în afara insulelor
+      description: |-
+        <red>Activează/dezactivează PVP acolo</red>
+        <red>unde nu există nicio insulă.</red>
+
+        <green>Pe o insulă se aplică întotdeauna</green>
+        <green>propria ei setare PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Creatură naturală care dă naștere în afara razei de acțiune
       description: >-

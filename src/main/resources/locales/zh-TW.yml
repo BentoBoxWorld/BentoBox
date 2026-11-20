@@ -1499,6 +1499,14 @@ protection:
       name: 命名牌
       description: 切換是否允許使用
       hint: 已停用命名牌互動
+    PVP_OUTSIDE_ISLANDS:
+      name: 島嶼外 PVP
+      description: |-
+        <red>啟用/停用沒有島嶼之處</red>
+        <red>的 PVP。</red>
+
+        <green>在島嶼上一律套用該島嶼</green>
+        <green>自己的 PVP 設定。</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 保護範圍外自然生成生物
       description: |-

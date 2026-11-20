@@ -1625,6 +1625,14 @@ protection:
       name: Namensschilder
       description: Umschalten der Nutzung
       hint: Namensschild-Interaktion deaktiviert
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP außerhalb von Inseln
+      description: |-
+        <red>PVP dort aktivieren/deaktivieren,</red>
+        <red>wo es keine Insel gibt.</red>
+
+        <green>Auf einer Insel gilt immer deren</green>
+        <green>eigene PVP-Einstellung.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Natürliche Spawns außerhalb des Schutzbereiches
       description: |-

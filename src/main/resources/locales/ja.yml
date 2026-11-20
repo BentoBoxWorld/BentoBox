@@ -1471,6 +1471,14 @@ protection:
       name: ネームタグ
       description: トグル使用
       hint: 名前タグの対話は無効です
+    PVP_OUTSIDE_ISLANDS:
+      name: 島の外でのPVP
+      description: |-
+        <red>島がない場所でのPVPを</red>
+        <red>有効/無効にします。</red>
+
+        <green>島の上では、常にその島の</green>
+        <green>PVP設定が適用されます。</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 範囲外に産卵する自然生物
       description: |-

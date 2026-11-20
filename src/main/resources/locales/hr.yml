@@ -1589,6 +1589,14 @@ protection:
       name: Oznake s imenima
       description: Uključi/isključi upotrebu
       hint: Interakcija s oznakom imena onemogućena
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP izvan otoka
+      description: |-
+        <red>Omogući/onemogući PVP tamo</red>
+        <red>gdje nema otoka.</red>
+
+        <green>Na otoku uvijek vrijedi njegova</green>
+        <green>vlastita PVP postavka.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Prirodno stvorenje koje se mrijesti izvan dometa
       description: |-

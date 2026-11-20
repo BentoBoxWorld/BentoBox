@@ -1467,6 +1467,11 @@ protection:
       name: '<green><bold>使用命名牌</bold></green>'
       description: 允許/禁止 使用命名牌
       hint: '<red>已被禁止使用命名牌</red>'
+    PVP_OUTSIDE_ISLANDS:
+      name: '<green><bold>島外 PVP</bold></green>'
+      description: |-
+        <gray>允許/禁止 在沒有島嶼的地方 PVP</gray>
+        <red>在島嶼上一律以該島嶼自己的 PVP 設定為準</red>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: '<green><bold>島外自然生成生物</bold></green>'
       description: |-

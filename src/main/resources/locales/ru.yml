@@ -1641,6 +1641,14 @@ protection:
       name: Бирка
       description: Переключает использование бирки
       hint: Использование бирки запрещено!
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP за пределами островов
+      description: |-
+        <red>Включить/выключить PVP там,</red>
+        <red>где нет острова.</red>
+
+        <green>На острове всегда действует</green>
+        <green>его собственная настройка PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Пассивный спавн за пределами острова
       description: |-
