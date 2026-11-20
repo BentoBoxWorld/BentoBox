@@ -48,4 +48,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         # Compile/test on the Java 25 toolchain (discovered from the JDK 25 install via
         # JAVA_HOME_25_X64); the daemon and Sonar scanner stay on the Java 21 JAVA_HOME.
-        run: ./gradlew build test jacocoTestReport sonar --info -Porg.gradle.java.installations.fromEnv=JAVA_HOME_25_X64
+        # GitHub gives no secrets to pull requests from forks, so SONAR_TOKEN is empty there
+        # and the upload can only fail. Build and test those without the :sonar task.
+        run: |
+          if [ -n "$SONAR_TOKEN" ]; then
+            ./gradlew build test jacocoTestReport sonar --info -Porg.gradle.java.installations.fromEnv=JAVA_HOME_25_X64
+          else
+            echo "::notice::SONAR_TOKEN is not available (pull request from a fork); skipping SonarCloud analysis."
+            ./gradlew build test jacocoTestReport --info -Porg.gradle.java.installations.fromEnv=JAVA_HOME_25_X64
+          fi
