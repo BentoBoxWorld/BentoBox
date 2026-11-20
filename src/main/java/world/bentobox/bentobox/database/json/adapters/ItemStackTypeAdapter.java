@@ -1,11 +1,14 @@
 package world.bentobox.bentobox.database.json.adapters;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -24,6 +27,8 @@ import world.bentobox.bentobox.BentoBox;
 public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
 
     private static final int MAX_AMOUNT = 99;
+    private static final Pattern ITEM_MARKER = Pattern.compile("^(\\s*)==: org\\.bukkit\\.inventory\\.ItemStack\\s*$");
+    private static final Pattern ITEM_KEY = Pattern.compile("^(\\s*)(?:id|type):\\s*(\\S.*?)\\s*$");
 
     @Override
     public void write(JsonWriter out, ItemStack value) throws IOException {
@@ -38,8 +43,10 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
             value = value.clone();
             value.setAmount(MAX_AMOUNT);
         } else if (value.getAmount() < 1) {
-            BentoBox.getInstance().logWarning("ItemStack " + value.getType() + " has quantity " + value.getAmount()
-                    + " which is less than 1. Clamping to 1.");
+            if (isUnexpectedLowAmount(value.getType(), value.getAmount())) {
+                BentoBox.getInstance().logWarning("ItemStack " + value.getType() + " has quantity " + value.getAmount()
+                        + " which is less than 1. Clamping to 1.");
+            }
             value = value.clone();
             value.setAmount(1);
         }
@@ -48,32 +55,75 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
         out.value(c.saveToString());
     }
 
+    /**
+     * Bukkit uses an AIR stack with amount 0 for an empty slot. That is normal state, not bad
+     * item data, so only a real item with an amount below 1 is worth a warning.
+     */
+    static boolean isUnexpectedLowAmount(Material type, int amount) {
+        return amount < 1 && !type.isAir();
+    }
+
     @Override
     public ItemStack read(JsonReader reader) throws IOException {
         if (reader.peek() == JsonToken.NULL) {
             reader.nextNull();
             return null;
         }
-        YamlConfiguration c = new YamlConfiguration();
         String n = reader.nextString();
-        // Verify material type because yaml loading errors of unknown materials cannot be trapped by try clause.
-        if (n.contains("type:")) {
-            String type = n.substring(n.indexOf("type:") + 6);
-            type = type.substring(0, type.indexOf('\n'));
-            Material m = Material.matchMaterial(type);            
-            if (m == null) {
-                BentoBox.getInstance().logWarning("Unknown material: " + type);
-                return new ItemStack(Material.AIR);
-            }
-
-        }
+        // Let Bukkit/Paper load the item first. Modern Paper stores items as id/count/components,
+        // and component data (attribute modifiers, custom names, ...) can itself contain "type:",
+        // so the stored text must not be scanned for a material before this. Bukkit logs and
+        // returns null for an item it cannot build, e.g. one with a material this server lacks.
+        String cause = "";
         try {
+            YamlConfiguration c = new YamlConfiguration();
             c.loadFromString(n);
-            return c.getItemStack("is");
-        } catch (InvalidConfigurationException _) {
-            BentoBox.getInstance().logError("Cannot load ItemStack serialized as " + n);
-            return new ItemStack(Material.AIR);
+            ItemStack is = c.getItemStack("is");
+            if (is != null) {
+                return is;
+            }
+        } catch (InvalidConfigurationException | RuntimeException e) {
+            cause = " (" + e.getMessage() + ")";
         }
+        // Fall back to keeping at least the material
+        Material m = recoverMaterial(n);
+        if (m != null) {
+            BentoBox.getInstance().logWarning("Could not fully load ItemStack" + cause + ". Recovered it as a plain " + m
+                    + " without its amount or item data. Stored data: " + n);
+            return new ItemStack(m);
+        }
+        BentoBox.getInstance().logError("Cannot load ItemStack" + cause + ". Replacing it with AIR. Stored data: " + n);
+        return new ItemStack(Material.AIR);
+    }
+
+    /**
+     * Finds the material of a stored item from its item-level {@code id:} (modern format) or
+     * {@code type:} (legacy format) key. Only keys at the same indent as the item's
+     * {@code ==: org.bukkit.inventory.ItemStack} marker count, so a nested {@code type:} inside
+     * item data, such as a firework effect, is never mistaken for the material.
+     * @param yaml the stored YAML
+     * @return the material, or null if none is found or this server does not know it
+     */
+    static @Nullable Material recoverMaterial(String yaml) {
+        String[] lines = yaml.split("\\R");
+        String indent = null;
+        for (String line : lines) {
+            Matcher marker = ITEM_MARKER.matcher(line);
+            if (marker.matches()) {
+                indent = marker.group(1);
+                break;
+            }
+        }
+        if (indent == null) {
+            return null;
+        }
+        for (String line : lines) {
+            Matcher key = ITEM_KEY.matcher(line);
+            if (key.matches() && key.group(1).equals(indent)) {
+                return Material.matchMaterial(key.group(2).replace("\"", "").replace("'", "").trim());
+            }
+        }
+        return null;
     }
 
 }
