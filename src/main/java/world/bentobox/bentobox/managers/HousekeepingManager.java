@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -18,6 +22,7 @@ import org.bukkit.scheduler.BukkitTask;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
+import world.bentobox.bentobox.util.Pair;
 
 /**
  * Periodic housekeeping: automatically runs the region-files purge against
@@ -55,6 +60,10 @@ public class HousekeepingManager {
     private static final String LAST_DELETED_RUN_KEY = "lastDeletedRunMillis";
     private static final long CHECK_INTERVAL_TICKS = 20L * 60L * 60L; // 1 hour
     private static final long STARTUP_DELAY_TICKS  = 20L * 60L * 5L;  // 5 minutes
+    /** How long an async sweep waits for one main-thread step before giving up. */
+    private static final long MAIN_THREAD_TIMEOUT_MINUTES = 2L;
+    /** Regions whose loaded chunks are evicted per tick; each is up to 1024 chunks per dimension. */
+    private static final int EVICT_REGIONS_PER_TICK = 2;
 
     private final BentoBox plugin;
     private final File stateFile;
@@ -181,16 +190,14 @@ public class HousekeepingManager {
         inProgress = true;
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                // Save worlds once per cycle — both sweeps see a consistent
-                // on-disk snapshot.
-                if (!saveAllWorlds()) {
-                    return;
-                }
+                // Worlds already saved during this cycle, so a world shared by
+                // both sweeps is only ever saved once.
+                Set<World> savedWorlds = new HashSet<>();
                 if (runAge) {
-                    executeAgeCycle();
+                    executeAgeCycle(savedWorlds);
                 }
                 if (runDeleted) {
-                    executeDeletedCycle();
+                    executeDeletedCycle(savedWorlds);
                 }
             } catch (Exception e) {
                 plugin.logError("Housekeeping: cycle failed: " + e.getMessage());
@@ -202,38 +209,123 @@ public class HousekeepingManager {
     }
 
     // ---------------------------------------------------------------
-    // Cycle execution
+    // Main-thread work, spread across ticks (#3018)
     // ---------------------------------------------------------------
 
-    private boolean saveAllWorlds() {
-        plugin.log("Housekeeping: saving all worlds before purge...");
-        CompletableFuture<Void> saved = new CompletableFuture<>();
+    /**
+     * Runs {@code task} on the main server thread and blocks the calling
+     * (async) thread until it has finished. Each call lands in its own tick,
+     * which is what lets the callers below spread their work out instead of
+     * stacking it into a single heavy tick.
+     *
+     * @param task work that must run on the main thread
+     * @param what short description used in error messages
+     * @return {@code true} if the task ran to completion
+     */
+    private boolean runOnMainThreadAndWait(Runnable task, String what) {
+        CompletableFuture<Void> done = new CompletableFuture<>();
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
-                Bukkit.getWorlds().forEach(World::save);
-                saved.complete(null);
+                task.run();
+                done.complete(null);
             } catch (Exception e) {
-                saved.completeExceptionally(e);
+                done.completeExceptionally(e);
             }
         });
         try {
-            saved.get(2, TimeUnit.MINUTES);
-            plugin.log("Housekeeping: world save complete");
+            done.get(MAIN_THREAD_TIMEOUT_MINUTES, TimeUnit.MINUTES);
             return true;
         } catch (TimeoutException _) {
-            plugin.logError("Housekeeping: world save timed out after 2 minutes, aborting cycle");
+            plugin.logError("Housekeeping: " + what + " timed out after " + MAIN_THREAD_TIMEOUT_MINUTES
+                    + " minutes");
             return false;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            plugin.logError("Housekeeping: world save interrupted: " + e.getMessage());
+            plugin.logError("Housekeeping: " + what + " interrupted: " + e.getMessage());
             return false;
         } catch (ExecutionException e) {
-            plugin.logError("Housekeeping: world save failed: " + e.getCause().getMessage());
+            plugin.logError("Housekeeping: " + what + " failed: " + e.getCause().getMessage());
             return false;
         }
     }
 
-    private void executeAgeCycle() {
+    /**
+     * The worlds a sweep of this game mode can touch: its overworld plus the
+     * nether and end when the game mode owns island versions of them. This
+     * mirrors the dimension gating in {@link PurgeRegionsService}.
+     */
+    private List<World> gameModeWorlds(World overworld) {
+        List<World> worlds = new ArrayList<>();
+        worlds.add(overworld);
+        IslandWorldManager iwm = plugin.getIWM();
+        if (iwm.isNetherGenerate(overworld) && iwm.isNetherIslands(overworld)) {
+            World nether = iwm.getNetherWorld(overworld);
+            if (nether != null) {
+                worlds.add(nether);
+            }
+        }
+        if (iwm.isEndGenerate(overworld) && iwm.isEndIslands(overworld)) {
+            World end = iwm.getEndWorld(overworld);
+            if (end != null) {
+                worlds.add(end);
+            }
+        }
+        return worlds;
+    }
+
+    /**
+     * Saves the given worlds so the sweep sees their current on-disk state.
+     *
+     * <p>{@code World.save()} has to run on the main thread and is the most
+     * expensive thing housekeeping does there, so it is kept to the minimum:
+     * only the worlds a sweep is about to act on are saved (never every world
+     * on the server), each at most once per cycle, and one world per tick.
+     *
+     * @param worlds worlds to save
+     * @param savedWorlds worlds already saved during this cycle; updated
+     * @return {@code false} if any save failed, in which case the caller must
+     *         not go on to purge
+     */
+    private boolean saveWorlds(List<World> worlds, Set<World> savedWorlds) {
+        for (World w : worlds) {
+            if (savedWorlds.contains(w)) {
+                continue;
+            }
+            plugin.log("Housekeeping: saving world '" + w.getName() + "' before purge...");
+            if (!runOnMainThreadAndWait(w::save, "save of world '" + w.getName() + "'")) {
+                plugin.logError("Housekeeping: could not save world '" + w.getName() + "', skipping its purge");
+                return false;
+            }
+            savedWorlds.add(w);
+        }
+        return true;
+    }
+
+    /**
+     * Evicts the loaded chunks of the scan's target regions a few regions per
+     * tick, so Paper's autosave cannot re-flush them over the region files
+     * that are about to be deleted. A large sweep therefore costs many light
+     * ticks rather than one heavy one.
+     */
+    private void evictChunksInBatches(PurgeScanResult scan) {
+        List<Pair<Integer, Integer>> regions = new ArrayList<>(scan.deletableRegions().keySet());
+        AtomicInteger evicted = new AtomicInteger();
+        for (int i = 0; i < regions.size(); i += EVICT_REGIONS_PER_TICK) {
+            List<Pair<Integer, Integer>> batch = regions.subList(i,
+                    Math.min(i + EVICT_REGIONS_PER_TICK, regions.size()));
+            runOnMainThreadAndWait(
+                    () -> evicted.addAndGet(plugin.getPurgeRegionsService().evictChunks(scan, batch)),
+                    "chunk eviction");
+        }
+        plugin.log("Purge deleted: evicted " + evicted.get() + " loaded chunk(s) from "
+                + regions.size() + " target region(s)");
+    }
+
+    // ---------------------------------------------------------------
+    // Cycle execution
+    // ---------------------------------------------------------------
+
+    private void executeAgeCycle(Set<World> savedWorlds) {
         long startMillis = System.currentTimeMillis();
         int ageDays = plugin.getSettings().getHousekeepingRegionAgeDays();
         if (ageDays <= 0) {
@@ -255,6 +347,12 @@ public class HousekeepingManager {
             totalWorlds++;
             plugin.log("Housekeeping age sweep: scanning '" + gm.getDescription().getName()
                     + "' world '" + overworld.getName() + "'");
+            // The age scan reads region-file timestamps, so in-memory chunk
+            // changes have to be on disk before it looks.
+            if (!saveWorlds(gameModeWorlds(overworld), savedWorlds)) {
+                hasErrors = true;
+                continue;
+            }
             PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
             int purged = runDeleteIfNonEmpty(scan, overworld, "age sweep");
             if (purged < 0) {
@@ -275,7 +373,7 @@ public class HousekeepingManager {
         }
     }
 
-    private void executeDeletedCycle() {
+    private void executeDeletedCycle(Set<World> savedWorlds) {
         long startMillis = System.currentTimeMillis();
         List<GameModeAddon> gameModes = plugin.getAddonsManager().getGameModeAddons();
         plugin.log("Housekeeping deleted sweep: starting across " + gameModes.size() + " gamemode(s)");
@@ -292,10 +390,18 @@ public class HousekeepingManager {
             plugin.log("Housekeeping deleted sweep: scanning '" + gm.getDescription().getName()
                     + "' world '" + overworld.getName() + "'");
             PurgeScanResult scan = plugin.getPurgeRegionsService().scanDeleted(overworld);
-            // Evict in-memory chunks on the main thread before the async delete,
-            // so Paper's autosave can't re-flush them over the deleted region files.
+            // The deleted scan is driven by the island database, not by what is
+            // on disk, so nothing needs saving unless there is something to
+            // purge. The usual hourly run finds nothing and so never touches
+            // the main thread at all.
             if (!scan.isEmpty()) {
-                evictChunksOnMainThread(scan);
+                if (!saveWorlds(gameModeWorlds(overworld), savedWorlds)) {
+                    hasErrors = true;
+                    continue;
+                }
+                // Evict in-memory chunks before the async delete, so Paper's
+                // autosave can't re-flush them over the deleted region files.
+                evictChunksInBatches(scan);
             }
             int purged = runDeleteIfNonEmpty(scan, overworld, "deleted sweep");
             if (purged < 0) {
@@ -313,23 +419,6 @@ public class HousekeepingManager {
             saveState();
         } else {
             plugin.logError("Housekeeping deleted sweep: completed with errors, last-run timestamp not advanced");
-        }
-    }
-
-    private void evictChunksOnMainThread(PurgeScanResult scan) {
-        CompletableFuture<Void> done = new CompletableFuture<>();
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            try {
-                plugin.getPurgeRegionsService().evictChunks(scan);
-                done.complete(null);
-            } catch (Exception e) {
-                done.completeExceptionally(e);
-            }
-        });
-        try {
-            done.join();
-        } catch (Exception e) {
-            plugin.logError("Housekeeping: chunk eviction failed: " + e.getMessage());
         }
     }
 
