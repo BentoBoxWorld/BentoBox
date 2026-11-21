@@ -1371,6 +1371,9 @@ protection:
       description: Umschalten der Nutzung
       name: Werkbänke
       hint: Zugriff auf Werkbank deaktiviert
+    CREEPER_BLOCK_DAMAGE:
+      description: Umschalten, ob Creeper auf dieser Insel Blöcke zerstören
+      name: Creeper-Blockschaden
     CREEPER_DAMAGE:
       description: Umschalten von Creeper-Schäden
       name: Creeperschaden

@@ -1325,6 +1325,11 @@ protection:
       description: Permitir uso
       name: Bancadas de trabalho
       hint: Uso de bancadas de trabalho desabilitado
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Alternar se creepers quebram</green>
+        <green>blocos nesta ilha</green>
+      name: Dano de creepers a blocos
     CREEPER_DAMAGE:
       description: |
         <green>Alternar proteção contra</green>

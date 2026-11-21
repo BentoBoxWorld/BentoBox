@@ -1367,6 +1367,11 @@ protection:
       description: Toggle gebruik
       name: Werkbanken
       hint: Toegang tot werkbank uitgeschakeld
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Schakel in/uit of creepers</green>
+        <green>blokken breken op dit eiland</green>
+      name: Creeper-blokschade
     CREEPER_DAMAGE:
       description: |
         <green>Schakel creeper-</green>

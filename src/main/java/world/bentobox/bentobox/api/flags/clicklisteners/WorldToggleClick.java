@@ -43,15 +43,10 @@ public class WorldToggleClick implements ClickHandler {
         // Get flag
         plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
             if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
-                if (!plugin.getIWM().getHiddenFlags(world).contains(flag.getID())) {
-                    plugin.getIWM().getHiddenFlags(world).add(flag.getID());
-                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-                } else {
-                    plugin.getIWM().getHiddenFlags(world).remove(flag.getID());
-                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
-                }
-                // Save changes
-                plugin.getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
+                boolean hide = !flag.isHidden(world);
+                flag.setHidden(world, hide);
+                user.getPlayer().playSound(user.getLocation(),
+                        hide ? Sound.BLOCK_GLASS_BREAK : Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
             } else {
                 // Toggle flag
                 flag.setSetting(world, !flag.isSetForWorld(world));

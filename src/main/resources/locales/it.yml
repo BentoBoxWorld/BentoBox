@@ -1352,6 +1352,9 @@ protection:
       description: Abilita/disabilita uso
       name: Banchi da lavoro
       hint: Uso di banchi da lavoro vietato
+    CREEPER_BLOCK_DAMAGE:
+      description: Abilita/disabilita la distruzione dei blocchi da parte dei creeper su quest'isola
+      name: Danni dei creeper ai blocchi
     CREEPER_DAMAGE:
       description: Abilita/disabilita danni dei creeper
       name: Danni dei creeper

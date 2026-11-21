@@ -643,6 +643,16 @@ public final class Flags {
     public static final Flag CREEPER_DAMAGE = new Flag.Builder("CREEPER_DAMAGE", Material.GREEN_SHULKER_BOX).listener(new CreeperListener()).type(Type.WORLD_SETTING)
             .defaultSetting(true).build();
     /**
+     * Island setting that toggles whether creeper explosions break blocks on that island.
+     * It only has an effect while the world setting {@link #CREEPER_DAMAGE} allows creeper
+     * damage. Hidden from players until an admin chooses to show it.
+     * @since 3.23.8
+     * @see CreeperListener
+     */
+    public static final Flag CREEPER_BLOCK_DAMAGE = new Flag.Builder("CREEPER_BLOCK_DAMAGE", Material.GUNPOWDER)
+            .type(Type.SETTING).defaultSetting(true).hiddenByDefault(true).build();
+
+    /**
      * Prevents visitors from triggering a creeper to blow up an island.
      * @see CreeperListener
      */

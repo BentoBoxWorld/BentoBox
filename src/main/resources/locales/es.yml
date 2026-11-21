@@ -1343,6 +1343,9 @@ protection:
       description: Uso de mesa de crafteo
       name: Mesa de Crafteo
       hint: No uso de mesa de crafteo
+    CREEPER_BLOCK_DAMAGE:
+      description: Modificar si los creepers rompen bloques en esta isla
+      name: Daño de creeper a bloques
     CREEPER_DAMAGE:
       description: Modificar daño del creeper
       name: Daño del creeper

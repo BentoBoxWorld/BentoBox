@@ -1355,6 +1355,11 @@ protection:
       description: Comutați utilizarea
       name: Banci de lucru
       hint: Accesul la bancă de lucru este dezactivat
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Comută dacă creeperii</green>
+        <green>distrug blocuri pe această insulă</green>
+      name: Daune creeper asupra blocurilor
     CREEPER_DAMAGE:
       description: |
         <green>târâtor Toggle</green>

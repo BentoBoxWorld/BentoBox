@@ -1237,6 +1237,9 @@ protection:
       description: 允許/禁止 使用合成台
       name: '<green><bold>使用合成台</bold></green>'
       hint: '<red>已被禁止使用合成台</red>'
+    CREEPER_BLOCK_DAMAGE:
+      description: 允許/禁止 苦力怕爆炸破壞此島嶼上的方塊
+      name: '<green><bold>苦力怕破壞方塊</bold></green>'
     CREEPER_DAMAGE:
       description: 允許/禁止 苦力怕的爆炸生效
       name: '<green><bold>苦力怕爆炸</bold></green>'

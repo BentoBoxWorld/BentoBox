@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -652,5 +653,72 @@ class FlagTest extends RanksManagerTestSetup {
                 .defaultRank(-1)
                 .build();
         assertEquals(-1, flag.getDefaultRank());
+    }
+
+    /*
+     * Hidden flags
+     */
+
+    private List<String> hiddenFlagsFor(GameModeAddon gm) {
+        List<String> hidden = new ArrayList<>();
+        WorldSettings ws = mock(WorldSettings.class);
+        when(ws.getHiddenFlags()).thenReturn(hidden);
+        when(gm.getWorldSettings()).thenReturn(ws);
+        when(iwm.getAddon(world)).thenReturn(Optional.of(gm));
+        when(iwm.getHiddenFlags(world)).thenReturn(hidden);
+        return hidden;
+    }
+
+    @Test
+    void testOrdinaryFlagIsVisibleUntilHidden() {
+        GameModeAddon gm = mock(GameModeAddon.class);
+        List<String> hidden = hiddenFlagsFor(gm);
+        Flag flag = new Flag.Builder("ordinary", Material.STONE).build();
+        assertFalse(flag.isHiddenByDefault());
+        assertFalse(flag.isHidden(world));
+
+        flag.setHidden(world, true);
+
+        assertEquals(List.of("ordinary"), hidden);
+        assertTrue(flag.isHidden(world));
+        verify(gm).saveWorldSettings();
+        // Nothing to remember for a flag that is not hidden by default
+        verify(iwm, never()).saveCoreWorldSettings(world);
+
+        flag.setHidden(world, false);
+        assertTrue(hidden.isEmpty());
+        assertFalse(flag.isHidden(world));
+    }
+
+    @Test
+    void testHiddenByDefaultFlagStaysHiddenUntilAdminShowsIt() {
+        GameModeAddon gm = mock(GameModeAddon.class);
+        List<String> hidden = hiddenFlagsFor(gm);
+        List<String> shown = new ArrayList<>();
+        when(iwm.getShownFlags(world)).thenReturn(shown);
+        Flag flag = new Flag.Builder("secret", Material.STONE).hiddenByDefault(true).build();
+        assertTrue(flag.isHiddenByDefault());
+        // Hidden without appearing in the game mode's hidden-flags list
+        assertTrue(hidden.isEmpty());
+        assertTrue(flag.isHidden(world));
+
+        flag.setHidden(world, false);
+
+        assertEquals(List.of("secret"), shown);
+        assertFalse(flag.isHidden(world));
+        verify(iwm).saveCoreWorldSettings(world);
+
+        // Hiding it again forgets the admin's choice
+        flag.setHidden(world, true);
+        assertTrue(shown.isEmpty());
+        assertTrue(flag.isHidden(world));
+    }
+
+    @Test
+    void testSetHiddenOutsideGameWorldDoesNothing() {
+        when(iwm.getAddon(world)).thenReturn(Optional.empty());
+        Flag flag = new Flag.Builder("nowhere", Material.STONE).build();
+        flag.setHidden(world, true);
+        assertFalse(flag.isHidden(world));
     }
 }

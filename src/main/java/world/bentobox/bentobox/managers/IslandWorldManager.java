@@ -796,6 +796,19 @@ public class IslandWorldManager {
     }
 
     /**
+     * Returns the flags that are hidden by default but that an admin has chosen to
+     * show in this world. Edit the returned list and then call
+     * {@link #saveCoreWorldSettings(World)}.
+     * @param world - world
+     * @return mutable list of flag IDs, or an empty immutable list if the world is not a game world
+     * @since 3.23.8
+     * @see world.bentobox.bentobox.api.flags.Flag#isHidden(World)
+     */
+    public List<String> getShownFlags(@NonNull World world) {
+        return getCoreWorldSettings(world).map(CoreWorldSettings::getShownFlags).orElse(Collections.emptyList());
+    }
+
+    /**
      * Return island setting defaults for world
      *
      * @param world - world

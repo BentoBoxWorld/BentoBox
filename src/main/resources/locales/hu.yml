@@ -1368,6 +1368,11 @@ protection:
       description: Használat váltása
       name: Munkapadok
       hint: A munkaasztalhoz való hozzáférés letiltva
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Váltás: a creeperek törhetnek-e</green>
+        <green>blokkokat ezen a szigeten</green>
+      name: Creeper blokksebzés
     CREEPER_DAMAGE:
       description: |-
         <green>Creeper sebzés elleni</green>

@@ -188,7 +188,6 @@ public class SettingsPanel extends AbstractRefreshingPanel {
     private TabType activeTab;
     /** The flags of the active tab that the viewer may see, in display order. */
     private List<Flag> pagedFlags = new ArrayList<>();
-    private List<String> hiddenFlags = new ArrayList<>();
     private boolean deferringSaves;
 
     /**
@@ -348,7 +347,6 @@ public class SettingsPanel extends AbstractRefreshingPanel {
      * the viewer would see nothing.
      */
     private void prepareFlags() {
-        hiddenFlags = plugin.getIWM().getHiddenFlags(world);
         Flag.Mode mode = currentMode();
         List<Flag> flags = getFlags(mode);
         int i = 0;
@@ -393,7 +391,7 @@ public class SettingsPanel extends AbstractRefreshingPanel {
     }
 
     private boolean isVisibleToUser(Flag flag) {
-        return user.isOp() || activeTab.showsAllFlags() || !hiddenFlags.contains(flag.getID());
+        return user.isOp() || activeTab.showsAllFlags() || !flag.isHidden(world);
     }
 
     /**
@@ -407,7 +405,7 @@ public class SettingsPanel extends AbstractRefreshingPanel {
         return plugin.getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(activeTab.getFlagType()) && !f.getMode().equals(Mode.TOP_ROW))
                 .filter(f -> addon.isEmpty() || f.getGameModes().isEmpty() || f.getGameModes().contains(addon.get()))
-                .anyMatch(f -> !hiddenFlags.contains(f.getID()));
+                .anyMatch(f -> !f.isHidden(world));
     }
 
     @Override
@@ -446,7 +444,7 @@ public class SettingsPanel extends AbstractRefreshingPanel {
         if (index >= pagedFlags.size()) {
             return null;
         }
-        return createFlagItem(pagedFlags.get(index), template, hiddenFlags.contains(pagedFlags.get(index).getID()));
+        return createFlagItem(pagedFlags.get(index), template, pagedFlags.get(index).isHidden(world));
     }
 
     /**

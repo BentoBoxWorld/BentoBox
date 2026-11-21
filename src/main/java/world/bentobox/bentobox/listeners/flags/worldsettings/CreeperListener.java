@@ -40,6 +40,10 @@ public class CreeperListener extends FlagListener {
             e.blockList().clear();
             // Still allow player and mob damage
             e.setCancelled(false);
+        } else {
+            // Islands may turn creeper block damage off for themselves
+            e.blockList().removeIf(block -> getIslands().getProtectedIslandAt(block.getLocation())
+                    .map(island -> !island.isAllowed(Flags.CREEPER_BLOCK_DAMAGE)).orElse(false));
         }
 
         // Check for griefing

@@ -1326,6 +1326,9 @@ protection:
       description: Przełącz użycie
       name: Stół rzemieślniczy
       hint: Używanie stołu rzemieślniczego jest wyłączone.
+    CREEPER_BLOCK_DAMAGE:
+      description: Przełącz niszczenie bloków przez Creepery na tej wyspie
+      name: Niszczenie bloków przez creepery
     CREEPER_DAMAGE:
       description: Przełącz obrażenia od Creepera
       name: Obrażenia od creepera

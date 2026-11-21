@@ -1251,6 +1251,11 @@ protection:
       description: Перемикає використання
       name: Верстаки
       hint: Доступ до верстака вимкнено
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Перемикає, чи руйнують</green>
+        <green>кріпери блоки на цьому острові.</green>
+      name: Руйнування блоків кріперами
     CREEPER_DAMAGE:
       description: |
         <green>Перемикає</green>
