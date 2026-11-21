@@ -30,6 +30,14 @@ public class TeamInvite implements DataObject {
     
     @Expose
     private String uniqueId;
+
+    /**
+     * When the invite was made, in epoch milliseconds. Zero for invites stored
+     * before this field existed.
+     * @since 3.23.8
+     */
+    @Expose
+    private long created;
     
     /**
      * @param type - invitation type, e.g., coop, team, trust
@@ -42,6 +50,23 @@ public class TeamInvite implements DataObject {
         this.uniqueId = invitee.toString();
         this.inviter = inviter;
         this.islandID = islandID;
+        this.created = System.currentTimeMillis();
+    }
+
+    /**
+     * @return when the invite was made in epoch milliseconds, or 0 if unknown
+     * @since 3.23.8
+     */
+    public long getCreated() {
+        return created;
+    }
+
+    /**
+     * @param created when the invite was made, in epoch milliseconds
+     * @since 3.23.8
+     */
+    public void setCreated(long created) {
+        this.created = created;
     }
 
     @Override

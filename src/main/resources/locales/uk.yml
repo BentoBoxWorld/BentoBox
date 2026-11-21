@@ -913,6 +913,8 @@ commands:
           you-rejected-invite: '<green>Ви відхилили запрошення приєднатися до [prefix_an-island].</green>'
           name-rejected-your-invite: '<red>[name] відхилив(ла) ваше запрошення до [prefix_island]!</red>'
         cancel:
+          success: '<green>Запрошення для </green><aqua>[name]</aqua><green> відкликано.</green>'
+          no-invite: '<red>У [name] немає очікуваного запрошення на ваш острів.</red>'
           description: скасувати очікуюче запрошення приєднатися до вашого [prefix_island]
       leave:
         cannot-leave: '<red>Власники не можуть покинути! Спершу станьте учасником або виженіть усіх.</red>'

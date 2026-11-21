@@ -993,6 +993,8 @@ commands:
           name-rejected-your-invite: '<red>[name] odrzucił zaproszenie do wyspy.</red>'
         cancel:
           description: anuluj oczekujące zaproszenie do dołączenia do Twojej wyspy
+          success: '<green>Zaproszenie dla </green><aqua>[name]</aqua><green> zostało wycofane.</green>'
+          no-invite: '<red>[name] nie ma oczekującego zaproszenia na twoją wyspę.</red>'
       leave:
         cannot-leave: >-
           <red>Lider drużyny nie może opuścić wyspy. Zostań jej członkiem, lub</red>

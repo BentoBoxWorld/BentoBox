@@ -321,6 +321,12 @@ public class Settings implements ConfigObject {
     private boolean hideUsedBlueprints = false;
 
     // Cooldowns
+    @ConfigComment("How long a team, trust or coop invite stays open, in hours.")
+    @ConfigComment("An invite that is not accepted or declined in this time is withdrawn automatically.")
+    @ConfigComment("Set to 0 for invites that never expire.")
+    @ConfigEntry(path = "island.invite-expiry-hours", since = "3.23.8")
+    private int inviteExpiryHours = 24;
+
     @ConfigComment("How long a player must wait until they can rejoin a team island after being kicked in minutes.")
     @ConfigComment("This slows the effectiveness of players repeating challenges")
     @ConfigComment("by repetitively being invited to a team island.")
@@ -790,6 +796,22 @@ public class Settings implements ConfigObject {
 
     public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
         this.closePanelOnClickOutside = closePanelOnClickOutside;
+    }
+
+    /**
+     * @return how long an invite stays open in hours; 0 or less means it never expires
+     * @since 3.23.8
+     */
+    public int getInviteExpiryHours() {
+        return inviteExpiryHours;
+    }
+
+    /**
+     * @param inviteExpiryHours how long an invite stays open in hours; 0 means it never expires
+     * @since 3.23.8
+     */
+    public void setInviteExpiryHours(int inviteExpiryHours) {
+        this.inviteExpiryHours = inviteExpiryHours;
     }
 
     public int getInviteCooldown() {

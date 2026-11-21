@@ -976,6 +976,8 @@ commands:
           you-rejected-invite: <green>Вы отклонили приглашение посетить остров.</green>
           name-rejected-your-invite: <red>[name] отклонил ваш запрос на присоединение!</red>
         cancel:
+          success: '<green>Приглашение для </green><aqua>[name]</aqua><green> отозвано.</green>'
+          no-invite: '<red>У [name] нет ожидающего приглашения на ваш остров.</red>'
           description: отклонить ожидающие подтверждения приглашения посетить ваш
             остров
       leave:

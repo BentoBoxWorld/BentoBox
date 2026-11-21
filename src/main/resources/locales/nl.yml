@@ -1025,6 +1025,8 @@ commands:
           name-rejected-your-invite: '<red>[name] heeft je eilanduitnodiging afgewezen!</red>'
         cancel:
           description: annuleer de lopende uitnodiging om lid te worden van je eiland
+          success: '<green>Uitnodiging voor </green><aqua>[name]</aqua><green> ingetrokken.</green>'
+          no-invite: '<red>[name] heeft geen openstaande uitnodiging voor jouw eiland.</red>'
       leave:
         cannot-leave: >-
           <red>Eigenaren kunnen niet vertrekken! Word eerst lid, of schop alle</red>

@@ -1017,6 +1017,8 @@ commands:
           name-rejected-your-invite: '<red>[name] ha rifiutato il tuo invito!</red>'
         cancel:
           description: elimina l'invito ad entrare nella tua isola
+          success: '<green>Invito a </green><aqua>[name]</aqua><green> ritirato.</green>'
+          no-invite: '<red>[name] non ha inviti in sospeso per la tua isola.</red>'
       leave:
         cannot-leave: >-
           <red>I proprietari non possono lasciare! Diventa un membro, o caccia</red>

@@ -1031,6 +1031,8 @@ commands:
           name-rejected-your-invite: '<red>[name] hat deine Insel-Einladung abgelehnt!</red>'
         cancel:
           description: Die ausstehende Einladung zu deiner Insel zurücknehmen
+          success: '<green>Einladung an </green><aqua>[name]</aqua><green> zurückgezogen.</green>'
+          no-invite: '<red>[name] hat keine ausstehende Einladung zu deiner Insel.</red>'
       leave:
         cannot-leave: >-
           <red>Besitzer können nicht gehen! Werde zuerst Mitglied, oder kicke alle</red>

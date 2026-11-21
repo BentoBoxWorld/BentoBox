@@ -948,6 +948,8 @@ commands:
           name-rejected-your-invite: '<red>[name] rejected your [prefix_island] invite!</red>'
         cancel:
           description: cancel the pending invite to join your [prefix_island]
+          success: '<green>Invitation to </green><aqua>[name]</aqua><green> withdrawn.</green>'
+          no-invite: '<red>[name] has no pending invitation to your [prefix_island].</red>'
       leave:
         cannot-leave: '<red>Owners cannot leave! Become a member first, or kick all
           members.</red>'

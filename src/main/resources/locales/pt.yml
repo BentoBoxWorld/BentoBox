@@ -996,6 +996,8 @@ commands:
           name-rejected-your-invite: '<red>[name] rejeitou seu convite para a ilha!</red>'
         cancel:
           description: cancelar o convite pendente para ingressar na sua ilha
+          success: '<green>Convite para </green><aqua>[name]</aqua><green> retirado.</green>'
+          no-invite: '<red>[name] não tem nenhum convite pendente para a tua ilha.</red>'
       leave:
         cannot-leave: >-
           <red>Os proprietários não podem sair! Torne-se um membro primeiro ou</red>

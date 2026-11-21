@@ -973,6 +973,8 @@ commands:
           you-rejected-invite: '<green>Bạn đã từ chối lời mời vào đảo.</green>'
           name-rejected-your-invite: '<red>[name] đã từ chối lời mời vào đảo của bạn!</red>'
         cancel:
+          success: '<green>Đã rút lời mời gửi tới </green><aqua>[name]</aqua><green>.</green>'
+          no-invite: '<red>[name] không có lời mời nào đang chờ tới đảo của bạn.</red>'
           description: hủy lời mời đang chờ của bạn
       leave:
         cannot-leave: >-
