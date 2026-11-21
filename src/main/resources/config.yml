@@ -234,6 +234,15 @@ island:
     # Team invites will always require confirmation, for safety concerns.
     # Added since 1.8.0.
     invites: false
+  locked-border:
+    # Show a border around a locked island to a player who is turned away from it,
+    # so they can see where the island they cannot enter starts. The border is the
+    # vanilla world border, shown only to that player for a few seconds.
+    # Added since 3.23.8.
+    show: true
+    # Color of the locked island border. Options are RED, GREEN or BLUE.
+    # Added since 3.23.8.
+    color: RED
   # Modal dialog options. Dialogs are the 'menu they can't click away' shown to
   # players for high-friction flows. They require a server that supports dialogs
   # (Minecraft 26+); on older servers every option below falls back automatically

@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -48,6 +51,11 @@ public class LockAndBanListener extends FlagListener {
      * island.
      */
     private final Set<UUID> deletableNotified = new HashSet<>();
+
+    /**
+     * Draws the border of a locked island for players who are turned away from it.
+     */
+    private final LockedIslandBorder lockedBorder = new LockedIslandBorder();
 
     /**
      * Result of checking the island for locked state or player bans
@@ -92,8 +100,11 @@ public class LockAndBanListener extends FlagListener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        if (!checkAndNotify(e.getPlayer(), e.getTo()).isAllowed()) {
+        Optional<Island> island = getIslands().getProtectedIslandAt(e.getTo());
+        CheckResult result = checkAndNotify(e.getPlayer(), e.getTo(), island);
+        if (!result.isAllowed()) {
             e.setCancelled(true);
+            showLockedBorder(e.getPlayer(), result, island, e.getTo());
             e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
             e.getPlayer().setVelocity(new Vector(0,0,0));
             e.getPlayer().setGliding(false);
@@ -106,6 +117,20 @@ public class LockAndBanListener extends FlagListener {
     }
 
     // Vehicle move check
+    /**
+     * Keeps locked-out and banned players from riding a vehicle onto an island.
+     *
+     * <p>{@link VehicleMoveEvent} cannot be cancelled, so the equivalent of
+     * cancelling a player's move is to put the vehicle back where it came from:
+     * <ul>
+     *   <li>If anybody aboard may not enter, the whole vehicle is turned back with
+     *       everyone still in it, including riders who could have entered on their
+     *       own. Nothing is left behind on territory a rider cannot reach, and
+     *       nobody is dropped into whatever the vehicle was crossing (#2958).</li>
+     *   <li>A rider who is already somewhere they may not be (the island was
+     *       locked around them) is sent home, as with walking players.</li>
+     * </ul>
+     */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent e) {
         // Ignore only vertical movement
@@ -117,19 +142,58 @@ public class LockAndBanListener extends FlagListener {
         // any further player passengers (the rare multi-player case).
         Optional<Island> island = Optional.empty();
         boolean islandResolved = false;
+        List<Player> riders = new ArrayList<>();
+        List<Player> denied = new ArrayList<>();
         for (Entity passenger : e.getVehicle().getPassengers()) {
             if (passenger instanceof Player p) {
                 if (!islandResolved) {
                     island = getIslands().getProtectedIslandAt(e.getTo());
                     islandResolved = true;
                 }
-                if (!checkAndNotify(p, e.getTo(), island).isAllowed()) {
-                    p.leaveVehicle();
-                    p.teleport(e.getFrom());
-                    e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
-                    eject(p);
+                riders.add(p);
+                CheckResult result = checkAndNotify(p, e.getTo(), island);
+                if (!result.isAllowed()) {
+                    denied.add(p);
+                    showLockedBorder(p, result, island, e.getTo());
                 }
             }
+        }
+        if (denied.isEmpty()) {
+            return;
+        }
+        Vehicle vehicle = e.getVehicle();
+        vehicle.getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+
+        // Riders who are already somewhere they may not be are sent home.
+        List<Player> trapped = denied.stream().filter(p -> !check(p, e.getFrom()).isAllowed()).toList();
+        if (!trapped.isEmpty()) {
+            trapped.forEach(p -> {
+                p.leaveVehicle();
+                eject(p);
+            });
+            return;
+        }
+        // Otherwise the whole vehicle is turned back, whoever else is aboard.
+        vehicle.setVelocity(new Vector(0, 0, 0));
+        // Riders stay aboard: a teleported vehicle keeps its passengers
+        if (vehicle.teleport(e.getFrom())) {
+            return;
+        }
+        // The server refused to move the loaded vehicle. Take the riders off and
+        // bring the empty vehicle back out so it can still be recovered.
+        riders.forEach(p -> {
+            p.leaveVehicle();
+            p.teleport(e.getFrom());
+        });
+        vehicle.teleport(e.getFrom());
+    }
+
+    /**
+     * Shows the border of the island a player has just been turned away from, if it is locked.
+     */
+    private void showLockedBorder(Player player, CheckResult result, Optional<Island> island, Location to) {
+        if (result == CheckResult.LOCKED && to.getWorld() != null) {
+            island.ifPresent(is -> lockedBorder.show(player, is, to.getWorld()));
         }
     }
 
@@ -147,6 +211,7 @@ public class LockAndBanListener extends FlagListener {
         UUID uuid = e.getPlayer().getUniqueId();
         notifiedPlayers.remove(uuid);
         deletableNotified.remove(uuid);
+        lockedBorder.forget(uuid);
     }
 
     /**
