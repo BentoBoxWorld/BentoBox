@@ -55,6 +55,11 @@ public class LockAndBanListener extends FlagListener {
     private final Set<UUID> deletableNotified = new HashSet<>();
 
     /**
+     * Draws the border of a locked island for players who are turned away from it.
+     */
+    private final LockedIslandBorder lockedBorder = new LockedIslandBorder();
+
+    /**
      * Result of checking the island for locked state or player bans
      *
      */
@@ -97,8 +102,11 @@ public class LockAndBanListener extends FlagListener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        if (!checkAndNotify(e.getPlayer(), e.getTo()).isAllowed()) {
+        Optional<Island> island = getIslands().getProtectedIslandAt(e.getTo());
+        CheckResult result = checkAndNotify(e.getPlayer(), e.getTo(), island);
+        if (!result.isAllowed()) {
             e.setCancelled(true);
+            showLockedBorder(e.getPlayer(), result, island, e.getTo());
             e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
             e.getPlayer().setVelocity(new Vector(0,0,0));
             e.getPlayer().setGliding(false);
@@ -117,12 +125,10 @@ public class LockAndBanListener extends FlagListener {
      * <p>{@link VehicleMoveEvent} cannot be cancelled, so the equivalent of
      * cancelling a player's move is to put the vehicle back where it came from:
      * <ul>
-     *   <li>If nobody aboard may enter, the whole vehicle is turned back with its
-     *       riders still in it. Nothing is left behind on territory the riders
-     *       cannot reach, and nobody is dropped into whatever the vehicle was
-     *       crossing (#2958).</li>
-     *   <li>If someone aboard may enter, the vehicle carries on and only the
-     *       riders who may not are taken off and sent home.</li>
+     *   <li>If anybody aboard may not enter, the whole vehicle is turned back with
+     *       everyone still in it, including riders who could have entered on their
+     *       own. Nothing is left behind on territory a rider cannot reach, and
+     *       nobody is dropped into whatever the vehicle was crossing (#2958).</li>
      *   <li>A rider who is already somewhere they may not be (the island was
      *       locked around them) is sent home, as with walking players.</li>
      * </ul>
@@ -138,7 +144,7 @@ public class LockAndBanListener extends FlagListener {
         // any further player passengers (the rare multi-player case).
         Optional<Island> island = Optional.empty();
         boolean islandResolved = false;
-        boolean someoneMayEnter = false;
+        List<Player> riders = new ArrayList<>();
         List<Player> denied = new ArrayList<>();
         for (Entity passenger : e.getVehicle().getPassengers()) {
             if (passenger instanceof Player p) {
@@ -146,10 +152,11 @@ public class LockAndBanListener extends FlagListener {
                     island = getIslands().getProtectedIslandAt(e.getTo());
                     islandResolved = true;
                 }
-                if (checkAndNotify(p, e.getTo(), island).isAllowed()) {
-                    someoneMayEnter = true;
-                } else {
+                riders.add(p);
+                CheckResult result = checkAndNotify(p, e.getTo(), island);
+                if (!result.isAllowed()) {
                     denied.add(p);
+                    showLockedBorder(p, result, island, e.getTo());
                 }
             }
         }
@@ -159,27 +166,36 @@ public class LockAndBanListener extends FlagListener {
         Vehicle vehicle = e.getVehicle();
         vehicle.getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
 
-        // Turn the whole vehicle back when nobody aboard may enter and they all came
-        // from somewhere they are allowed to be.
-        if (!someoneMayEnter && denied.stream().allMatch(p -> check(p, e.getFrom()).isAllowed())) {
-            vehicle.setVelocity(new Vector(0, 0, 0));
-            if (vehicle.teleport(e.getFrom(), TeleportFlag.EntityState.RETAIN_PASSENGERS)) {
-                return;
-            }
-            // The server refused to move the loaded vehicle. Take the riders off and
-            // bring the empty vehicle back out so it can still be recovered.
-            denied.forEach(p -> {
+        // Riders who are already somewhere they may not be are sent home.
+        List<Player> trapped = denied.stream().filter(p -> !check(p, e.getFrom()).isAllowed()).toList();
+        if (!trapped.isEmpty()) {
+            trapped.forEach(p -> {
                 p.leaveVehicle();
-                p.teleport(e.getFrom());
+                eject(p);
             });
-            vehicle.teleport(e.getFrom());
             return;
         }
-        // Otherwise the vehicle carries on (or is already inside) without them.
-        denied.forEach(p -> {
+        // Otherwise the whole vehicle is turned back, whoever else is aboard.
+        vehicle.setVelocity(new Vector(0, 0, 0));
+        if (vehicle.teleport(e.getFrom(), TeleportFlag.EntityState.RETAIN_PASSENGERS)) {
+            return;
+        }
+        // The server refused to move the loaded vehicle. Take the riders off and
+        // bring the empty vehicle back out so it can still be recovered.
+        riders.forEach(p -> {
             p.leaveVehicle();
-            eject(p);
+            p.teleport(e.getFrom());
         });
+        vehicle.teleport(e.getFrom());
+    }
+
+    /**
+     * Shows the border of the island a player has just been turned away from, if it is locked.
+     */
+    private void showLockedBorder(Player player, CheckResult result, Optional<Island> island, Location to) {
+        if (result == CheckResult.LOCKED && to.getWorld() != null) {
+            island.ifPresent(is -> lockedBorder.show(player, is, to.getWorld()));
+        }
     }
 
     // Login check
@@ -196,6 +212,7 @@ public class LockAndBanListener extends FlagListener {
         UUID uuid = e.getPlayer().getUniqueId();
         notifiedPlayers.remove(uuid);
         deletableNotified.remove(uuid);
+        lockedBorder.forget(uuid);
     }
 
     /**

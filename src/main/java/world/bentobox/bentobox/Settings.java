@@ -27,6 +27,19 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 @ConfigComment("")
 public class Settings implements ConfigObject {
 
+    /**
+     * Colors a vanilla world border can be drawn in.
+     * @since 3.23.8
+     */
+    public enum BorderColor {
+        /** A shrinking border, which the client draws red */
+        RED,
+        /** A growing border, which the client draws green */
+        GREEN,
+        /** A static border, which the client draws blue */
+        BLUE
+    }
+
     /* GENERAL */
     @ConfigComment("Default language for new players.")
     @ConfigComment("This is the filename in the locale folder without .yml.")
@@ -358,6 +371,16 @@ public class Settings implements ConfigObject {
     @ConfigComment("Team invites will always require confirmation, for safety concerns.")
     @ConfigEntry(path = "island.confirmation.invites", since = "1.8.0")
     private boolean inviteConfirmation = false;
+
+    @ConfigComment("Show a border around a locked island to a player who is turned away from it,")
+    @ConfigComment("so they can see where the island they cannot enter starts. The border is the")
+    @ConfigComment("vanilla world border, shown only to that player for a few seconds.")
+    @ConfigEntry(path = "island.locked-border.show", since = "3.23.8")
+    private boolean lockedBorder = true;
+
+    @ConfigComment("Color of the locked island border. Options are RED, GREEN or BLUE.")
+    @ConfigEntry(path = "island.locked-border.color", since = "3.23.8")
+    private BorderColor lockedBorderColor = BorderColor.RED;
 
     @ConfigComment("Modal dialog options. Dialogs are the 'menu they can't click away' shown to")
     @ConfigComment("players for high-friction flows. They require a server that supports dialogs")
@@ -1032,6 +1055,38 @@ public class Settings implements ConfigObject {
      */
     public void setDialogConfirmations(boolean dialogConfirmations) {
         this.dialogConfirmations = dialogConfirmations;
+    }
+
+    /**
+     * @return whether a player turned away from a locked island is shown its border
+     * @since 3.23.8
+     */
+    public boolean isLockedBorder() {
+        return lockedBorder;
+    }
+
+    /**
+     * @param lockedBorder whether to show the border of a locked island to a player turned away from it
+     * @since 3.23.8
+     */
+    public void setLockedBorder(boolean lockedBorder) {
+        this.lockedBorder = lockedBorder;
+    }
+
+    /**
+     * @return the color of the locked island border
+     * @since 3.23.8
+     */
+    public BorderColor getLockedBorderColor() {
+        return lockedBorderColor;
+    }
+
+    /**
+     * @param lockedBorderColor the color of the locked island border
+     * @since 3.23.8
+     */
+    public void setLockedBorderColor(BorderColor lockedBorderColor) {
+        this.lockedBorderColor = lockedBorderColor;
     }
 
     /**
