@@ -9,10 +9,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -265,26 +267,26 @@ class GameModePlaceholderTest extends CommonTestSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
-     */
-    /**
      * The visitor list placeholders name every player currently visiting, for both
      * the player's own island and the island they are standing on (#2188).
      */
     @Test
     void testVisitorListPlaceholders() {
-        org.bukkit.entity.Player v1 = org.mockito.Mockito.mock(org.bukkit.entity.Player.class);
-        org.bukkit.entity.Player v2 = org.mockito.Mockito.mock(org.bukkit.entity.Player.class);
-        org.mockito.Mockito.when(v1.getName()).thenReturn("alice");
-        org.mockito.Mockito.when(v2.getName()).thenReturn("bob");
-        org.mockito.Mockito.when(island.getVisitors()).thenReturn(java.util.List.of(v1, v2));
-        org.mockito.Mockito.when(im.getIslandAt(org.mockito.ArgumentMatchers.any())).thenReturn(java.util.Optional.of(island));
+        Player v1 = mock(Player.class);
+        Player v2 = mock(Player.class);
+        when(v1.getName()).thenReturn("alice");
+        when(v2.getName()).thenReturn("bob");
+        when(island.getVisitors()).thenReturn(List.of(v1, v2));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         assertEquals("alice,bob", GameModePlaceholder.ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
         assertEquals("alice,bob",
                 GameModePlaceholder.VISITED_ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     */
     @Test
     void testGetReplacerWorld() {
         assertEquals("0", GameModePlaceholder.ISLAND_DISTANCE.getReplacer().onReplace(addon, user, island));
