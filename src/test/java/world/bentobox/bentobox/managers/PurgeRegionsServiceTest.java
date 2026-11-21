@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -28,6 +29,7 @@ import java.util.UUID;
 import com.google.common.collect.ImmutableSet;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +42,7 @@ import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.managers.PurgeRegionsService.FilterStats;
 import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -805,5 +808,54 @@ class PurgeRegionsServiceTest extends CommonTestSetup {
         verify(sch, never()).runTask(eq(plugin), any(Runnable.class));
         verify(pim, never()).callEvent(any());
         assertTrue(service.getPendingDeletions().contains("del"));
+    }
+
+    // ---------------------------------------------------------------
+    // Slimefun block data (#2051)
+    // ---------------------------------------------------------------
+
+    private PurgeScanResult scanOfRegion(boolean nether) {
+        return new PurgeScanResult(world, 0, Map.of(new Pair<>(1, -2), Set.of()), nether, false,
+                new FilterStats(0, 0, 0, 0), Set.of());
+    }
+
+    /**
+     * Slimefun keeps block data outside the region files, so the purge tells the
+     * hook which regions went, in every dimension that was purged.
+     */
+    @Test
+    void testDeleteClearsSlimefunDataForPurgedRegions() {
+        SlimefunHook slimefun = mock(SlimefunHook.class);
+        when(hooksManager.getHook("Slimefun")).thenReturn(Optional.of(slimefun));
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(nether.getWorldFolder()).thenReturn(tempDir.resolve("nether").toFile());
+        when(iwm.getNetherWorld(world)).thenReturn(nether);
+        PurgeScanResult scan = scanOfRegion(true);
+
+        assertTrue(service.delete(scan));
+
+        verify(slimefun).clearRegions(world, scan.deletableRegions().keySet());
+        verify(slimefun).clearRegions(nether, scan.deletableRegions().keySet());
+    }
+
+    /**
+     * A failure inside Slimefun must not stop the purge from finishing.
+     */
+    @Test
+    void testDeleteSurvivesSlimefunFailure() {
+        SlimefunHook slimefun = mock(SlimefunHook.class);
+        when(hooksManager.getHook("Slimefun")).thenReturn(Optional.of(slimefun));
+        when(slimefun.clearRegions(any(), any())).thenThrow(new NoClassDefFoundError("BlockStorage"));
+
+        assertTrue(service.delete(scanOfRegion(false)));
+
+        verify(plugin).logWarning(contains("Could not clear Slimefun block data"));
+    }
+
+    @Test
+    void testDeleteWithoutSlimefunDoesNothingExtra() {
+        assertTrue(service.delete(scanOfRegion(false)));
+        verify(plugin, never()).logWarning(contains("Slimefun"));
     }
 }
