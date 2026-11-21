@@ -1510,6 +1510,14 @@ protection:
       name: Бірки
       description: Перемикає використання
       hint: Взаємодію з бірками вимкнено
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP за межами островів
+      description: |-
+        <red>Увімкнути/вимкнути PVP там,</red>
+        <red>де немає острова.</red>
+
+        <green>На острові завжди діє його</green>
+        <green>власне налаштування PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Природний спавн істот за межами діапазону
       description: |-

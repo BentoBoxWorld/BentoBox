@@ -1537,6 +1537,14 @@ protection:
       name: İsim etiketleri
       description: Kullanımını değiş.
       hint: İsim etiketini kullanımı kapalı.
+    PVP_OUTSIDE_ISLANDS:
+      name: Adaların dışında PVP
+      description: |-
+        <red>Ada olmayan yerlerde PVP'yi</red>
+        <red>aç/kapat.</red>
+
+        <green>Bir adada her zaman o adanın</green>
+        <green>kendi PVP ayarı geçerlidir.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Normalin dışında doğuşu değiş.
       description: |-

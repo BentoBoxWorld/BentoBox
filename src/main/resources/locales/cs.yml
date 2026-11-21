@@ -1558,6 +1558,14 @@ protection:
       name: Jmenovky
       description: Přepnout použití
       hint: Interakce s jmenovkami zakázána
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP mimo ostrovy
+      description: |-
+        <red>Povolit/zakázat PVP tam,</red>
+        <red>kde není žádný ostrov.</red>
+
+        <green>Na ostrově vždy platí jeho</green>
+        <green>vlastní nastavení PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Přirozené spawnování tvorů mimo prostor ostrova
       description: |-

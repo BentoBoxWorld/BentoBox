@@ -1607,6 +1607,14 @@ protection:
       name: Targhette
       description: Abilita/disabiltia uso
       hint: No uso di targhette
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fuori dalle isole
+      description: |-
+        <red>Abilita/disabilita il PVP dove</red>
+        <red>non c'è nessuna isola.</red>
+
+        <green>Su un'isola vale sempre la sua</green>
+        <green>impostazione PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Generazione creature fuori dall'isola
       description: |-

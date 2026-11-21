@@ -1631,6 +1631,14 @@ protection:
       name: Naamplaatjes
       description: Toggle gebruik
       hint: Interactie met naamlabel uitgeschakeld
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP buiten eilanden
+      description: |-
+        <red>PVP in-/uitschakelen waar</red>
+        <red>geen eiland is.</red>
+
+        <green>Op een eiland geldt altijd de</green>
+        <green>eigen PVP-instelling van dat eiland.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Natuurlijke spawning buiten bereik
       description: |-

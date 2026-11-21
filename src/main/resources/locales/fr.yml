@@ -1623,6 +1623,14 @@ protection:
       name: Étiquettes de nom
       description: Activer l'utilisation
       hint: Interaction avec le tag de nom désactivée
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP en dehors des îles
+      description: |-
+        <red>Activer/désactiver le PVP là où</red>
+        <red>il n'y a aucune île.</red>
+
+        <green>Sur une île, son propre réglage</green>
+        <green>PVP s'applique toujours.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Apparition de créatures naturelles en dehors de la portée
       description: |-

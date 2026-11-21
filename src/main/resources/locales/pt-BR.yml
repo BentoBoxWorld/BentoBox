@@ -1587,6 +1587,14 @@ protection:
       name: Etiquetas
       description: Permitir uso
       hint: Interação com etiquetas desabilitada
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fora das ilhas
+      description: |-
+        <red>Ativar/desativar o PVP onde</red>
+        <red>não há nenhuma ilha.</red>
+
+        <green>Em uma ilha, a configuração de PVP</green>
+        <green>da própria ilha sempre se aplica.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Nascimento natural de criaturas fora do alcance
       description: |-

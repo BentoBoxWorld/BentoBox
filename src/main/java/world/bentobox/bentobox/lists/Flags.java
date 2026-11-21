@@ -428,6 +428,16 @@ public final class Flags {
     public static final Flag PVP_END = new Flag.Builder("PVP_END", Material.END_CRYSTAL).type(Type.SETTING)
             .defaultRank(DISABLED).cooldown(60).mode(Flag.Mode.BASIC).build();
 
+    /**
+     * World setting: whether players can hurt each other where there is no island at all.
+     * On an island the island's own PVP setting for that dimension always decides; this
+     * only covers the wilderness of a game world, where PVP was previously always off.
+     * Off by default, so existing worlds behave as before.
+     * @since 3.23.8
+     */
+    public static final Flag PVP_OUTSIDE_ISLANDS = new Flag.Builder("PVP_OUTSIDE_ISLANDS", Material.STONE_SWORD)
+            .type(Type.WORLD_SETTING).defaultSetting(false).build();
+
     // Fire
     /**
      * Prevents fire from burning blocks.

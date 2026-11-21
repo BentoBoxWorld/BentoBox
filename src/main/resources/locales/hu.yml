@@ -1644,6 +1644,14 @@ protection:
       name: Névtáblák
       description: Használat váltása
       hint: A névcímkével való interakció letiltva
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP a szigeteken kívül
+      description: |-
+        <red>PVP engedélyezése/tiltása ott,</red>
+        <red>ahol nincs sziget.</red>
+
+        <green>Egy szigeten mindig a sziget saját</green>
+        <green>PVP beállítása érvényes.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: A hatótávon kívül ívó természetes lény
       description: |-

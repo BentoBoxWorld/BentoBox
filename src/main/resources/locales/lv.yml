@@ -1589,6 +1589,14 @@ protection:
       name: Birka
       description: Pārslēdz birku lietošanu
       hint: Birkas lietošana nav atļauta
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP ārpus salām
+      description: |-
+        <red>Ieslēgt/izslēgt PVP tur,</red>
+        <red>kur nav nevienas salas.</red>
+
+        <green>Uz salas vienmēr ir spēkā tās</green>
+        <green>pašas PVP iestatījums.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Dabīgā radību rašanās ārpus salas
       description: |-

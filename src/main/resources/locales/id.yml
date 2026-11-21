@@ -1605,6 +1605,14 @@ protection:
       name: Tanda nama
       description: Alihkan penggunaan
       hint: Interaksi tag nama dinonaktifkan
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP di luar pulau
+      description: |-
+        <red>Aktifkan/nonaktifkan PVP di tempat</red>
+        <red>yang tidak ada pulaunya.</red>
+
+        <green>Di sebuah pulau, pengaturan PVP</green>
+        <green>pulau itu sendiri selalu berlaku.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Makhluk alami yang bertelur di luar jangkauan
       description: |-
