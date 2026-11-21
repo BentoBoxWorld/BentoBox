@@ -5,11 +5,14 @@
 
 package world.bentobox.bentobox.api.panels;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -319,8 +322,9 @@ public class TemplatedPanel extends Panel {
         String type = String.valueOf(rec.dataMap().getOrDefault("type", ""));
 
         if (!this.typeCreators.containsKey(type)) {
-            // There are no object with a given type.
-            return this.makeFallBack(rec.fallback());
+            // The panel has no button of this type: try the types every panel understands
+            PanelItem builtIn = this.makeBuiltInButton(type, rec);
+            return builtIn == null ? this.makeFallBack(rec.fallback()) : builtIn;
         }
 
         BiFunction<ItemTemplateRecord, ItemSlot, PanelItem> buttonBuilder = this.typeCreators.get(type);
@@ -332,6 +336,70 @@ public class TemplatedPanel extends Panel {
         // Try to get next object.
         PanelItem item = buttonBuilder.apply(rec, itemSlot);
         return item == null ? this.makeFallBack(rec.fallback()) : item;
+    }
+
+    /**
+     * Makes a button of one of the types that work in every templated panel, so
+     * server owners can link panels into their own menus without any code:
+     * <ul>
+     *   <li>{@value #TYPE_COMMAND} closes the panel and runs the command given in
+     *       {@code data.command} as the player who clicked, with that player's own
+     *       permissions. {@code [player]} in the command is replaced by their name.</li>
+     *   <li>{@value #TYPE_CLOSE} closes the panel.</li>
+     * </ul>
+     * A panel that registers its own button of the same type keeps its own behaviour.
+     * If the button lists actions, only those click types work and their tooltips are
+     * added to the description; with no actions any click works.
+     *
+     * @param type the button type from the template
+     * @param rec template of the button
+     * @return the button, or null if the type is not a built-in one or the template is incomplete
+     * @since 3.23.8
+     */
+    @Nullable
+    private PanelItem makeBuiltInButton(String type, @NonNull ItemTemplateRecord rec) {
+        final String command;
+        if (TYPE_COMMAND.equals(type)) {
+            command = String.valueOf(rec.dataMap().getOrDefault("command", "")).strip().replaceFirst("^/+", "");
+            if (command.isEmpty()) {
+                BentoBox.getInstance().logWarning("A " + TYPE_COMMAND + " button in panel '"
+                        + this.panelTemplate.title() + "' has no data.command, so it was left out.");
+                return null;
+            }
+        } else if (TYPE_CLOSE.equals(type)) {
+            command = null;
+        } else {
+            return null;
+        }
+
+        PanelItemBuilder itemBuilder = new PanelItemBuilder();
+        if (rec.icon() != null) {
+            itemBuilder.icon(rec.icon().clone());
+        }
+        if (rec.title() != null) {
+            itemBuilder.name(this.user.getTranslation(rec.title()));
+        }
+        List<String> description = new ArrayList<>();
+        if (rec.description() != null) {
+            description.add(this.user.getTranslation(rec.description()));
+        }
+        rec.actions().stream().map(ItemTemplateRecord.ActionRecords::tooltip)
+                .filter(tooltip -> tooltip != null && !tooltip.isBlank())
+                .map(this.user::getTranslation).forEach(description::add);
+        itemBuilder.description(description);
+
+        itemBuilder.clickHandler((panel, clicker, clickType, slot) -> {
+            boolean clickAllowed = rec.actions().isEmpty() || rec.actions().stream()
+                    .anyMatch(action -> action.clickType() == clickType || action.clickType() == ClickType.UNKNOWN);
+            if (clickAllowed) {
+                clicker.closeInventory();
+                if (command != null) {
+                    clicker.performCommand(command.replace("[player]", clicker.getName()));
+                }
+            }
+            return true;
+        });
+        return itemBuilder.build();
     }
 
     /**
@@ -447,6 +515,18 @@ public class TemplatedPanel extends Panel {
     /**
      * This map links custom types with their info object.
      */
+    /**
+     * Button type, available in every templated panel, that runs a command as the player.
+     * @since 3.23.8
+     */
+    public static final String TYPE_COMMAND = "COMMAND";
+
+    /**
+     * Button type, available in every templated panel, that closes the panel.
+     * @since 3.23.8
+     */
+    public static final String TYPE_CLOSE = "CLOSE";
+
     private final Map<String, BiFunction<ItemTemplateRecord, ItemSlot, PanelItem>> typeCreators;
 
     /**
