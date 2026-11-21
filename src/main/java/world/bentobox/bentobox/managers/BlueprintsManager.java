@@ -268,21 +268,31 @@ public class BlueprintsManager {
             }
         }
         Map<String, Blueprint> loaded = getBlueprints(addon);
-        for (BlueprintBundle bb : bundles.values()) {
-            for (World.Environment env : List.of(World.Environment.NORMAL, World.Environment.NETHER,
-                    World.Environment.THE_END)) {
-                String bpName = bb.getBlueprint(env);
-                if (bpName == null) {
-                    if (env == World.Environment.NORMAL) {
-                        plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId()
-                                + "' has no overworld blueprint set. Islands made with it will be empty.");
-                    }
-                } else if (!loaded.containsKey(bpName) && isPasted(addon, env)) {
-                    // A blueprint for a dimension the game mode never pastes into does no harm
-                    plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId() + "' uses blueprint '" + bpName
-                            + FOR + env + ", but it did not load. Check that "
-                            + new File(folder, bpName + BLUEPRINT_SUFFIX) + " exists and is not corrupted.");
+        bundles.values().forEach(bb -> checkBundleBlueprints(addon, bb, loaded));
+    }
+
+    /**
+     * Logs an error for each blueprint a bundle needs that is not set or did not load.
+     *
+     * @param addon the game mode the bundle belongs to
+     * @param bb the bundle to check
+     * @param loaded the blueprints that loaded for the game mode, by name
+     */
+    private void checkBundleBlueprints(@NonNull GameModeAddon addon, BlueprintBundle bb, Map<String, Blueprint> loaded) {
+        String gameMode = addon.getDescription().getName();
+        for (World.Environment env : List.of(World.Environment.NORMAL, World.Environment.NETHER,
+                World.Environment.THE_END)) {
+            String bpName = bb.getBlueprint(env);
+            if (bpName == null) {
+                if (env == World.Environment.NORMAL) {
+                    plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId()
+                            + "' has no overworld blueprint set. Islands made with it will be empty.");
                 }
+            } else if (!loaded.containsKey(bpName) && isPasted(addon, env)) {
+                // A blueprint for a dimension the game mode never pastes into does no harm
+                plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId() + "' uses blueprint '" + bpName
+                        + FOR + env + ", but it did not load. Check that "
+                        + new File(getBlueprintsFolder(addon), bpName + BLUEPRINT_SUFFIX) + " exists and is not corrupted.");
             }
         }
     }
