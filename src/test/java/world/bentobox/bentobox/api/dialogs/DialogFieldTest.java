@@ -136,7 +136,8 @@ class DialogFieldTest extends CommonTestSetup {
     @Test
     void testNumberBadValuesThrow() {
         assertThrows(IllegalArgumentException.class, () -> new DialogField.Number("n", LABEL, 0, 10, 11, 0, null, 200));
-        assertThrows(IllegalArgumentException.class, () -> DialogField.number("n", LABEL, 0, 10, 1).step(-1));
+        DialogField.Number n = DialogField.number("n", LABEL, 0, 10, 1);
+        assertThrows(IllegalArgumentException.class, () -> n.step(-1));
     }
 
     // ---- Toggle ----
@@ -172,7 +173,9 @@ class DialogFieldTest extends CommonTestSetup {
         DialogField.Choice c = DialogField.choice("mode", LABEL, options, null);
         options.add(Option.of("B"));
         assertEquals(1, c.options().size());
-        assertThrows(UnsupportedOperationException.class, () -> c.options().add(Option.of("C")));
+        List<Option> copy = c.options();
+        Option extra = Option.of("C");
+        assertThrows(UnsupportedOperationException.class, () -> copy.add(extra));
     }
 
     @Test

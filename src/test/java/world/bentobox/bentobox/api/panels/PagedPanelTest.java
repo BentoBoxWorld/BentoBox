@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -143,7 +144,7 @@ class PagedPanelTest extends CommonTestSetup {
         assertEquals("item45", p.getItems().get(0).getName());
         // Refreshed in place: the inventory was created and opened only once
         mockedBukkit.verify(() -> Bukkit.createInventory(any(), anyInt(), any(net.kyori.adventure.text.Component.class)),
-                Mockito.times(1));
+                times(1));
         // Middle page has both buttons
         assertEquals(Material.ARROW, p.getItems().get(45).getItem().getType());
         assertEquals(Material.ARROW, p.getItems().get(53).getItem().getType());

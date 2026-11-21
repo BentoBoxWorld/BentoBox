@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
 public sealed interface DialogField permits DialogField.Text, DialogField.Number, DialogField.Toggle, DialogField.Choice {
 
     /** What a field key may contain */
-    Pattern KEY_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
+    Pattern KEY_PATTERN = Pattern.compile("\\w+");
 
     /** Widest input the client accepts */
     int MAX_WIDTH = 1024;
@@ -176,8 +176,12 @@ public sealed interface DialogField permits DialogField.Text, DialogField.Number
     @NonNull
     static Choice choice(@NonNull String key, @NonNull Component label, @NonNull List<Choice.Option> options,
             @Nullable String initialId) {
-        return new Choice(key, label, options, initialId == null && !options.isEmpty() ? options.getFirst().id() : initialId,
-                true, DEFAULT_WIDTH);
+        String initial = initialId;
+        if (initial == null) {
+            // An empty list is rejected by the constructor, so "" never reaches a dialog
+            initial = options.isEmpty() ? "" : options.getFirst().id();
+        }
+        return new Choice(key, label, options, initial, true, DEFAULT_WIDTH);
     }
 
     /**

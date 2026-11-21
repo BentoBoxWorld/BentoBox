@@ -102,7 +102,7 @@ public class PagedPanel extends Panel {
     private PanelItem pageButton(User user, String reference, Material icon, int target) {
         // Pages are shown to the player counting from 1
         String number = String.valueOf(target + 1);
-        PanelItemBuilder b = new PanelItemBuilder().icon(icon).amount(Math.clamp(target + 1, 1, 64))
+        PanelItemBuilder b = new PanelItemBuilder().icon(icon).amount(Math.clamp((long) target + 1, 1, 64))
                 .clickHandler((panel, u, clickType, slot) -> {
                     showPage(target);
                     return true;

@@ -413,21 +413,22 @@ public class DialogBuilder {
             }
             yield b.build();
         }
-        case DialogField.Number n -> {
-            var b = DialogInput.numberRange(n.key(), n.label(), n.min(), n.max()).initial(n.initial())
-                    .width(n.width());
-            if (n.step() > 0) {
-                b.step(n.step());
+        case DialogField.Number(var key, var label, var min, var max, var initial, var step, var labelFormat,
+                var width) -> {
+            var b = DialogInput.numberRange(key, label, min, max).initial(initial).width(width);
+            if (step > 0) {
+                b.step(step);
             }
-            if (n.labelFormat() != null) {
-                b.labelFormat(n.labelFormat());
+            if (labelFormat != null) {
+                b.labelFormat(labelFormat);
             }
             yield b.build();
         }
-        case DialogField.Toggle t -> DialogInput.bool(t.key(), t.label()).initial(t.initial()).build();
-        case DialogField.Choice c -> DialogInput.singleOption(c.key(), c.label(), c.options().stream()
-                .map(o -> SingleOptionDialogInput.OptionEntry.create(o.id(), o.display(), o.id().equals(c.initialId())))
-                .toList()).labelVisible(c.labelVisible()).width(c.width()).build();
+        case DialogField.Toggle(var key, var label, var initial) -> DialogInput.bool(key, label).initial(initial).build();
+        case DialogField.Choice(var key, var label, var options, var initialId, var labelVisible, var width) ->
+            DialogInput.singleOption(key, label, options.stream()
+                    .map(o -> SingleOptionDialogInput.OptionEntry.create(o.id(), o.display(), o.id().equals(initialId)))
+                    .toList()).labelVisible(labelVisible).width(width).build();
         };
     }
 }

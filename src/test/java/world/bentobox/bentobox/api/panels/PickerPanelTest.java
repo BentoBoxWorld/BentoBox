@@ -162,7 +162,8 @@ class PickerPanelTest extends CommonTestSetup {
         PagedPanel panel = PickerPanel.materials(user).onPick(picked::set).open();
         PanelListener listener = panel.getListener().orElseThrow();
         InventoryView view = mock(InventoryView.class);
-        when(view.getBottomInventory()).thenReturn(mock(Inventory.class));
+        Inventory bottom = mock(Inventory.class);
+        when(view.getBottomInventory()).thenReturn(bottom);
         InventoryClickEvent e = mock(InventoryClickEvent.class);
         when(e.getView()).thenReturn(view);
         when(e.getClickedInventory()).thenReturn(inv);

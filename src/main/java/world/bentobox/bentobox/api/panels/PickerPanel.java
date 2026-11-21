@@ -75,6 +75,10 @@ public class PickerPanel<T> {
     /** Most characters a search may be */
     private static final int MAX_SEARCH = 32;
 
+    private static final String SPAWN_EGG = "_SPAWN_EGG";
+    private static final String SNOW_BLOCK = "SNOW_BLOCK";
+    private static final String STONE = "STONE";
+
     private final User user;
     private final List<T> values;
     private Function<T, ItemStack> icon;
@@ -422,7 +426,7 @@ public class PickerPanel<T> {
      */
     @NonNull
     static Optional<Material> spawnEgg(@NonNull EntityType type) {
-        return Optional.ofNullable(Material.matchMaterial(type.name() + "_SPAWN_EGG"));
+        return Optional.ofNullable(Material.matchMaterial(type.name() + SPAWN_EGG));
     }
 
     /**
@@ -432,10 +436,10 @@ public class PickerPanel<T> {
     @NonNull
     static Optional<EntityType> entityFromEgg(@NonNull ItemStack item) {
         String n = item.getType().name();
-        if (!n.endsWith("_SPAWN_EGG")) {
+        if (!n.endsWith(SPAWN_EGG)) {
             return Optional.empty();
         }
-        String type = n.substring(0, n.length() - "_SPAWN_EGG".length());
+        String type = n.substring(0, n.length() - SPAWN_EGG.length());
         return Arrays.stream(EntityType.values()).filter(t -> t.name().equals(type)).findFirst();
     }
 
@@ -448,16 +452,16 @@ public class PickerPanel<T> {
             Map.entry("dripstone", "POINTED_DRIPSTONE"), Map.entry("lush", "MOSS_BLOCK"),
             // Before "grove" and "swamp", which it contains
             Map.entry("mangrove", "MANGROVE_PROPAGULE"),
-            Map.entry("frozen", "PACKED_ICE"), Map.entry("ice", "PACKED_ICE"), Map.entry("snow", "SNOW_BLOCK"),
-            Map.entry("grove", "SNOW_BLOCK"), Map.entry("peak", "STONE"), Map.entry("slopes", "SNOW_BLOCK"),
+            Map.entry("frozen", "PACKED_ICE"), Map.entry("ice", "PACKED_ICE"), Map.entry("snow", SNOW_BLOCK),
+            Map.entry("grove", SNOW_BLOCK), Map.entry("peak", STONE), Map.entry("slopes", SNOW_BLOCK),
             Map.entry("ocean", "WATER_BUCKET"), Map.entry("river", "WATER_BUCKET"), Map.entry("beach", "SAND"),
             Map.entry("desert", "SAND"), Map.entry("badlands", "RED_SAND"), Map.entry("swamp", "LILY_PAD"), Map.entry("jungle", "JUNGLE_SAPLING"),
             Map.entry("bamboo", "BAMBOO"), Map.entry("cherry", "CHERRY_SAPLING"),
             Map.entry("pale", "PALE_OAK_SAPLING"), Map.entry("dark_forest", "DARK_OAK_SAPLING"),
             Map.entry("birch", "BIRCH_SAPLING"), Map.entry("taiga", "SPRUCE_SAPLING"),
             Map.entry("savanna", "ACACIA_SAPLING"), Map.entry("sunflower", "SUNFLOWER"), Map.entry("flower", "POPPY"),
-            Map.entry("forest", "OAK_SAPLING"), Map.entry("meadow", "CORNFLOWER"), Map.entry("hills", "STONE"),
-            Map.entry("stony", "STONE"), Map.entry("plains", "GRASS_BLOCK"));
+            Map.entry("forest", "OAK_SAPLING"), Map.entry("meadow", "CORNFLOWER"), Map.entry("hills", STONE),
+            Map.entry("stony", STONE), Map.entry("plains", "GRASS_BLOCK"));
 
     /**
      * Suggests an icon for a biome from its name, e.g. sand for a desert or a lily pad for a
