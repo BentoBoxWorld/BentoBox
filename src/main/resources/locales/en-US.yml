@@ -2216,6 +2216,22 @@ panels:
     next:
       name: '<white><bold>Next Page</bold></white>'
       description: '<gray>Switch to [number] page</gray>'
+  # Shared by the value pickers (materials, entities, biomes...) addons open.
+  picker:
+    back:
+      name: '<white><bold>Back</bold></white>'
+      description: '<gray>Go back without choosing.</gray>'
+    inventory:
+      name: '<white><bold>Or use your inventory</bold></white>'
+      description: '<gray>Click an item in your own inventory to choose it.</gray>'
+    search:
+      name: '<white><bold>Search</bold></white>'
+      description: '<gray>Show only names containing some text.</gray>'
+      clear-name: '<white><bold>Clear search</bold></white>'
+      clear-description: '<gray>Show everything again.</gray>'
+      title: '<white>Search</white>'
+      field: 'Name contains'
+      button: '<green>Search</green>'
   tips:
     click-to-next: '<yellow>Click </yellow><gray>for next.</gray>'
     click-to-previous: '<yellow>Click </yellow><gray>for previous.</gray>'
