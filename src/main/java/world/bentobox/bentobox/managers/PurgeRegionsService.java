@@ -30,6 +30,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.managers.island.IslandGrid;
 import world.bentobox.bentobox.managers.island.IslandGrid.IslandData;
 import world.bentobox.bentobox.util.Pair;
@@ -252,6 +253,8 @@ public class PurgeRegionsService {
         boolean ok = deleteRegionFiles(scan);
         if (!ok) {
             plugin.logError("Not all region files could be deleted");
+        } else {
+            clearCustomBlockData(scan);
         }
 
         // Collect unique island IDs across all reaped regions. An island
@@ -322,6 +325,39 @@ public class PurgeRegionsService {
                 + islandsDeferred + " island(s) deferred"
                 + (scan.days() == 0 ? " (to shutdown)" : " (partial cleanup)"));
         return ok;
+    }
+
+    /**
+     * Clears the block data that other plugins keep outside the region files for
+     * the regions that were just deleted, so it does not come back to life when
+     * the area is used again (#2051).
+     *
+     * <p>Only Slimefun needs this. A failure in the other plugin is logged and
+     * never stops the purge.
+     *
+     * @param scan the scan whose region files have been deleted
+     */
+    private void clearCustomBlockData(PurgeScanResult scan) {
+        plugin.getHooks().getHook("Slimefun").ifPresent(hook -> {
+            try {
+                SlimefunHook slimefun = (SlimefunHook) hook;
+                Set<Pair<Integer, Integer>> regions = scan.deletableRegions().keySet();
+                int cleared = slimefun.clearRegions(scan.world(), regions);
+                World nether = scan.isNether() ? plugin.getIWM().getNetherWorld(scan.world()) : null;
+                if (nether != null) {
+                    cleared += slimefun.clearRegions(nether, regions);
+                }
+                World end = scan.isEnd() ? plugin.getIWM().getEndWorld(scan.world()) : null;
+                if (end != null) {
+                    cleared += slimefun.clearRegions(end, regions);
+                }
+                if (cleared > 0) {
+                    plugin.log("Cleared " + cleared + " Slimefun block(s) from the purged regions");
+                }
+            } catch (Exception | LinkageError e) {
+                plugin.logWarning("Could not clear Slimefun block data for the purged regions: " + e);
+            }
+        });
     }
 
     /**

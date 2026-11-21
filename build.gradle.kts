@@ -300,6 +300,9 @@ dependencies {
     }
     compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
     compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")
+    testImplementation("com.github.Slimefun:Slimefun4:$slimefun4Version") {
+        isTransitive = false // only BlockStorage is needed, to test SlimefunHook
+    }
     compileOnly("beer.devs:itemsadder-api:$itemsAdderVersion") // Published to Maven Central
     compileOnly("de.oliver:FancyNpcs:$fancyNpcsVersion")
     compileOnly("lol.pyr:znpcsplus-api:$znpcsplusApiVersion")
