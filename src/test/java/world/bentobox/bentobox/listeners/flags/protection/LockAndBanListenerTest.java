@@ -30,7 +30,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import io.papermc.paper.entity.TeleportFlag;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -372,10 +371,10 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(vehicle.getPassengers()).thenReturn(passengers);
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
-        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(true);
+        when(vehicle.teleport(outside)).thenReturn(true);
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
         // The whole vehicle is turned back with both riders aboard
-        verify(vehicle).teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS);
+        verify(vehicle).teleport(outside);
         verify(mockPlayer, never()).leaveVehicle();
         // Nobody is sent home
         verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
@@ -696,11 +695,11 @@ class LockAndBanListenerTest extends CommonTestSetup {
     @Test
     void testVehicleWithOnlyLockedOutRiderIsTurnedBack() {
         Vehicle vehicle = lockedOutRiderIn(mockPlayer);
-        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(true);
+        when(vehicle.teleport(outside)).thenReturn(true);
 
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
 
-        verify(vehicle).teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS);
+        verify(vehicle).teleport(outside);
         verify(mockPlayer, never()).leaveVehicle();
         verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
     }
@@ -712,13 +711,13 @@ class LockAndBanListenerTest extends CommonTestSetup {
     @Test
     void testVehicleTurnBackFallsBackToMovingRiderAndVehicleSeparately() {
         Vehicle vehicle = lockedOutRiderIn(mockPlayer);
-        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(false);
+        when(vehicle.teleport(outside)).thenReturn(false);
 
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
 
         verify(mockPlayer).leaveVehicle();
         verify(mockPlayer).teleport(outside);
-        verify(vehicle).teleport(outside);
+        verify(vehicle, times(2)).teleport(outside);
         verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
     }
 
@@ -734,7 +733,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
 
         verify(mockPlayer).leaveVehicle();
         verify(im).homeTeleportAsync(any(), eq(mockPlayer));
-        verify(vehicle, never()).teleport(any(Location.class), any(TeleportFlag[].class));
+        verify(vehicle, never()).teleport(any(Location.class));
     }
 
     /**
@@ -751,13 +750,13 @@ class LockAndBanListenerTest extends CommonTestSetup {
         vehicle.getPassengers().add(member);
         when(island.isAllowed(any(User.class), any())).thenAnswer(
                 (Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(memberUuid));
-        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(false);
+        when(vehicle.teleport(outside)).thenReturn(false);
 
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
 
         verify(mockPlayer).teleport(outside);
         verify(member).teleport(outside);
-        verify(vehicle).teleport(outside);
+        verify(vehicle, times(2)).teleport(outside);
         verify(im, never()).homeTeleportAsync(any(), any(Player.class));
     }
 
@@ -786,7 +785,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
 
         verify(border).setSize(PROTECTION_RANGE * 2D);
         // Red is a shrinking border
-        verify(border).setSize(eq(PROTECTION_RANGE * 2D - 0.1), anyLong());
+        verify(border).changeSize(eq(PROTECTION_RANGE * 2D - 0.1), anyLong());
         verify(mockPlayer).setWorldBorder(border);
         verify(sch).runTaskLater(any(), any(Runnable.class), anyLong());
     }
@@ -797,7 +796,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
 
         listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
 
-        verify(border, never()).setSize(anyDouble(), anyLong());
+        verify(border, never()).changeSize(anyDouble(), anyLong());
         verify(mockPlayer).setWorldBorder(border);
     }
 
@@ -807,7 +806,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
 
         listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
 
-        verify(border).setSize(eq(PROTECTION_RANGE * 2D + 0.1), anyLong());
+        verify(border).changeSize(eq(PROTECTION_RANGE * 2D + 0.1), anyLong());
     }
 
     @Test
@@ -895,10 +894,10 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(vehicle.getPassengers()).thenReturn(passengers);
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
-        when(vehicle.teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS)).thenReturn(true);
+        when(vehicle.teleport(outside)).thenReturn(true);
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
         // One rider may not enter, so the whole vehicle is turned back, member included
-        verify(vehicle).teleport(outside, TeleportFlag.EntityState.RETAIN_PASSENGERS);
+        verify(vehicle).teleport(outside);
         verify(player, never()).leaveVehicle();
         verify(player2, never()).leaveVehicle();
         // Nobody is sent home

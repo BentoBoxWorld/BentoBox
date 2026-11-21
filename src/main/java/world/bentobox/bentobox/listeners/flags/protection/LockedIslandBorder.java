@@ -81,9 +81,9 @@ class LockedIslandBorder {
         // The client colors a border by whether it is shrinking, growing or still
         Settings.BorderColor color = settings.getLockedBorderColor();
         if (color == Settings.BorderColor.GREEN) {
-            border.setSize(size + 0.1, MAX_TICKS);
+            border.changeSize(size + 0.1, MAX_TICKS);
         } else if (color != Settings.BorderColor.BLUE) {
-            border.setSize(size - 0.1, MAX_TICKS);
+            border.changeSize(size - 0.1, MAX_TICKS);
         }
         // Keep the border the player had before any of ours went up
         WorldBorder previous = current != null ? current.previous : player.getWorldBorder();

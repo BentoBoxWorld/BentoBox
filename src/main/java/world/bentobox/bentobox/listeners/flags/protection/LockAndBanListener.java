@@ -23,8 +23,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
-import io.papermc.paper.entity.TeleportFlag;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
@@ -177,7 +175,8 @@ public class LockAndBanListener extends FlagListener {
         }
         // Otherwise the whole vehicle is turned back, whoever else is aboard.
         vehicle.setVelocity(new Vector(0, 0, 0));
-        if (vehicle.teleport(e.getFrom(), TeleportFlag.EntityState.RETAIN_PASSENGERS)) {
+        // Riders stay aboard: a teleported vehicle keeps its passengers
+        if (vehicle.teleport(e.getFrom())) {
             return;
         }
         // The server refused to move the loaded vehicle. Take the riders off and
