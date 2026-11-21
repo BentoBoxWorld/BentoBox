@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -12,6 +13,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
@@ -159,12 +161,19 @@ public class IslandResetCommand extends ConfirmableCommand {
      * @param label The command label used
      */
     private void selectBundle(@NonNull User user, @NonNull String label) {
+        Map<String, BlueprintBundle> bundles = getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon());
         // Show panel only if there are multiple bundles available
-        if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() > 1) {
+        if (bundles.size() > 1) {
             // Show panel - once the player selected a bundle, this will re-run this command
             IslandCreationPanel.openPanel(this, user, label, true);
-        } else {
-            resetIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
+            return;
+        }
+        // The bundle used when the player does not choose: "default", or the only one there is
+        String name = BlueprintsManager.defaultBundleName(bundles);
+        // A stand-in for the default bundle is still subject to its own permission
+        if (name.equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)
+                || getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, name)) {
+            resetIsland(user, name);
         }
     }
 

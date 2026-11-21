@@ -497,7 +497,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
     void testPasteBundleNotRegistered() {
         boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
         assertFalse(result);
-        verify(plugin).logError("Tried to paste 'default' but the bundle is not loaded!");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("there is no blueprint bundle called 'default'"));
     }
 
     @Test
@@ -509,7 +509,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         boolean result = manager.paste(addon, island, BUNDLE_NAME, null, true);
         assertFalse(result);
-        verify(plugin).logError("No blueprints loaded for bundle 'default'!");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("no blueprints are loaded"));
     }
 
     // -----------------------------------------------------------------------
@@ -661,6 +661,44 @@ class BlueprintsManagerTest extends CommonTestSetup {
         assertTrue(bundles.containsKey(BUNDLE_NAME));
     }
 
+    private void loadBundleWithMissingEndBlueprint(boolean endIslands) throws IOException {
+        blueprintsFolder.mkdirs();
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        Blueprint islandBp = new Blueprint();
+        islandBp.setName("island");
+        bb.setBlueprint(World.Environment.NORMAL, islandBp);
+        Blueprint endBp = new Blueprint();
+        endBp.setName("bedrock");
+        bb.setBlueprint(World.Environment.THE_END, endBp);
+        manager.saveBlueprintBundle(addon, bb);
+        Files.writeString(new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX).toPath(),
+                BLUEPRINT_JSON);
+        world.bentobox.bentobox.api.configuration.WorldSettings ws = mock(
+                world.bentobox.bentobox.api.configuration.WorldSettings.class);
+        when(ws.isEndGenerate()).thenReturn(endIslands);
+        when(ws.isEndIslands()).thenReturn(endIslands);
+        when(addon.getWorldSettings()).thenReturn(ws);
+
+        manager.loadBlueprintBundles(addon);
+    }
+
+    /**
+     * A bundle may name an end blueprint the game mode never ships, because it has
+     * no end islands. That is harmless and must not be reported (#1917).
+     */
+    @Test
+    void testLoadBlueprintBundlesIgnoresMissingBlueprintForUnusedDimension() throws IOException {
+        loadBundleWithMissingEndBlueprint(false);
+        verify(plugin, never()).logError(org.mockito.ArgumentMatchers.contains("uses blueprint 'bedrock'"));
+    }
+
+    @Test
+    void testLoadBlueprintBundlesReportsMissingBlueprintForUsedDimension() throws IOException {
+        loadBundleWithMissingEndBlueprint(true);
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("uses blueprint 'bedrock' for THE_END"));
+    }
+
     @Test
     void testLoadBlueprintBundlesDuplicateUniqueId() throws IOException {
         blueprintsFolder.mkdirs();
@@ -745,7 +783,29 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         manager.paste(addon, island, BUNDLE_NAME, null, true);
         // Should log error about no default blueprint
-        verify(plugin).logError("Blueprint bundle has no normal world blueprint, using default");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("points at overworld blueprint 'nonexistent'"));
+    }
+
+    // -----------------------------------------------------------------------
+    // defaultBundleName (#1917)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testDefaultBundleNamePrefersDefault() {
+        assertEquals("default", BlueprintsManager.defaultBundleName(
+                Map.of("default", new BlueprintBundle(), "custom", new BlueprintBundle())));
+    }
+
+    @Test
+    void testDefaultBundleNameUsesOnlyBundleWhenNoDefault() {
+        assertEquals("custom", BlueprintsManager.defaultBundleName(Map.of("custom", new BlueprintBundle())));
+    }
+
+    @Test
+    void testDefaultBundleNameAmbiguousFallsBackToDefault() {
+        assertEquals("default", BlueprintsManager.defaultBundleName(Map.of()));
+        assertEquals("default", BlueprintsManager.defaultBundleName(
+                Map.of("a", new BlueprintBundle(), "b", new BlueprintBundle())));
     }
 
     @Test
@@ -758,7 +818,7 @@ class BlueprintsManagerTest extends CommonTestSetup {
 
         // No blueprints loaded
         manager.paste(addon, island, BUNDLE_NAME);
-        verify(plugin).logError("No blueprints loaded for bundle 'default'!");
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("no blueprints are loaded"));
     }
 
     // -----------------------------------------------------------------------

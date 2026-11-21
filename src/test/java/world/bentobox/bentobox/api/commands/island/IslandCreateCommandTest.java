@@ -440,6 +440,35 @@ class IslandCreateCommandTest extends CommonTestSetup {
     }
 
     /**
+     * With no "default" bundle and a single bundle of the admin's own, that bundle
+     * is used when the player does not choose one (#1917).
+     */
+    @Test
+    void testNoArgsUsesOnlyBundleWhenNoDefault() {
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.checkPerm(any(), any(), eq("custom"))).thenReturn(true);
+
+        assertTrue(cc.execute(user, "", Collections.emptyList()));
+        verify(builder).name("custom");
+    }
+
+    /**
+     * The stand-in bundle keeps its own permission requirement.
+     */
+    @Test
+    void testNoArgsOnlyBundleStillNeedsPermission() {
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("custom", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        when(bpm.checkPerm(any(), any(), eq("custom"))).thenReturn(false);
+
+        assertFalse(cc.execute(user, "", Collections.emptyList()));
+        verify(builder, never()).name(any());
+    }
+
+    /**
      * Test method for cost check - economy disabled ignores cost
      */
     @Test

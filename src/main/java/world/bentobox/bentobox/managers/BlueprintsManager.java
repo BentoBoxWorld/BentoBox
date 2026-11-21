@@ -70,6 +70,7 @@ public class BlueprintsManager {
     @NonNull
     public static final String FOLDER_NAME = "blueprints";
     private static final String FOR = "' for ";
+    private static final String BLUEPRINT_BUNDLE = " blueprint bundle '";
 
     /**
      * Map of blueprint bundles to game mode addon.
@@ -211,6 +212,8 @@ public class BlueprintsManager {
                 }
                 // Load blueprints
                 loadBlueprints(addon);
+                // Tell the admin now about anything that will stop islands being made
+                checkBundles(addon);
             } catch (Exception e) {
                 plugin.logError("Could not load blueprints for " + addon.getDescription().getName() + ": " + e.getMessage());
                 plugin.logStacktrace(e);
@@ -220,6 +223,91 @@ public class BlueprintsManager {
                 blueprintsLoaded.remove(addon);
             }
         });
+    }
+
+    /**
+     * The bundle to use when a player has not chosen one: {@value #DEFAULT_BUNDLE_NAME}
+     * if it exists, otherwise the only bundle there is. An admin who replaces the
+     * stock bundle with a single one of their own therefore does not have to call
+     * it "default".
+     *
+     * @param bundles the game mode's bundles, keyed by unique id
+     * @return the bundle name to use; {@value #DEFAULT_BUNDLE_NAME} when there is no
+     *         unambiguous alternative
+     * @since 3.23.8
+     */
+    @NonNull
+    public static String defaultBundleName(@NonNull Map<String, BlueprintBundle> bundles) {
+        if (bundles.size() == 1 && !bundles.containsKey(DEFAULT_BUNDLE_NAME)) {
+            return bundles.keySet().iterator().next();
+        }
+        return DEFAULT_BUNDLE_NAME;
+    }
+
+    /**
+     * Logs, at load time, every problem that would later stop an island being
+     * created: no usable default bundle, and bundles that point at blueprints
+     * which did not load. Each message names the file to fix (#1917).
+     *
+     * @param addon the game mode whose bundles were just loaded
+     */
+    private void checkBundles(@NonNull GameModeAddon addon) {
+        String gameMode = addon.getDescription().getName();
+        File folder = getBlueprintsFolder(addon);
+        Map<String, BlueprintBundle> bundles = getBlueprintBundles(addon);
+        if (!bundles.containsKey(DEFAULT_BUNDLE_NAME)) {
+            if (bundles.size() == 1) {
+                plugin.logWarning(gameMode + " has no '" + DEFAULT_BUNDLE_NAME + "' blueprint bundle. Its only bundle, '"
+                        + bundles.keySet().iterator().next() + "', will be used when a player does not choose one.");
+            } else {
+                plugin.logError(gameMode + " has no '" + DEFAULT_BUNDLE_NAME + "' blueprint bundle ("
+                        + new File(folder, DEFAULT_BUNDLE_NAME + BLUEPRINT_BUNDLE_SUFFIX) + " is missing).");
+                plugin.logError("Players given an island automatically, for example on first login, will get an empty one."
+                        + " Restore the file from the " + gameMode + " jar, or name one of these bundles '"
+                        + DEFAULT_BUNDLE_NAME + "': " + bundles.keySet());
+            }
+        }
+        Map<String, Blueprint> loaded = getBlueprints(addon);
+        bundles.values().forEach(bb -> checkBundleBlueprints(addon, bb, loaded));
+    }
+
+    /**
+     * Logs an error for each blueprint a bundle needs that is not set or did not load.
+     *
+     * @param addon the game mode the bundle belongs to
+     * @param bb the bundle to check
+     * @param loaded the blueprints that loaded for the game mode, by name
+     */
+    private void checkBundleBlueprints(@NonNull GameModeAddon addon, BlueprintBundle bb, Map<String, Blueprint> loaded) {
+        String gameMode = addon.getDescription().getName();
+        for (World.Environment env : List.of(World.Environment.NORMAL, World.Environment.NETHER,
+                World.Environment.THE_END)) {
+            String bpName = bb.getBlueprint(env);
+            if (bpName == null) {
+                if (env == World.Environment.NORMAL) {
+                    plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId()
+                            + "' has no overworld blueprint set. Islands made with it will be empty.");
+                }
+            } else if (!loaded.containsKey(bpName) && isPasted(addon, env)) {
+                // A blueprint for a dimension the game mode never pastes into does no harm
+                plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId() + "' uses blueprint '" + bpName
+                        + FOR + env + ", but it did not load. Check that "
+                        + new File(getBlueprintsFolder(addon), bpName + BLUEPRINT_SUFFIX) + " exists and is not corrupted.");
+            }
+        }
+    }
+
+    /**
+     * @param addon the game mode
+     * @param env a world environment
+     * @return true if the game mode pastes a blueprint in that environment when an island is made
+     */
+    private static boolean isPasted(@NonNull GameModeAddon addon, World.Environment env) {
+        return switch (env) {
+        case NETHER -> addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands();
+        case THE_END -> addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands();
+        default -> true;
+        };
     }
 
     /**
@@ -490,22 +578,28 @@ public class BlueprintsManager {
      * @return true if okay, false is there is a problem
      */
     public boolean paste(GameModeAddon addon, Island island, String name, Runnable task, boolean useNMS) {
+        String gameMode = addon.getDescription().getName();
         if (validate(addon, name) == null) {
-            plugin.logError("Tried to paste '" + name + "' but the bundle is not loaded!");
+            plugin.logError("Cannot make an island for " + gameMode + ": there is no blueprint bundle called '" + name
+                    + "'. Bundles available: " + getBlueprintBundles(addon).keySet() + ". Check "
+                    + new File(getBlueprintsFolder(addon), name + BLUEPRINT_BUNDLE_SUFFIX) + ".");
             return false;
         }
         BlueprintBundle bb = getBlueprintBundles(addon).get(name.toLowerCase());
         if (!blueprints.containsKey(addon) || blueprints.get(addon).isEmpty()) {
-            plugin.logError("No blueprints loaded for bundle '" + name + "'!");
+            plugin.logError("Cannot make an island for " + gameMode + " with bundle '" + name
+                    + "': no blueprints are loaded. Check the files in " + getBlueprintsFolder(addon) + ".");
             return false;
         }
         Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NORMAL));
         if (bp == null) {
             // Oops, no overworld
             bp = getBlueprints(addon).get("island");
-            plugin.logError("Blueprint bundle has no normal world blueprint, using default");
+            plugin.logError(gameMode + BLUEPRINT_BUNDLE + name + "' points at overworld blueprint '"
+                    + bb.getBlueprint(World.Environment.NORMAL) + "', which is not loaded. Trying 'island' instead.");
             if (bp == null) {
-                plugin.logError("NO DEFAULT BLUEPRINT FOUND! Make sure 'island.blueprint' exists!");
+                plugin.logError("There is no 'island' blueprint either, so the island will be empty. Check that "
+                        + new File(getBlueprintsFolder(addon), "island" + BLUEPRINT_SUFFIX) + " exists.");
             }
         }
         // Paste

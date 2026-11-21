@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -9,6 +10,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
@@ -138,19 +140,37 @@ public class IslandCreateCommand extends CompositeCommand {
             }
             // Make island
             return makeIsland(user, name);
-        } else {
-            if (getPlugin().getSettings().getIslandNumber() > 1
-                    && checkMaxUses(user, BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
-                return false;
-            }
-            // Show panel only if there are multiple bundles available
-            if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() > 1) {
-                // Show panel
-                IslandCreationPanel.openPanel(this, user, label, false);
-                return true;
-            }
-            return makeIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
         }
+        return createWithoutChoice(user, label);
+    }
+
+    /**
+     * Handles the command when the player has not named a bundle: opens the
+     * selection panel if there is a choice, otherwise makes the island with the
+     * default bundle, or with the only bundle there is.
+     *
+     * @param user the player making an island
+     * @param label the command label used
+     * @return true if the panel was opened or island creation started
+     */
+    private boolean createWithoutChoice(User user, String label) {
+        Map<String, BlueprintBundle> bundles = getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon());
+        // The bundle used when the player does not choose: "default", or the only one there is
+        String name = BlueprintsManager.defaultBundleName(bundles);
+        if (getPlugin().getSettings().getIslandNumber() > 1 && checkMaxUses(user, name)) {
+            return false;
+        }
+        // Show panel only if there are multiple bundles available
+        if (bundles.size() > 1) {
+            IslandCreationPanel.openPanel(this, user, label, false);
+            return true;
+        }
+        // A stand-in for the default bundle is still subject to its own permission
+        if (!name.equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)
+                && !getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, name)) {
+            return false;
+        }
+        return makeIsland(user, name);
     }
 
     /**
