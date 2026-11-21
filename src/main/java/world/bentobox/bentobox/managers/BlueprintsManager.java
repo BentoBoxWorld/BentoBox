@@ -70,6 +70,7 @@ public class BlueprintsManager {
     @NonNull
     public static final String FOLDER_NAME = "blueprints";
     private static final String FOR = "' for ";
+    private static final String BLUEPRINT_BUNDLE = " blueprint bundle '";
 
     /**
      * Map of blueprint bundles to game mode addon.
@@ -273,13 +274,13 @@ public class BlueprintsManager {
                 String bpName = bb.getBlueprint(env);
                 if (bpName == null) {
                     if (env == World.Environment.NORMAL) {
-                        plugin.logError(gameMode + " blueprint bundle '" + bb.getUniqueId()
+                        plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId()
                                 + "' has no overworld blueprint set. Islands made with it will be empty.");
                     }
                 } else if (!loaded.containsKey(bpName) && isPasted(addon, env)) {
                     // A blueprint for a dimension the game mode never pastes into does no harm
-                    plugin.logError(gameMode + " blueprint bundle '" + bb.getUniqueId() + "' uses blueprint '" + bpName
-                            + "' for " + env + ", but it did not load. Check that "
+                    plugin.logError(gameMode + BLUEPRINT_BUNDLE + bb.getUniqueId() + "' uses blueprint '" + bpName
+                            + FOR + env + ", but it did not load. Check that "
                             + new File(folder, bpName + BLUEPRINT_SUFFIX) + " exists and is not corrupted.");
                 }
             }
@@ -584,7 +585,7 @@ public class BlueprintsManager {
         if (bp == null) {
             // Oops, no overworld
             bp = getBlueprints(addon).get("island");
-            plugin.logError(gameMode + " blueprint bundle '" + name + "' points at overworld blueprint '"
+            plugin.logError(gameMode + BLUEPRINT_BUNDLE + name + "' points at overworld blueprint '"
                     + bb.getBlueprint(World.Environment.NORMAL) + "', which is not loaded. Trying 'island' instead.");
             if (bp == null) {
                 plugin.logError("There is no 'island' blueprint either, so the island will be empty. Check that "
