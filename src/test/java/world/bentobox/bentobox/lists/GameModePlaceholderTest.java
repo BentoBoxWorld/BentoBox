@@ -9,10 +9,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,6 +108,7 @@ class GameModePlaceholderTest extends CommonTestSetup {
         assertEquals("1", GameModePlaceholder.ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals(uuid.toString(), GameModePlaceholder.ISLAND_UUID.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
+        assertEquals("", GameModePlaceholder.ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
     }
 
     /**
@@ -132,6 +135,7 @@ class GameModePlaceholderTest extends CommonTestSetup {
         assertEquals("", GameModePlaceholder.ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_UUID.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
+        assertEquals("", GameModePlaceholder.ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
     }
 
     /**
@@ -259,6 +263,25 @@ class GameModePlaceholderTest extends CommonTestSetup {
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_UUID.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.VISITED_ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
+        assertEquals("", GameModePlaceholder.VISITED_ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
+    }
+
+    /**
+     * The visitor list placeholders name every player currently visiting, for both
+     * the player's own island and the island they are standing on (#2188).
+     */
+    @Test
+    void testVisitorListPlaceholders() {
+        Player v1 = mock(Player.class);
+        Player v2 = mock(Player.class);
+        when(v1.getName()).thenReturn("alice");
+        when(v2.getName()).thenReturn("bob");
+        when(island.getVisitors()).thenReturn(List.of(v1, v2));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
+
+        assertEquals("alice,bob", GameModePlaceholder.ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
+        assertEquals("alice,bob",
+                GameModePlaceholder.VISITED_ISLAND_VISITORS_LIST.getReplacer().onReplace(addon, user, island));
     }
 
     /**
