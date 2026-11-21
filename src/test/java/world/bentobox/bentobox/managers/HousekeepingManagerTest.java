@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -401,7 +402,7 @@ class HousekeepingManagerTest extends CommonTestSetup {
         settings.setHousekeepingDeletedIntervalHours(1);
         PurgeScanResult scan = scanWithRegions(0, 1);
         when(purgeService.scanDeleted(world)).thenReturn(scan);
-        org.mockito.Mockito.doThrow(new IllegalStateException("disk full")).when(world).save();
+        doThrow(new IllegalStateException("disk full")).when(world).save();
 
         HousekeepingManager hm = new HousekeepingManager(plugin);
         invokeCheckAndMaybeRun(hm);

@@ -54,6 +54,7 @@ import world.bentobox.bentobox.util.Pair;
 public class HousekeepingManager {
 
     private static final String LOG_PREFIX = "Housekeeping ";
+    private static final String LOG_TAG = "Housekeeping: ";
 
     private static final String LEGACY_LAST_RUN_KEY = "lastRunMillis";
     private static final String LAST_AGE_RUN_KEY = "lastAgeRunMillis";
@@ -181,7 +182,7 @@ public class HousekeepingManager {
 
     private synchronized void runNow(boolean runAge, boolean runDeleted) {
         if (inProgress) {
-            plugin.log("Housekeeping: run requested but already in progress, ignoring");
+            plugin.log(LOG_TAG + "run requested but already in progress, ignoring");
             return;
         }
         if (!runAge && !runDeleted) {
@@ -200,7 +201,7 @@ public class HousekeepingManager {
                     executeDeletedCycle(savedWorlds);
                 }
             } catch (Exception e) {
-                plugin.logError("Housekeeping: cycle failed: " + e.getMessage());
+                plugin.logError(LOG_TAG + "cycle failed: " + e.getMessage());
                 plugin.logStacktrace(e);
             } finally {
                 inProgress = false;
@@ -236,15 +237,15 @@ public class HousekeepingManager {
             done.get(MAIN_THREAD_TIMEOUT_MINUTES, TimeUnit.MINUTES);
             return true;
         } catch (TimeoutException _) {
-            plugin.logError("Housekeeping: " + what + " timed out after " + MAIN_THREAD_TIMEOUT_MINUTES
+            plugin.logError(LOG_TAG + "" + what + " timed out after " + MAIN_THREAD_TIMEOUT_MINUTES
                     + " minutes");
             return false;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            plugin.logError("Housekeeping: " + what + " interrupted: " + e.getMessage());
+            plugin.logError(LOG_TAG + "" + what + " interrupted: " + e.getMessage());
             return false;
         } catch (ExecutionException e) {
-            plugin.logError("Housekeeping: " + what + " failed: " + e.getCause().getMessage());
+            plugin.logError(LOG_TAG + "" + what + " failed: " + e.getCause().getMessage());
             return false;
         }
     }
@@ -291,9 +292,9 @@ public class HousekeepingManager {
             if (savedWorlds.contains(w)) {
                 continue;
             }
-            plugin.log("Housekeeping: saving world '" + w.getName() + "' before purge...");
+            plugin.log(LOG_TAG + "saving world '" + w.getName() + "' before purge...");
             if (!runOnMainThreadAndWait(w::save, "save of world '" + w.getName() + "'")) {
-                plugin.logError("Housekeeping: could not save world '" + w.getName() + "', skipping its purge");
+                plugin.logError(LOG_TAG + "could not save world '" + w.getName() + "', skipping its purge");
                 return false;
             }
             savedWorlds.add(w);
@@ -329,7 +330,7 @@ public class HousekeepingManager {
         long startMillis = System.currentTimeMillis();
         int ageDays = plugin.getSettings().getHousekeepingRegionAgeDays();
         if (ageDays <= 0) {
-            plugin.logError("Housekeeping: region-age-days must be >= 1, skipping age sweep");
+            plugin.logError(LOG_TAG + "region-age-days must be >= 1, skipping age sweep");
             return;
         }
         List<GameModeAddon> gameModes = plugin.getAddonsManager().getGameModeAddons();
@@ -341,24 +342,14 @@ public class HousekeepingManager {
         boolean hasErrors = false;
         for (GameModeAddon gm : gameModes) {
             World overworld = gm.getOverWorld();
-            if (overworld == null) {
-                continue;
-            }
-            totalWorlds++;
-            plugin.log("Housekeeping age sweep: scanning '" + gm.getDescription().getName()
-                    + "' world '" + overworld.getName() + "'");
-            // The age scan reads region-file timestamps, so in-memory chunk
-            // changes have to be on disk before it looks.
-            if (!saveWorlds(gameModeWorlds(overworld), savedWorlds)) {
-                hasErrors = true;
-                continue;
-            }
-            PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
-            int purged = runDeleteIfNonEmpty(scan, overworld, "age sweep");
-            if (purged < 0) {
-                hasErrors = true;
-            } else {
-                totalRegionsPurged += purged;
+            if (overworld != null) {
+                totalWorlds++;
+                int purged = ageSweepWorld(gm, overworld, ageDays, savedWorlds);
+                if (purged < 0) {
+                    hasErrors = true;
+                } else {
+                    totalRegionsPurged += purged;
+                }
             }
         }
 
@@ -383,31 +374,14 @@ public class HousekeepingManager {
         boolean hasErrors = false;
         for (GameModeAddon gm : gameModes) {
             World overworld = gm.getOverWorld();
-            if (overworld == null) {
-                continue;
-            }
-            totalWorlds++;
-            plugin.log("Housekeeping deleted sweep: scanning '" + gm.getDescription().getName()
-                    + "' world '" + overworld.getName() + "'");
-            PurgeScanResult scan = plugin.getPurgeRegionsService().scanDeleted(overworld);
-            // The deleted scan is driven by the island database, not by what is
-            // on disk, so nothing needs saving unless there is something to
-            // purge. The usual hourly run finds nothing and so never touches
-            // the main thread at all.
-            if (!scan.isEmpty()) {
-                if (!saveWorlds(gameModeWorlds(overworld), savedWorlds)) {
+            if (overworld != null) {
+                totalWorlds++;
+                int purged = deletedSweepWorld(gm, overworld, savedWorlds);
+                if (purged < 0) {
                     hasErrors = true;
-                    continue;
+                } else {
+                    totalRegionsPurged += purged;
                 }
-                // Evict in-memory chunks before the async delete, so Paper's
-                // autosave can't re-flush them over the deleted region files.
-                evictChunksInBatches(scan);
-            }
-            int purged = runDeleteIfNonEmpty(scan, overworld, "deleted sweep");
-            if (purged < 0) {
-                hasErrors = true;
-            } else {
-                totalRegionsPurged += purged;
             }
         }
 
@@ -420,6 +394,47 @@ public class HousekeepingManager {
         } else {
             plugin.logError("Housekeeping deleted sweep: completed with errors, last-run timestamp not advanced");
         }
+    }
+
+    /**
+     * Age-sweeps one game mode's worlds.
+     *
+     * @return regions purged, or -1 if the save or the purge failed
+     */
+    private int ageSweepWorld(GameModeAddon gm, World overworld, int ageDays, Set<World> savedWorlds) {
+        plugin.log("Housekeeping age sweep: scanning '" + gm.getDescription().getName()
+                + "' world '" + overworld.getName() + "'");
+        // The age scan reads region-file timestamps, so in-memory chunk
+        // changes have to be on disk before it looks.
+        if (!saveWorlds(gameModeWorlds(overworld), savedWorlds)) {
+            return -1;
+        }
+        PurgeScanResult scan = plugin.getPurgeRegionsService().scan(overworld, ageDays);
+        return runDeleteIfNonEmpty(scan, overworld, "age sweep");
+    }
+
+    /**
+     * Purges the regions of deleted islands in one game mode's worlds.
+     *
+     * @return regions purged, or -1 if the save or the purge failed
+     */
+    private int deletedSweepWorld(GameModeAddon gm, World overworld, Set<World> savedWorlds) {
+        plugin.log("Housekeeping deleted sweep: scanning '" + gm.getDescription().getName()
+                + "' world '" + overworld.getName() + "'");
+        PurgeScanResult scan = plugin.getPurgeRegionsService().scanDeleted(overworld);
+        // The deleted scan is driven by the island database, not by what is
+        // on disk, so nothing needs saving unless there is something to
+        // purge. The usual hourly run finds nothing and so never touches
+        // the main thread at all.
+        if (!scan.isEmpty()) {
+            if (!saveWorlds(gameModeWorlds(overworld), savedWorlds)) {
+                return -1;
+            }
+            // Evict in-memory chunks before the async delete, so Paper's
+            // autosave can't re-flush them over the deleted region files.
+            evictChunksInBatches(scan);
+        }
+        return runDeleteIfNonEmpty(scan, overworld, "deleted sweep");
     }
 
     private int runDeleteIfNonEmpty(PurgeScanResult scan, World overworld, String label) {
@@ -459,7 +474,7 @@ public class HousekeepingManager {
             }
             lastDeletedRunMillis = yaml.getLong(LAST_DELETED_RUN_KEY, 0L);
         } catch (Exception e) {
-            plugin.logError("Housekeeping: could not read " + stateFile.getAbsolutePath()
+            plugin.logError(LOG_TAG + "could not read " + stateFile.getAbsolutePath()
                     + ": " + e.getMessage());
             lastAgeRunMillis = 0L;
             lastDeletedRunMillis = 0L;
@@ -470,7 +485,7 @@ public class HousekeepingManager {
         try {
             File parent = stateFile.getParentFile();
             if (parent != null && !parent.exists() && !parent.mkdirs()) {
-                plugin.logError("Housekeeping: could not create " + parent.getAbsolutePath());
+                plugin.logError(LOG_TAG + "could not create " + parent.getAbsolutePath());
                 return;
             }
             YamlConfiguration yaml = new YamlConfiguration();
@@ -478,7 +493,7 @@ public class HousekeepingManager {
             yaml.set(LAST_DELETED_RUN_KEY, lastDeletedRunMillis);
             yaml.save(stateFile);
         } catch (IOException e) {
-            plugin.logError("Housekeeping: could not write " + stateFile.getAbsolutePath()
+            plugin.logError(LOG_TAG + "could not write " + stateFile.getAbsolutePath()
                     + ": " + e.getMessage());
         }
     }
