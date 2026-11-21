@@ -3,18 +3,23 @@ package world.bentobox.bentobox.api.dialogs;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
-import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput;
+import io.papermc.paper.registry.data.dialog.input.TextDialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import io.papermc.paper.registry.data.dialog.type.MultiActionType;
 import net.kyori.adventure.audience.Audience;
@@ -29,8 +34,9 @@ import world.bentobox.bentobox.util.Util;
  * {@code PanelBuilder}.
  * <p>
  * A dialog needs a {@link #title(Component) title} and either a
- * {@link #confirmation(DialogButton, DialogButton) confirmation} (two buttons)
- * or one or more {@link #button(DialogButton) buttons} (a multi-action menu).
+ * {@link #confirmation(DialogButton, DialogButton) confirmation} (two buttons),
+ * a {@link #notice(DialogButton) notice} (one button), or one or more
+ * {@link #button(DialogButton) buttons} (a multi-action menu).
  * Titles and body lines are Adventure {@link Component Components}; the
  * {@code title}/{@code body} overloads that take a {@link User} translate a
  * locale key for that user and parse colors/formatting.
@@ -58,10 +64,40 @@ import world.bentobox.bentobox.util.Util;
  * grid.build().show(user);
  * }</pre>
  *
+ * <p>
+ * A dialog can also be a form: add {@link #input(DialogField) fields} and give it a
+ * {@link DialogButton#submit(Component, BiConsumer) submit button}, which receives what
+ * the player entered. See {@link DialogField} for an example.
+ *
  * @author tastybento
  * @since 3.21.0
  */
 public class DialogBuilder {
+
+    /**
+     * What the client does after a button is clicked.
+     *
+     * @since 3.24.0
+     */
+    public enum AfterAction {
+        /** Close the dialog. The default. */
+        CLOSE,
+        /** Leave the dialog open, e.g. so a form can be submitted again after a correction */
+        NONE,
+        /**
+         * Show a "waiting for response" screen until the server shows another dialog or
+         * closes it, e.g. while a form is checked, then re-shown with errors or replaced by
+         * a result
+         */
+        WAIT_FOR_RESPONSE
+    }
+
+    /** A line of body text */
+    private record TextLine(Component text) {}
+
+    /** An item shown in the body, with optional text beside it */
+    private record ItemLine(ItemStack item, @Nullable Component description) {}
+
 
     /** How long a button's server-side click callback stays valid after the dialog is shown. */
     private static final Duration CALLBACK_LIFETIME = Duration.ofMinutes(10);
@@ -76,7 +112,10 @@ public class DialogBuilder {
     public static final int DEFAULT_COLUMNS = 2;
 
     private Component title = Component.empty();
-    private final List<Component> body = new ArrayList<>();
+    private final List<Object> body = new ArrayList<>();
+    private final List<DialogField> inputs = new ArrayList<>();
+    private AfterAction afterAction = AfterAction.CLOSE;
+    private DialogButton noticeButton;
     private boolean escapable = true;
     private boolean pause = false;
     private int columns = DEFAULT_COLUMNS;
@@ -115,7 +154,61 @@ public class DialogBuilder {
      * @return this builder
      */
     public DialogBuilder body(@NonNull Component line) {
-        this.body.add(line);
+        this.body.add(new TextLine(line));
+        return this;
+    }
+
+    /**
+     * Adds an item to the body, shown as it looks in an inventory, with optional text
+     * beside it - e.g. the block or mob a form is about.
+     *
+     * @param item        the item, not null; a copy is shown
+     * @param description text shown beside the item, or null for none
+     * @return this builder
+     * @since 3.24.0
+     */
+    public DialogBuilder body(@NonNull ItemStack item, @Nullable Component description) {
+        this.body.add(new ItemLine(item.clone(), description));
+        return this;
+    }
+
+    /**
+     * Adds an input field, shown below the body in the order added. Read what the player
+     * entered from the {@link DialogResponse} given to a
+     * {@link DialogButton#submit(Component, BiConsumer) submit button}.
+     *
+     * @param field the field, not null
+     * @return this builder
+     * @throws IllegalArgumentException if another field already uses the same key
+     * @since 3.24.0
+     */
+    public DialogBuilder input(@NonNull DialogField field) {
+        if (inputs.stream().anyMatch(f -> f.key().equals(field.key()))) {
+            throw new IllegalArgumentException("Two dialog fields share the key '" + field.key() + "'");
+        }
+        this.inputs.add(field);
+        return this;
+    }
+
+    /**
+     * @return the fields added so far, in order
+     * @since 3.24.0
+     */
+    @NonNull
+    public List<DialogField> getInputs() {
+        return List.copyOf(inputs);
+    }
+
+    /**
+     * Sets what the client does after any button is clicked. Defaults to
+     * {@link AfterAction#CLOSE}.
+     *
+     * @param afterAction the action, not null
+     * @return this builder
+     * @since 3.24.0
+     */
+    public DialogBuilder afterAction(@NonNull AfterAction afterAction) {
+        this.afterAction = afterAction;
         return this;
     }
 
@@ -165,6 +258,7 @@ public class DialogBuilder {
      * @return this builder
      */
     public DialogBuilder confirmation(@NonNull DialogButton yes, @NonNull DialogButton no) {
+        checkType(noticeButton == null && buttons.isEmpty());
         this.yesButton = yes;
         this.noButton = no;
         return this;
@@ -178,8 +272,30 @@ public class DialogBuilder {
      * @return this builder
      */
     public DialogBuilder button(@NonNull DialogButton button) {
+        checkType(noticeButton == null && yesButton == null);
         this.buttons.add(button);
         return this;
+    }
+
+    /**
+     * Makes this a notice: a message with a single button, e.g. to report the result of
+     * an action. Mutually exclusive with {@link #confirmation(DialogButton, DialogButton)}
+     * and {@link #button(DialogButton)}.
+     *
+     * @param ok the button, not null
+     * @return this builder
+     * @since 3.24.0
+     */
+    public DialogBuilder notice(@NonNull DialogButton ok) {
+        checkType(yesButton == null && buttons.isEmpty());
+        this.noticeButton = ok;
+        return this;
+    }
+
+    private static void checkType(boolean ok) {
+        if (!ok) {
+            throw new IllegalStateException("A dialog is either a confirmation(), a notice() or a list of button()s");
+        }
     }
 
     /**
@@ -211,21 +327,28 @@ public class DialogBuilder {
      * Builds the dialog.
      *
      * @return the built dialog, ready to {@link BBDialog#show(User) show}
-     * @throws IllegalStateException if neither a confirmation nor any button was set
+     * @throws IllegalStateException if no confirmation, notice or button was set
      */
     @NonNull
     public BBDialog build() {
         boolean confirmation = yesButton != null && noButton != null;
-        if (!confirmation && buttons.isEmpty()) {
-            throw new IllegalStateException("A dialog needs either a confirmation() or at least one button()");
+        if (!confirmation && noticeButton == null && buttons.isEmpty()) {
+            throw new IllegalStateException("A dialog needs a confirmation(), a notice() or at least one button()");
         }
 
-        List<PlainMessageDialogBody> bodyLines = body.stream().map(DialogBody::plainMessage).toList();
+        List<DialogBody> bodyLines = body.stream().map(DialogBuilder::toBody).toList();
         DialogBase base = DialogBase.builder(title).canCloseWithEscape(escapable).pause(pause)
-                .afterAction(DialogBase.DialogAfterAction.CLOSE).body(bodyLines).build();
+                .afterAction(DialogBase.DialogAfterAction.valueOf(afterAction.name())).body(bodyLines)
+                .inputs(inputs.stream().map(DialogBuilder::toInput).toList()).build();
 
-        DialogType type = confirmation ? DialogType.confirmation(toActionButton(yesButton), toActionButton(noButton))
-                : multiAction();
+        DialogType type;
+        if (confirmation) {
+            type = DialogType.confirmation(toActionButton(yesButton), toActionButton(noButton));
+        } else if (noticeButton != null) {
+            type = DialogType.notice(toActionButton(noticeButton));
+        } else {
+            type = multiAction();
+        }
 
         Dialog dialog = Dialog.create(factory -> factory.empty().base(base).type(type));
         return new BBDialog(dialog);
@@ -243,7 +366,8 @@ public class DialogBuilder {
 
     private ActionButton toActionButton(DialogButton button) {
         ActionButton.Builder b = ActionButton.builder(button.label())
-                .action(DialogAction.customClick((view, audience) -> runOnMainThread(button.onClick(), audience),
+                .action(DialogAction.customClick(
+                        (view, audience) -> runOnMainThread(button.onSubmit(), DialogResponse.from(view), audience),
                         ClickCallback.Options.builder().uses(1).lifetime(CALLBACK_LIFETIME).build()));
         if (button.tooltip() != null) {
             b.tooltip(button.tooltip());
@@ -259,11 +383,52 @@ public class DialogBuilder {
      * Server-side dialog callbacks may be delivered off the main thread, so BentoBox
      * / addon code (which is not thread-safe) is dispatched back to it.
      */
-    private static void runOnMainThread(Consumer<User> onClick, Audience audience) {
-        if (onClick == null || !(audience instanceof Player player)) {
+    private static void runOnMainThread(BiConsumer<User, DialogResponse> action, DialogResponse response,
+            Audience audience) {
+        if (action == null || !(audience instanceof Player player)) {
             return;
         }
         User user = User.getInstance(player);
-        Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> onClick.accept(user));
+        Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> action.accept(user, response));
+    }
+
+    private static DialogBody toBody(Object line) {
+        if (line instanceof ItemLine(ItemStack item, Component description)) {
+            var b = DialogBody.item(item);
+            if (description != null) {
+                b.description(DialogBody.plainMessage(description));
+            }
+            return b.build();
+        }
+        return DialogBody.plainMessage(((TextLine) line).text());
+    }
+
+    private static DialogInput toInput(DialogField field) {
+        return switch (field) {
+        case DialogField.Text t -> {
+            TextDialogInput.Builder b = DialogInput.text(t.key(), t.label()).initial(t.initial())
+                    .maxLength(t.maxLength()).labelVisible(t.labelVisible()).width(t.width());
+            if (t.isMultiline()) {
+                b.multiline(TextDialogInput.MultilineOptions.create(t.maxLines(), null));
+            }
+            yield b.build();
+        }
+        case DialogField.Number(var key, var label, var min, var max, var initial, var step, var labelFormat,
+                var width) -> {
+            var b = DialogInput.numberRange(key, label, min, max).initial(initial).width(width);
+            if (step > 0) {
+                b.step(step);
+            }
+            if (labelFormat != null) {
+                b.labelFormat(labelFormat);
+            }
+            yield b.build();
+        }
+        case DialogField.Toggle(var key, var label, var initial) -> DialogInput.bool(key, label).initial(initial).build();
+        case DialogField.Choice(var key, var label, var options, var initialId, var labelVisible, var width) ->
+            DialogInput.singleOption(key, label, options.stream()
+                    .map(o -> SingleOptionDialogInput.OptionEntry.create(o.id(), o.display(), o.id().equals(initialId)))
+                    .toList()).labelVisible(labelVisible).width(width).build();
+        };
     }
 }
