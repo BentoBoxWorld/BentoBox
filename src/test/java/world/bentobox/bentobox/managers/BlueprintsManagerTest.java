@@ -661,6 +661,44 @@ class BlueprintsManagerTest extends CommonTestSetup {
         assertTrue(bundles.containsKey(BUNDLE_NAME));
     }
 
+    private void loadBundleWithMissingEndBlueprint(boolean endIslands) throws IOException {
+        blueprintsFolder.mkdirs();
+        BlueprintBundle bb = new BlueprintBundle();
+        bb.setUniqueId(BUNDLE_NAME);
+        Blueprint islandBp = new Blueprint();
+        islandBp.setName("island");
+        bb.setBlueprint(World.Environment.NORMAL, islandBp);
+        Blueprint endBp = new Blueprint();
+        endBp.setName("bedrock");
+        bb.setBlueprint(World.Environment.THE_END, endBp);
+        manager.saveBlueprintBundle(addon, bb);
+        Files.writeString(new File(blueprintsFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX).toPath(),
+                BLUEPRINT_JSON);
+        world.bentobox.bentobox.api.configuration.WorldSettings ws = mock(
+                world.bentobox.bentobox.api.configuration.WorldSettings.class);
+        when(ws.isEndGenerate()).thenReturn(endIslands);
+        when(ws.isEndIslands()).thenReturn(endIslands);
+        when(addon.getWorldSettings()).thenReturn(ws);
+
+        manager.loadBlueprintBundles(addon);
+    }
+
+    /**
+     * A bundle may name an end blueprint the game mode never ships, because it has
+     * no end islands. That is harmless and must not be reported (#1917).
+     */
+    @Test
+    void testLoadBlueprintBundlesIgnoresMissingBlueprintForUnusedDimension() throws IOException {
+        loadBundleWithMissingEndBlueprint(false);
+        verify(plugin, never()).logError(org.mockito.ArgumentMatchers.contains("uses blueprint 'bedrock'"));
+    }
+
+    @Test
+    void testLoadBlueprintBundlesReportsMissingBlueprintForUsedDimension() throws IOException {
+        loadBundleWithMissingEndBlueprint(true);
+        verify(plugin).logError(org.mockito.ArgumentMatchers.contains("uses blueprint 'bedrock' for THE_END"));
+    }
+
     @Test
     void testLoadBlueprintBundlesDuplicateUniqueId() throws IOException {
         blueprintsFolder.mkdirs();

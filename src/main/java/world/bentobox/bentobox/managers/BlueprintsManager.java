@@ -276,13 +276,27 @@ public class BlueprintsManager {
                         plugin.logError(gameMode + " blueprint bundle '" + bb.getUniqueId()
                                 + "' has no overworld blueprint set. Islands made with it will be empty.");
                     }
-                } else if (!loaded.containsKey(bpName)) {
+                } else if (!loaded.containsKey(bpName) && isPasted(addon, env)) {
+                    // A blueprint for a dimension the game mode never pastes into does no harm
                     plugin.logError(gameMode + " blueprint bundle '" + bb.getUniqueId() + "' uses blueprint '" + bpName
                             + "' for " + env + ", but it did not load. Check that "
                             + new File(folder, bpName + BLUEPRINT_SUFFIX) + " exists and is not corrupted.");
                 }
             }
         }
+    }
+
+    /**
+     * @param addon the game mode
+     * @param env a world environment
+     * @return true if the game mode pastes a blueprint in that environment when an island is made
+     */
+    private static boolean isPasted(@NonNull GameModeAddon addon, World.Environment env) {
+        return switch (env) {
+        case NETHER -> addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands();
+        case THE_END -> addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands();
+        default -> true;
+        };
     }
 
     /**
