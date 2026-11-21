@@ -49,7 +49,7 @@ public class IslandTeamUninviteCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        Island island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island == null) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -93,7 +93,7 @@ public class IslandTeamUninviteCommand extends CompositeCommand {
      */
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        Island island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island == null) {
             return Optional.empty();
         }

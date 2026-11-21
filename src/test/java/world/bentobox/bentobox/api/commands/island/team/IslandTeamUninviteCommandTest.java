@@ -51,7 +51,8 @@ class IslandTeamUninviteCommandTest extends RanksManagerTestSetup {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
+        CommandsManager commandsManager = mock(CommandsManager.class);
+        when(plugin.getCommandsManager()).thenReturn(commandsManager);
         when(plugin.getPlayers()).thenReturn(pm);
         User.setPlugin(plugin);
 
@@ -65,7 +66,7 @@ class IslandTeamUninviteCommandTest extends RanksManagerTestSetup {
         when(itc.getInviteCommand()).thenReturn(inviteCommand);
         when(inviteCommand.getUsage()).thenReturn("/island team invite");
 
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(island.getUniqueId()).thenReturn(ISLAND_ID);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
@@ -87,7 +88,7 @@ class IslandTeamUninviteCommandTest extends RanksManagerTestSetup {
 
     @Test
     void testNoIsland() {
-        when(im.getIsland(any(), any(User.class))).thenReturn(null);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertFalse(cmd.execute(user, "uninvite", Collections.singletonList("bill")));
         verify(user).sendMessage("general.errors.no-island");
     }
@@ -153,7 +154,7 @@ class IslandTeamUninviteCommandTest extends RanksManagerTestSetup {
 
     @Test
     void testTabCompleteNoIsland() {
-        when(im.getIsland(any(), any(User.class))).thenReturn(null);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertTrue(cmd.tabComplete(user, "uninvite", List.of("uninvite", "")).isEmpty());
     }
 }
