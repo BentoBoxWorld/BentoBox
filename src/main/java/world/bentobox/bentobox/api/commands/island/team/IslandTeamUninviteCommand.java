@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -13,6 +15,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.TeamInvite;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Withdraws a pending team, trust or coop invite: {@code /island team uninvite <player>}.
@@ -83,5 +86,20 @@ public class IslandTeamUninviteCommand extends CompositeCommand {
         itc.removeInvite(targetUUID);
         user.sendMessage("commands.island.team.invite.cancel.success", TextVariables.NAME, args.getFirst());
         return true;
+    }
+
+    /**
+     * Offers the names of players who have an open invite to the user's island.
+     */
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null) {
+            return Optional.empty();
+        }
+        String lastArg = args.isEmpty() ? "" : args.getLast();
+        List<String> options = itc.getInvitees(island).stream().map(getPlayers()::getName)
+                .filter(name -> name != null && !name.isEmpty()).sorted().toList();
+        return Optional.of(Util.tabLimit(new ArrayList<>(options), lastArg));
     }
 }

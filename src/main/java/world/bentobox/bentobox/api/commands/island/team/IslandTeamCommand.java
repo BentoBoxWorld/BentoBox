@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -268,6 +269,22 @@ public class IslandTeamCommand extends CompositeCommand {
     @Nullable
     public TeamInvite getInvite(UUID invitee) {
         return handler.loadObject(invitee.toString());
+    }
+
+    /**
+     * Gets the players who have an open invite to an island.
+     * @param island the island
+     * @return UUIDs of everyone with a valid, unexpired invite to the island
+     * @since 3.23.8
+     */
+    @NonNull
+    public List<UUID> getInvitees(@NonNull Island island) {
+        return handler.loadObjects().stream()
+                .filter(invite -> island.getUniqueId().equals(invite.getIslandID()))
+                .map(TeamInvite::getInvitee)
+                .filter(Objects::nonNull)
+                .filter(this::isInvited)
+                .toList();
     }
 
     /**

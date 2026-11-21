@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
@@ -136,5 +138,22 @@ class IslandTeamUninviteCommandTest extends RanksManagerTestSetup {
         pendingInvite(UUID.randomUUID(), ISLAND_ID);
         assertTrue(cmd.execute(user, "uninvite", Collections.singletonList("bill")));
         verify(itc).removeInvite(invitee);
+    }
+
+    @Test
+    void testTabCompleteOffersPendingInvitees() {
+        UUID other = UUID.randomUUID();
+        when(itc.getInvitees(island)).thenReturn(List.of(invitee, other));
+        when(pm.getName(invitee)).thenReturn("bill");
+        when(pm.getName(other)).thenReturn("alice");
+
+        assertEquals(List.of("alice", "bill"), cmd.tabComplete(user, "uninvite", List.of("uninvite", "")).orElseThrow());
+        assertEquals(List.of("bill"), cmd.tabComplete(user, "uninvite", List.of("uninvite", "b")).orElseThrow());
+    }
+
+    @Test
+    void testTabCompleteNoIsland() {
+        when(im.getIsland(any(), any(User.class))).thenReturn(null);
+        assertTrue(cmd.tabComplete(user, "uninvite", List.of("uninvite", "")).isEmpty());
     }
 }
