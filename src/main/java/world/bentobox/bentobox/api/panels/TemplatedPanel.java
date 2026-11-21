@@ -387,11 +387,8 @@ public class TemplatedPanel extends Panel {
                 .filter(tooltip -> tooltip != null && !tooltip.isBlank())
                 .map(this.user::getTranslation).forEach(description::add);
         itemBuilder.description(description);
-
         itemBuilder.clickHandler((panel, clicker, clickType, slot) -> {
-            boolean clickAllowed = rec.actions().isEmpty() || rec.actions().stream()
-                    .anyMatch(action -> action.clickType() == clickType || action.clickType() == ClickType.UNKNOWN);
-            if (clickAllowed) {
+            if (isClickAllowed(rec, clickType)) {
                 clicker.closeInventory();
                 if (command != null) {
                     clicker.performCommand(command.replace("[player]", clicker.getName()));
@@ -400,6 +397,16 @@ public class TemplatedPanel extends Panel {
             return true;
         });
         return itemBuilder.build();
+    }
+
+    /**
+     * @param rec template of a button
+     * @param clickType how the button was clicked
+     * @return true if the template lists no actions, or lists one for this click type
+     */
+    private static boolean isClickAllowed(@NonNull ItemTemplateRecord rec, ClickType clickType) {
+        return rec.actions().isEmpty() || rec.actions().stream()
+                .anyMatch(action -> action.clickType() == clickType || action.clickType() == ClickType.UNKNOWN);
     }
 
     /**
@@ -513,9 +520,6 @@ public class TemplatedPanel extends Panel {
     private final User user;
 
     /**
-     * This map links custom types with their info object.
-     */
-    /**
      * Button type, available in every templated panel, that runs a command as the player.
      * @since 3.23.8
      */
@@ -527,6 +531,9 @@ public class TemplatedPanel extends Panel {
      */
     public static final String TYPE_CLOSE = "CLOSE";
 
+    /**
+     * This map links custom types with their info object.
+     */
     private final Map<String, BiFunction<ItemTemplateRecord, ItemSlot, PanelItem>> typeCreators;
 
     /**
