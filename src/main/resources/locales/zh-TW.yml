@@ -1235,6 +1235,11 @@ protection:
       description: 切換是否允許使用
       name: 工作台
       hint: 已停用工作台使用
+    CREEPER_BLOCK_DAMAGE:
+      description: |-
+        <green>切換是否允許苦力怕</green>
+        <green>破壞此島嶼上的方塊。</green>
+      name: 苦力怕破壞方塊
     CREEPER_DAMAGE:
       description: |-
         <green>切換是否允許苦力怕</green>

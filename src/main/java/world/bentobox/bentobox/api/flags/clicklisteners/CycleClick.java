@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.bukkit.Bukkit;
@@ -155,20 +154,10 @@ public class CycleClick implements PanelItem.ClickHandler {
     }
 
     private void leftShiftClick(Flag flag, World world) {
-        // Mutate the game mode's live list - IWM#getHiddenFlags returns an immutable
-        // empty list when the world is not a game world (java:S6322)
-        plugin.getIWM().getAddon(world).ifPresent(gameModeAddon -> {
-            List<String> hiddenFlags = gameModeAddon.getWorldSettings().getHiddenFlags();
-            if (!hiddenFlags.contains(flag.getID())) {
-                hiddenFlags.add(flag.getID());
-                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-            } else {
-                hiddenFlags.remove(flag.getID());
-                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
-            }
-            // Save changes
-            gameModeAddon.saveWorldSettings();
-        });
+        boolean hide = !flag.isHidden(world);
+        flag.setHidden(world, hide);
+        user.getPlayer().playSound(user.getLocation(), hide ? Sound.BLOCK_GLASS_BREAK : Sound.BLOCK_NOTE_BLOCK_CHIME,
+                1F, 1F);
     }
 
     /**

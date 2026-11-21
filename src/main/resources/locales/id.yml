@@ -1341,6 +1341,11 @@ protection:
       description: Alihkan penggunaan
       name: meja kerja
       hint: Akses meja kerja dinonaktifkan
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Alihkan apakah creeper</green>
+        <green>merusak blok di pulau ini.</green>
+      name: Kerusakan blok oleh creeper
     CREEPER_DAMAGE:
       description: |
         <green>Alihkan kerusakan</green>

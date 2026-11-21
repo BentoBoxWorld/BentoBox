@@ -1234,6 +1234,9 @@ protection:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用工作台</color:#FAFAD2>'
       name: '<aqua><bold>工作台</bold></aqua>'
       hint: 禁止使用工作台
+    CREEPER_BLOCK_DAMAGE:
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>苦力怕爆炸破坏本岛屿上的方块</color:#FAFAD2>'
+      name: '<aqua><bold>苦力怕破坏方块</bold></aqua>'
     CREEPER_DAMAGE:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>苦力怕爆炸造成的伤害与破坏</color:#FAFAD2>'
       name: '<aqua><bold>苦力怕爆炸</bold></aqua>'

@@ -30,6 +30,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.ItemParser;
 import world.bentobox.bentobox.util.Util;
@@ -159,6 +160,7 @@ public class Flag implements Comparable<Flag> {
     private final Mode mode;
     private final Set<Flag> subflags;
     private final HideWhen hideWhen;
+    private final boolean hiddenByDefault;
     private boolean isSubFlag;
     private Flag parentFlag;
 
@@ -180,6 +182,7 @@ public class Flag implements Comparable<Flag> {
         this.mode = builder.mode;
         this.subflags = builder.subflags;
         this.hideWhen = builder.hideWhen;
+        this.hiddenByDefault = builder.hiddenByDefault;
         this.isSubFlag = false;
         this.parentFlag = null;
     }
@@ -332,6 +335,60 @@ public class Flag implements Comparable<Flag> {
      */
     public HideWhen getHideWhen() {
         return hideWhen;
+    }
+
+    /**
+     * A flag that is hidden by default is not shown to players in a world until
+     * an admin chooses to show it there.
+     * @return true if this flag starts out hidden from players
+     * @since 3.23.8
+     */
+    public boolean isHiddenByDefault() {
+        return hiddenByDefault;
+    }
+
+    /**
+     * Whether this flag is hidden from players in a world. A flag is hidden if an
+     * admin has hidden it, or if it is {@link #isHiddenByDefault() hidden by default}
+     * and no admin has chosen to show it. Ops always see hidden flags.
+     * @param world the world
+     * @return true if players should not see this flag in the world
+     * @since 3.23.8
+     */
+    public boolean isHidden(@NonNull World world) {
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        return iwm.getHiddenFlags(world).contains(id)
+                || (hiddenByDefault && !iwm.getShownFlags(world).contains(id));
+    }
+
+    /**
+     * Hides this flag from players in a world, or shows it again, and saves the choice.
+     * Does nothing if the world is not a game mode world.
+     * @param world the world
+     * @param hidden true to hide the flag, false to show it
+     * @since 3.23.8
+     */
+    public void setHidden(@NonNull World world, boolean hidden) {
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        // Mutate the game mode's live list - IWM#getHiddenFlags returns an immutable
+        // empty list when the world is not a game world (java:S6322)
+        iwm.getAddon(world).ifPresent(gameModeAddon -> {
+            List<String> hiddenFlags = gameModeAddon.getWorldSettings().getHiddenFlags();
+            hiddenFlags.remove(id);
+            if (hidden) {
+                hiddenFlags.add(id);
+            }
+            gameModeAddon.saveWorldSettings();
+            if (hiddenByDefault) {
+                // Remember that an admin chose to show a flag that would otherwise stay hidden
+                List<String> shownFlags = iwm.getShownFlags(world);
+                shownFlags.remove(id);
+                if (!hidden) {
+                    shownFlags.add(id);
+                }
+                iwm.saveCoreWorldSettings(world);
+            }
+        });
     }
 
     /**
@@ -785,6 +842,7 @@ public class Flag implements Comparable<Flag> {
 
         // Hide when indicator
         private HideWhen hideWhen = HideWhen.NEVER;
+        private boolean hiddenByDefault;
 
         /**
          * Builder for making flags
@@ -940,6 +998,18 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder hideWhen(HideWhen hideWhen) {
             this.hideWhen = hideWhen;
+            return this;
+        }
+
+        /**
+         * Hide this flag from players until an admin chooses to show it. Use this for
+         * settings that most servers will not want players to change.
+         * @param hiddenByDefault true to start hidden
+         * @return Builder - flag builder
+         * @since 3.23.8
+         */
+        public Builder hiddenByDefault(boolean hiddenByDefault) {
+            this.hiddenByDefault = hiddenByDefault;
             return this;
         }
 

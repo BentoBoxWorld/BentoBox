@@ -1313,6 +1313,11 @@ protection:
       description: Bật/Tắt sử dụng
       name: Bàn chế tạo
       hint: Đã tắt tương tác với bàn chế tạo
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Bật/Tắt việc Creeper</green>
+        <green>phá khối trên đảo này</green>
+      name: Creeper phá khối
     CREEPER_DAMAGE:
       description: |
         <green>Bật/Tắt bảo vệ khỏi</green>

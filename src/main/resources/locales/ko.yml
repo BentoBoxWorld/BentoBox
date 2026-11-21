@@ -1244,6 +1244,10 @@ protection:
       description: 사용 가능 여부 설정
       name: 작업대
       hint: 작업대 접근이 금지되어있습니다
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>이 섬에서 크리퍼가 블록을 부술지 여부 설정</green>
+      name: 크리퍼 블록 파괴
     CREEPER_DAMAGE:
       description: |
         <green>크리퍼의 대미지로부터 보호 할것인지 여부 설정</green>

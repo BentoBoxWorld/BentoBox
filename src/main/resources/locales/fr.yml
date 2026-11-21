@@ -1364,6 +1364,9 @@ protection:
       description: Activer l'utilisation
       name: Tables de crafting
       hint: Accès au plan de travail désactivé
+    CREEPER_BLOCK_DAMAGE:
+      description: Activer/désactiver la destruction de blocs par les Creepers sur cette île
+      name: Dégâts de Creeper sur les blocs
     CREEPER_DAMAGE:
       description: Activer/désactiver les dégâts de Creeper
       name: Dégâts de Creeper

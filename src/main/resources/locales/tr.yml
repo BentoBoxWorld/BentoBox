@@ -1296,6 +1296,9 @@ protection:
       description: Kullanımı değiş.
       name: Çalışma masası
       hint: Çalışma masası kullanımı kapalı.
+    CREEPER_BLOCK_DAMAGE:
+      description: Creeperların bu adada blok kırmasını değiş.
+      name: Creeper blok hasarı
     CREEPER_DAMAGE:
       description: Creeper hasarını değiş.
       name: Creeper hasarı

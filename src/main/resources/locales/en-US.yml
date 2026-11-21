@@ -1292,6 +1292,11 @@ protection:
       description: Toggle use
       name: Workbenches
       hint: Workbench access disabled
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Toggle whether creepers</green>
+        <green>break blocks on this island.</green>
+      name: Creeper block damage
     CREEPER_DAMAGE:
       description: |
         <green>Toggle creeper</green>

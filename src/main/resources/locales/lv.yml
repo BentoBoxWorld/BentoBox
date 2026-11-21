@@ -1327,6 +1327,9 @@ protection:
       description: Pārslēdz izmantošanu
       name: Darbagaldi
       hint: Darbagaldu lietošana nav atļauta
+    CREEPER_BLOCK_DAMAGE:
+      description: Pārslēdz, vai krīperi šajā salā bojā blokus
+      name: Krīpera bojājumi blokiem
     CREEPER_DAMAGE:
       description: Pārslēdz krīpera bojājumus
       name: Krīpera bojājumi

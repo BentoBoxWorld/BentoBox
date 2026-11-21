@@ -1339,6 +1339,11 @@ protection:
       description: Alternar uso
       name: Bancadas de trabalho
       hint: Acesso ao ambiente de trabalho desativado
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Alternar se os creepers partem</green>
+        <green>blocos nesta ilha.</green>
+      name: Dano de creeper em blocos
     CREEPER_DAMAGE:
       description: |
         <green>Alternar dano de</green>

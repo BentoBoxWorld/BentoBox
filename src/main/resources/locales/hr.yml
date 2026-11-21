@@ -1325,6 +1325,11 @@ protection:
       description: Uključi/isključi upotrebu
       name: Radni stolovi
       hint: Pristup radnom stolu onemogućen
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Uključi/isključi uništavanje</green>
+        <green>blokova od creepera na ovom otoku</green>
+      name: Šteta creepera na blokovima
     CREEPER_DAMAGE:
       description: |
         <green>Preklopni puzavac</green>

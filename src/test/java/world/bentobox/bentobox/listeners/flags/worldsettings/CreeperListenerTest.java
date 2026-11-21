@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,7 +9,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
@@ -92,10 +95,39 @@ class CreeperListenerTest extends CommonTestSetup {
         when(entity.getLocation()).thenReturn(location);
         when(entity.getType()).thenReturn(EntityType.CREEPER);
         when(iwm.inWorld(location)).thenReturn(true);
+        when(island.isAllowed(Flags.CREEPER_BLOCK_DAMAGE)).thenReturn(true);
         EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
         cl.onExplosion(event);
         assertFalse(event.isCancelled());
         assertFalse(event.blockList().isEmpty()); // No clearing of block list
+    }
+
+    /**
+     * An island that has turned creeper block damage off keeps its blocks, while
+     * blocks outside any island are still destroyed (#2176).
+     */
+    @Test
+    void testOnExplosionIslandCreeperBlockDamageOff() {
+        Block onIsland = mock(Block.class);
+        Location islandLoc = mock(Location.class);
+        when(onIsland.getLocation()).thenReturn(islandLoc);
+        Block wilderness = mock(Block.class);
+        Location wildLoc = mock(Location.class);
+        when(wilderness.getLocation()).thenReturn(wildLoc);
+        when(im.getProtectedIslandAt(wildLoc)).thenReturn(Optional.empty());
+        when(island.isAllowed(Flags.CREEPER_BLOCK_DAMAGE)).thenReturn(false);
+        List<Block> list = new ArrayList<>(List.of(onIsland, wilderness));
+        Creeper entity = mock(Creeper.class);
+        when(entity.getLocation()).thenReturn(location);
+        when(entity.getType()).thenReturn(EntityType.CREEPER);
+        when(iwm.inWorld(location)).thenReturn(true);
+        EntityExplodeEvent event = new EntityExplodeEvent(entity, location, list, 0, null);
+
+        cl.onExplosion(event);
+
+        // The explosion still happens and hurts entities; only the island's blocks are spared
+        assertFalse(event.isCancelled());
+        assertEquals(List.of(wilderness), event.blockList());
     }
 
     /**

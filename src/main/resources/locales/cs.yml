@@ -1304,6 +1304,9 @@ protection:
       description: Přepnout použití
       name: Pracovní stolky
       hint: Přístup k pracovním stolkům zakázán
+    CREEPER_BLOCK_DAMAGE:
+      description: Přepnout ničení bloků creeperem na tomto ostrově
+      name: Ničení bloků creeperem
     CREEPER_DAMAGE:
       description: Přepnout ničení creeperem
       name: Ničení creeperem
