@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -512,18 +513,36 @@ public class PurgeRegionsService {
      * @param scan a prior scan result whose regions should be evicted
      */
     public void evictChunks(PurgeScanResult scan) {
-        if (scan.deletableRegions().isEmpty()) {
+        if (scan.deletableRegions().isEmpty() || scan.world() == null) {
             return;
         }
+        int evicted = evictChunks(scan, scan.deletableRegions().keySet());
+        plugin.log("Purge deleted: evicted " + evicted + " loaded chunk(s) from "
+                + scan.deletableRegions().size() + " target region(s)");
+    }
+
+    /**
+     * Evicts the loaded chunks of a subset of a scan's target regions. This is
+     * {@link #evictChunks(PurgeScanResult)} in instalments: a caller that must
+     * not stall the server can feed it a few regions per tick instead of the
+     * whole scan at once. Must be called on the main thread.
+     *
+     * @param scan the scan the regions belong to
+     * @param regions region coordinates to evict; normally a slice of
+     *                {@code scan.deletableRegions().keySet()}
+     * @return the number of chunks unloaded
+     * @since 3.23.8
+     */
+    public int evictChunks(PurgeScanResult scan, Collection<Pair<Integer, Integer>> regions) {
         World overworld = scan.world();
-        if (overworld == null) {
-            return;
+        if (overworld == null || regions.isEmpty()) {
+            return 0;
         }
         World netherWorld = scan.isNether() ? plugin.getIWM().getNetherWorld(overworld) : null;
         World endWorld = scan.isEnd() ? plugin.getIWM().getEndWorld(overworld) : null;
 
         int evicted = 0;
-        for (Pair<Integer, Integer> coords : scan.deletableRegions().keySet()) {
+        for (Pair<Integer, Integer> coords : regions) {
             int baseCx = coords.x() << 5;   // rX * 32
             int baseCz = coords.z() << 5;
             evicted += evictRegion(overworld, baseCx, baseCz);
@@ -534,8 +553,7 @@ public class PurgeRegionsService {
                 evicted += evictRegion(endWorld, baseCx, baseCz);
             }
         }
-        plugin.log("Purge deleted: evicted " + evicted + " loaded chunk(s) from "
-                + scan.deletableRegions().size() + " target region(s)");
+        return evicted;
     }
 
     private int evictRegion(World world, int baseCx, int baseCz) {
