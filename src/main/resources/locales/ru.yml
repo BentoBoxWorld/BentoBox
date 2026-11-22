@@ -2302,6 +2302,21 @@ panels:
     next:
       name: <white><bold>Следующая страница</bold></white>
       description: <gray>Перейти на [number] страницу.</gray>
+  picker:
+    back:
+      name: '<white><bold>Назад</bold></white>'
+      description: '<gray>Вернуться без выбора.</gray>'
+    inventory:
+      name: '<white><bold>Или используйте свой инвентарь</bold></white>'
+      description: '<gray>Нажмите на предмет в своём инвентаре, чтобы выбрать его.</gray>'
+    search:
+      name: '<white><bold>Поиск</bold></white>'
+      description: '<gray>Показывать только названия, содержащие текст.</gray>'
+      clear-name: '<white><bold>Сбросить поиск</bold></white>'
+      clear-description: '<gray>Снова показать всё.</gray>'
+      title: '<white>Поиск</white>'
+      field: 'Название содержит'
+      button: '<green>Поиск</green>'
   tips:
     click-to-next: <gray><yellow>Нажмите</yellow>, чтобы перейти на следующую страницу.</gray>
     click-to-previous: <gray><yellow>Нажмите</yellow>, чтобы перейти на предыдущую

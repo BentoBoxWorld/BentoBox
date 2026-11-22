@@ -2274,6 +2274,21 @@ panels:
     next:
       name: '<white><bold>Pagina următoare</bold></white>'
       description: '<gray>Comutați la pagina [number].</gray>'
+  picker:
+    back:
+      name: '<white><bold>Înapoi</bold></white>'
+      description: '<gray>Mergi înapoi fără a alege.</gray>'
+    inventory:
+      name: '<white><bold>Sau folosește inventarul tău</bold></white>'
+      description: '<gray>Dă clic pe un obiect din inventarul tău pentru a-l alege.</gray>'
+    search:
+      name: '<white><bold>Caută</bold></white>'
+      description: '<gray>Afișează doar numele care conțin un text.</gray>'
+      clear-name: '<white><bold>Șterge căutarea</bold></white>'
+      clear-description: '<gray>Afișează din nou totul.</gray>'
+      title: '<white>Caută</white>'
+      field: 'Numele conține'
+      button: '<green>Caută</green>'
   tips:
     click-to-next: '<yellow>Faceți clic pe </yellow><gray>pentru următorul.</gray>'
     click-to-previous: '<yellow>Faceți clic pe </yellow><gray>pentru anterior.</gray>'

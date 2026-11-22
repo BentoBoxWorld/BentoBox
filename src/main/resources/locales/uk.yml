@@ -2148,6 +2148,21 @@ panels:
     next:
       name: '<white><bold>Наступна сторінка</bold></white>'
       description: '<gray>Перейти на сторінку [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Назад</bold></white>'
+      description: '<gray>Повернутися без вибору.</gray>'
+    inventory:
+      name: '<white><bold>Або скористайтеся своїм інвентарем</bold></white>'
+      description: '<gray>Натисніть на предмет у своєму інвентарі, щоб вибрати його.</gray>'
+    search:
+      name: '<white><bold>Пошук</bold></white>'
+      description: '<gray>Показувати лише назви, що містять текст.</gray>'
+      clear-name: '<white><bold>Скинути пошук</bold></white>'
+      clear-description: '<gray>Знову показати все.</gray>'
+      title: '<white>Пошук</white>'
+      field: 'Назва містить'
+      button: '<green>Пошук</green>'
   tips:
     click-to-next: '<yellow>Клік </yellow><gray>для наступної.</gray>'
     click-to-previous: '<yellow>Клік </yellow><gray>для попередньої.</gray>'

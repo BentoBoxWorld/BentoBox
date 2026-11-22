@@ -2097,6 +2097,21 @@ panels:
     next:
       name: '<white><bold>次のページ</bold></white>'
       description: '<gray>[number]ページに切り替えます</gray>'
+  picker:
+    back:
+      name: '<white><bold>戻る</bold></white>'
+      description: '<gray>選択せずに戻ります。</gray>'
+    inventory:
+      name: '<white><bold>またはインベントリを使う</bold></white>'
+      description: '<gray>自分のインベントリのアイテムをクリックして選択します。</gray>'
+    search:
+      name: '<white><bold>検索</bold></white>'
+      description: '<gray>指定した文字を含む名前だけを表示します。</gray>'
+      clear-name: '<white><bold>検索をクリア</bold></white>'
+      clear-description: '<gray>すべてをもう一度表示します。</gray>'
+      title: '<white>検索</white>'
+      field: '名前に含まれる文字'
+      button: '<green>検索</green>'
   tips:
     click-to-next: '<yellow>次にクリックします。</yellow>'
     click-to-previous: '<yellow>以前にクリックしてください。</yellow>'

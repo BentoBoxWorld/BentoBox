@@ -2243,6 +2243,21 @@ panels:
     next:
       name: '<white><bold>Pagina Successiva</bold></white>'
       description: '<gray>Passa a [number] pagina</gray>'
+  picker:
+    back:
+      name: '<white><bold>Indietro</bold></white>'
+      description: '<gray>Torna indietro senza scegliere.</gray>'
+    inventory:
+      name: '<white><bold>Oppure usa il tuo inventario</bold></white>'
+      description: '<gray>Clicca su un oggetto del tuo inventario per sceglierlo.</gray>'
+    search:
+      name: '<white><bold>Cerca</bold></white>'
+      description: '<gray>Mostra solo i nomi che contengono un testo.</gray>'
+      clear-name: '<white><bold>Cancella ricerca</bold></white>'
+      clear-description: '<gray>Mostra di nuovo tutto.</gray>'
+      title: '<white>Cerca</white>'
+      field: 'Il nome contiene'
+      button: '<green>Cerca</green>'
   tips:
     click-to-next: '<yellow>Clicca </yellow><gray>per il prossimo.</gray>'
     click-to-previous: '<yellow>Clicca </yellow><gray>per precedente.</gray>'

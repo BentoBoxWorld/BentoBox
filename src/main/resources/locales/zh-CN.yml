@@ -2012,6 +2012,21 @@ panels:
     next:
       name: '<white><bold>下一页</bold></white>'
       description: '<gray>切换至第[number]页</gray>'
+  picker:
+    back:
+      name: '<white><bold>返回</bold></white>'
+      description: '<gray>不作选择并返回。</gray>'
+    inventory:
+      name: '<white><bold>或使用你的物品栏</bold></white>'
+      description: '<gray>点击你物品栏中的物品来选择它。</gray>'
+    search:
+      name: '<white><bold>搜索</bold></white>'
+      description: '<gray>只显示包含指定文字的名称。</gray>'
+      clear-name: '<white><bold>清除搜索</bold></white>'
+      clear-description: '<gray>重新显示全部。</gray>'
+      title: '<white>搜索</white>'
+      field: '名称包含'
+      button: '<green>搜索</green>'
   tips:
     click-to-next: '<yellow>点击 </yellow><gray>往下翻</gray>'
     click-to-previous: '<yellow>点击 </yellow><gray>往上翻</gray>'

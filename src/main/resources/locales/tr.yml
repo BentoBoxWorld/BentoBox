@@ -2114,6 +2114,21 @@ panels:
     next:
       name: '<white><bold>Sonraki Sayfa</bold></white>'
       description: '<gray>[number] sayfaya geç</gray>'
+  picker:
+    back:
+      name: '<white><bold>Geri</bold></white>'
+      description: '<gray>Seçim yapmadan geri dön.</gray>'
+    inventory:
+      name: '<white><bold>Ya da envanterini kullan</bold></white>'
+      description: '<gray>Seçmek için kendi envanterindeki bir eşyaya tıkla.</gray>'
+    search:
+      name: '<white><bold>Ara</bold></white>'
+      description: '<gray>Yalnızca belirli bir metni içeren adları göster.</gray>'
+      clear-name: '<white><bold>Aramayı temizle</bold></white>'
+      clear-description: '<gray>Her şeyi yeniden göster.</gray>'
+      title: '<white>Ara</white>'
+      field: 'Ad şunu içerir'
+      button: '<green>Ara</green>'
   tips:
     click-to-next: '<yellow>Tıkla </yellow><gray>sonraki için.</gray>'
     click-to-previous: '<yellow>Tıkla </yellow><gray>önceki için.</gray>'

@@ -2278,6 +2278,21 @@ panels:
     next:
       name: '<white><bold>Volgende Pagina</bold></white>'
       description: '<gray>Schakel over naar pagina [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Terug</bold></white>'
+      description: '<gray>Ga terug zonder te kiezen.</gray>'
+    inventory:
+      name: '<white><bold>Of gebruik je inventaris</bold></white>'
+      description: '<gray>Klik op een voorwerp in je eigen inventaris om het te kiezen.</gray>'
+    search:
+      name: '<white><bold>Zoeken</bold></white>'
+      description: '<gray>Toon alleen namen die een tekst bevatten.</gray>'
+      clear-name: '<white><bold>Zoekopdracht wissen</bold></white>'
+      clear-description: '<gray>Toon alles weer.</gray>'
+      title: '<white>Zoeken</white>'
+      field: 'Naam bevat'
+      button: '<green>Zoeken</green>'
   tips:
     click-to-next: '<yellow>Klik </yellow><gray>voor volgende.</gray>'
     click-to-previous: '<yellow>Klik </yellow><gray>voor vorige.</gray>'

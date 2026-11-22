@@ -2170,6 +2170,21 @@ panels:
     next:
       name: <white><bold>下一頁</bold></white>
       description: <gray>切換至第 [number] 頁</gray>
+  picker:
+    back:
+      name: '<white><bold>返回</bold></white>'
+      description: '<gray>不選擇並返回。</gray>'
+    inventory:
+      name: '<white><bold>或使用你的物品欄</bold></white>'
+      description: '<gray>點擊你物品欄中的物品來選擇它。</gray>'
+    search:
+      name: '<white><bold>搜尋</bold></white>'
+      description: '<gray>只顯示包含指定文字的名稱。</gray>'
+      clear-name: '<white><bold>清除搜尋</bold></white>'
+      clear-description: '<gray>重新顯示全部。</gray>'
+      title: '<white>搜尋</white>'
+      field: '名稱包含'
+      button: '<green>搜尋</green>'
   tips:
     click-to-next: <yellow>點擊 </yellow><gray>即可前往下一頁。</gray>
     click-to-previous: <yellow>點擊 </yellow><gray>即可返回上一頁。</gray>

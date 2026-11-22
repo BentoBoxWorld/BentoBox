@@ -2087,6 +2087,21 @@ panels:
     next:
       name: '<white><bold>다음 페이지</bold></white>'
       description: '<gray>[number] 페이지로 전환</gray>'
+  picker:
+    back:
+      name: '<white><bold>뒤로</bold></white>'
+      description: '<gray>선택하지 않고 돌아갑니다.</gray>'
+    inventory:
+      name: '<white><bold>또는 인벤토리 사용</bold></white>'
+      description: '<gray>자신의 인벤토리에서 아이템을 클릭하여 선택하세요.</gray>'
+    search:
+      name: '<white><bold>검색</bold></white>'
+      description: '<gray>입력한 글자가 포함된 이름만 표시합니다.</gray>'
+      clear-name: '<white><bold>검색 지우기</bold></white>'
+      clear-description: '<gray>모두 다시 표시합니다.</gray>'
+      title: '<white>검색</white>'
+      field: '이름에 포함된 글자'
+      button: '<green>검색</green>'
   tips:
     click-to-next: '<yellow>클릭 </yellow><gray>하여 다음으로 가세요.</gray>'
     click-to-previous: '<yellow>클릭 </yellow><gray>하면 이전으로 돌아갑니다.</gray>'

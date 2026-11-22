@@ -2235,6 +2235,21 @@ panels:
     next:
       name: '<white><bold>Sljedeća Stranica</bold></white>'
       description: '<gray>Prebaci se na [number] stranicu</gray>'
+  picker:
+    back:
+      name: '<white><bold>Natrag</bold></white>'
+      description: '<gray>Vrati se bez odabira.</gray>'
+    inventory:
+      name: '<white><bold>Ili upotrijebi svoj inventar</bold></white>'
+      description: '<gray>Klikni predmet u svom inventaru da ga odabereš.</gray>'
+    search:
+      name: '<white><bold>Traži</bold></white>'
+      description: '<gray>Prikaži samo nazive koji sadrže neki tekst.</gray>'
+      clear-name: '<white><bold>Očisti pretragu</bold></white>'
+      clear-description: '<gray>Ponovno prikaži sve.</gray>'
+      title: '<white>Traži</white>'
+      field: 'Naziv sadrži'
+      button: '<green>Traži</green>'
   tips:
     click-to-next: '<yellow>Kliknite </yellow><gray>za sljedeće.</gray>'
     click-to-previous: '<yellow>Klikni </yellow><gray>za prethodno.</gray>'

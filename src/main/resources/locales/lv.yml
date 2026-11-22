@@ -2262,6 +2262,21 @@ panels:
     next:
       name: '<white><bold>Nākamā Lapa</bold></white>'
       description: '<gray>Pāriet uz [number] lapu</gray>'
+  picker:
+    back:
+      name: '<white><bold>Atpakaļ</bold></white>'
+      description: '<gray>Atgriezties, neko neizvēloties.</gray>'
+    inventory:
+      name: '<white><bold>Vai izmanto savu inventāru</bold></white>'
+      description: '<gray>Noklikšķini uz priekšmeta savā inventārā, lai to izvēlētos.</gray>'
+    search:
+      name: '<white><bold>Meklēt</bold></white>'
+      description: '<gray>Rādīt tikai nosaukumus, kas satur norādīto tekstu.</gray>'
+      clear-name: '<white><bold>Notīrīt meklēšanu</bold></white>'
+      clear-description: '<gray>Atkal rādīt visu.</gray>'
+      title: '<white>Meklēt</white>'
+      field: 'Nosaukums satur'
+      button: '<green>Meklēt</green>'
   tips:
     click-to-next: '<yellow>Noklikšķini </yellow><gray>, lai turpinātu.</gray>'
     click-to-previous: '<yellow>Klikšķini </yellow><gray>, lai atgrieztos iepriekš.</gray>'

@@ -2187,6 +2187,21 @@ panels:
     next:
       name: '<white><bold>Další stránka</bold></white>'
       description: '<gray>Přepněte na stránku [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Zpět</bold></white>'
+      description: '<gray>Vrátit se bez výběru.</gray>'
+    inventory:
+      name: '<white><bold>Nebo použijte svůj inventář</bold></white>'
+      description: '<gray>Klikněte na předmět ve svém inventáři a vyberte jej.</gray>'
+    search:
+      name: '<white><bold>Hledat</bold></white>'
+      description: '<gray>Zobrazit jen názvy obsahující daný text.</gray>'
+      clear-name: '<white><bold>Zrušit hledání</bold></white>'
+      clear-description: '<gray>Zobrazit znovu vše.</gray>'
+      title: '<white>Hledat</white>'
+      field: 'Název obsahuje'
+      button: '<green>Hledat</green>'
   tips:
     click-to-next: '<yellow>Klikněte pro další.</yellow>'
     click-to-previous: '<yellow>Klikněte pro předchozí.</yellow>'

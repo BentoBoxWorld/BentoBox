@@ -2300,6 +2300,21 @@ panels:
     next:
       name: '<white><bold>Következő oldal</bold></white>'
       description: '<gray>Váltás a [number] oldalra</gray>'
+  picker:
+    back:
+      name: '<white><bold>Vissza</bold></white>'
+      description: '<gray>Visszalépés választás nélkül.</gray>'
+    inventory:
+      name: '<white><bold>Vagy használd a leltáradat</bold></white>'
+      description: '<gray>Kattints egy tárgyra a saját leltáradban a kiválasztásához.</gray>'
+    search:
+      name: '<white><bold>Keresés</bold></white>'
+      description: '<gray>Csak az adott szöveget tartalmazó nevek megjelenítése.</gray>'
+      clear-name: '<white><bold>Keresés törlése</bold></white>'
+      clear-description: '<gray>Minden megjelenítése újra.</gray>'
+      title: '<white>Keresés</white>'
+      field: 'A név tartalmazza'
+      button: '<green>Keresés</green>'
   tips:
     click-to-next: '<yellow>Kattints </yellow><gray>a következőhöz.</gray>'
     click-to-previous: '<yellow>Kattints </yellow><gray>az előzőhöz.</gray>'

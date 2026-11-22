@@ -2274,6 +2274,21 @@ panels:
     next:
       name: '<white><bold>Nächste Seite</bold></white>'
       description: '<gray>Zur Seite [number] wechseln</gray>'
+  picker:
+    back:
+      name: '<white><bold>Zurück</bold></white>'
+      description: '<gray>Ohne Auswahl zurückgehen.</gray>'
+    inventory:
+      name: '<white><bold>Oder nutze dein Inventar</bold></white>'
+      description: '<gray>Klicke auf einen Gegenstand in deinem Inventar, um ihn auszuwählen.</gray>'
+    search:
+      name: '<white><bold>Suchen</bold></white>'
+      description: '<gray>Nur Namen anzeigen, die einen Text enthalten.</gray>'
+      clear-name: '<white><bold>Suche löschen</bold></white>'
+      clear-description: '<gray>Wieder alles anzeigen.</gray>'
+      title: '<white>Suchen</white>'
+      field: 'Name enthält'
+      button: '<green>Suchen</green>'
   tips:
     click-to-next: '<yellow>Klicken</yellow><gray>, um weiterzugehen.</gray>'
     click-to-previous: '<yellow>Klicken</yellow><gray>, um zum zurückgehen.</gray>'

@@ -2205,6 +2205,21 @@ panels:
     next:
       name: '<white><bold>Trang tiếp theo</bold></white>'
       description: '<gray>Chuyển sang trang [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Quay lại</bold></white>'
+      description: '<gray>Quay lại mà không chọn.</gray>'
+    inventory:
+      name: '<white><bold>Hoặc dùng túi đồ của bạn</bold></white>'
+      description: '<gray>Nhấp vào một vật phẩm trong túi đồ của bạn để chọn.</gray>'
+    search:
+      name: '<white><bold>Tìm kiếm</bold></white>'
+      description: '<gray>Chỉ hiện các tên có chứa đoạn văn bản.</gray>'
+      clear-name: '<white><bold>Xóa tìm kiếm</bold></white>'
+      clear-description: '<gray>Hiện lại tất cả.</gray>'
+      title: '<white>Tìm kiếm</white>'
+      field: 'Tên có chứa'
+      button: '<green>Tìm kiếm</green>'
   tips:
     click-to-next: '<yellow>Nhấn </yellow><gray>để tiếp theo.</gray>'
     click-to-previous: '<yellow>Nhấp </yellow><gray>để trở về trước.</gray>'
