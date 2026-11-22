@@ -321,16 +321,25 @@ class YamlDatabaseHandlerTest extends CommonTestSetup {
 
     @Test
     void testDeserializeEnumZombifiedPiglin() throws Exception {
-        // Backwards compatibility: PIG_ZOMBIE should resolve
-        Object result = deserializeEnumMethod.invoke(handler, "PIG_ZOMBIE", EntityType.class);
-        // Should return ZOMBIFIED_PIGLIN if present, or PIG_ZOMBIE, or PIG as fallback
-        assertSame(EntityType.class, result.getClass().getDeclaringClass() != null ? result.getClass().getDeclaringClass() : result.getClass());
+        // Backwards compatibility: PIG_ZOMBIE should resolve to ZOMBIFIED_PIGLIN
+        assertEquals(EntityType.ZOMBIFIED_PIGLIN, deserializeEnumMethod.invoke(handler, "PIG_ZOMBIE", EntityType.class));
     }
 
     @Test
     void testDeserializeEnumZombifiedPiglinDirect() throws Exception {
-        Object result = deserializeEnumMethod.invoke(handler, "ZOMBIFIED_PIGLIN", EntityType.class);
-        assertSame(EntityType.class, result.getClass().getDeclaringClass() != null ? result.getClass().getDeclaringClass() : result.getClass());
+        assertEquals(EntityType.ZOMBIFIED_PIGLIN, deserializeEnumMethod.invoke(handler, "ZOMBIFIED_PIGLIN", EntityType.class));
+    }
+
+    @Test
+    void testDeserializeEnumGrassMaterial() throws Exception {
+        // Backwards compatibility: GRASS should resolve to the Material SHORT_GRASS, not an Optional
+        assertEquals(Material.SHORT_GRASS, deserializeEnumMethod.invoke(handler, "GRASS", Material.class));
+    }
+
+    @Test
+    void testDeserializeEnumRenamesOnlyApplyToTheirOwnEnum() throws Exception {
+        // PIG_ZOMBIE is not a Material, so it must not come back as an EntityType
+        assertNull(deserializeEnumMethod.invoke(handler, "PIG_ZOMBIE", Material.class));
     }
 
     @Override
