@@ -82,11 +82,14 @@ public sealed interface DialogField permits DialogField.Text, DialogField.Number
      * @param key     the field key, letters, digits and underscores only
      * @param label   the label shown with the box
      * @param initial the text the box starts with, or null for empty
-     * @return a text field with a 32 character limit; change it with {@link Text#maxLength(int)}
+     * @return a text field with a 32 character limit, or the length of {@code initial} if that
+     *         is longer; change it with {@link Text#maxLength(int)}
      */
     @NonNull
     static Text text(@NonNull String key, @NonNull Component label, @Nullable String initial) {
-        return new Text(key, label, initial == null ? "" : initial, Text.DEFAULT_MAX_LENGTH, 0, true, DEFAULT_WIDTH);
+        String start = initial == null ? "" : initial;
+        return new Text(key, label, start, Math.max(Text.DEFAULT_MAX_LENGTH, start.length()), 0, true,
+                DEFAULT_WIDTH);
     }
 
     /**

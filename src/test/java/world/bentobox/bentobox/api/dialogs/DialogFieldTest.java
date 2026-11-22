@@ -71,6 +71,15 @@ class DialogFieldTest extends CommonTestSetup {
     }
 
     @Test
+    void testTextLongInitialCanBeGivenALargerLimit() {
+        String longText = "x".repeat(90);
+        DialogField.Text t = DialogField.text("desc", LABEL, longText);
+        assertEquals(90, t.maxLength());
+        assertEquals(512, t.maxLength(512).maxLength());
+        assertEquals(longText, t.maxLength(512).initial());
+    }
+
+    @Test
     void testTextInitialLongerThanMaxThrows() {
         DialogField.Text t = DialogField.text("name", LABEL, "0123456789");
         assertThrows(IllegalArgumentException.class, () -> t.maxLength(5));
