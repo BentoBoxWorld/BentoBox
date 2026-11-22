@@ -754,6 +754,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>點擊</aqua> <green>查看操作</green>'
+          kick: '<red>移出玩家</red>'
+          setowner: '<gold>設為島主</gold>'
+          leave: '<red>離開隊伍</red>'
+          accept: '<green>接受</green>'
+          reject: '<red>拒絕</red>'
+          back: '<white>返回</white>'
         tips:
           LEFT:
             name: <aqua>左鍵點擊</aqua>
@@ -862,6 +870,12 @@ commands:
               # Optional description line shown above the click tips. Placeholders: [name], [display_name].
               description: ''
           enter-name: <green>請輸入玩家名稱：</green>
+          mode:
+            name: '<white>點擊玩家將</white>'
+            invite: '<green>邀請加入你的隊伍</green>'
+            coop: '<green>設為合作成員</green>'
+            trust: '<green>設為信任成員</green>'
+            change: '<gray>點擊切換</gray>'
           tips:
             LEFT:
               name: <aqua>左鍵點擊</aqua>

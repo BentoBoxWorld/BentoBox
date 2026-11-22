@@ -842,6 +842,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klikšķini,</aqua> <green>lai redzētu darbības</green>'
+          kick: '<red>Izmest spēlētāju</red>'
+          setowner: '<gold>Padarīt par īpašnieku</gold>'
+          leave: '<red>Pamest komandu</red>'
+          accept: '<green>Pieņemt</green>'
+          reject: '<red>Noraidīt</red>'
+          back: '<white>Atpakaļ</white>'
         tips:
           LEFT:
             name: '<aqua>Kreiso klikšķi</aqua>'
@@ -938,6 +946,12 @@ commands:
               <aqua>Meklēšana pēc</aqua>
               <red>[name]</red>
           enter-name: '<green>Ievadi vārdu:</green>'
+          mode:
+            name: '<white>Klikšķis uz spēlētāja</white>'
+            invite: '<green>Uzaicina viņu komandā</green>'
+            coop: '<green>Padara viņu par sadarbības biedru</green>'
+            trust: '<green>Uztic viņam</green>'
+            change: '<gray>Klikšķini, lai mainītu</gray>'
           tips:
             LEFT:
               name: '<aqua>Kreisa Klikšķis</aqua>'

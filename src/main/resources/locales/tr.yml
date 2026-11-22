@@ -828,6 +828,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Tıkla</aqua> <green>ve işlemleri gör</green>'
+          kick: '<red>Oyuncuyu at</red>'
+          setowner: '<gold>Sahip yap</gold>'
+          leave: '<red>Takımdan ayrıl</red>'
+          accept: '<green>Kabul et</green>'
+          reject: '<red>Reddet</red>'
+          back: '<white>Geri</white>'
         tips:
           LEFT:
             name: '<aqua>Sol Tıkla</aqua>'
@@ -924,6 +932,12 @@ commands:
               <aqua>Aranıyor</aqua>
               <red>[name]</red>
           enter-name: '<green>İsim girin:</green>'
+          mode:
+            name: '<white>Bir oyuncuya tıklamak</white>'
+            invite: '<green>Onu takımına davet eder</green>'
+            coop: '<green>Onu kooperatif yapar</green>'
+            trust: '<green>Ona güvenir</green>'
+            change: '<gray>Değiştirmek için tıkla</gray>'
           tips:
             LEFT:
               name: '<aqua>Sol Tıklama</aqua>'

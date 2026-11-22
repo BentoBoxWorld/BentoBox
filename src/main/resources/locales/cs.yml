@@ -825,6 +825,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klikni</aqua> <green>pro akce</green>'
+          kick: '<red>Vyhodit hráče</red>'
+          setowner: '<gold>Nastavit jako vlastníka</gold>'
+          leave: '<red>Opustit tým</red>'
+          accept: '<green>Přijmout</green>'
+          reject: '<red>Odmítnout</red>'
+          back: '<white>Zpět</white>'
         tips:
           LEFT:
             name: '<aqua>Levý klik</aqua>'
@@ -921,6 +929,12 @@ commands:
               <aqua>Hledání</aqua>
               <red>[name]</red>
           enter-name: '<green>Zadejte název:</green>'
+          mode:
+            name: '<white>Kliknutí na hráče</white>'
+            invite: '<green>Pozve ho do týmu</green>'
+            coop: '<green>Nastaví ho jako kooperujícího</green>'
+            trust: '<green>Nastaví ho jako důvěryhodného</green>'
+            change: '<gray>Klikni pro změnu</gray>'
           tips:
             LEFT:
               name: '<aqua>Levý klik</aqua>'

@@ -837,6 +837,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klikni</aqua> <green>za radnje</green>'
+          kick: '<red>Izbaci igrača</red>'
+          setowner: '<gold>Postavi za vlasnika</gold>'
+          leave: '<red>Napusti tim</red>'
+          accept: '<green>Prihvati</green>'
+          reject: '<red>Odbij</red>'
+          back: '<white>Natrag</white>'
         tips:
           LEFT:
             name: '<aqua>Lijevi Klip</aqua>'
@@ -937,6 +945,12 @@ commands:
               <aqua>Traženje za</aqua>
               <red>[name]</red>
           enter-name: '<green>Unesi ime:</green>'
+          mode:
+            name: '<white>Klik na igrača</white>'
+            invite: '<green>Poziva ga u tvoj tim</green>'
+            coop: '<green>Udružuje ga (coop)</green>'
+            trust: '<green>Daje mu povjerenje</green>'
+            change: '<gray>Klikni za promjenu</gray>'
           tips:
             LEFT:
               name: '<aqua>Lijevi Klik</aqua>'

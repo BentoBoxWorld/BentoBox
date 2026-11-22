@@ -778,6 +778,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>点击</aqua> <green>查看操作</green>'
+          kick: '<red>踢出该玩家</red>'
+          setowner: '<gold>设为岛主</gold>'
+          leave: '<red>离开团队</red>'
+          accept: '<green>接受</green>'
+          reject: '<red>拒绝</red>'
+          back: '<white>返回</white>'
         tips:
           LEFT:
             name: '<aqua>左键</aqua>'
@@ -872,6 +880,12 @@ commands:
               <aqua>查找:</aqua>
               <red>[name]</red>
           enter-name: '<green>请输入玩家ID: </green>'
+          mode:
+            name: '<white>点击玩家将</white>'
+            invite: '<green>邀请TA加入团队</green>'
+            coop: '<green>设为协作者</green>'
+            trust: '<green>设为可信玩家</green>'
+            change: '<gray>点击切换</gray>'
           tips:
             LEFT:
               name: '<aqua>左键</aqua>'

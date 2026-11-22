@@ -60,6 +60,7 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
 
     private static final int SLOT_PREVIOUS = 1;
     private static final int SLOT_NEXT = 7;
+    private static final int SLOT_MODE = 6;
     private static final int SLOT_FIRST_PROSPECT = 10;
     private static final int SLOT_BACK = 53;
 
@@ -445,6 +446,85 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         assertFalse(item.getDescription().stream()
                 .anyMatch(l -> l.contains("buttons.member.description")),
                 "A blank member.description key must not leak into the lore");
+    }
+
+    // -----------------------------------------------------------------------
+    // Mode button for players who can only tap (#3137)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testModeButton_oneClick_leftClickCoopsPlayer() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(coopCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickProspect(ClickType.LEFT);
+
+        verify(coopCommand).execute(user, "invite", List.of("target"));
+        verify(itic, never()).execute(any(), anyString(), anyList());
+    }
+
+    @Test
+    void testModeButton_twoClicks_leftClickTrustsPlayer() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(trustCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickProspect(ClickType.LEFT);
+
+        verify(trustCommand).execute(user, "invite", List.of("target"));
+        verify(coopCommand, never()).execute(any(), anyString(), anyList());
+    }
+
+    @Test
+    void testModeButton_threeClicks_wrapsBackToInvite() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        for (int i = 0; i < 3; i++) {
+            clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        }
+        clickProspect(ClickType.LEFT);
+
+        verify(itic).execute(user, "invite", List.of("target"));
+    }
+
+    @Test
+    void testModeButton_inCoopMode_rightAndShiftClicksKeepTheirOwnAction() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(trustCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickProspect(ClickType.SHIFT_LEFT);
+
+        verify(trustCommand).execute(user, "invite", List.of("target"));
+    }
+
+    @Test
+    void testModeButton_hiddenWhenOnlyInviteIsPossible() {
+        when(itc.getCoopCommand()).thenReturn(null);
+        when(itc.getTrustCommand()).thenReturn(null);
+
+        gui.build(user);
+
+        PanelItem item = PanelListenerManager.getOpenPanels().get(uuid).getItems().get(SLOT_MODE);
+        assertNotNull(item);
+        assertTrue(item.getClickHandler().isEmpty());
+    }
+
+    @Test
+    void testModeButton_hiddenWhenRankTooLowForCoopAndTrust() {
+        when(island.getRankCommand(anyString())).thenReturn(1000);
+
+        gui.build(user);
+
+        assertTrue(PanelListenerManager.getOpenPanels().get(uuid).getItems().get(SLOT_MODE).getClickHandler()
+                .isEmpty());
     }
 
     @Test
