@@ -341,7 +341,7 @@ public class Flag implements Comparable<Flag> {
      * A flag that is hidden by default is not shown to players in a world until
      * an admin chooses to show it there.
      * @return true if this flag starts out hidden from players
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public boolean isHiddenByDefault() {
         return hiddenByDefault;
@@ -353,7 +353,7 @@ public class Flag implements Comparable<Flag> {
      * and no admin has chosen to show it. Ops always see hidden flags.
      * @param world the world
      * @return true if players should not see this flag in the world
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public boolean isHidden(@NonNull World world) {
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
@@ -366,7 +366,7 @@ public class Flag implements Comparable<Flag> {
      * Does nothing if the world is not a game mode world.
      * @param world the world
      * @param hidden true to hide the flag, false to show it
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public void setHidden(@NonNull World world, boolean hidden) {
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
@@ -1006,7 +1006,7 @@ public class Flag implements Comparable<Flag> {
          * settings that most servers will not want players to change.
          * @param hiddenByDefault true to start hidden
          * @return Builder - flag builder
-         * @since 3.23.8
+         * @since 3.24.0
          */
         public Builder hiddenByDefault(boolean hiddenByDefault) {
             this.hiddenByDefault = hiddenByDefault;

@@ -801,7 +801,7 @@ public class IslandWorldManager {
      * {@link #saveCoreWorldSettings(World)}.
      * @param world - world
      * @return mutable list of flag IDs, or an empty immutable list if the world is not a game world
-     * @since 3.23.8
+     * @since 3.24.0
      * @see world.bentobox.bentobox.api.flags.Flag#isHidden(World)
      */
     public List<String> getShownFlags(@NonNull World world) {

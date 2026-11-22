@@ -24,7 +24,7 @@ import world.bentobox.bentobox.util.Util;
  * same island whose rank is high enough to invite in the first place. The command
  * shares the invite command's permission, so no new permission node is needed.
  *
- * @since 3.23.8
+ * @since 3.24.0
  */
 public class IslandTeamUninviteCommand extends CompositeCommand {
 

@@ -354,7 +354,7 @@ public class TemplatedPanel extends Panel {
      * @param type the button type from the template
      * @param rec template of the button
      * @return the button, or null if the type is not a built-in one or the template is incomplete
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @Nullable
     private PanelItem makeBuiltInButton(String type, @NonNull ItemTemplateRecord rec) {
@@ -521,13 +521,13 @@ public class TemplatedPanel extends Panel {
 
     /**
      * Button type, available in every templated panel, that runs a command as the player.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public static final String TYPE_COMMAND = "COMMAND";
 
     /**
      * Button type, available in every templated panel, that closes the panel.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public static final String TYPE_CLOSE = "CLOSE";
 

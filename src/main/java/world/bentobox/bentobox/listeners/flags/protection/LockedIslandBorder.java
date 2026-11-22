@@ -25,7 +25,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * addon) is put back afterwards.
  *
  * @author tastybento
- * @since 3.23.8
+ * @since 3.24.0
  */
 class LockedIslandBorder {
 

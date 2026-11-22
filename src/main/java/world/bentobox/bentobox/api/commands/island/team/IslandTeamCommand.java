@@ -275,7 +275,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * Gets the players who have an open invite to an island.
      * @param island the island
      * @return UUIDs of everyone with a valid, unexpired invite to the island
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @NonNull
     public List<UUID> getInvitees(@NonNull Island island) {

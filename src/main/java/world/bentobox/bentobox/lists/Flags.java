@@ -433,7 +433,7 @@ public final class Flags {
      * On an island the island's own PVP setting for that dimension always decides; this
      * only covers the wilderness of a game world, where PVP was previously always off.
      * Off by default, so existing worlds behave as before.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public static final Flag PVP_OUTSIDE_ISLANDS = new Flag.Builder("PVP_OUTSIDE_ISLANDS", Material.STONE_SWORD)
             .type(Type.WORLD_SETTING).defaultSetting(false).build();
@@ -646,7 +646,7 @@ public final class Flags {
      * Island setting that toggles whether creeper explosions break blocks on that island.
      * It only has an effect while the world setting {@link #CREEPER_DAMAGE} allows creeper
      * damage. Hidden from players until an admin chooses to show it.
-     * @since 3.23.8
+     * @since 3.24.0
      * @see CreeperListener
      */
     public static final Flag CREEPER_BLOCK_DAMAGE = new Flag.Builder("CREEPER_BLOCK_DAMAGE", Material.GUNPOWDER)

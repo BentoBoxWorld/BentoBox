@@ -234,7 +234,7 @@ public class BlueprintsManager {
      * @param bundles the game mode's bundles, keyed by unique id
      * @return the bundle name to use; {@value #DEFAULT_BUNDLE_NAME} when there is no
      *         unambiguous alternative
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @NonNull
     public static String defaultBundleName(@NonNull Map<String, BlueprintBundle> bundles) {

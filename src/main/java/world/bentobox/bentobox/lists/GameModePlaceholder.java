@@ -296,7 +296,7 @@ public enum GameModePlaceholder {
             (addon, user, island) -> island == null ? "" : String.valueOf(island.getVisitors().size())),
     /**
      * Returns a comma separated list of the names of the players currently visiting the island.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     ISLAND_VISITORS_LIST("island_visitors_list",
             "Comma-separated list of players currently visiting the player's island",
@@ -575,7 +575,7 @@ public enum GameModePlaceholder {
     getVisitedIsland(addon, user).map(value -> String.valueOf(value.getVisitors().size())).orElse("")),
     /**
      * Returns a comma separated list of the names of the players currently visiting the island the player is standing on.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     VISITED_ISLAND_VISITORS_LIST("visited_island_visitors_list",
             "Comma-separated list of players currently visiting the island the player is standing on",

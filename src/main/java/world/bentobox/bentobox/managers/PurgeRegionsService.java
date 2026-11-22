@@ -567,7 +567,7 @@ public class PurgeRegionsService {
      * @param regions region coordinates to evict; normally a slice of
      *                {@code scan.deletableRegions().keySet()}
      * @return the number of chunks unloaded
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public int evictChunks(PurgeScanResult scan, Collection<Pair<Integer, Integer>> regions) {
         World overworld = scan.world();

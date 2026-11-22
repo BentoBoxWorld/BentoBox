@@ -30,7 +30,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
  * files keep working.
  *
  * @author tastybento
- * @since 3.23.8
+ * @since 3.24.0
  */
 public final class BlueprintFill {
 

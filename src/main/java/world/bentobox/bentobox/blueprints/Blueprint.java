@@ -59,19 +59,19 @@ public class Blueprint {
     /**
      * Block placed at every position between {@link #fillMin} and {@link #fillMax}
      * that has no entry in {@link #blocks}. Null means no fill: missing positions are left alone.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @Expose
     private BlueprintBlock fill;
     /**
      * Minimum corner of the fill box, relative to the paste location
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @Expose
     private Vector fillMin;
     /**
      * Maximum corner of the fill box, relative to the paste location
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @Expose
     private Vector fillMax;
@@ -286,7 +286,7 @@ public class Blueprint {
      * Get the block placed at every position in the fill box that has no explicit block.
      * Most compact blueprints use air.
      * @return the fill block, or null if this blueprint has no fill
-     * @since 3.23.8
+     * @since 3.24.0
      * @see BlueprintFill
      */
     public BlueprintBlock getFill() {
@@ -295,7 +295,7 @@ public class Blueprint {
 
     /**
      * @param fill the fill block to set, or null for no fill
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public void setFill(BlueprintBlock fill) {
         this.fill = fill;
@@ -303,7 +303,7 @@ public class Blueprint {
 
     /**
      * @return the minimum corner of the fill box, relative to the paste location
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public Vector getFillMin() {
         return fillMin;
@@ -311,7 +311,7 @@ public class Blueprint {
 
     /**
      * @param fillMin the minimum corner of the fill box to set
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public void setFillMin(Vector fillMin) {
         this.fillMin = fillMin;
@@ -319,7 +319,7 @@ public class Blueprint {
 
     /**
      * @return the maximum corner of the fill box, relative to the paste location
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public Vector getFillMax() {
         return fillMax;
@@ -327,7 +327,7 @@ public class Blueprint {
 
     /**
      * @param fillMax the maximum corner of the fill box to set
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public void setFillMax(Vector fillMax) {
         this.fillMax = fillMax;

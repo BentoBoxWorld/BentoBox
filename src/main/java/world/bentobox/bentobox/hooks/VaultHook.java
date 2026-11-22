@@ -45,7 +45,7 @@ public class VaultHook extends Hook {
      * Used to defer the early hook when Vault is installed but its economy provider is supplied
      * later, e.g. by an addon such as InvSwitcher during its own {@code onEnable()}.
      * @return true if Vault is enabled and an economy provider is registered
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public boolean isEconomyRegistered() {
         if (!isPluginAvailable()) {

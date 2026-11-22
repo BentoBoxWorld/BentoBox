@@ -207,7 +207,7 @@ island:
   # How long a team, trust or coop invite stays open, in hours.
   # An invite that is not accepted or declined in this time is withdrawn automatically.
   # Set to 0 for invites that never expire.
-  # Added since 3.23.8.
+  # Added since 3.24.0.
   invite-expiry-hours: 24
   cooldown:
     time:
@@ -243,10 +243,10 @@ island:
     # Show a border around a locked island to a player who is turned away from it,
     # so they can see where the island they cannot enter starts. The border is the
     # vanilla world border, shown only to that player for a few seconds.
-    # Added since 3.23.8.
+    # Added since 3.24.0.
     show: true
     # Color of the locked island border. Options are RED, GREEN or BLUE.
-    # Added since 3.23.8.
+    # Added since 3.24.0.
     color: RED
   # Modal dialog options. Dialogs are the 'menu they can't click away' shown to
   # players for high-friction flows. They require a server that supports dialogs
@@ -298,7 +298,7 @@ island:
   # Milliseconds per tick that pasting and copying blueprints may use. Blocks are pasted in batches of
   # paste-speed until this time is used up, so larger islands paste much faster when the server has spare time.
   # A tick is 50 ms. Lower this if island creation causes lag. 0 pastes a single batch per tick (the old behavior).
-  # Added since 3.23.8.
+  # Added since 3.24.0.
   paste-time-budget: 10
   # Island deletion: Number of chunks per world to regenerate per second.
   # If there is a nether and end then 3x this number will be regenerated per second.

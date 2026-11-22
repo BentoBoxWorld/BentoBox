@@ -29,7 +29,7 @@ public class CoreWorldSettings implements DataObject {
 
     /**
      * IDs of flags that are hidden by default but that an admin has chosen to show
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @Expose
     private List<String> shownFlags = new ArrayList<>();
@@ -74,7 +74,7 @@ public class CoreWorldSettings implements DataObject {
 
     /**
      * @return mutable list of IDs of hidden-by-default flags that an admin has chosen to show
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public List<String> getShownFlags() {
         if (shownFlags == null) {
@@ -85,7 +85,7 @@ public class CoreWorldSettings implements DataObject {
 
     /**
      * @param shownFlags IDs of hidden-by-default flags that an admin has chosen to show
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public void setShownFlags(List<String> shownFlags) {
         this.shownFlags = shownFlags;

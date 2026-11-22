@@ -34,7 +34,7 @@ public class TeamInvite implements DataObject {
     /**
      * When the invite was made, in epoch milliseconds. Zero for invites stored
      * before this field existed.
-     * @since 3.23.8
+     * @since 3.24.0
      */
     @Expose
     private long created;
@@ -55,7 +55,7 @@ public class TeamInvite implements DataObject {
 
     /**
      * @return when the invite was made in epoch milliseconds, or 0 if unknown
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public long getCreated() {
         return created;
@@ -63,7 +63,7 @@ public class TeamInvite implements DataObject {
 
     /**
      * @param created when the invite was made, in epoch milliseconds
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public void setCreated(long created) {
         this.created = created;

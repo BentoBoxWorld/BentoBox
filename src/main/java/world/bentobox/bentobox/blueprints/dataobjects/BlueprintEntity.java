@@ -252,7 +252,7 @@ public class BlueprintEntity {
      * position themselves and are not moved.
      * @param location the paste location: the bottom centre of the entity's block
      * @return the spawn location
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public Location getSpawnLocation(Location location) {
         if (type == null || y == 0D) {

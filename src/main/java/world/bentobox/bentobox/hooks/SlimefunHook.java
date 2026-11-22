@@ -60,7 +60,7 @@ public class SlimefunHook extends Hook {
      * @param world the world the regions were deleted from
      * @param regions region coordinates {@code (regionX, regionZ)} that were deleted
      * @return the number of Slimefun blocks cleared
-     * @since 3.23.8
+     * @since 3.24.0
      */
     public int clearRegions(@NonNull World world, @NonNull Collection<Pair<Integer, Integer>> regions) {
         BlockStorage storage = BlockStorage.getStorage(world);
