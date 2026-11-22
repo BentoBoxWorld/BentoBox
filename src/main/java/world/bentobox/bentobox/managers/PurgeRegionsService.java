@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.managers.island.IslandGrid;
 import world.bentobox.bentobox.managers.island.IslandGrid.IslandData;
 import world.bentobox.bentobox.util.Pair;
@@ -251,6 +253,8 @@ public class PurgeRegionsService {
         boolean ok = deleteRegionFiles(scan);
         if (!ok) {
             plugin.logError("Not all region files could be deleted");
+        } else {
+            clearCustomBlockData(scan);
         }
 
         // Collect unique island IDs across all reaped regions. An island
@@ -321,6 +325,39 @@ public class PurgeRegionsService {
                 + islandsDeferred + " island(s) deferred"
                 + (scan.days() == 0 ? " (to shutdown)" : " (partial cleanup)"));
         return ok;
+    }
+
+    /**
+     * Clears the block data that other plugins keep outside the region files for
+     * the regions that were just deleted, so it does not come back to life when
+     * the area is used again (#2051).
+     *
+     * <p>Only Slimefun needs this. A failure in the other plugin is logged and
+     * never stops the purge.
+     *
+     * @param scan the scan whose region files have been deleted
+     */
+    private void clearCustomBlockData(PurgeScanResult scan) {
+        plugin.getHooks().getHook("Slimefun").ifPresent(hook -> {
+            try {
+                SlimefunHook slimefun = (SlimefunHook) hook;
+                Set<Pair<Integer, Integer>> regions = scan.deletableRegions().keySet();
+                int cleared = slimefun.clearRegions(scan.world(), regions);
+                World nether = scan.isNether() ? plugin.getIWM().getNetherWorld(scan.world()) : null;
+                if (nether != null) {
+                    cleared += slimefun.clearRegions(nether, regions);
+                }
+                World end = scan.isEnd() ? plugin.getIWM().getEndWorld(scan.world()) : null;
+                if (end != null) {
+                    cleared += slimefun.clearRegions(end, regions);
+                }
+                if (cleared > 0) {
+                    plugin.log("Cleared " + cleared + " Slimefun block(s) from the purged regions");
+                }
+            } catch (Exception | LinkageError e) {
+                plugin.logWarning("Could not clear Slimefun block data for the purged regions: " + e);
+            }
+        });
     }
 
     /**
@@ -512,18 +549,36 @@ public class PurgeRegionsService {
      * @param scan a prior scan result whose regions should be evicted
      */
     public void evictChunks(PurgeScanResult scan) {
-        if (scan.deletableRegions().isEmpty()) {
+        if (scan.deletableRegions().isEmpty() || scan.world() == null) {
             return;
         }
+        int evicted = evictChunks(scan, scan.deletableRegions().keySet());
+        plugin.log("Purge deleted: evicted " + evicted + " loaded chunk(s) from "
+                + scan.deletableRegions().size() + " target region(s)");
+    }
+
+    /**
+     * Evicts the loaded chunks of a subset of a scan's target regions. This is
+     * {@link #evictChunks(PurgeScanResult)} in instalments: a caller that must
+     * not stall the server can feed it a few regions per tick instead of the
+     * whole scan at once. Must be called on the main thread.
+     *
+     * @param scan the scan the regions belong to
+     * @param regions region coordinates to evict; normally a slice of
+     *                {@code scan.deletableRegions().keySet()}
+     * @return the number of chunks unloaded
+     * @since 3.24.0
+     */
+    public int evictChunks(PurgeScanResult scan, Collection<Pair<Integer, Integer>> regions) {
         World overworld = scan.world();
-        if (overworld == null) {
-            return;
+        if (overworld == null || regions.isEmpty()) {
+            return 0;
         }
         World netherWorld = scan.isNether() ? plugin.getIWM().getNetherWorld(overworld) : null;
         World endWorld = scan.isEnd() ? plugin.getIWM().getEndWorld(overworld) : null;
 
         int evicted = 0;
-        for (Pair<Integer, Integer> coords : scan.deletableRegions().keySet()) {
+        for (Pair<Integer, Integer> coords : regions) {
             int baseCx = coords.x() << 5;   // rX * 32
             int baseCz = coords.z() << 5;
             evicted += evictRegion(overworld, baseCx, baseCz);
@@ -534,8 +589,7 @@ public class PurgeRegionsService {
                 evicted += evictRegion(endWorld, baseCx, baseCz);
             }
         }
-        plugin.log("Purge deleted: evicted " + evicted + " loaded chunk(s) from "
-                + scan.deletableRegions().size() + " target region(s)");
+        return evicted;
     }
 
     private int evictRegion(World world, int baseCx, int baseCz) {

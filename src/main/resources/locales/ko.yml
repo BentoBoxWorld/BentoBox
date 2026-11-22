@@ -919,6 +919,8 @@ commands:
           name-rejected-your-invite: '<red>[name] 이(가) 섬원 초대를 거절했습니다!</red>'
         cancel:
           description: 보류중인 초대를 취소하여 섬에 갈수 있습니다!
+          success: '<aqua>[name]</aqua><green>님에게 보낸 초대를 취소했습니다.</green>'
+          no-invite: '<red>[name]님에게는 당신의 섬으로의 대기 중인 초대가 없습니다.</red>'
       leave:
         cannot-leave: '<red>주인은 섬을 버리고 떠날수 없습니다! 섬원이 되거나 모든 섬원을 추방하세요!</red>'
         description: 섬을 떠납니다
@@ -1242,6 +1244,10 @@ protection:
       description: 사용 가능 여부 설정
       name: 작업대
       hint: 작업대 접근이 금지되어있습니다
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>이 섬에서 크리퍼가 블록을 부술지 여부 설정</green>
+      name: 크리퍼 블록 파괴
     CREEPER_DAMAGE:
       description: |
         <green>크리퍼의 대미지로부터 보호 할것인지 여부 설정</green>
@@ -1487,6 +1493,14 @@ protection:
       name: 이름표
       description: 사용가능 여부 설정
       hint: 이름표를 사용할 수 없습니다
+    PVP_OUTSIDE_ISLANDS:
+      name: 섬 밖 PVP
+      description: |-
+        <red>섬이 없는 곳에서의 PVP를</red>
+        <red>켜거나 끕니다.</red>
+
+        <green>섬 위에서는 항상 그 섬의</green>
+        <green>PVP 설정이 적용됩니다.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 범위 밖에서 생성되는 자연 생물
       description: |-
@@ -2073,6 +2087,21 @@ panels:
     next:
       name: '<white><bold>다음 페이지</bold></white>'
       description: '<gray>[number] 페이지로 전환</gray>'
+  picker:
+    back:
+      name: '<white><bold>뒤로</bold></white>'
+      description: '<gray>선택하지 않고 돌아갑니다.</gray>'
+    inventory:
+      name: '<white><bold>또는 인벤토리 사용</bold></white>'
+      description: '<gray>자신의 인벤토리에서 아이템을 클릭하여 선택하세요.</gray>'
+    search:
+      name: '<white><bold>검색</bold></white>'
+      description: '<gray>입력한 글자가 포함된 이름만 표시합니다.</gray>'
+      clear-name: '<white><bold>검색 지우기</bold></white>'
+      clear-description: '<gray>모두 다시 표시합니다.</gray>'
+      title: '<white>검색</white>'
+      field: '이름에 포함된 글자'
+      button: '<green>검색</green>'
   tips:
     click-to-next: '<yellow>클릭 </yellow><gray>하여 다음으로 가세요.</gray>'
     click-to-previous: '<yellow>클릭 </yellow><gray>하면 이전으로 돌아갑니다.</gray>'

@@ -987,6 +987,8 @@ commands:
           name-rejected-your-invite: '<red>[name] rejeitou seu convite a ilha!</red>'
         cancel:
           description: cancelar um convite pendente para se juntar a sua ilha
+          success: '<green>Convite para </green><aqua>[name]</aqua><green> retirado.</green>'
+          no-invite: '<red>[name] não tem nenhum convite pendente para a sua ilha.</red>'
       leave:
         cannot-leave: >-
           <red>Donos não podem sair! Torne-se um membro antes, ou expulse todos os</red>
@@ -1323,6 +1325,11 @@ protection:
       description: Permitir uso
       name: Bancadas de trabalho
       hint: Uso de bancadas de trabalho desabilitado
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Alternar se creepers quebram</green>
+        <green>blocos nesta ilha</green>
+      name: Dano de creepers a blocos
     CREEPER_DAMAGE:
       description: |
         <green>Alternar proteção contra</green>
@@ -1587,6 +1594,14 @@ protection:
       name: Etiquetas
       description: Permitir uso
       hint: Interação com etiquetas desabilitada
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fora das ilhas
+      description: |-
+        <red>Ativar/desativar o PVP onde</red>
+        <red>não há nenhuma ilha.</red>
+
+        <green>Em uma ilha, a configuração de PVP</green>
+        <green>da própria ilha sempre se aplica.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Nascimento natural de criaturas fora do alcance
       description: |-
@@ -2206,6 +2221,21 @@ panels:
     next:
       name: '<white><bold>Próxima Página</bold></white>'
       description: '<gray>Mude para a página [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Voltar</bold></white>'
+      description: '<gray>Voltar sem escolher.</gray>'
+    inventory:
+      name: '<white><bold>Ou use seu inventário</bold></white>'
+      description: '<gray>Clique em um item do seu inventário para escolhê-lo.</gray>'
+    search:
+      name: '<white><bold>Buscar</bold></white>'
+      description: '<gray>Mostrar apenas nomes que contenham um texto.</gray>'
+      clear-name: '<white><bold>Limpar busca</bold></white>'
+      clear-description: '<gray>Mostrar tudo novamente.</gray>'
+      title: '<white>Buscar</white>'
+      field: 'O nome contém'
+      button: '<green>Buscar</green>'
   tips:
     click-to-next: '<yellow>Clique </yellow><gray>para o próximo.</gray>'
     click-to-previous: '<yellow>Clique </yellow><gray>para anterior.</gray>'

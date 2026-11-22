@@ -1015,6 +1015,8 @@ commands:
           name-rejected-your-invite: '<red>[name] a respins invitația dvs. la insulă!</red>'
         cancel:
           description: anulați invitația în așteptare pentru a vă alătura insulei
+          success: '<green>Invitația pentru </green><aqua>[name]</aqua><green> a fost retrasă.</green>'
+          no-invite: '<red>[name] nu are nicio invitație în așteptare pe insula ta.</red>'
       leave:
         cannot-leave: >-
           <red>Proprietarii nu pot pleca! Deveniți mai întâi membru sau dați cu</red>
@@ -1353,6 +1355,11 @@ protection:
       description: Comutați utilizarea
       name: Banci de lucru
       hint: Accesul la bancă de lucru este dezactivat
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Comută dacă creeperii</green>
+        <green>distrug blocuri pe această insulă</green>
+      name: Daune creeper asupra blocurilor
     CREEPER_DAMAGE:
       description: |
         <green>târâtor Toggle</green>
@@ -1619,6 +1626,14 @@ protection:
       name: Etichete de nume
       description: Comutați utilizarea
       hint: Interacțiunea etichetei de nume a fost dezactivată
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP în afara insulelor
+      description: |-
+        <red>Activează/dezactivează PVP acolo</red>
+        <red>unde nu există nicio insulă.</red>
+
+        <green>Pe o insulă se aplică întotdeauna</green>
+        <green>propria ei setare PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Creatură naturală care dă naștere în afara razei de acțiune
       description: >-
@@ -2259,6 +2274,21 @@ panels:
     next:
       name: '<white><bold>Pagina următoare</bold></white>'
       description: '<gray>Comutați la pagina [number].</gray>'
+  picker:
+    back:
+      name: '<white><bold>Înapoi</bold></white>'
+      description: '<gray>Mergi înapoi fără a alege.</gray>'
+    inventory:
+      name: '<white><bold>Sau folosește inventarul tău</bold></white>'
+      description: '<gray>Dă clic pe un obiect din inventarul tău pentru a-l alege.</gray>'
+    search:
+      name: '<white><bold>Caută</bold></white>'
+      description: '<gray>Afișează doar numele care conțin un text.</gray>'
+      clear-name: '<white><bold>Șterge căutarea</bold></white>'
+      clear-description: '<gray>Afișează din nou totul.</gray>'
+      title: '<white>Caută</white>'
+      field: 'Numele conține'
+      button: '<green>Caută</green>'
   tips:
     click-to-next: '<yellow>Faceți clic pe </yellow><gray>pentru următorul.</gray>'
     click-to-previous: '<yellow>Faceți clic pe </yellow><gray>pentru anterior.</gray>'

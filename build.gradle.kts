@@ -48,7 +48,7 @@ paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArt
 group = "world.bentobox" // From <groupId>
 
 // Base properties from <properties>
-val buildVersion = "3.23.7"
+val buildVersion = "3.24.0"
 val buildNumberDefault = "-LOCAL" // Local build identifier
 val snapshotSuffix = "-SNAPSHOT"  // Indicates development/snapshot version
 
@@ -289,6 +289,7 @@ dependencies {
         exclude(group = "org.spigotmc", module = "spigot-api")
     }
     compileOnly("io.lumine:Mythic-Dist:$mythicDistVersion")
+    testImplementation("io.lumine:Mythic-Dist:$mythicDistVersion")
     compileOnly("org.mvplugins.multiverse.core:multiverse-core:$multiverseCore5Version")
     compileOnly("com.onarandombox.multiversecore:multiverse-core:$multiverseCore4Version") {
         exclude(group = "org.spigotmc", module = "spigot-api")
@@ -299,6 +300,9 @@ dependencies {
     }
     compileOnly("com.github.apachezy:LangUtils:$langUtilsVersion")
     compileOnly("com.github.Slimefun:Slimefun4:$slimefun4Version")
+    testImplementation("com.github.Slimefun:Slimefun4:$slimefun4Version") {
+        isTransitive = false // only BlockStorage is needed, to test SlimefunHook
+    }
     compileOnly("beer.devs:itemsadder-api:$itemsAdderVersion") // Published to Maven Central
     compileOnly("de.oliver:FancyNpcs:$fancyNpcsVersion")
     compileOnly("lol.pyr:znpcsplus-api:$znpcsplusApiVersion")

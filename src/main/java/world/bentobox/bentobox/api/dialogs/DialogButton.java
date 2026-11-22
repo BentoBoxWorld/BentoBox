@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.dialogs;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -15,6 +16,10 @@ import world.bentobox.bentobox.util.Util;
  * A button has a label, an optional tooltip shown on hover and an optional
  * {@link #onClick()} callback. The callback is run on the server's main thread,
  * with the {@link User} who clicked, when the button is pressed.
+ * <p>
+ * A button made with {@link #submit(Component, BiConsumer) submit} gets the
+ * {@link DialogResponse} too - the values the player entered in the dialog's
+ * {@link DialogField fields}. Any button on a dialog with fields can be a submit button.
  *
  * @author tastybento
  * @since 3.21.0
@@ -39,7 +44,11 @@ public class DialogButton {
     private final Component label;
     private final @Nullable Component tooltip;
     private final int width;
+    /** The action as given: a {@code Consumer<User>} for a plain button, a {@code BiConsumer} for a submit one */
     private final @Nullable Consumer<User> onClick;
+    private final @Nullable BiConsumer<User, DialogResponse> action;
+    /** True if the action wants the response, i.e. this was made as a submit button */
+    private final boolean submit;
 
     /**
      * Creates a button from Adventure components.
@@ -69,14 +78,7 @@ public class DialogButton {
      */
     public DialogButton(@NonNull Component label, @Nullable Component tooltip, int width,
             @Nullable Consumer<User> onClick) {
-        if (width < MIN_WIDTH || width > MAX_WIDTH) {
-            throw new IllegalArgumentException(
-                    "Button width must be between " + MIN_WIDTH + " and " + MAX_WIDTH + ", not " + width);
-        }
-        this.label = label;
-        this.tooltip = tooltip;
-        this.width = width;
-        this.onClick = onClick;
+        this(label, tooltip, width, onClick, onClick == null ? null : (u, r) -> onClick.accept(u), false);
     }
 
     /**
@@ -87,6 +89,20 @@ public class DialogButton {
      */
     public DialogButton(@NonNull Component label, @Nullable Consumer<User> onClick) {
         this(label, null, onClick);
+    }
+
+    private DialogButton(@NonNull Component label, @Nullable Component tooltip, int width,
+            @Nullable Consumer<User> onClick, @Nullable BiConsumer<User, DialogResponse> action, boolean submit) {
+        if (width < MIN_WIDTH || width > MAX_WIDTH) {
+            throw new IllegalArgumentException(
+                    "Button width must be between " + MIN_WIDTH + " and " + MAX_WIDTH + ", not " + width);
+        }
+        this.label = label;
+        this.tooltip = tooltip;
+        this.width = width;
+        this.onClick = onClick;
+        this.action = action;
+        this.submit = submit;
     }
 
     /**
@@ -105,6 +121,36 @@ public class DialogButton {
     }
 
     /**
+     * Creates a submit button: when clicked, it gets the values the player entered in the
+     * dialog's {@link DialogField fields}.
+     *
+     * @param label    the button label, not null
+     * @param onSubmit the action to run with the clicking user and the response, not null
+     * @return a new button
+     * @since 3.24.0
+     */
+    @NonNull
+    public static DialogButton submit(@NonNull Component label, @NonNull BiConsumer<User, DialogResponse> onSubmit) {
+        return new DialogButton(label, null, DEFAULT_WIDTH, u -> onSubmit.accept(u, DialogResponse.EMPTY), onSubmit,
+                true);
+    }
+
+    /**
+     * Creates a submit button whose label is a localized translation for the given user.
+     *
+     * @param user      the user whose locale is used, not null
+     * @param reference the locale key of the label, not null
+     * @param onSubmit  the action to run with the clicking user and the response, not null
+     * @return a new button
+     * @since 3.24.0
+     */
+    @NonNull
+    public static DialogButton submit(@NonNull User user, @NonNull String reference,
+            @NonNull BiConsumer<User, DialogResponse> onSubmit) {
+        return submit(Util.parseMiniMessageOrLegacy(user.getTranslation(reference)), onSubmit);
+    }
+
+    /**
      * Returns a copy of this button at the given width, so a button made by
      * {@link #of(User, String, Consumer)} can still be sized.
      *
@@ -115,7 +161,20 @@ public class DialogButton {
      */
     @NonNull
     public DialogButton withWidth(int width) {
-        return new DialogButton(label, tooltip, width, onClick);
+        return new DialogButton(label, tooltip, width, onClick, action, submit);
+    }
+
+    /**
+     * Returns a copy of this button with a hover tooltip, so a button made by a factory
+     * can still have one.
+     *
+     * @param tooltip the hover tooltip, or null for none
+     * @return a new button, identical but for its tooltip
+     * @since 3.24.0
+     */
+    @NonNull
+    public DialogButton withTooltip(@Nullable Component tooltip) {
+        return new DialogButton(label, tooltip, width, onClick, action, submit);
     }
 
     /**
@@ -143,10 +202,34 @@ public class DialogButton {
     }
 
     /**
-     * @return the action to run when the button is clicked, or null if none
+     * The action to run when the button is clicked, without the response. For a
+     * {@link #submit(Component, BiConsumer) submit} button this runs the submit action with
+     * an {@link DialogResponse#EMPTY empty} response; use {@link #onSubmit()} to pass the real one.
+     *
+     * @return the action, or null if none
      */
     @Nullable
     public Consumer<User> onClick() {
         return onClick;
+    }
+
+    /**
+     * The action to run when the button is clicked, with the response. Plain buttons
+     * ignore the response, so this is set whenever {@link #onClick()} is.
+     *
+     * @return the action, or null if none
+     * @since 3.24.0
+     */
+    @Nullable
+    public BiConsumer<User, DialogResponse> onSubmit() {
+        return action;
+    }
+
+    /**
+     * @return true if this button was made with {@link #submit(Component, BiConsumer) submit}
+     * @since 3.24.0
+     */
+    public boolean isSubmit() {
+        return submit;
     }
 }

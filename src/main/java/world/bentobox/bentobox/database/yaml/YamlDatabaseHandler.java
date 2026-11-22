@@ -28,6 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
@@ -791,13 +792,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         try {
             String name = value.toUpperCase(Locale.ENGLISH);
             // Backwards compatibility for upgrade to 1.16.1
-            if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
-                return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
-                        .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
+            if (EntityType.class.equals(enumClass) && name.equals("PIG_ZOMBIE")) {
+                name = "ZOMBIFIED_PIGLIN";
             }
             // Backwards compatibility for upgrade to 1.20.4
-            if (name.equals("GRASS") && Enums.getIfPresent(EntityType.class, "SHORT_GRASS").isPresent()) {
-                return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
+            if (Material.class.equals(enumClass) && name.equals("GRASS")
+                    && Enums.getIfPresent(Material.class, "SHORT_GRASS").isPresent()) {
+                name = "SHORT_GRASS";
             }
             return Enum.valueOf(enumClass, name);
         } catch (Exception _) {

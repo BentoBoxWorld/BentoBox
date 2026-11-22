@@ -967,6 +967,8 @@ commands:
           name-rejected-your-invite: '<red>[name] odmítnul tvou pozvánku!</red>'
         cancel:
           description: zrušit čekající pozvánku na tvůj ostrov
+          success: '<green>Pozvánka pro hráče </green><aqua>[name]</aqua><green> byla stažena.</green>'
+          no-invite: '<red>[name] nemá žádnou čekající pozvánku na tvůj ostrov.</red>'
       leave:
         cannot-leave: >-
           <red>Vlastník nemůže odejít! Nejdříve se staň členem, nebo vykopni</red>
@@ -1302,6 +1304,9 @@ protection:
       description: Přepnout použití
       name: Pracovní stolky
       hint: Přístup k pracovním stolkům zakázán
+    CREEPER_BLOCK_DAMAGE:
+      description: Přepnout ničení bloků creeperem na tomto ostrově
+      name: Ničení bloků creeperem
     CREEPER_DAMAGE:
       description: Přepnout ničení creeperem
       name: Ničení creeperem
@@ -1558,6 +1563,14 @@ protection:
       name: Jmenovky
       description: Přepnout použití
       hint: Interakce s jmenovkami zakázána
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP mimo ostrovy
+      description: |-
+        <red>Povolit/zakázat PVP tam,</red>
+        <red>kde není žádný ostrov.</red>
+
+        <green>Na ostrově vždy platí jeho</green>
+        <green>vlastní nastavení PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Přirozené spawnování tvorů mimo prostor ostrova
       description: |-
@@ -2174,6 +2187,21 @@ panels:
     next:
       name: '<white><bold>Další stránka</bold></white>'
       description: '<gray>Přepněte na stránku [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Zpět</bold></white>'
+      description: '<gray>Vrátit se bez výběru.</gray>'
+    inventory:
+      name: '<white><bold>Nebo použijte svůj inventář</bold></white>'
+      description: '<gray>Klikněte na předmět ve svém inventáři a vyberte jej.</gray>'
+    search:
+      name: '<white><bold>Hledat</bold></white>'
+      description: '<gray>Zobrazit jen názvy obsahující daný text.</gray>'
+      clear-name: '<white><bold>Zrušit hledání</bold></white>'
+      clear-description: '<gray>Zobrazit znovu vše.</gray>'
+      title: '<white>Hledat</white>'
+      field: 'Název obsahuje'
+      button: '<green>Hledat</green>'
   tips:
     click-to-next: '<yellow>Klikněte pro další.</yellow>'
     click-to-previous: '<yellow>Klikněte pro předchozí.</yellow>'

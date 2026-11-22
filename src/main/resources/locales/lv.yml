@@ -984,6 +984,8 @@ commands:
           name-rejected-your-invite: '<red>[name] noraidīja ielūgumu pievienoties komandai!</red>'
         cancel:
           description: atcelt nosūtītos ielūgumus
+          success: '<green>Ielūgums spēlētājam </green><aqua>[name]</aqua><green> ir atsaukts.</green>'
+          no-invite: '<red>[name] nav neviena gaidoša ielūguma uz tavu salu.</red>'
       leave:
         cannot-leave: >-
           <red>Īpašnieks nevar pamest komandu! Nodod salu citam vai izmet visus no</red>
@@ -1325,6 +1327,9 @@ protection:
       description: Pārslēdz izmantošanu
       name: Darbagaldi
       hint: Darbagaldu lietošana nav atļauta
+    CREEPER_BLOCK_DAMAGE:
+      description: Pārslēdz, vai krīperi šajā salā bojā blokus
+      name: Krīpera bojājumi blokiem
     CREEPER_DAMAGE:
       description: Pārslēdz krīpera bojājumus
       name: Krīpera bojājumi
@@ -1589,6 +1594,14 @@ protection:
       name: Birka
       description: Pārslēdz birku lietošanu
       hint: Birkas lietošana nav atļauta
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP ārpus salām
+      description: |-
+        <red>Ieslēgt/izslēgt PVP tur,</red>
+        <red>kur nav nevienas salas.</red>
+
+        <green>Uz salas vienmēr ir spēkā tās</green>
+        <green>pašas PVP iestatījums.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Dabīgā radību rašanās ārpus salas
       description: |-
@@ -2249,6 +2262,21 @@ panels:
     next:
       name: '<white><bold>Nākamā Lapa</bold></white>'
       description: '<gray>Pāriet uz [number] lapu</gray>'
+  picker:
+    back:
+      name: '<white><bold>Atpakaļ</bold></white>'
+      description: '<gray>Atgriezties, neko neizvēloties.</gray>'
+    inventory:
+      name: '<white><bold>Vai izmanto savu inventāru</bold></white>'
+      description: '<gray>Noklikšķini uz priekšmeta savā inventārā, lai to izvēlētos.</gray>'
+    search:
+      name: '<white><bold>Meklēt</bold></white>'
+      description: '<gray>Rādīt tikai nosaukumus, kas satur norādīto tekstu.</gray>'
+      clear-name: '<white><bold>Notīrīt meklēšanu</bold></white>'
+      clear-description: '<gray>Atkal rādīt visu.</gray>'
+      title: '<white>Meklēt</white>'
+      field: 'Nosaukums satur'
+      button: '<green>Meklēt</green>'
   tips:
     click-to-next: '<yellow>Noklikšķini </yellow><gray>, lai turpinātu.</gray>'
     click-to-previous: '<yellow>Klikšķini </yellow><gray>, lai atgrieztos iepriekš.</gray>'

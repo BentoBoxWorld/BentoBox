@@ -204,6 +204,11 @@ island:
   # If this is true, then ones that are used up will not be shown in the island create menu.
   # Added since 2.3.0.
   hide-used-blueprints: false
+  # How long a team, trust or coop invite stays open, in hours.
+  # An invite that is not accepted or declined in this time is withdrawn automatically.
+  # Set to 0 for invites that never expire.
+  # Added since 3.24.0.
+  invite-expiry-hours: 24
   cooldown:
     time:
       # How long a player must wait until they can rejoin a team island after being kicked in minutes.
@@ -234,6 +239,15 @@ island:
     # Team invites will always require confirmation, for safety concerns.
     # Added since 1.8.0.
     invites: false
+  locked-border:
+    # Show a border around a locked island to a player who is turned away from it,
+    # so they can see where the island they cannot enter starts. The border is the
+    # vanilla world border, shown only to that player for a few seconds.
+    # Added since 3.24.0.
+    show: true
+    # Color of the locked island border. Options are RED, GREEN or BLUE.
+    # Added since 3.24.0.
+    color: RED
   # Modal dialog options. Dialogs are the 'menu they can't click away' shown to
   # players for high-friction flows. They require a server that supports dialogs
   # (Minecraft 26+); on older servers every option below falls back automatically
@@ -281,6 +295,11 @@ island:
   # On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the
   # resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.
   paste-speed: 64
+  # Milliseconds per tick that pasting and copying blueprints may use. Blocks are pasted in batches of
+  # paste-speed until this time is used up, so larger islands paste much faster when the server has spare time.
+  # A tick is 50 ms. Lower this if island creation causes lag. 0 pastes a single batch per tick (the old behavior).
+  # Added since 3.24.0.
+  paste-time-budget: 10
   # Island deletion: Number of chunks per world to regenerate per second.
   # If there is a nether and end then 3x this number will be regenerated per second.
   # Smaller values will help reduce noticeable lag but will make deleting take longer.

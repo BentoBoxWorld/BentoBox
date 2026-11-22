@@ -919,6 +919,8 @@ commands:
           you-rejected-invite: '<green>你拒绝了对方的邀请.</green>'
           name-rejected-your-invite: '<aqua>[name]</aqua><red>拒绝了你的邀请!</red>'
         cancel:
+          success: '<green>已撤回对</green><aqua>[name]</aqua><green>的邀请.</green>'
+          no-invite: '<aqua>[name]</aqua><red>没有尚未回应的岛屿邀请.</red>'
           description: 取消尚未得到回应的邀请
       leave:
         cannot-leave: '<red>岛主无法退出, 除非转让岛屿, 或踢出全部成员.</red>'
@@ -1232,6 +1234,9 @@ protection:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用工作台</color:#FAFAD2>'
       name: '<aqua><bold>工作台</bold></aqua>'
       hint: 禁止使用工作台
+    CREEPER_BLOCK_DAMAGE:
+      description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>苦力怕爆炸破坏本岛屿上的方块</color:#FAFAD2>'
+      name: '<aqua><bold>苦力怕破坏方块</bold></aqua>'
     CREEPER_DAMAGE:
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>苦力怕爆炸造成的伤害与破坏</color:#FAFAD2>'
       name: '<aqua><bold>苦力怕爆炸</bold></aqua>'
@@ -1458,6 +1463,11 @@ protection:
       name: '<aqua><bold>命名牌</bold></aqua>'
       description: '<green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>使用命名牌</color:#FAFAD2>'
       hint: 禁止使用命名牌
+    PVP_OUTSIDE_ISLANDS:
+      name: '<aqua><bold>岛外PVP</bold></aqua>'
+      description: |-
+        <green>允许</green><color:#FAFAD2>或</color:#FAFAD2><red>禁止</red><color:#FAFAD2>在没有岛屿的地方PVP</color:#FAFAD2>
+        <dark_red>在岛屿上始终以该岛屿自己的PVP设置为准</dark_red>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: '<aqua><bold>岛外自然生成生物</bold></aqua>'
       description: |-
@@ -2002,6 +2012,21 @@ panels:
     next:
       name: '<white><bold>下一页</bold></white>'
       description: '<gray>切换至第[number]页</gray>'
+  picker:
+    back:
+      name: '<white><bold>返回</bold></white>'
+      description: '<gray>不作选择并返回。</gray>'
+    inventory:
+      name: '<white><bold>或使用你的物品栏</bold></white>'
+      description: '<gray>点击你物品栏中的物品来选择它。</gray>'
+    search:
+      name: '<white><bold>搜索</bold></white>'
+      description: '<gray>只显示包含指定文字的名称。</gray>'
+      clear-name: '<white><bold>清除搜索</bold></white>'
+      clear-description: '<gray>重新显示全部。</gray>'
+      title: '<white>搜索</white>'
+      field: '名称包含'
+      button: '<green>搜索</green>'
   tips:
     click-to-next: '<yellow>点击 </yellow><gray>往下翻</gray>'
     click-to-previous: '<yellow>点击 </yellow><gray>往上翻</gray>'

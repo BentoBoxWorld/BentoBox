@@ -252,8 +252,7 @@ public class PlayersManager {
         if (playerUUID == null) {
             return "";
         }
-        getPlayer(playerUUID);
-        return Objects.requireNonNullElse(playerCache.get(playerUUID).getPlayerName(), "");
+        return Objects.requireNonNullElse(getPlayer(playerUUID).getPlayerName(), "");
     }
 
     /**

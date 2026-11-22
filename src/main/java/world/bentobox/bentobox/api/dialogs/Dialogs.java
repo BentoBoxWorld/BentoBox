@@ -16,7 +16,7 @@ public final class Dialogs {
 
     /**
      * Whether the running server supports Paper's dialog system. Dialogs were
-     * added in Minecraft 26; on older servers this returns {@code false} and
+     * added to Paper in Minecraft 1.21.7; on older servers this returns {@code false} and
      * callers should fall back to chat or panel presentation.
      *
      * @return true if dialogs can be shown

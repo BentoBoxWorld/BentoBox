@@ -983,6 +983,8 @@ commands:
           name-rejected-your-invite: '<red>[name] je odbio tvoj poziv za otok!</red>'
         cancel:
           description: poništite poziv na čekanju da se pridružite vašem otoku
+          success: '<green>Pozivnica za </green><aqua>[name]</aqua><green> je povučena.</green>'
+          no-invite: '<red>[name] nema pozivnicu na čekanju za vaš otok.</red>'
       leave:
         cannot-leave: >-
           <red>Vlasnici ne mogu otići! Prvo postanite član ili izbacite sve</red>
@@ -1323,6 +1325,11 @@ protection:
       description: Uključi/isključi upotrebu
       name: Radni stolovi
       hint: Pristup radnom stolu onemogućen
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Uključi/isključi uništavanje</green>
+        <green>blokova od creepera na ovom otoku</green>
+      name: Šteta creepera na blokovima
     CREEPER_DAMAGE:
       description: |
         <green>Preklopni puzavac</green>
@@ -1589,6 +1596,14 @@ protection:
       name: Oznake s imenima
       description: Uključi/isključi upotrebu
       hint: Interakcija s oznakom imena onemogućena
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP izvan otoka
+      description: |-
+        <red>Omogući/onemogući PVP tamo</red>
+        <red>gdje nema otoka.</red>
+
+        <green>Na otoku uvijek vrijedi njegova</green>
+        <green>vlastita PVP postavka.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Prirodno stvorenje koje se mrijesti izvan dometa
       description: |-
@@ -2220,6 +2235,21 @@ panels:
     next:
       name: '<white><bold>Sljedeća Stranica</bold></white>'
       description: '<gray>Prebaci se na [number] stranicu</gray>'
+  picker:
+    back:
+      name: '<white><bold>Natrag</bold></white>'
+      description: '<gray>Vrati se bez odabira.</gray>'
+    inventory:
+      name: '<white><bold>Ili upotrijebi svoj inventar</bold></white>'
+      description: '<gray>Klikni predmet u svom inventaru da ga odabereš.</gray>'
+    search:
+      name: '<white><bold>Traži</bold></white>'
+      description: '<gray>Prikaži samo nazive koji sadrže neki tekst.</gray>'
+      clear-name: '<white><bold>Očisti pretragu</bold></white>'
+      clear-description: '<gray>Ponovno prikaži sve.</gray>'
+      title: '<white>Traži</white>'
+      field: 'Naziv sadrži'
+      button: '<green>Traži</green>'
   tips:
     click-to-next: '<yellow>Kliknite </yellow><gray>za sljedeće.</gray>'
     click-to-previous: '<yellow>Klikni </yellow><gray>za prethodno.</gray>'

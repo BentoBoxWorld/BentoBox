@@ -412,6 +412,8 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         // deliberately flushing the queue on shutdown (see AbstractDatabaseHandler#flush)
         if (async && !this.plugin.isEnabled() && !this.draining)
         {
+            // Complete the future so that nothing waiting on this save waits forever
+            completableFuture.complete(false);
             return;
         }
 

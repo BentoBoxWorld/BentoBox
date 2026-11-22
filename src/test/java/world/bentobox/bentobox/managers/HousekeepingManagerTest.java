@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -15,7 +16,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +38,7 @@ import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.managers.PurgeRegionsService.FilterStats;
 import world.bentobox.bentobox.managers.PurgeRegionsService.PurgeScanResult;
+import world.bentobox.bentobox.util.Pair;
 
 /**
  * Tests for {@link HousekeepingManager}.
@@ -322,8 +326,102 @@ class HousekeepingManagerTest extends CommonTestSetup {
     }
 
     // ------------------------------------------------------------------
+    // Main-thread cost (#3018)
+    // ------------------------------------------------------------------
+
+    /**
+     * The usual hourly deleted sweep finds nothing to purge. It must then do
+     * no main-thread work at all: no world save and no scheduled sync task.
+     */
+    @Test
+    void testDeletedSweepWithNothingToPurgeNeverTouchesMainThread() throws Exception {
+        settings.setHousekeepingIntervalDays(0);
+        settings.setHousekeepingDeletedIntervalHours(1);
+        when(purgeService.scanDeleted(world)).thenReturn(emptyScan(0));
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        invokeCheckAndMaybeRun(hm);
+
+        verify(world, never()).save();
+        verify(scheduler, never()).runTask(eq(plugin), any(Runnable.class));
+        verify(purgeService, never()).delete(any());
+    }
+
+    /**
+     * When there is something to purge, only the game mode's own world is
+     * saved (never every world on the server), and chunk eviction is fed to
+     * the main thread a few regions at a time instead of in one tick.
+     */
+    @Test
+    void testDeletedSweepSavesOnlyAffectedWorldAndEvictsInBatches() throws Exception {
+        settings.setHousekeepingIntervalDays(0);
+        settings.setHousekeepingDeletedIntervalHours(1);
+        World unrelated = mock(World.class);
+        mockedBukkit.when(Bukkit::getWorlds).thenReturn(List.of(world, unrelated));
+
+        PurgeScanResult scan = scanWithRegions(0, 5);
+        when(purgeService.scanDeleted(world)).thenReturn(scan);
+        when(purgeService.delete(scan)).thenReturn(true);
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        invokeCheckAndMaybeRun(hm);
+
+        verify(world, times(1)).save();
+        verify(unrelated, never()).save();
+        // 5 regions at 2 per tick = 3 instalments, and never the all-at-once call.
+        verify(purgeService, times(3)).evictChunks(eq(scan), any());
+        verify(purgeService, never()).evictChunks(scan);
+        verify(purgeService, times(1)).delete(scan);
+    }
+
+    /**
+     * A world shared by the age and deleted sweeps is saved once per cycle.
+     */
+    @Test
+    void testWorldSavedOncePerCycle() {
+        settings.setHousekeepingAgeEnabled(true);
+        settings.setHousekeepingRegionAgeDays(30);
+        PurgeScanResult deleted = scanWithRegions(0, 1);
+        when(purgeService.scan(world, 30)).thenReturn(emptyScan(30));
+        when(purgeService.scanDeleted(world)).thenReturn(deleted);
+        when(purgeService.delete(deleted)).thenReturn(true);
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        hm.runNow();
+
+        verify(world, times(1)).save();
+    }
+
+    /**
+     * If the world cannot be saved the purge for it is skipped and the
+     * last-run timestamp is not advanced, so the sweep is retried.
+     */
+    @Test
+    void testFailedSaveSkipsPurge() throws Exception {
+        settings.setHousekeepingIntervalDays(0);
+        settings.setHousekeepingDeletedIntervalHours(1);
+        PurgeScanResult scan = scanWithRegions(0, 1);
+        when(purgeService.scanDeleted(world)).thenReturn(scan);
+        doThrow(new IllegalStateException("disk full")).when(world).save();
+
+        HousekeepingManager hm = new HousekeepingManager(plugin);
+        invokeCheckAndMaybeRun(hm);
+
+        verify(purgeService, never()).delete(any());
+        assertEquals(0L, hm.getLastDeletedRunMillis());
+    }
+
+    // ------------------------------------------------------------------
     // helpers
     // ------------------------------------------------------------------
+
+    private PurgeScanResult scanWithRegions(int days, int regions) {
+        Map<Pair<Integer, Integer>, Set<String>> map = new HashMap<>();
+        for (int i = 0; i < regions; i++) {
+            map.put(new Pair<>(i, 0), Set.of("island" + i));
+        }
+        return new PurgeScanResult(world, days, map, false, false, new FilterStats(0, 0, 0, 0), Set.of());
+    }
 
     private static PurgeScanResult emptyScan(int days) {
         return new PurgeScanResult(mock(World.class), days, Collections.emptyMap(),

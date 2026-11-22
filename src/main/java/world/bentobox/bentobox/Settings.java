@@ -27,6 +27,19 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 @ConfigComment("")
 public class Settings implements ConfigObject {
 
+    /**
+     * Colors a vanilla world border can be drawn in.
+     * @since 3.24.0
+     */
+    public enum BorderColor {
+        /** A shrinking border, which the client draws red */
+        RED,
+        /** A growing border, which the client draws green */
+        GREEN,
+        /** A static border, which the client draws blue */
+        BLUE
+    }
+
     /* GENERAL */
     @ConfigComment("Default language for new players.")
     @ConfigComment("This is the filename in the locale folder without .yml.")
@@ -308,6 +321,12 @@ public class Settings implements ConfigObject {
     private boolean hideUsedBlueprints = false;
 
     // Cooldowns
+    @ConfigComment("How long a team, trust or coop invite stays open, in hours.")
+    @ConfigComment("An invite that is not accepted or declined in this time is withdrawn automatically.")
+    @ConfigComment("Set to 0 for invites that never expire.")
+    @ConfigEntry(path = "island.invite-expiry-hours", since = "3.24.0")
+    private int inviteExpiryHours = 24;
+
     @ConfigComment("How long a player must wait until they can rejoin a team island after being kicked in minutes.")
     @ConfigComment("This slows the effectiveness of players repeating challenges")
     @ConfigComment("by repetitively being invited to a team island.")
@@ -358,6 +377,16 @@ public class Settings implements ConfigObject {
     @ConfigComment("Team invites will always require confirmation, for safety concerns.")
     @ConfigEntry(path = "island.confirmation.invites", since = "1.8.0")
     private boolean inviteConfirmation = false;
+
+    @ConfigComment("Show a border around a locked island to a player who is turned away from it,")
+    @ConfigComment("so they can see where the island they cannot enter starts. The border is the")
+    @ConfigComment("vanilla world border, shown only to that player for a few seconds.")
+    @ConfigEntry(path = "island.locked-border.show", since = "3.24.0")
+    private boolean lockedBorder = true;
+
+    @ConfigComment("Color of the locked island border. Options are RED, GREEN or BLUE.")
+    @ConfigEntry(path = "island.locked-border.color", since = "3.24.0")
+    private BorderColor lockedBorderColor = BorderColor.RED;
 
     @ConfigComment("Modal dialog options. Dialogs are the 'menu they can't click away' shown to")
     @ConfigComment("players for high-friction flows. They require a server that supports dialogs")
@@ -414,6 +443,12 @@ public class Settings implements ConfigObject {
     @ConfigComment("resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.")
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 64;
+
+    @ConfigComment("Milliseconds per tick that pasting and copying blueprints may use. Blocks are pasted in batches of")
+    @ConfigComment("paste-speed until this time is used up, so larger islands paste much faster when the server has spare time.")
+    @ConfigComment("A tick is 50 ms. Lower this if island creation causes lag. 0 pastes a single batch per tick (the old behavior).")
+    @ConfigEntry(path = "island.paste-time-budget", since = "3.24.0")
+    private int pasteTimeBudget = 10;
     
     @ConfigComment("Island Level Purge Protection")
     @ConfigComment("Islands above this level will not be purged even if they are old. Requires the Level Addon.")
@@ -763,6 +798,22 @@ public class Settings implements ConfigObject {
         this.closePanelOnClickOutside = closePanelOnClickOutside;
     }
 
+    /**
+     * @return how long an invite stays open in hours; 0 or less means it never expires
+     * @since 3.24.0
+     */
+    public int getInviteExpiryHours() {
+        return inviteExpiryHours;
+    }
+
+    /**
+     * @param inviteExpiryHours how long an invite stays open in hours; 0 means it never expires
+     * @since 3.24.0
+     */
+    public void setInviteExpiryHours(int inviteExpiryHours) {
+        this.inviteExpiryHours = inviteExpiryHours;
+    }
+
     public int getInviteCooldown() {
         return inviteCooldown;
     }
@@ -877,6 +928,22 @@ public class Settings implements ConfigObject {
      */
     public int getPasteSpeed() {
         return this.pasteSpeed;
+    }
+
+    /**
+     * @return milliseconds per tick that pasting and copying blueprints may use; 0 means one batch per tick
+     * @since 3.24.0
+     */
+    public int getPasteTimeBudget() {
+        return pasteTimeBudget;
+    }
+
+    /**
+     * @param pasteTimeBudget milliseconds per tick that pasting and copying blueprints may use
+     * @since 3.24.0
+     */
+    public void setPasteTimeBudget(int pasteTimeBudget) {
+        this.pasteTimeBudget = pasteTimeBudget;
     }
 
     /**
@@ -1010,6 +1077,38 @@ public class Settings implements ConfigObject {
      */
     public void setDialogConfirmations(boolean dialogConfirmations) {
         this.dialogConfirmations = dialogConfirmations;
+    }
+
+    /**
+     * @return whether a player turned away from a locked island is shown its border
+     * @since 3.24.0
+     */
+    public boolean isLockedBorder() {
+        return lockedBorder;
+    }
+
+    /**
+     * @param lockedBorder whether to show the border of a locked island to a player turned away from it
+     * @since 3.24.0
+     */
+    public void setLockedBorder(boolean lockedBorder) {
+        this.lockedBorder = lockedBorder;
+    }
+
+    /**
+     * @return the color of the locked island border
+     * @since 3.24.0
+     */
+    public BorderColor getLockedBorderColor() {
+        return lockedBorderColor;
+    }
+
+    /**
+     * @param lockedBorderColor the color of the locked island border
+     * @since 3.24.0
+     */
+    public void setLockedBorderColor(BorderColor lockedBorderColor) {
+        this.lockedBorderColor = lockedBorderColor;
     }
 
     /**

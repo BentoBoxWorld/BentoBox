@@ -914,6 +914,8 @@ commands:
           you-rejected-invite: '<green>您拒絕了加入島嶼的邀請。</green>'
           name-rejected-your-invite: '<red>[name] 拒絕了您的島嶼邀請!</red>'
         cancel:
+          success: '<green>已撤回對 </green><aqua>[name]</aqua><green> 的邀請。</green>'
+          no-invite: '<red>[name] 沒有尚未回應的島嶼邀請。</red>'
           description: 取消尚未接受加入您的島嶼的邀請
       leave:
         cannot-leave: '<red>隊長不能離隊!先成為成員, 或踢出所有成員。</red>'
@@ -1235,6 +1237,9 @@ protection:
       description: 允許/禁止 使用合成台
       name: '<green><bold>使用合成台</bold></green>'
       hint: '<red>已被禁止使用合成台</red>'
+    CREEPER_BLOCK_DAMAGE:
+      description: 允許/禁止 苦力怕爆炸破壞此島嶼上的方塊
+      name: '<green><bold>苦力怕破壞方塊</bold></green>'
     CREEPER_DAMAGE:
       description: 允許/禁止 苦力怕的爆炸生效
       name: '<green><bold>苦力怕爆炸</bold></green>'
@@ -1467,6 +1472,11 @@ protection:
       name: '<green><bold>使用命名牌</bold></green>'
       description: 允許/禁止 使用命名牌
       hint: '<red>已被禁止使用命名牌</red>'
+    PVP_OUTSIDE_ISLANDS:
+      name: '<green><bold>島外 PVP</bold></green>'
+      description: |-
+        <gray>允許/禁止 在沒有島嶼的地方 PVP</gray>
+        <red>在島嶼上一律以該島嶼自己的 PVP 設定為準</red>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: '<green><bold>島外自然生成生物</bold></green>'
       description: |-
@@ -2005,6 +2015,21 @@ panels:
     next:
       name: '<white><bold>下一頁</bold></white>'
       description: '<gray>切換到[number]頁面</gray>'
+  picker:
+    back:
+      name: '<white><bold>返回</bold></white>'
+      description: '<gray>不作選擇並返回。</gray>'
+    inventory:
+      name: '<white><bold>或使用你的物品欄</bold></white>'
+      description: '<gray>點擊你物品欄中的物品來選擇它。</gray>'
+    search:
+      name: '<white><bold>搜尋</bold></white>'
+      description: '<gray>只顯示包含指定文字的名稱。</gray>'
+      clear-name: '<white><bold>清除搜尋</bold></white>'
+      clear-description: '<gray>重新顯示全部。</gray>'
+      title: '<white>搜尋</white>'
+      field: '名稱包含'
+      button: '<green>搜尋</green>'
   tips:
     click-to-next: '<yellow>單擊下一步。</yellow>'
     click-to-previous: '<yellow>單擊以獲取上一個。</yellow>'

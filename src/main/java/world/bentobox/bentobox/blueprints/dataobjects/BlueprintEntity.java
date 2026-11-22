@@ -239,6 +239,30 @@ public class BlueprintEntity {
         if (entity instanceof Painting painting) {
             this.setPaintingArt(painting.getArt().key().asString());
         }
+        if (!(entity instanceof Display) && !(entity instanceof Hanging)) {
+            // Height within the block, e.g., a boat floating on water or a mob standing on a slab
+            y = entity.getLocation().getY() - entity.getLocation().getBlockY();
+        }
+    }
+
+    /**
+     * Get where to spawn this entity. Entities are pasted at the horizontal centre of their block;
+     * ordinary entities are also raised to the height within the block that they were copied at,
+     * so a boat floats on the water instead of sinking into it. Display and hanging entities
+     * position themselves and are not moved.
+     * @param location the paste location: the bottom centre of the entity's block
+     * @return the spawn location
+     * @since 3.24.0
+     */
+    public Location getSpawnLocation(Location location) {
+        if (type == null || y == 0D) {
+            return location;
+        }
+        Class<?> entityClass = type.getEntityClass();
+        if (entityClass != null && (Display.class.isAssignableFrom(entityClass) || Hanging.class.isAssignableFrom(entityClass))) {
+            return location;
+        }
+        return location.clone().add(0, y, 0);
     }
 
     private void serializeHorseInventory(AbstractHorse horse) {
@@ -308,8 +332,6 @@ public class BlueprintEntity {
         }
         configureAgeable(e);
         configureHorse(e);
-        // Shift to the in-block location (remove the 0.5 that the location serializer used)
-        e.getLocation().add(new Vector(x - 0.5D, y, z - 0.5D));
     }
 
     private void configureAgeable(Entity e) {

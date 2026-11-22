@@ -655,17 +655,19 @@ class SQLDatabaseHandlerTest extends CommonTestSetup {
     // ── store (via saveObject sync path): async-guard branch ─────────────────
 
     @Test
-    void testStore_asyncTrueAndPluginDisabled_doesNotComplete() {
+    void testStore_asyncTrueAndPluginDisabled_completesFalse() throws Exception {
         // saveObject must see isEnabled()=true to enqueue (async path)
         when(plugin.isEnabled()).thenReturn(true);
+        clearInvocations(ps);
         CompletableFuture<Boolean> future = handler.saveObject(new TestDataObject());
         assertFalse(handler.queue().isEmpty());
 
-        // Now disable the plugin; when the queued runnable runs, the guard returns early
-        // and the future is never completed.
+        // Now disable the plugin; when the queued runnable runs, the guard skips the write
+        // but still completes the future, so nothing waiting on it waits forever.
         when(plugin.isEnabled()).thenReturn(false);
         handler.queue().poll().run();
 
-        assertFalse(future.isDone());
+        assertFalse(future.get(5, TimeUnit.SECONDS));
+        verify(ps, never()).execute();
     }
 }

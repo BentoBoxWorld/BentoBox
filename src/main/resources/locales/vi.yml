@@ -973,6 +973,8 @@ commands:
           you-rejected-invite: '<green>Bạn đã từ chối lời mời vào đảo.</green>'
           name-rejected-your-invite: '<red>[name] đã từ chối lời mời vào đảo của bạn!</red>'
         cancel:
+          success: '<green>Đã rút lời mời gửi tới </green><aqua>[name]</aqua><green>.</green>'
+          no-invite: '<red>[name] không có lời mời nào đang chờ tới đảo của bạn.</red>'
           description: hủy lời mời đang chờ của bạn
       leave:
         cannot-leave: >-
@@ -1311,6 +1313,11 @@ protection:
       description: Bật/Tắt sử dụng
       name: Bàn chế tạo
       hint: Đã tắt tương tác với bàn chế tạo
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Bật/Tắt việc Creeper</green>
+        <green>phá khối trên đảo này</green>
+      name: Creeper phá khối
     CREEPER_DAMAGE:
       description: |
         <green>Bật/Tắt bảo vệ khỏi</green>
@@ -1572,6 +1579,14 @@ protection:
       name: Nhãn ghi tên
       description: Bật/Tắt sử dụng
       hint: Đã tắt tương tác với nhãn ghi tên
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP ngoài đảo
+      description: |-
+        <red>Bật/Tắt PVP ở nơi</red>
+        <red>không có đảo nào.</red>
+
+        <green>Trên một hòn đảo, thiết lập PVP</green>
+        <green>của chính đảo đó luôn được áp dụng.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Sinh quái tự nhiên ngoài đảo
       description: |-
@@ -2190,6 +2205,21 @@ panels:
     next:
       name: '<white><bold>Trang tiếp theo</bold></white>'
       description: '<gray>Chuyển sang trang [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Quay lại</bold></white>'
+      description: '<gray>Quay lại mà không chọn.</gray>'
+    inventory:
+      name: '<white><bold>Hoặc dùng túi đồ của bạn</bold></white>'
+      description: '<gray>Nhấp vào một vật phẩm trong túi đồ của bạn để chọn.</gray>'
+    search:
+      name: '<white><bold>Tìm kiếm</bold></white>'
+      description: '<gray>Chỉ hiện các tên có chứa đoạn văn bản.</gray>'
+      clear-name: '<white><bold>Xóa tìm kiếm</bold></white>'
+      clear-description: '<gray>Hiện lại tất cả.</gray>'
+      title: '<white>Tìm kiếm</white>'
+      field: 'Tên có chứa'
+      button: '<green>Tìm kiếm</green>'
   tips:
     click-to-next: '<yellow>Nhấn </yellow><gray>để tiếp theo.</gray>'
     click-to-previous: '<yellow>Nhấp </yellow><gray>để trở về trước.</gray>'

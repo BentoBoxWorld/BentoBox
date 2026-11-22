@@ -57,6 +57,25 @@ public class Blueprint {
     @Expose
     private boolean sink;
     /**
+     * Block placed at every position between {@link #fillMin} and {@link #fillMax}
+     * that has no entry in {@link #blocks}. Null means no fill: missing positions are left alone.
+     * @since 3.24.0
+     */
+    @Expose
+    private BlueprintBlock fill;
+    /**
+     * Minimum corner of the fill box, relative to the paste location
+     * @since 3.24.0
+     */
+    @Expose
+    private Vector fillMin;
+    /**
+     * Maximum corner of the fill box, relative to the paste location
+     * @since 3.24.0
+     */
+    @Expose
+    private Vector fillMax;
+    /**
      * @return the name
      */
     @NonNull
@@ -184,6 +203,9 @@ public class Blueprint {
         }
     }
     /**
+     * Get the explicitly stored blocks. If this blueprint has a {@link #getFill() fill},
+     * positions in the fill box that are not in this map are pasted as the fill block,
+     * so this map does not list every block that will be pasted.
      * @return the blocks
      */
     public Map<Vector, BlueprintBlock> getBlocks() {
@@ -258,6 +280,57 @@ public class Blueprint {
      */
     public void setSink(boolean sink) {
         this.sink = sink;
+    }
+
+    /**
+     * Get the block placed at every position in the fill box that has no explicit block.
+     * Most compact blueprints use air.
+     * @return the fill block, or null if this blueprint has no fill
+     * @since 3.24.0
+     * @see BlueprintFill
+     */
+    public BlueprintBlock getFill() {
+        return fill;
+    }
+
+    /**
+     * @param fill the fill block to set, or null for no fill
+     * @since 3.24.0
+     */
+    public void setFill(BlueprintBlock fill) {
+        this.fill = fill;
+    }
+
+    /**
+     * @return the minimum corner of the fill box, relative to the paste location
+     * @since 3.24.0
+     */
+    public Vector getFillMin() {
+        return fillMin;
+    }
+
+    /**
+     * @param fillMin the minimum corner of the fill box to set
+     * @since 3.24.0
+     */
+    public void setFillMin(Vector fillMin) {
+        this.fillMin = fillMin;
+    }
+
+    /**
+     * @return the maximum corner of the fill box, relative to the paste location
+     * @since 3.24.0
+     */
+    public Vector getFillMax() {
+        return fillMax;
+    }
+
+    /**
+     * @param fillMax the maximum corner of the fill box to set
+     * @since 3.24.0
+     */
+    public void setFillMax(Vector fillMax) {
+        this.fillMax = fillMax;
     }
 
 }

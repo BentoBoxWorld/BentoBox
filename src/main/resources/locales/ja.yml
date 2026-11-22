@@ -899,6 +899,8 @@ commands:
           name-rejected-your-invite: '[name]はあなたの島の招待を拒否!'
         cancel:
           description: あなたの島に参加する保留中の招待をキャンセル
+          success: '<aqua>[name]</aqua><green>への招待を取り消しました。</green>'
+          no-invite: '<red>[name]にはあなたの島への保留中の招待がありません。</red>'
       leave:
         cannot-leave: チームリーダーは去ることができない!最初にメンバーになるか、すべてのメンバーを蹴る。
         description: 島を残す
@@ -1220,6 +1222,9 @@ protection:
       description: トグル使用
       name: ワークベンチ
       hint: ワークベンチアクセスが無効です
+    CREEPER_BLOCK_DAMAGE:
+      description: この島でクリーパーがブロックを壊すかどうかを切り替える
+      name: クリーパーのブロック破壊
     CREEPER_DAMAGE:
       description: クリーパーダメージを切り替える
       name: クリーパーダメージ
@@ -1471,6 +1476,14 @@ protection:
       name: ネームタグ
       description: トグル使用
       hint: 名前タグの対話は無効です
+    PVP_OUTSIDE_ISLANDS:
+      name: 島の外でのPVP
+      description: |-
+        <red>島がない場所でのPVPを</red>
+        <red>有効/無効にします。</red>
+
+        <green>島の上では、常にその島の</green>
+        <green>PVP設定が適用されます。</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 範囲外に産卵する自然生物
       description: |-
@@ -2084,6 +2097,21 @@ panels:
     next:
       name: '<white><bold>次のページ</bold></white>'
       description: '<gray>[number]ページに切り替えます</gray>'
+  picker:
+    back:
+      name: '<white><bold>戻る</bold></white>'
+      description: '<gray>選択せずに戻ります。</gray>'
+    inventory:
+      name: '<white><bold>またはインベントリを使う</bold></white>'
+      description: '<gray>自分のインベントリのアイテムをクリックして選択します。</gray>'
+    search:
+      name: '<white><bold>検索</bold></white>'
+      description: '<gray>指定した文字を含む名前だけを表示します。</gray>'
+      clear-name: '<white><bold>検索をクリア</bold></white>'
+      clear-description: '<gray>すべてをもう一度表示します。</gray>'
+      title: '<white>検索</white>'
+      field: '名前に含まれる文字'
+      button: '<green>検索</green>'
   tips:
     click-to-next: '<yellow>次にクリックします。</yellow>'
     click-to-previous: '<yellow>以前にクリックしてください。</yellow>'

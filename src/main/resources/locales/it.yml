@@ -1017,6 +1017,8 @@ commands:
           name-rejected-your-invite: '<red>[name] ha rifiutato il tuo invito!</red>'
         cancel:
           description: elimina l'invito ad entrare nella tua isola
+          success: '<green>Invito a </green><aqua>[name]</aqua><green> ritirato.</green>'
+          no-invite: '<red>[name] non ha inviti in sospeso per la tua isola.</red>'
       leave:
         cannot-leave: >-
           <red>I proprietari non possono lasciare! Diventa un membro, o caccia</red>
@@ -1350,6 +1352,9 @@ protection:
       description: Abilita/disabilita uso
       name: Banchi da lavoro
       hint: Uso di banchi da lavoro vietato
+    CREEPER_BLOCK_DAMAGE:
+      description: Abilita/disabilita la distruzione dei blocchi da parte dei creeper su quest'isola
+      name: Danni dei creeper ai blocchi
     CREEPER_DAMAGE:
       description: Abilita/disabilita danni dei creeper
       name: Danni dei creeper
@@ -1607,6 +1612,14 @@ protection:
       name: Targhette
       description: Abilita/disabiltia uso
       hint: No uso di targhette
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fuori dalle isole
+      description: |-
+        <red>Abilita/disabilita il PVP dove</red>
+        <red>non c'è nessuna isola.</red>
+
+        <green>Su un'isola vale sempre la sua</green>
+        <green>impostazione PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Generazione creature fuori dall'isola
       description: |-
@@ -2230,6 +2243,21 @@ panels:
     next:
       name: '<white><bold>Pagina Successiva</bold></white>'
       description: '<gray>Passa a [number] pagina</gray>'
+  picker:
+    back:
+      name: '<white><bold>Indietro</bold></white>'
+      description: '<gray>Torna indietro senza scegliere.</gray>'
+    inventory:
+      name: '<white><bold>Oppure usa il tuo inventario</bold></white>'
+      description: '<gray>Clicca su un oggetto del tuo inventario per sceglierlo.</gray>'
+    search:
+      name: '<white><bold>Cerca</bold></white>'
+      description: '<gray>Mostra solo i nomi che contengono un testo.</gray>'
+      clear-name: '<white><bold>Cancella ricerca</bold></white>'
+      clear-description: '<gray>Mostra di nuovo tutto.</gray>'
+      title: '<white>Cerca</white>'
+      field: 'Il nome contiene'
+      button: '<green>Cerca</green>'
   tips:
     click-to-next: '<yellow>Clicca </yellow><gray>per il prossimo.</gray>'
     click-to-previous: '<yellow>Clicca </yellow><gray>per precedente.</gray>'

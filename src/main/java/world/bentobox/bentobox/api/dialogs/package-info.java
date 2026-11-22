@@ -21,7 +21,7 @@
  * <p>
  * Buttons carry a {@link world.bentobox.bentobox.api.dialogs.DialogButton#onClick()}
  * callback that runs on the server's main thread when the player clicks. Because
- * the dialog classes only exist on Minecraft 26+, callers that need to degrade
+ * the dialog classes only exist on Paper 1.21.7+, callers that need to degrade
  * gracefully should guard with {@link world.bentobox.bentobox.api.dialogs.Dialogs#isSupported()}.
  * </p>
  *

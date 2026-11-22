@@ -11,6 +11,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -32,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import world.bentobox.bentobox.CommonTestSetup;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -462,5 +466,32 @@ class PlaceBlocksListenerTest extends CommonTestSetup {
             assertEquals(Result.DENY, e.useInteractedBlock(), "Failed on " + item.getType().toString());
         }
         verify(notifier, times(7)).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * The clicked block's island decides, not the island the player is standing on.
+     */
+    @Test
+    void testOnPlayerInteractClickedBlockOnProtectedIsland() {
+        // The player stands on an island where they may place blocks
+        Location playerLocation = mock(Location.class);
+        when(playerLocation.getWorld()).thenReturn(world);
+        when(mockPlayer.getLocation()).thenReturn(playerLocation);
+        Island playerIsland = mock(Island.class);
+        when(playerIsland.isAllowed(any(), any())).thenReturn(true);
+        when(im.getProtectedIslandAt(playerLocation)).thenReturn(Optional.of(playerIsland));
+        // The clicked block is on an island where they may not
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        when(im.getProtectedIslandAt(location)).thenReturn(Optional.of(island));
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.ITEM_FRAME);
+        Block clickedBlock = mock(Block.class);
+        when(clickedBlock.getLocation()).thenReturn(location);
+        when(clickedBlock.getType()).thenReturn(Material.GRASS_BLOCK);
+        for (int i = 0; i < 2; i++) {
+            PlayerInteractEvent e = new PlayerInteractEvent(mockPlayer, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
+            pbl.onPlayerInteract(e);
+            assertEquals(Result.DENY, e.useInteractedBlock(), "Failed on " + item.getType().toString());
+        }
     }
 }

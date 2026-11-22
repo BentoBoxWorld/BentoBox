@@ -969,6 +969,8 @@ commands:
           you-rejected-invite: '<blue>Ada katılma istegini reddettin!</blue>'
           name-rejected-your-invite: '<light_purple>[name] </light_purple><dark_red>davetini reddetti!</dark_red>'
         cancel:
+          success: '<aqua>[name]</aqua><green> adlı oyuncuya gönderilen davet geri çekildi.</green>'
+          no-invite: '<red>[name] adlı oyuncunun adana bekleyen bir daveti yok.</red>'
           description: Adanıza davet ettiğin birisinin davetiyesini iptal ettin!
       leave:
         cannot-leave: '<dark_red>Ada sahibi cıkamaz! İlk önce adadan herkesi atması gerekir!</dark_red>'
@@ -1294,6 +1296,9 @@ protection:
       description: Kullanımı değiş.
       name: Çalışma masası
       hint: Çalışma masası kullanımı kapalı.
+    CREEPER_BLOCK_DAMAGE:
+      description: Creeperların bu adada blok kırmasını değiş.
+      name: Creeper blok hasarı
     CREEPER_DAMAGE:
       description: Creeper hasarını değiş.
       name: Creeper hasarı
@@ -1537,6 +1542,14 @@ protection:
       name: İsim etiketleri
       description: Kullanımını değiş.
       hint: İsim etiketini kullanımı kapalı.
+    PVP_OUTSIDE_ISLANDS:
+      name: Adaların dışında PVP
+      description: |-
+        <red>Ada olmayan yerlerde PVP'yi</red>
+        <red>aç/kapat.</red>
+
+        <green>Bir adada her zaman o adanın</green>
+        <green>kendi PVP ayarı geçerlidir.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Normalin dışında doğuşu değiş.
       description: |-
@@ -2101,6 +2114,21 @@ panels:
     next:
       name: '<white><bold>Sonraki Sayfa</bold></white>'
       description: '<gray>[number] sayfaya geç</gray>'
+  picker:
+    back:
+      name: '<white><bold>Geri</bold></white>'
+      description: '<gray>Seçim yapmadan geri dön.</gray>'
+    inventory:
+      name: '<white><bold>Ya da envanterini kullan</bold></white>'
+      description: '<gray>Seçmek için kendi envanterindeki bir eşyaya tıkla.</gray>'
+    search:
+      name: '<white><bold>Ara</bold></white>'
+      description: '<gray>Yalnızca belirli bir metni içeren adları göster.</gray>'
+      clear-name: '<white><bold>Aramayı temizle</bold></white>'
+      clear-description: '<gray>Her şeyi yeniden göster.</gray>'
+      title: '<white>Ara</white>'
+      field: 'Ad şunu içerir'
+      button: '<green>Ara</green>'
   tips:
     click-to-next: '<yellow>Tıkla </yellow><gray>sonraki için.</gray>'
     click-to-previous: '<yellow>Tıkla </yellow><gray>önceki için.</gray>'

@@ -913,6 +913,8 @@ commands:
           you-rejected-invite: '<green>Ви відхилили запрошення приєднатися до [prefix_an-island].</green>'
           name-rejected-your-invite: '<red>[name] відхилив(ла) ваше запрошення до [prefix_island]!</red>'
         cancel:
+          success: '<green>Запрошення для </green><aqua>[name]</aqua><green> відкликано.</green>'
+          no-invite: '<red>У [name] немає очікуваного запрошення на ваш острів.</red>'
           description: скасувати очікуюче запрошення приєднатися до вашого [prefix_island]
       leave:
         cannot-leave: '<red>Власники не можуть покинути! Спершу станьте учасником або виженіть усіх.</red>'
@@ -1249,6 +1251,11 @@ protection:
       description: Перемикає використання
       name: Верстаки
       hint: Доступ до верстака вимкнено
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Перемикає, чи руйнують</green>
+        <green>кріпери блоки на цьому острові.</green>
+      name: Руйнування блоків кріперами
     CREEPER_DAMAGE:
       description: |
         <green>Перемикає</green>
@@ -1510,6 +1517,14 @@ protection:
       name: Бірки
       description: Перемикає використання
       hint: Взаємодію з бірками вимкнено
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP за межами островів
+      description: |-
+        <red>Увімкнути/вимкнути PVP там,</red>
+        <red>де немає острова.</red>
+
+        <green>На острові завжди діє його</green>
+        <green>власне налаштування PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Природний спавн істот за межами діапазону
       description: |-
@@ -2133,6 +2148,21 @@ panels:
     next:
       name: '<white><bold>Наступна сторінка</bold></white>'
       description: '<gray>Перейти на сторінку [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Назад</bold></white>'
+      description: '<gray>Повернутися без вибору.</gray>'
+    inventory:
+      name: '<white><bold>Або скористайтеся своїм інвентарем</bold></white>'
+      description: '<gray>Натисніть на предмет у своєму інвентарі, щоб вибрати його.</gray>'
+    search:
+      name: '<white><bold>Пошук</bold></white>'
+      description: '<gray>Показувати лише назви, що містять текст.</gray>'
+      clear-name: '<white><bold>Скинути пошук</bold></white>'
+      clear-description: '<gray>Знову показати все.</gray>'
+      title: '<white>Пошук</white>'
+      field: 'Назва містить'
+      button: '<green>Пошук</green>'
   tips:
     click-to-next: '<yellow>Клік </yellow><gray>для наступної.</gray>'
     click-to-previous: '<yellow>Клік </yellow><gray>для попередньої.</gray>'

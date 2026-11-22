@@ -996,6 +996,8 @@ commands:
           name-rejected-your-invite: '<red>[name] menolak undangan pulau Anda!</red>'
         cancel:
           description: batalkan undangan yang tertunda untuk bergabung dengan pulau Anda
+          success: '<green>Undangan untuk </green><aqua>[name]</aqua><green> telah ditarik.</green>'
+          no-invite: '<red>[name] tidak memiliki undangan tertunda ke pulaumu.</red>'
       leave:
         cannot-leave: >-
           <red>Pemilik tidak bisa pergi! Jadilah anggota terlebih dahulu, atau</red>
@@ -1339,6 +1341,11 @@ protection:
       description: Alihkan penggunaan
       name: meja kerja
       hint: Akses meja kerja dinonaktifkan
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Alihkan apakah creeper</green>
+        <green>merusak blok di pulau ini.</green>
+      name: Kerusakan blok oleh creeper
     CREEPER_DAMAGE:
       description: |
         <green>Alihkan kerusakan</green>
@@ -1605,6 +1612,14 @@ protection:
       name: Tanda nama
       description: Alihkan penggunaan
       hint: Interaksi tag nama dinonaktifkan
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP di luar pulau
+      description: |-
+        <red>Aktifkan/nonaktifkan PVP di tempat</red>
+        <red>yang tidak ada pulaunya.</red>
+
+        <green>Di sebuah pulau, pengaturan PVP</green>
+        <green>pulau itu sendiri selalu berlaku.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Makhluk alami yang bertelur di luar jangkauan
       description: |-
@@ -2240,6 +2255,21 @@ panels:
     next:
       name: '<white><bold>Halaman Berikutnya</bold></white>'
       description: '<gray>Beralih ke halaman [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Kembali</bold></white>'
+      description: '<gray>Kembali tanpa memilih.</gray>'
+    inventory:
+      name: '<white><bold>Atau gunakan inventarismu</bold></white>'
+      description: '<gray>Klik item di inventarismu sendiri untuk memilihnya.</gray>'
+    search:
+      name: '<white><bold>Cari</bold></white>'
+      description: '<gray>Tampilkan hanya nama yang mengandung teks tertentu.</gray>'
+      clear-name: '<white><bold>Hapus pencarian</bold></white>'
+      clear-description: '<gray>Tampilkan semuanya lagi.</gray>'
+      title: '<white>Cari</white>'
+      field: 'Nama mengandung'
+      button: '<green>Cari</green>'
   tips:
     click-to-next: '<yellow>Klik </yellow><gray>untuk selanjutnya.</gray>'
     click-to-previous: '<yellow>Klik </yellow><gray>untuk sebelumnya.</gray>'

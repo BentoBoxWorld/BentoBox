@@ -455,6 +455,40 @@ class PVPListenerTest extends CommonTestSetup {
     }
 
     /**
+     * Where there is no island PVP stays off by default (#1053).
+     */
+    @Test
+    void testOnEntityDamageOutsideIslandsOffByDefault() {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        EntityDamageByEntityEvent e = createDamageEvent(mockPlayer, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
+        new PVPListener().onEntityDamage(e);
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Where there is no island, the PVP_OUTSIDE_ISLANDS world setting allows PVP (#1053).
+     */
+    @Test
+    void testOnEntityDamageOutsideIslandsAllowedByWorldSetting() {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        Flags.PVP_OUTSIDE_ISLANDS.setSetting(world, true);
+        EntityDamageByEntityEvent e = createDamageEvent(mockPlayer, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
+        new PVPListener().onEntityDamage(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * On an island the island's own setting decides, whatever the world setting says (#1053).
+     */
+    @Test
+    void testOnEntityDamageOnIslandIgnoresOutsideSetting() {
+        Flags.PVP_OUTSIDE_ISLANDS.setSetting(world, true);
+        EntityDamageByEntityEvent e = createDamageEvent(mockPlayer, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK);
+        new PVPListener().onEntityDamage(e);
+        assertTrue(e.isCancelled());
+    }
+
+    /**
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test

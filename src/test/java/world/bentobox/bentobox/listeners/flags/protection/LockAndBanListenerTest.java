@@ -3,6 +3,8 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -18,7 +20,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.WorldBorder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -29,6 +33,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 
@@ -58,6 +63,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
     private Location inside;
     @Mock
     private Location inside2;
+    private Settings s;
 
     @Override
     @BeforeEach
@@ -68,7 +74,7 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Settings
-        Settings s = mock(Settings.class);
+        s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
         // Sometimes use withSettings().verboseLogging()
@@ -365,10 +371,13 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(vehicle.getPassengers()).thenReturn(passengers);
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
+        when(vehicle.teleport(outside)).thenReturn(true);
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
-        // User should be teleported somewhere
-        verify(im).homeTeleportAsync(any(), eq(mockPlayer));
-        // Player 2 should not be teleported
+        // The whole vehicle is turned back with both riders aboard
+        verify(vehicle).teleport(outside);
+        verify(mockPlayer, never()).leaveVehicle();
+        // Nobody is sent home
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
         verify(im, never()).homeTeleportAsync(any(), eq(player2));
         // Call teleport event
         PlayerTeleportEvent ev = new PlayerTeleportEvent(mockPlayer, inside, outside);
@@ -679,6 +688,187 @@ class LockAndBanListenerTest extends CommonTestSetup {
         verify(im, never()).homeTeleportAsync(any(), eq(player));
     }
 
+    /**
+     * A vehicle whose only rider is locked out is turned back with the rider still
+     * aboard, so no boat is left stranded on the locked island (#2958).
+     */
+    @Test
+    void testVehicleWithOnlyLockedOutRiderIsTurnedBack() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+        when(vehicle.teleport(outside)).thenReturn(true);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+
+        verify(vehicle).teleport(outside);
+        verify(mockPlayer, never()).leaveVehicle();
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
+    }
+
+    /**
+     * If the server will not move the loaded vehicle, the rider is put back where
+     * they came from and the empty vehicle is brought out too, so it is recoverable.
+     */
+    @Test
+    void testVehicleTurnBackFallsBackToMovingRiderAndVehicleSeparately() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+        when(vehicle.teleport(outside)).thenReturn(false);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+
+        verify(mockPlayer).leaveVehicle();
+        verify(mockPlayer).teleport(outside);
+        verify(vehicle, times(2)).teleport(outside);
+        verify(im, never()).homeTeleportAsync(any(), eq(mockPlayer));
+    }
+
+    /**
+     * A rider who is already inside an island they may not be on (it was locked
+     * around them) is sent home rather than shuffled within the island.
+     */
+    @Test
+    void testVehicleRiderAlreadyInsideLockedIslandIsSentHome() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, inside, inside2));
+
+        verify(mockPlayer).leaveVehicle();
+        verify(im).homeTeleportAsync(any(), eq(mockPlayer));
+        verify(vehicle, never()).teleport(any(Location.class));
+    }
+
+    /**
+     * If the server will not move a vehicle carrying both a locked-out rider and a
+     * member, everyone is taken off and put back where the vehicle came from.
+     */
+    @Test
+    void testMixedVehicleFallbackMovesEveryRiderBack() {
+        Vehicle vehicle = lockedOutRiderIn(mockPlayer);
+        Player member = mock(Player.class);
+        UUID memberUuid = UUID.randomUUID();
+        when(member.getUniqueId()).thenReturn(memberUuid);
+        when(member.getWorld()).thenReturn(world);
+        vehicle.getPassengers().add(member);
+        when(island.isAllowed(any(User.class), any())).thenAnswer(
+                (Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(memberUuid));
+        when(vehicle.teleport(outside)).thenReturn(false);
+
+        listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+
+        verify(mockPlayer).teleport(outside);
+        verify(member).teleport(outside);
+        verify(vehicle, times(2)).teleport(outside);
+        verify(im, never()).homeTeleportAsync(any(), any(Player.class));
+    }
+
+    /*
+     * Locked island border tests
+     */
+
+    private WorldBorder borderSetup(Settings.BorderColor color) {
+        when(s.isLockedBorder()).thenReturn(true);
+        when(s.getLockedBorderColor()).thenReturn(color);
+        when(island.getUniqueId()).thenReturn("island-1");
+        when(island.getProtectionCenter()).thenReturn(new Location(world, X, Y, Z));
+        WorldBorder border = mock(WorldBorder.class);
+        mockedBukkit.when(Bukkit::createWorldBorder).thenReturn(border);
+        when(mockPlayer.getUniqueId()).thenReturn(uuid);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
+        return border;
+    }
+
+    @Test
+    void testLockedIslandBorderShownWhenTurnedAway() {
+        WorldBorder border = borderSetup(Settings.BorderColor.RED);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+
+        verify(border).setSize(PROTECTION_RANGE * 2D);
+        // Red is a shrinking border
+        verify(border).changeSize(eq(PROTECTION_RANGE * 2D - 0.1), anyLong());
+        verify(mockPlayer).setWorldBorder(border);
+        verify(sch).runTaskLater(any(), any(Runnable.class), anyLong());
+    }
+
+    @Test
+    void testLockedIslandBorderBlueIsStatic() {
+        WorldBorder border = borderSetup(Settings.BorderColor.BLUE);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+
+        verify(border, never()).changeSize(anyDouble(), anyLong());
+        verify(mockPlayer).setWorldBorder(border);
+    }
+
+    @Test
+    void testLockedIslandBorderGreenGrows() {
+        WorldBorder border = borderSetup(Settings.BorderColor.GREEN);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+
+        verify(border).changeSize(eq(PROTECTION_RANGE * 2D + 0.1), anyLong());
+    }
+
+    @Test
+    void testLockedIslandBorderNotResentWhileShowing() {
+        WorldBorder border = borderSetup(Settings.BorderColor.RED);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+        when(mockPlayer.getWorldBorder()).thenReturn(border);
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+
+        verify(mockPlayer, times(1)).setWorldBorder(border);
+    }
+
+    @Test
+    void testLockedIslandBorderOffInConfig() {
+        borderSetup(Settings.BorderColor.RED);
+        when(s.isLockedBorder()).thenReturn(false);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+
+        verify(mockPlayer, never()).setWorldBorder(any());
+    }
+
+    @Test
+    void testLockedIslandBorderNotShownForBan() {
+        borderSetup(Settings.BorderColor.RED);
+        when(island.isBanned(uuid)).thenReturn(true);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+
+        verify(mockPlayer, never()).setWorldBorder(any());
+    }
+
+    @Test
+    void testLockedIslandBorderKeptUntilDue() {
+        WorldBorder border = borderSetup(Settings.BorderColor.RED);
+        WorldBorder previous = mock(WorldBorder.class);
+        when(mockPlayer.getWorldBorder()).thenReturn(previous);
+
+        listener.onPlayerMove(new PlayerMoveEvent(mockPlayer, outside, inside));
+        when(mockPlayer.getWorldBorder()).thenReturn(border);
+
+        ArgumentCaptor<Runnable> task = ArgumentCaptor.forClass(Runnable.class);
+        verify(sch).runTaskLater(any(), task.capture(), anyLong());
+        // Not yet due: the task waits again rather than removing the border
+        task.getValue().run();
+        verify(mockPlayer, never()).setWorldBorder(previous);
+        verify(sch, times(2)).runTaskLater(any(), any(Runnable.class), anyLong());
+    }
+
+    private Vehicle lockedOutRiderIn(Player rider) {
+        when(rider.getUniqueId()).thenReturn(uuid);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.LOCK))).thenReturn(false);
+        Vehicle vehicle = mock(Vehicle.class);
+        List<Entity> passengers = new ArrayList<>();
+        passengers.add(rider);
+        when(vehicle.getPassengers()).thenReturn(passengers);
+        when(vehicle.getWorld()).thenReturn(world);
+        return vehicle;
+    }
+
     @Test
     void testVehicleMoveIntoLockedIsland() {
         // Make player
@@ -704,10 +894,14 @@ class LockAndBanListenerTest extends CommonTestSetup {
         when(vehicle.getPassengers()).thenReturn(passengers);
         when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
+        when(vehicle.teleport(outside)).thenReturn(true);
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
-        // User should be teleported somewhere
-        verify(im).homeTeleportAsync(any(), eq(player));
-        // Player 2 should not be teleported
+        // One rider may not enter, so the whole vehicle is turned back, member included
+        verify(vehicle).teleport(outside);
+        verify(player, never()).leaveVehicle();
+        verify(player2, never()).leaveVehicle();
+        // Nobody is sent home
+        verify(im, never()).homeTeleportAsync(any(), eq(player));
         verify(im, never()).homeTeleportAsync(any(), eq(player2));
         // Call teleport event
         PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);

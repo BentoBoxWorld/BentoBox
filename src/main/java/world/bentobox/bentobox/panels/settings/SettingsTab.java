@@ -168,8 +168,7 @@ public class SettingsTab implements Tab, ClickHandler {
         flags.removeAll(toBeRemoved);
 
         return flags.stream().map(
-                (f -> f.toPanelItem(plugin, user, world, island,
-                        plugin.getIWM().getHiddenFlags(world).contains(f.getID()))))
+                (f -> f.toPanelItem(plugin, user, world, island, f.isHidden(world))))
                 .toList();
     }
 
@@ -242,7 +241,7 @@ public class SettingsTab implements Tab, ClickHandler {
      * @return {@code true} if the flag is visible to the user
      */
     private boolean isVisibleToUser(Flag flag) {
-        return user.isOp() || !plugin.getIWM().getHiddenFlags(world).contains(flag.getID());
+        return user.isOp() || !flag.isHidden(world);
     }
 
     /**
@@ -254,12 +253,11 @@ public class SettingsTab implements Tab, ClickHandler {
         if (user.isOp()) {
             return true;
         }
-        List<String> hiddenFlags = plugin.getIWM().getHiddenFlags(world);
         var addon = plugin.getIWM().getAddon(world);
         return plugin.getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(type) && !f.getMode().equals(Mode.TOP_ROW))
                 .filter(f -> addon.isEmpty() || f.getGameModes().isEmpty() || f.getGameModes().contains(addon.get()))
-                .anyMatch(f -> !hiddenFlags.contains(f.getID()));
+                .anyMatch(f -> !f.isHidden(world));
     }
 
     /* (non-Javadoc)

@@ -1005,6 +1005,8 @@ commands:
           name-rejected-your-invite: '<red>[name] rechazó tu invitacion!</red>'
         cancel:
           description: Cancela la invitación pendiente para unirte a tu isla.
+          success: '<green>Invitación a </green><aqua>[name]</aqua><green> retirada.</green>'
+          no-invite: '<red>[name] no tiene ninguna invitación pendiente a tu isla.</red>'
       leave:
         cannot-leave: >-
           <red>Los propietarios no pueden irse! Conviértete en un miembro primero o</red>
@@ -1341,6 +1343,9 @@ protection:
       description: Uso de mesa de crafteo
       name: Mesa de Crafteo
       hint: No uso de mesa de crafteo
+    CREEPER_BLOCK_DAMAGE:
+      description: Modificar si los creepers rompen bloques en esta isla
+      name: Daño de creeper a bloques
     CREEPER_DAMAGE:
       description: Modificar daño del creeper
       name: Daño del creeper
@@ -1595,6 +1600,14 @@ protection:
       name: Etiquetas de nombres
       description: Modificar uso
       hint: No uso de Etiquetas de nombres
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP fuera de las islas
+      description: |-
+        <red>Activar/desactivar el PVP donde</red>
+        <red>no hay ninguna isla.</red>
+
+        <green>En una isla siempre se aplica</green>
+        <green>su propia configuración de PVP.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: 'Spawneo de criaturas naturales afuera del rango '
       description: |-
@@ -2208,6 +2221,21 @@ panels:
     next:
       name: '<white><bold>Siguiente Página</bold></white>'
       description: '<gray>Cambiar a la página [number]</gray>'
+  picker:
+    back:
+      name: '<white><bold>Atrás</bold></white>'
+      description: '<gray>Volver sin elegir.</gray>'
+    inventory:
+      name: '<white><bold>O usa tu inventario</bold></white>'
+      description: '<gray>Haz clic en un objeto de tu inventario para elegirlo.</gray>'
+    search:
+      name: '<white><bold>Buscar</bold></white>'
+      description: '<gray>Mostrar solo los nombres que contengan un texto.</gray>'
+      clear-name: '<white><bold>Borrar búsqueda</bold></white>'
+      clear-description: '<gray>Mostrar todo de nuevo.</gray>'
+      title: '<white>Buscar</white>'
+      field: 'El nombre contiene'
+      button: '<green>Buscar</green>'
   tips:
     click-to-next: '<yellow>Haz clic </yellow><gray>para continuar.</gray>'
     click-to-previous: '<yellow>Haz clic </yellow><gray>para anterior.</gray>'

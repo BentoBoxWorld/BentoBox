@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -293,6 +294,14 @@ public enum GameModePlaceholder {
     ISLAND_VISITORS_COUNT("island_visitors_count",
             "Number of players currently visiting the player's island",
             (addon, user, island) -> island == null ? "" : String.valueOf(island.getVisitors().size())),
+    /**
+     * Returns a comma separated list of the names of the players currently visiting the island.
+     * @since 3.24.0
+     */
+    ISLAND_VISITORS_LIST("island_visitors_list",
+            "Comma-separated list of players currently visiting the player's island",
+            (addon, user, island) -> island == null ? "" : island.getVisitors().stream()
+            .map(Player::getName).collect(Collectors.joining(","))),
 
     /**
      * Returns whether this player is on his island and has a rank greater than VISITOR_RANK.
@@ -564,6 +573,15 @@ public enum GameModePlaceholder {
             "Number of players currently visiting the island the player is standing on",
             (addon, user, island) ->
     getVisitedIsland(addon, user).map(value -> String.valueOf(value.getVisitors().size())).orElse("")),
+    /**
+     * Returns a comma separated list of the names of the players currently visiting the island the player is standing on.
+     * @since 3.24.0
+     */
+    VISITED_ISLAND_VISITORS_LIST("visited_island_visitors_list",
+            "Comma-separated list of players currently visiting the island the player is standing on",
+            (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> value.getVisitors().stream()
+            .map(Player::getName).collect(Collectors.joining(","))).orElse("")),
     /* World-related */
     /**
      * World friendly name.

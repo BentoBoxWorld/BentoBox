@@ -1031,6 +1031,8 @@ commands:
           name-rejected-your-invite: '<red>[name] hat deine Insel-Einladung abgelehnt!</red>'
         cancel:
           description: Die ausstehende Einladung zu deiner Insel zurücknehmen
+          success: '<green>Einladung an </green><aqua>[name]</aqua><green> zurückgezogen.</green>'
+          no-invite: '<red>[name] hat keine ausstehende Einladung zu deiner Insel.</red>'
       leave:
         cannot-leave: >-
           <red>Besitzer können nicht gehen! Werde zuerst Mitglied, oder kicke alle</red>
@@ -1369,6 +1371,9 @@ protection:
       description: Umschalten der Nutzung
       name: Werkbänke
       hint: Zugriff auf Werkbank deaktiviert
+    CREEPER_BLOCK_DAMAGE:
+      description: Umschalten, ob Creeper auf dieser Insel Blöcke zerstören
+      name: Creeper-Blockschaden
     CREEPER_DAMAGE:
       description: Umschalten von Creeper-Schäden
       name: Creeperschaden
@@ -1625,6 +1630,14 @@ protection:
       name: Namensschilder
       description: Umschalten der Nutzung
       hint: Namensschild-Interaktion deaktiviert
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP außerhalb von Inseln
+      description: |-
+        <red>PVP dort aktivieren/deaktivieren,</red>
+        <red>wo es keine Insel gibt.</red>
+
+        <green>Auf einer Insel gilt immer deren</green>
+        <green>eigene PVP-Einstellung.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Natürliche Spawns außerhalb des Schutzbereiches
       description: |-
@@ -2261,6 +2274,21 @@ panels:
     next:
       name: '<white><bold>Nächste Seite</bold></white>'
       description: '<gray>Zur Seite [number] wechseln</gray>'
+  picker:
+    back:
+      name: '<white><bold>Zurück</bold></white>'
+      description: '<gray>Ohne Auswahl zurückgehen.</gray>'
+    inventory:
+      name: '<white><bold>Oder nutze dein Inventar</bold></white>'
+      description: '<gray>Klicke auf einen Gegenstand in deinem Inventar, um ihn auszuwählen.</gray>'
+    search:
+      name: '<white><bold>Suchen</bold></white>'
+      description: '<gray>Nur Namen anzeigen, die einen Text enthalten.</gray>'
+      clear-name: '<white><bold>Suche löschen</bold></white>'
+      clear-description: '<gray>Wieder alles anzeigen.</gray>'
+      title: '<white>Suchen</white>'
+      field: 'Name enthält'
+      button: '<green>Suchen</green>'
   tips:
     click-to-next: '<yellow>Klicken</yellow><gray>, um weiterzugehen.</gray>'
     click-to-previous: '<yellow>Klicken</yellow><gray>, um zum zurückgehen.</gray>'

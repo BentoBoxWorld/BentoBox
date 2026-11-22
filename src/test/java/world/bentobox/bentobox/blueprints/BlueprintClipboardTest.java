@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -23,6 +27,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -291,6 +296,126 @@ class BlueprintClipboardTest extends CommonTestSetup {
         assertTrue(bc.copy(user, true, true, false));
         // Origin was already set, so user.getLocation() should NOT be called
         verify(user, never()).getLocation();
+    }
+
+    /**
+     * Copying with air captures the whole box, so the air is stored once as the fill block
+     * and the sizes include both corner blocks.
+     */
+    @Test
+    void testCopyWithAirCompactsBlueprint() {
+        Runnable task = startAirCopy();
+        task.run();
+
+        Blueprint copied = bc.getBlueprint();
+        assertNotNull(copied);
+        assertEquals(3, copied.getxSize());
+        assertEquals(3, copied.getySize());
+        assertEquals(3, copied.getzSize());
+        assertEquals("minecraft:air", copied.getFill().getBlockData());
+        assertEquals(new Vector(0, 0, 0), copied.getFillMin());
+        assertEquals(new Vector(2, 2, 2), copied.getFillMax());
+        assertEquals(1, copied.getBlocks().size());
+        assertEquals("minecraft:stone", copied.getBlocks().get(new Vector(1, 0, 1)).getBlockData());
+    }
+
+    /**
+     * With a time budget, a copy is done in batches of paste-speed blocks until the budget is used up,
+     * so a small copy finishes in one tick even with a tiny paste speed.
+     */
+    @Test
+    void testCopyTimeBudgetFinishesInOneTick() {
+        plugin.getSettings().setPasteSpeed(4);
+        plugin.getSettings().setPasteTimeBudget(60_000);
+        Runnable task = startAirCopy();
+        task.run();
+        verify(user).sendMessage("general.success");
+        verify(user).sendMessage("commands.admin.blueprint.copied-blocks", "[number]", "27");
+        assertNotNull(bc.getBlueprint().getFill());
+    }
+
+    /**
+     * A budget of 0 copies one batch per tick: 27 blocks at 4 per tick take 7 ticks. Entities are
+     * found once, not every tick, and progress is reported at each 10%.
+     */
+    @Test
+    void testCopyNoBudgetOneBatchPerTick() {
+        plugin.getSettings().setPasteSpeed(4);
+        plugin.getSettings().setPasteTimeBudget(0);
+        Runnable task = startAirCopy();
+        for (int i = 0; i < 6; i++) {
+            task.run();
+        }
+        verify(user, never()).sendMessage("general.success");
+        task.run(); // 7th tick: done
+        verify(user).sendMessage("general.success");
+        verify(user).sendMessage("commands.admin.blueprint.copied-blocks", "[number]", "27");
+        verify(world, Mockito.times(1)).getNearbyEntities(any(BoundingBox.class));
+        // 14, 29, 44, 59, 74, 88, 100%: each tick reports the highest 10% mark it passed, once
+        for (String pct : List.of("10", "20", "40", "50", "70", "80", "100")) {
+            verify(user).sendMessage("commands.admin.blueprint.copied-percent", "[number]", pct);
+        }
+        verify(user, never()).sendMessage("commands.admin.blueprint.copied-percent", "[number]", "30");
+    }
+
+    /**
+     * A second copy cannot start while one is in progress, and can once it has finished.
+     */
+    @Test
+    void testCopyRefusedWhileCopying() {
+        plugin.getSettings().setPasteSpeed(4);
+        plugin.getSettings().setPasteTimeBudget(0);
+        Runnable task = startAirCopy();
+        task.run(); // One batch: the copy is still in progress
+        assertFalse(bc.copy(user, true, false, false));
+        verify(user).sendMessage("commands.admin.blueprint.mid-copy");
+        for (int i = 0; i < 6; i++) {
+            task.run();
+        }
+        verify(user).sendMessage("general.success");
+        assertTrue(bc.copy(user, true, false, false));
+    }
+
+    /**
+     * Sets up a 3x3x3 copy with air of a box that is all air except one stone block, and returns the copy task.
+     */
+    private Runnable startAirCopy() {
+        when(world.getMinHeight()).thenReturn(-64);
+        when(world.getMaxHeight()).thenReturn(320);
+        when(plugin.namespace()).thenReturn("bentobox"); // for the display entity NamespacedKey
+        // Fractional positions, as when set from where a player stands: blocks 0-2 on each axis
+        bc.setPos1(new Location(world, 0.3, 64.9, 0.7));
+        bc.setPos2(new Location(world, 2.1, 66.2, 2.6));
+        bc.setOrigin(new Vector(0, 64, 0));
+
+        Block airBlock = mockBlock(Material.AIR, "minecraft:air");
+        Block stoneBlock = mockBlock(Material.STONE, "minecraft:stone");
+        when(world.getBlockAt(any(Location.class))).thenAnswer(inv -> {
+            Location l = inv.getArgument(0);
+            return l.getBlockX() == 1 && l.getBlockY() == 64 && l.getBlockZ() == 1 ? stoneBlock : airBlock;
+        });
+        when(sch.runTaskAsynchronously(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return mock(BukkitTask.class);
+        });
+        ArgumentCaptor<Runnable> copyTask = ArgumentCaptor.forClass(Runnable.class);
+        when(sch.runTaskTimer(any(), copyTask.capture(), Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(mock(BukkitTask.class));
+
+        assertTrue(bc.copy(user, true, false, false));
+        return copyTask.getValue();
+    }
+
+    private Block mockBlock(Material material, String data) {
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(material);
+        BlockData bd = mock(BlockData.class);
+        when(bd.getAsString()).thenReturn(data);
+        when(block.getBlockData()).thenReturn(bd);
+        BlockState state = mock(BlockState.class);
+        when(state.getBlockData()).thenReturn(bd);
+        when(block.getState()).thenReturn(state);
+        return block;
     }
 
     // ---- setPos1 / setPos2 height clamping ----

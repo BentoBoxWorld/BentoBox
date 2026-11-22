@@ -158,7 +158,11 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, File backupTableFolder, String fileName, boolean async) {
         // Do not save anything if plug is disabled and this was an async request, unless we are
         // deliberately flushing the queue on shutdown (see AbstractDatabaseHandler#flush)
-        if (async && !plugin.isEnabled() && !draining) return;
+        if (async && !plugin.isEnabled() && !draining) {
+            // Complete the future so that nothing waiting on this save waits forever
+            completableFuture.complete(false);
+            return;
+        }
         File tmpFile = new File(backupTableFolder, fileName);
         if (file.exists()) {
             // Make a backup of file

@@ -1025,6 +1025,8 @@ commands:
           name-rejected-your-invite: '<red>[name] elutasította a szigetre szóló meghívást!</red>'
         cancel:
           description: törölje a függőben lévő meghívást, hogy csatlakozzon a szigetéhez
+          success: '<green>A(z) </green><aqua>[name]</aqua><green> számára küldött meghívó visszavonva.</green>'
+          no-invite: '<red>[name] számára nincs függőben lévő meghívó a szigetedre.</red>'
       leave:
         cannot-leave: >-
           <red>A tulajdonosok nem távozhatnak! Legyél először tag, vagy rúgj ki</red>
@@ -1366,6 +1368,11 @@ protection:
       description: Használat váltása
       name: Munkapadok
       hint: A munkaasztalhoz való hozzáférés letiltva
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Váltás: a creeperek törhetnek-e</green>
+        <green>blokkokat ezen a szigeten</green>
+      name: Creeper blokksebzés
     CREEPER_DAMAGE:
       description: |-
         <green>Creeper sebzés elleni</green>
@@ -1644,6 +1651,14 @@ protection:
       name: Névtáblák
       description: Használat váltása
       hint: A névcímkével való interakció letiltva
+    PVP_OUTSIDE_ISLANDS:
+      name: PVP a szigeteken kívül
+      description: |-
+        <red>PVP engedélyezése/tiltása ott,</red>
+        <red>ahol nincs sziget.</red>
+
+        <green>Egy szigeten mindig a sziget saját</green>
+        <green>PVP beállítása érvényes.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: A hatótávon kívül ívó természetes lény
       description: |-
@@ -2285,6 +2300,21 @@ panels:
     next:
       name: '<white><bold>Következő oldal</bold></white>'
       description: '<gray>Váltás a [number] oldalra</gray>'
+  picker:
+    back:
+      name: '<white><bold>Vissza</bold></white>'
+      description: '<gray>Visszalépés választás nélkül.</gray>'
+    inventory:
+      name: '<white><bold>Vagy használd a leltáradat</bold></white>'
+      description: '<gray>Kattints egy tárgyra a saját leltáradban a kiválasztásához.</gray>'
+    search:
+      name: '<white><bold>Keresés</bold></white>'
+      description: '<gray>Csak az adott szöveget tartalmazó nevek megjelenítése.</gray>'
+      clear-name: '<white><bold>Keresés törlése</bold></white>'
+      clear-description: '<gray>Minden megjelenítése újra.</gray>'
+      title: '<white>Keresés</white>'
+      field: 'A név tartalmazza'
+      button: '<green>Keresés</green>'
   tips:
     click-to-next: '<yellow>Kattints </yellow><gray>a következőhöz.</gray>'
     click-to-previous: '<yellow>Kattints </yellow><gray>az előzőhöz.</gray>'

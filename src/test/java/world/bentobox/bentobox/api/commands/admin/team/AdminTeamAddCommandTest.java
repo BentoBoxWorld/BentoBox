@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,16 +17,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import world.bentobox.bentobox.CommonTestSetup;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.island.IslandRankChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -33,6 +38,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -296,11 +302,24 @@ class AdminTeamAddCommandTest extends CommonTestSetup {
         when(pm.getName(notUUID)).thenReturn("poslovich");
         when(plugin.getPlayers()).thenReturn(pm);
 
+        // The target is a coop until they join
+        when(island.getRank(notUUID)).thenReturn(RanksManager.COOP_RANK);
+        Mockito.doAnswer(inv -> when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK)).when(im)
+                .setJoinTeam(island, notUUID);
+
         // Success
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         verify(im).setJoinTeam(island, notUUID);
         // Null name for target because it is created out of mocking via User.getPlayer(notUUID)
         verify(user).sendMessage("commands.admin.team.add.success", TextVariables.NAME, null, "[owner]", "tastybento");
+        // The rank change event reports the rank the target had before joining
+        ArgumentCaptor<Event> events = ArgumentCaptor.forClass(Event.class);
+        verify(pim, Mockito.atLeastOnce()).callEvent(events.capture());
+        IslandRankChangeEvent e = events.getAllValues().stream().filter(IslandRankChangeEvent.class::isInstance)
+                .map(IslandRankChangeEvent.class::cast).findFirst().orElseThrow();
+        assertEquals(notUUID, e.getPlayerUUID());
+        assertEquals(RanksManager.COOP_RANK, e.getOldRank());
+        assertEquals(RanksManager.MEMBER_RANK, e.getNewRank());
     }
 
 }

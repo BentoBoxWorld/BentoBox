@@ -948,6 +948,8 @@ commands:
           name-rejected-your-invite: '<red>[name] rejected your [prefix_island] invite!</red>'
         cancel:
           description: cancel the pending invite to join your [prefix_island]
+          success: '<green>Invitation to </green><aqua>[name]</aqua><green> withdrawn.</green>'
+          no-invite: '<red>[name] has no pending invitation to your [prefix_island].</red>'
       leave:
         cannot-leave: '<red>Owners cannot leave! Become a member first, or kick all
           members.</red>'
@@ -1290,6 +1292,11 @@ protection:
       description: Toggle use
       name: Workbenches
       hint: Workbench access disabled
+    CREEPER_BLOCK_DAMAGE:
+      description: |
+        <green>Toggle whether creepers</green>
+        <green>break blocks on this island.</green>
+      name: Creeper block damage
     CREEPER_DAMAGE:
       description: |
         <green>Toggle creeper</green>
@@ -1557,6 +1564,14 @@ protection:
       name: Name tags
       description: Toggle use
       hint: Name tag interaction disabled
+    PVP_OUTSIDE_ISLANDS:
+      name: "PVP outside [prefix_islands]"
+      description: |-
+        <red>Enable/Disable PVP where</red>
+        <red>there is no [prefix_island].</red>
+
+        <green>On [prefix_an-island], its own PVP</green>
+        <green>setting always applies.</green>
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       name: Natural creature spawning outside range
       description: |-
@@ -2201,6 +2216,22 @@ panels:
     next:
       name: '<white><bold>Next Page</bold></white>'
       description: '<gray>Switch to [number] page</gray>'
+  # Shared by the value pickers (materials, entities, biomes...) addons open.
+  picker:
+    back:
+      name: '<white><bold>Back</bold></white>'
+      description: '<gray>Go back without choosing.</gray>'
+    inventory:
+      name: '<white><bold>Or use your inventory</bold></white>'
+      description: '<gray>Click an item in your own inventory to choose it.</gray>'
+    search:
+      name: '<white><bold>Search</bold></white>'
+      description: '<gray>Show only names containing some text.</gray>'
+      clear-name: '<white><bold>Clear search</bold></white>'
+      clear-description: '<gray>Show everything again.</gray>'
+      title: '<white>Search</white>'
+      field: 'Name contains'
+      button: '<green>Search</green>'
   tips:
     click-to-next: '<yellow>Click </yellow><gray>for next.</gray>'
     click-to-previous: '<yellow>Click </yellow><gray>for previous.</gray>'

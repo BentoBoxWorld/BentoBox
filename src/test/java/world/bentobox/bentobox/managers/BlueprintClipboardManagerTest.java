@@ -1,5 +1,9 @@
 package world.bentobox.bentobox.managers;
 
+import org.bukkit.util.Vector;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -515,4 +519,61 @@ class BlueprintClipboardManagerTest extends CommonTestSetup {
         assertTrue(bp.exists());
     }
 
+
+    /**
+     * An old-format blueprint copied with air stores every block in its box. Loading it
+     * compacts the air into a fill block, and saving and reloading keeps the fill.
+     */
+    @Test
+    void testLoadOldFullAirBlueprintCompactsAndRoundTrips() throws IOException {
+        blueprintFolder.mkdirs();
+        StringBuilder blocks = new StringBuilder();
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 3; z++) {
+                    String data = (x == 1 && y == 0 && z == 1) ? "minecraft:bedrock" : "minecraft:air";
+                    if (!blocks.isEmpty()) {
+                        blocks.append(',');
+                    }
+                    blocks.append("[[").append(x).append(".0,").append(y).append(".0,").append(z)
+                            .append(".0],{\"blockData\":\"").append(data).append("\"}]");
+                }
+            }
+        }
+        String fullAir = "{\"name\":\"blueprint\",\"attached\":{},\"entities\":{},\"blocks\":[" + blocks
+                + "],\"xSize\":3,\"ySize\":3,\"zSize\":3,\"bedrock\":[1.0,0.0,1.0]}";
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(configFile.toPath(), fullAir, StandardOpenOption.CREATE);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
+
+        Blueprint bp = bcm.loadBlueprint(BLUEPRINT);
+        assertEquals("minecraft:air", bp.getFill().getBlockData());
+        assertEquals(new Vector(0, 0, 0), bp.getFillMin());
+        assertEquals(new Vector(2, 2, 2), bp.getFillMax());
+        assertEquals(1, bp.getBlocks().size());
+
+        // Save in the compact format and load it again
+        assertTrue(bcm.saveBlueprint(bp));
+        String saved = Files.readString(configFile.toPath());
+        assertFalse(saved.contains("minecraft:air\"}]"), "Air blocks should not be stored individually");
+        Blueprint reloaded = bcm.loadBlueprint(BLUEPRINT);
+        assertEquals("minecraft:air", reloaded.getFill().getBlockData());
+        assertEquals(new Vector(0, 0, 0), reloaded.getFillMin());
+        assertEquals(new Vector(2, 2, 2), reloaded.getFillMax());
+        assertEquals(1, reloaded.getBlocks().size());
+    }
+
+    /**
+     * A blueprint copied without air leaves gaps, which mean "leave the world alone", so it must not be compacted.
+     */
+    @Test
+    void testLoadBlueprintWithGapsIsNotCompacted() throws IOException {
+        blueprintFolder.mkdirs();
+        File configFile = new File(blueprintFolder, BLUEPRINT + BlueprintsManager.BLUEPRINT_SUFFIX);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
+        BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
+        Blueprint bp = bcm.loadBlueprint(BLUEPRINT);
+        assertNull(bp.getFill());
+        assertEquals(2, bp.getBlocks().size());
+    }
 }

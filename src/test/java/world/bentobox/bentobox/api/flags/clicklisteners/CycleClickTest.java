@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -336,14 +334,13 @@ class CycleClickTest extends RanksManagerTestSetup {
     void testOnShiftLeftClickIsOp() {
         when(user.isOp()).thenReturn(true);
         CycleClick udc = new CycleClick(LOCK);
-        // Click shift left
-        assertTrue(hiddenFlags.isEmpty());
+        // Click shift left hides the flag
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
-        assertFalse(hiddenFlags.isEmpty());
-        assertEquals(LOCK, hiddenFlags.getFirst());
-        // Click shift left again to remove flag
+        verify(flag).setHidden(world, true);
+        // Click shift left again to show the flag
+        when(flag.isHidden(world)).thenReturn(true);
         assertTrue(udc.onClick(panel, user, ClickType.SHIFT_LEFT, SLOT));
-        assertTrue(hiddenFlags.isEmpty());
+        verify(flag).setHidden(world, false);
         // Verify sounds
         verify(p, times(2)).playSound((Location)eq(null), any(Sound.class), eq(1F), eq(1F));
     }

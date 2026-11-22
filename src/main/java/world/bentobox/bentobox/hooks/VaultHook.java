@@ -39,6 +39,25 @@ public class VaultHook extends Hook {
         }
     }
 
+    /**
+     * Checks whether a plugin has registered a Vault economy provider yet, without hooking.
+     * <p>
+     * Used to defer the early hook when Vault is installed but its economy provider is supplied
+     * later, e.g. by an addon such as InvSwitcher during its own {@code onEnable()}.
+     * @return true if Vault is enabled and an economy provider is registered
+     * @since 3.24.0
+     */
+    public boolean isEconomyRegistered() {
+        if (!isPluginAvailable()) {
+            return false;
+        }
+        try {
+            return Bukkit.getServer().getServicesManager().getRegistration(Economy.class) != null;
+        } catch (Exception _) {
+            return false;
+        }
+    }
+
     @Override
     public String getFailureCause() {
         return "no plugin supporting economy has been found";

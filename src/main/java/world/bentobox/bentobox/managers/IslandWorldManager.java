@@ -223,12 +223,14 @@ public class IslandWorldManager {
             }
             world.setDifficulty(diff);
 
-            // Handle nether and end difficulty levels
-            if (settings.isNetherGenerate()) {
-                this.getNetherWorld(world).setDifficulty(diff);
+            // Handle nether and end difficulty levels. A game mode may enable them without providing the world.
+            World netherWorld = this.getNetherWorld(world);
+            if (settings.isNetherGenerate() && netherWorld != null) {
+                netherWorld.setDifficulty(diff);
             }
-            if (settings.isEndGenerate()) {
-                this.getEndWorld(world).setDifficulty(diff);
+            World endWorld = this.getEndWorld(world);
+            if (settings.isEndGenerate() && endWorld != null) {
+                endWorld.setDifficulty(diff);
             }
             plugin.log("Added world " + friendlyName + " (" + world.getDifficulty() + ")");
         });
@@ -791,6 +793,19 @@ public class IslandWorldManager {
     public List<String> getHiddenFlags(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getHiddenFlags()
                 : Collections.emptyList();
+    }
+
+    /**
+     * Returns the flags that are hidden by default but that an admin has chosen to
+     * show in this world. Edit the returned list and then call
+     * {@link #saveCoreWorldSettings(World)}.
+     * @param world - world
+     * @return mutable list of flag IDs, or an empty immutable list if the world is not a game world
+     * @since 3.24.0
+     * @see world.bentobox.bentobox.api.flags.Flag#isHidden(World)
+     */
+    public List<String> getShownFlags(@NonNull World world) {
+        return getCoreWorldSettings(world).map(CoreWorldSettings::getShownFlags).orElse(Collections.emptyList());
     }
 
     /**
