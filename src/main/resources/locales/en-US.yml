@@ -796,6 +796,16 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        # The menu opened by a plain click on a member or an invitation. It lists the shift and right click
+        # actions as buttons, for players who can only tap (Bedrock touch screens).
+        actions:
+          tip: '<aqua>Click</aqua> <green>for actions</green>'
+          kick: '<red>Kick player</red>'
+          setowner: '<gold>Make owner</gold>'
+          leave: '<red>Leave team</red>'
+          accept: '<green>Accept</green>'
+          reject: '<red>Reject</red>'
+          back: '<white>Back</white>'
         tips:
           LEFT:
             name: '<aqua>Left Click</aqua>'
@@ -907,6 +917,13 @@ commands:
               # Optional description line shown above the click tips. Placeholders: [name], [display_name].
               description: ""
           enter-name: '<green>Enter name:</green>'
+          # The button that changes what a left click on a player does.
+          mode:
+            name: '<white>Clicking a player will</white>'
+            invite: '<green>Invite them to your team</green>'
+            coop: '<green>Coop them</green>'
+            trust: '<green>Trust them</green>'
+            change: '<gray>Click to change</gray>'
           tips:
             LEFT:
               name: '<aqua>Left Click</aqua>'

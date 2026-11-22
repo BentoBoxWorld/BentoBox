@@ -848,6 +848,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klik</aqua> <green>untuk tindakan</green>'
+          kick: '<red>Keluarkan pemain</red>'
+          setowner: '<gold>Jadikan pemilik</gold>'
+          leave: '<red>Tinggalkan tim</red>'
+          accept: '<green>Terima</green>'
+          reject: '<red>Tolak</red>'
+          back: '<white>Kembali</white>'
         tips:
           LEFT:
             name: '<aqua>Klik Kiri</aqua>'
@@ -948,6 +956,12 @@ commands:
               <aqua>Mencari</aqua>
               <red>[name]</red>
           enter-name: '<green>Masukkan nama:</green>'
+          mode:
+            name: '<white>Mengeklik pemain akan</white>'
+            invite: '<green>Mengundangnya ke timmu</green>'
+            coop: '<green>Menjadikannya coop</green>'
+            trust: '<green>Mempercayainya</green>'
+            change: '<gray>Klik untuk mengubah</gray>'
           tips:
             LEFT:
               name: '<aqua>Klik Kiri</aqua>'

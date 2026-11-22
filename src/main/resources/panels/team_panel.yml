@@ -131,6 +131,9 @@ team_panel:
       description: commands.island.team.gui.buttons.member.description
       data:
         type: MEMBER
+      # A left or right click that no action below uses opens a small menu with the same actions as
+      # buttons, so players who cannot shift click (Bedrock touch screens) can still use them.
+      # Give an action the LEFT click-type and that action runs instead of the menu opening.
       # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
         # click-types.
       actions:

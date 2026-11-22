@@ -46,6 +46,13 @@ team_invite_panel:
           search:
             click-type: LEFT
             tooltip: commands.island.team.invite.gui.tips.search
+      7:
+        # Changes what a left click on a player does: invite, coop or trust. Players who cannot
+        # right click or shift click (Bedrock touch screens) need this to coop or trust.
+        # It is only shown to players who can do more than invite. Remove it to hide it for everyone.
+        icon: COMPARATOR
+        data:
+          type: MODE
       8:
         title: "protection.panel.next"
         icon: ARROW

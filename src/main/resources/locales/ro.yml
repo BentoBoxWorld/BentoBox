@@ -862,6 +862,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Clic</aqua> <green>pentru acțiuni</green>'
+          kick: '<red>Elimină jucătorul</red>'
+          setowner: '<gold>Fă-l proprietar</gold>'
+          leave: '<red>Părăsește echipa</red>'
+          accept: '<green>Acceptă</green>'
+          reject: '<red>Respinge</red>'
+          back: '<white>Înapoi</white>'
         tips:
           LEFT:
             name: '<aqua>Faceți clic stânga</aqua>'
@@ -968,6 +976,12 @@ commands:
               <aqua>Căutând</aqua>
               <red>[name]</red>
           enter-name: '<green>Introduceți numele:</green>'
+          mode:
+            name: '<white>Clic pe un jucător</white>'
+            invite: '<green>Îl invită în echipa ta</green>'
+            coop: '<green>Cooperează cu el</green>'
+            trust: '<green>Îi acordă încredere</green>'
+            change: '<gray>Clic pentru a schimba</gray>'
           tips:
             LEFT:
               name: '<aqua>Clic stânga</aqua>'

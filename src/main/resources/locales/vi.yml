@@ -832,6 +832,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Nhấp</aqua> <green>để xem hành động</green>'
+          kick: '<red>Đuổi người chơi</red>'
+          setowner: '<gold>Đặt làm chủ sở hữu</gold>'
+          leave: '<red>Rời nhóm</red>'
+          accept: '<green>Chấp nhận</green>'
+          reject: '<red>Từ chối</red>'
+          back: '<white>Quay lại</white>'
         tips:
           LEFT:
             name: '<aqua>Nhấp Chuột Trái</aqua>'
@@ -928,6 +936,12 @@ commands:
               <aqua>Đang tìm kiếm</aqua>
               <red>[name]</red>
           enter-name: '<green>Nhập tên:</green>'
+          mode:
+            name: '<white>Nhấp vào một người chơi sẽ</white>'
+            invite: '<green>Mời họ vào đội của bạn</green>'
+            coop: '<green>Cho họ chơi chung (coop)</green>'
+            trust: '<green>Tin tưởng họ</green>'
+            change: '<gray>Nhấp để thay đổi</gray>'
           tips:
             LEFT:
               name: '<aqua>Nhấn Chuột Trái</aqua>'

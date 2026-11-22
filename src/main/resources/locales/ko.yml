@@ -781,6 +781,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>클릭</aqua> <green>하여 작업 보기</green>'
+          kick: '<red>플레이어 강퇴</red>'
+          setowner: '<gold>소유자로 지정</gold>'
+          leave: '<red>팀 떠나기</red>'
+          accept: '<green>수락</green>'
+          reject: '<red>거절</red>'
+          back: '<white>뒤로</white>'
         tips:
           LEFT:
             name: '<aqua>왼쪽 클릭</aqua>'
@@ -875,6 +883,12 @@ commands:
               <aqua>검색 중</aqua>
               <red>[name]</red>
           enter-name: '<green>이름 입력:</green>'
+          mode:
+            name: '<white>플레이어를 클릭하면</white>'
+            invite: '<green>팀에 초대합니다</green>'
+            coop: '<green>협동 멤버로 만듭니다</green>'
+            trust: '<green>신뢰합니다</green>'
+            change: '<gray>클릭하여 변경</gray>'
           tips:
             LEFT:
               name: '<aqua>왼쪽 클릭</aqua>'

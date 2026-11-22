@@ -831,6 +831,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Нажмите</aqua> <green>для действий</green>'
+          kick: '<red>Кикнуть игрока</red>'
+          setowner: '<gold>Сделать владельцем</gold>'
+          leave: '<red>Покинуть команду</red>'
+          accept: '<green>Принять</green>'
+          reject: '<red>Отклонить</red>'
+          back: '<white>Назад</white>'
         tips:
           LEFT:
             name: <aqua>ЛКМ</aqua>
@@ -932,6 +940,12 @@ commands:
               <aqua>Поиск за</aqua>
               <red>[name]</red>
           enter-name: <green>Введите имя:</green>
+          mode:
+            name: '<white>Нажатие на игрока</white>'
+            invite: '<green>Приглашает его в команду</green>'
+            coop: '<green>Добавляет его для совместной игры</green>'
+            trust: '<green>Делает его доверенным</green>'
+            change: '<gray>Нажмите, чтобы изменить</gray>'
           tips:
             LEFT:
               name: <aqua>ЛКМ</aqua>

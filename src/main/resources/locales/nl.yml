@@ -877,6 +877,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klik</aqua> <green>voor acties</green>'
+          kick: '<red>Speler schoppen</red>'
+          setowner: '<gold>Eigenaar maken</gold>'
+          leave: '<red>Team verlaten</red>'
+          accept: '<green>Accepteren</green>'
+          reject: '<red>Weigeren</red>'
+          back: '<white>Terug</white>'
         tips:
           LEFT:
             name: '<aqua>Linker Klik</aqua>'
@@ -977,6 +985,12 @@ commands:
               <aqua>Zoeken naar</aqua>
               <red>[name]</red>
           enter-name: '<green>Voer naam in:</green>'
+          mode:
+            name: '<white>Klikken op een speler</white>'
+            invite: '<green>Nodigt hem uit voor je team</green>'
+            coop: '<green>Maakt hem coöp</green>'
+            trust: '<green>Vertrouwt hem</green>'
+            change: '<gray>Klik om te wijzigen</gray>'
           tips:
             LEFT:
               name: '<aqua>Linker Muisklik</aqua>'

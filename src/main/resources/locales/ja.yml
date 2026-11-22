@@ -765,6 +765,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>クリック</aqua> <green>で操作を表示</green>'
+          kick: '<red>プレーヤーをキック</red>'
+          setowner: '<gold>所有者にする</gold>'
+          leave: '<red>チームを去る</red>'
+          accept: '<green>承諾</green>'
+          reject: '<red>拒否</red>'
+          back: '<white>戻る</white>'
         tips:
           LEFT:
             name: '<aqua>左クリック</aqua>'
@@ -857,6 +865,12 @@ commands:
               <aqua>検索</aqua>
               <red>[name]</red>
           enter-name: '<green>名前を入力してください：</green>'
+          mode:
+            name: '<white>プレーヤーをクリックすると</white>'
+            invite: '<green>チームに招待します</green>'
+            coop: '<green>コープにします</green>'
+            trust: '<green>信頼します</green>'
+            change: '<gray>クリックで切り替え</gray>'
           tips:
             LEFT:
               name: '<aqua>左クリック</aqua>'

@@ -879,6 +879,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Kattints</aqua> <green>a műveletekhez</green>'
+          kick: '<red>Játékos kirúgása</red>'
+          setowner: '<gold>Tulajdonossá tétel</gold>'
+          leave: '<red>Csapat elhagyása</red>'
+          accept: '<green>Elfogadás</green>'
+          reject: '<red>Elutasítás</red>'
+          back: '<white>Vissza</white>'
         tips:
           LEFT:
             name: '<aqua>Bal Kattintás</aqua>'
@@ -979,6 +987,12 @@ commands:
               <aqua>Keresés</aqua>
               <red>[name]</red>
           enter-name: '<green>Írd be a nevet:</green>'
+          mode:
+            name: '<white>Játékosra kattintva</white>'
+            invite: '<green>Meghívod a csapatodba</green>'
+            coop: '<green>Együttműködővé teszed</green>'
+            trust: '<green>Megbízottá teszed</green>'
+            change: '<gray>Kattints a váltáshoz</gray>'
           tips:
             LEFT:
               name: '<aqua>Bal Kattintás</aqua>'
