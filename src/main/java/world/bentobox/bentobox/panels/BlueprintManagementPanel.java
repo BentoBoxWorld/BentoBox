@@ -87,7 +87,7 @@ public class BlueprintManagementPanel {
      * @return translation
      */
     private String t(String t) {
-        return user.getTranslation("commands.admin.blueprint.management." + t);
+        return user.getTranslation(MANAGEMENT + t);
     }
 
     /**
@@ -97,7 +97,7 @@ public class BlueprintManagementPanel {
      * @return translation
      */
     private String t(String t, String... vars) {
-        return user.getTranslation("commands.admin.blueprint.management." + t, vars);
+        return user.getTranslation(MANAGEMENT + t, vars);
     }
 
     /**
@@ -470,7 +470,7 @@ public class BlueprintManagementPanel {
                             plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                             openBB(bb);
                         } else if (selected == null) {
-                            u.sendMessage("commands.admin.blueprint.management.select-first");
+                            u.sendMessage(MANAGEMENT + "select-first");
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                         } else {
                             // Add
@@ -545,22 +545,36 @@ public class BlueprintManagementPanel {
 
     private void askName(User whom, GameModeAddon addon, @Nullable Blueprint bp, @Nullable BlueprintBundle bb) {
         // The default bundle keeps its id whatever it is called
-        boolean keepId = bb != null && bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME);
-        String current = "";
-        if (bp != null) {
-            current = bp.getDisplayName() == null ? bp.getName() : bp.getDisplayName();
-        } else if (bb != null) {
-            current = bb.getDisplayName();
-        }
-        Prompts.text(whom).title(MANAGEMENT + "name.title").initial(editable(current))
-                .validate(name -> Util.stripColor(Util.translateColorCodes(name)).length() > MAX_NAME_LENGTH
-                        ? t("name.too-long")
-                        : null)
-                .validate(name -> !keepId && isBundleIdTaken(addon, Util.sanitizeInput(name), bp == null ? bb : null)
+        String fixedId = bb != null && bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)
+                ? bb.getUniqueId()
+                : null;
+        // A bundle being renamed may keep its own id; a blueprint has no claim on one
+        BlueprintBundle renaming = bp == null ? bb : null;
+        Prompts.text(whom).title(MANAGEMENT + "name.title").initial(editable(currentName(bp, bb)))
+                .validate(this::checkNameLength)
+                .validate(name -> fixedId == null && isBundleIdTaken(addon, Util.sanitizeInput(name), renaming)
                         ? t("name.pick-a-unique-name")
                         : null)
-                .onSubmit(name -> named(whom, addon, bp, bb, keepId ? bb.getUniqueId() : Util.sanitizeInput(name), name))
+                .onSubmit(name -> named(whom, addon, bp, bb, fixedId == null ? Util.sanitizeInput(name) : fixedId, name))
                 .onCancel(() -> reopen(whom, addon, bp == null ? null : bb)).open();
+    }
+
+    /**
+     * @return the name being edited, or nothing for a new bundle
+     */
+    private static String currentName(@Nullable Blueprint bp, @Nullable BlueprintBundle bb) {
+        if (bp != null) {
+            return bp.getDisplayName() == null ? bp.getName() : bp.getDisplayName();
+        }
+        return bb == null ? "" : bb.getDisplayName();
+    }
+
+    /**
+     * @return a message if the name is too long once its colors are removed, otherwise null
+     */
+    @Nullable
+    private String checkNameLength(String name) {
+        return Util.stripColor(Util.translateColorCodes(name)).length() > MAX_NAME_LENGTH ? t("name.too-long") : null;
     }
 
     /**

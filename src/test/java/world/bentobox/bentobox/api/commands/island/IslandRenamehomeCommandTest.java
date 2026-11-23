@@ -59,7 +59,8 @@ class IslandRenamehomeCommandTest extends RanksManagerTestSetup {
         when(ic.getPermissionPrefix()).thenReturn("permission.");
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(anyString())).thenReturn(Optional.empty());
-        when(ic.getAddon()).thenReturn(mock(GameModeAddon.class));
+        GameModeAddon addon = mock(GameModeAddon.class);
+        when(ic.getAddon()).thenReturn(addon);
         when(ic.getTopLabel()).thenReturn("island");
         when(ic.getWorld()).thenReturn(world);
 
