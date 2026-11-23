@@ -529,21 +529,26 @@ public class IslandTeamGUI {
                 .build();
     }
 
+    /** @return true if this member is the player looking at the panel */
+    private boolean isViewer(User member) {
+        return Objects.equals(user.getUniqueId(), member.getUniqueId());
+    }
+
     /** @return true if the viewer may kick (or uncoop, or untrust) this member */
     private boolean canKick(Island is, User member) {
-        return user.hasPermission(parent.getKickCommand().getPermission()) && !user.equals(member)
+        return user.hasPermission(parent.getKickCommand().getPermission()) && !isViewer(member)
                 && is.getRank(user) >= is.getRankCommand(parent.getLabel() + " kick");
     }
 
     /** @return true if the viewer owns the island and may hand it to this member */
     private boolean canSetOwner(Island is, User member) {
-        return user.hasPermission(parent.getSetOwnerCommand().getPermission()) && !user.equals(member)
+        return user.hasPermission(parent.getSetOwnerCommand().getPermission()) && !isViewer(member)
                 && is.getRank(user) >= RanksManager.OWNER_RANK && is.getRank(member) >= RanksManager.MEMBER_RANK;
     }
 
     /** @return true if this member is the viewer and the viewer may leave the team */
     private boolean canLeave(Island is, User member) {
-        return user.hasPermission(parent.getLeaveCommand().getPermission()) && user.equals(member)
+        return user.hasPermission(parent.getLeaveCommand().getPermission()) && isViewer(member)
                 && is.getRank(user) < RanksManager.OWNER_RANK;
     }
 

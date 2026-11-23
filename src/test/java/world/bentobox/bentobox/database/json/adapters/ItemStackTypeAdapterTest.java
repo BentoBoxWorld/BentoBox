@@ -188,6 +188,12 @@ class ItemStackTypeAdapterTest extends CommonTestSetup {
     }
 
     @Test
+    void recoverMaterialIgnoresTrailingWhitespace() {
+        String yaml = "is:\n  ==: org.bukkit.inventory.ItemStack\n  type: 'STONE'  \t\n";
+        assertEquals(Material.STONE, ItemStackTypeAdapter.recoverMaterial(yaml));
+    }
+
+    @Test
     void recoverMaterialReturnsNullForUnknownMaterial() {
         String yaml = """
                 is:
