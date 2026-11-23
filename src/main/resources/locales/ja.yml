@@ -470,6 +470,7 @@ commands:
         new-bundle: 新しいバンドル
         new-bundle-instructions: クリックして新しいバンドルを作成します
         name:
+          title: '名前を入力してください'
           quit: やめる
           prompt: 名前を入力するか、「quit」で終了します
           too-long: '<red>長すぎる</red>'
@@ -478,6 +479,7 @@ commands:
           success: 成功！
           conversation-prefix: '>'
         description:
+          title: '[name] の説明'
           quit: やめる
           instructions: |
             [name]に複数行の説明を入力してください
@@ -507,6 +509,11 @@ commands:
         edit-commands: クリックしてコマンドを編集
         no-commands: コマンドが設定されていません
         commands:
+          title: '[name] のコマンド'
+          help: |
+            <white>このバンドルが貼り付けられたときに実行するコマンドです。1行に1つ入力します。</white>
+            <white>プレースホルダー <green>[player]</green> と <green>[owner]</green> が使えます。</white>
+            <white>先頭に <green>[SUDO]</green> を付けるとプレイヤーとして実行します。</white>
           quit: 終了
           clear: クリア
           instructions: |
@@ -2133,6 +2140,22 @@ panels:
     click-to-toggle: '<yellow>クリックして切り替えます。</yellow>'
     left-click-to-cycle-down: '<yellow>左クリックして下にサイクリングします。</yellow>'
     right-click-to-cycle-up: '<yellow>右クリックして上にサイクリングします。</yellow>'
+prompts:
+  buttons:
+    submit: '<green>送信</green>'
+  chat:
+    instructions: '<gray>チャットに答えを入力してください。キャンセルするには </gray><aqua>[cancel]</aqua><gray> と入力します。</gray>'
+    lines-instructions: '<gray>チャットに1行ずつ入力してください。終了するには </gray><aqua>[done]</aqua><gray>、キャンセルするには </gray><aqua>[cancel]</aqua><gray> と入力します。</gray>'
+    confirm-instructions: '<gray>確認するにはチャットに </gray><aqua>[confirm]</aqua><gray> と入力してください。それ以外はキャンセルになります。</gray>'
+    cancel-word: 'キャンセル'
+    done-word: '完了'
+    confirm-word: '確認'
+    timed-out: '<red>応答がありません - リクエストはキャンセルされました。</red>'
+  errors:
+    empty: '<red>先に何か入力してください。</red>'
+    too-long: '<red>長すぎます。上限は[number]文字です。</red>'
+    not-a-number: '<red>有効な数値ではありません。</red>'
+    out-of-range: '<red>[min]から[max]までの数値を入力してください。</red>'
 successfully-loaded: |
 
   <gold>____ _ ____</gold>

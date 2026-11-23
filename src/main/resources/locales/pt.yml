@@ -531,6 +531,7 @@ commands:
         new-bundle: Novo pacote
         new-bundle-instructions: Clique para fazer um novo pacote
         name:
+          title: 'Insira um nome'
           quit: desistir
           prompt: Digite um nome ou 'quit' para sair
           too-long: '<red>Nome muito longo. Apenas 32 caracteres são permitidos.</red>'
@@ -541,6 +542,7 @@ commands:
           success: Sucesso!
           conversation-prefix: '>'
         description:
+          title: 'Descrição de [name]'
           quit: desistir
           instructions: |
             Insira uma descrição de várias linhas para [name]
@@ -570,6 +572,11 @@ commands:
         edit-commands: Clica para editar comandos
         no-commands: Nenhum comando definido
         commands:
+          title: 'Comandos de [name]'
+          help: |
+            <white>Comandos executados quando este pacote é colado, um por linha.</white>
+            <white>Suporta os marcadores <green>[player]</green> e <green>[owner]</green>.</white>
+            <white>Coloque <green>[SUDO]</green> antes para executar como o jogador.</white>
           quit: sair
           clear: limpar
           instructions: |
@@ -2289,6 +2296,22 @@ panels:
     click-to-toggle: '<yellow>Clique </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clique Esquerdo </yellow><gray>para ciclar para baixo.</gray>'
     right-click-to-cycle-up: '<yellow>Clique com o botão direito </yellow><gray>para girar para cima.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Enviar</green>'
+  chat:
+    instructions: '<gray>Escreva a sua resposta no chat, ou escreva </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    lines-instructions: '<gray>Escreva uma linha de cada vez no chat. Escreva </gray><aqua>[done]</aqua><gray> para terminar ou </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    confirm-instructions: '<gray>Escreva </gray><aqua>[confirm]</aqua><gray> no chat para confirmar. Qualquer outra coisa cancela.</gray>'
+    cancel-word: 'cancelar'
+    done-word: 'concluir'
+    confirm-word: 'confirmar'
+    timed-out: '<red>Sem resposta - pedido cancelado.</red>'
+  errors:
+    empty: '<red>Escreva algo primeiro.</red>'
+    too-long: '<red>É demasiado longo. O limite é de [number] caracteres.</red>'
+    not-a-number: '<red>Isso não é um número válido.</red>'
+    out-of-range: '<red>Insira um número de [min] a [max].</red>'
 successfully-loaded: >
 
   <gold>____ _ ____</gold>

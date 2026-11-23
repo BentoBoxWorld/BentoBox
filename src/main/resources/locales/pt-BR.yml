@@ -526,6 +526,7 @@ commands:
         new-bundle: Novo Pacote
         new-bundle-instructions: Clique para fazer um novo pacote
         name:
+          title: 'Digite um nome'
           quit: sair
           prompt: Digite um nome, ou 'quit' para sair
           too-long: '<red>Muito comprido</red>'
@@ -536,6 +537,7 @@ commands:
           success: Sucesso!
           conversation-prefix: '>'
         description:
+          title: 'Descrição de [name]'
           quit: sair
           instructions: |
             Digite uma descrição de várias linhas para [name]
@@ -565,6 +567,11 @@ commands:
         edit-commands: Clique para editar comandos
         no-commands: Nenhum comando definido
         commands:
+          title: 'Comandos de [name]'
+          help: |
+            <white>Comandos executados quando este pacote é colado, um por linha.</white>
+            <white>Suporta os placeholders <green>[player]</green> e <green>[owner]</green>.</white>
+            <white>Coloque <green>[SUDO]</green> na frente para executar como o jogador.</white>
           quit: sair
           clear: limpar
           instructions: |
@@ -2257,6 +2264,22 @@ panels:
     click-to-toggle: '<yellow>Clique </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clique Esquerdo </yellow><gray>para girar para baixo.</gray>'
     right-click-to-cycle-up: '<yellow>Clique Direito </yellow><gray>para alternar para cima.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Enviar</green>'
+  chat:
+    instructions: '<gray>Digite sua resposta no chat, ou digite </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    lines-instructions: '<gray>Digite uma linha por vez no chat. Digite </gray><aqua>[done]</aqua><gray> para terminar ou </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    confirm-instructions: '<gray>Digite </gray><aqua>[confirm]</aqua><gray> no chat para confirmar. Qualquer outra coisa cancela.</gray>'
+    cancel-word: 'cancelar'
+    done-word: 'pronto'
+    confirm-word: 'confirmar'
+    timed-out: '<red>Sem resposta - pedido cancelado.</red>'
+  errors:
+    empty: '<red>Digite algo primeiro.</red>'
+    too-long: '<red>É longo demais. O limite é de [number] caracteres.</red>'
+    not-a-number: '<red>Isso não é um número válido.</red>'
+    out-of-range: '<red>Digite um número de [min] a [max].</red>'
 successfully-loaded: >
 
   <gold>  ____             _        ____</gold>

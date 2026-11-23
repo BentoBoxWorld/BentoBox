@@ -515,6 +515,7 @@ commands:
         new-bundle: Nový balík
         new-bundle-instructions: Klikni pro vytvoření nového balíku
         name:
+          title: 'Zadejte název'
           quit: přestat
           prompt: Napiš jméno, nebo 'quit' ke zrušení
           too-long: '<red>Příliš dlouhé</red>'
@@ -525,6 +526,7 @@ commands:
           success: Povedlo se!
           conversation-prefix: '>'
         description:
+          title: 'Popis: [name]'
           quit: přestat
           instructions: |
             Napiš víceřádkový popis pro [name]
@@ -554,6 +556,11 @@ commands:
         edit-commands: Klikněte pro úpravu příkazů
         no-commands: Žádné příkazy nastaveny
         commands:
+          title: 'Příkazy: [name]'
+          help: |
+            <white>Příkazy spuštěné při vložení tohoto balíku, jeden na řádek.</white>
+            <white>Podporuje zástupné symboly <green>[player]</green> a <green>[owner]</green>.</white>
+            <white>Předponou <green>[SUDO]</green> se příkaz spustí jako hráč.</white>
           quit: konec
           clear: vymazat
           instructions: |
@@ -2223,6 +2230,22 @@ panels:
     click-to-toggle: '<yellow>Kliknutím přepínáte.</yellow>'
     left-click-to-cycle-down: '<yellow>Levé kliknutí na cyklus dolů.</yellow>'
     right-click-to-cycle-up: '<yellow>Kliknutím pravým tlačítkem je cyklujte nahoru.</yellow>'
+prompts:
+  buttons:
+    submit: '<green>Odeslat</green>'
+  chat:
+    instructions: '<gray>Napište odpověď do chatu, nebo napište </gray><aqua>[cancel]</aqua><gray> pro zrušení.</gray>'
+    lines-instructions: '<gray>Pište do chatu jeden řádek po druhém. Napište </gray><aqua>[done]</aqua><gray> pro dokončení, nebo </gray><aqua>[cancel]</aqua><gray> pro zrušení.</gray>'
+    confirm-instructions: '<gray>Napište do chatu </gray><aqua>[confirm]</aqua><gray> pro potvrzení. Cokoli jiného akci zruší.</gray>'
+    cancel-word: 'zrušit'
+    done-word: 'hotovo'
+    confirm-word: 'potvrdit'
+    timed-out: '<red>Žádná odpověď - požadavek zrušen.</red>'
+  errors:
+    empty: '<red>Nejprve něco napište.</red>'
+    too-long: '<red>To je příliš dlouhé. Limit je [number] znaků.</red>'
+    not-a-number: '<red>To není platné číslo.</red>'
+    out-of-range: '<red>Zadejte číslo od [min] do [max].</red>'
 successfully-loaded: >
 
   <gold>  ____             _        ____</gold>

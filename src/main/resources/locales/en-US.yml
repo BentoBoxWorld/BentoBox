@@ -492,6 +492,7 @@ commands:
         new-bundle: New Bundle
         new-bundle-instructions: Click to make a new bundle
         name:
+          title: Enter a name
           quit: quit
           prompt: Enter a name, or 'quit' to quit
           too-long: '<red>Too long name. Only 32 chars are allowed.</red>'
@@ -501,6 +502,7 @@ commands:
           success: Success!
           conversation-prefix: '>'
         description:
+          title: Description of [name]
           quit: quit
           instructions: |
             Enter a multi line description for [name]
@@ -530,6 +532,11 @@ commands:
         next-page: '<white>Next Page</white>'
         previous-page: '<white>Previous Page</white>'
         commands:
+          title: Commands for [name]
+          help: |
+            <white>Commands to run when this bundle is pasted, one per line.</white>
+            <white>Supports <green>[player]</green> and <green>[owner]</green> placeholders.</white>
+            <white>Prefix with <green>[SUDO]</green> to run as the player.</white>
           quit: quit
           clear: clear
           instructions: |
@@ -2256,6 +2263,22 @@ panels:
     click-to-toggle: '<yellow>Click </yellow><gray>to toggle.</gray>'
     left-click-to-cycle-down: '<yellow>Left Click </yellow><gray>to cycle downwards.</gray>'
     right-click-to-cycle-up: '<yellow>Right Click </yellow><gray>to cycle upwards.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Submit</green>'
+  chat:
+    instructions: '<gray>Type your answer in chat, or type </gray><aqua>[cancel]</aqua><gray> to cancel.</gray>'
+    lines-instructions: '<gray>Type one line at a time in chat. Type </gray><aqua>[done]</aqua><gray> to finish, or </gray><aqua>[cancel]</aqua><gray> to cancel.</gray>'
+    confirm-instructions: '<gray>Type </gray><aqua>[confirm]</aqua><gray> in chat to confirm. Anything else cancels.</gray>'
+    cancel-word: cancel
+    done-word: done
+    confirm-word: confirm
+    timed-out: '<red>No answer - request cancelled.</red>'
+  errors:
+    empty: '<red>Type something first.</red>'
+    too-long: '<red>That is too long. The limit is [number] characters.</red>'
+    not-a-number: '<red>That is not a valid number.</red>'
+    out-of-range: '<red>Enter a number from [min] to [max].</red>'
 
 successfully-loaded: |2
 

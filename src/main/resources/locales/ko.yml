@@ -486,6 +486,7 @@ commands:
         new-bundle: 새 번들
         new-bundle-instructions: 클릭하여 새 번들을 만듭니다
         name:
+          title: '이름을 입력하세요'
           quit: 나가기
           prompt: 이름을 입력하세요, quit를 입력하여 종료할수 있습니다
           too-long: '<red>너무 깁니다</red>'
@@ -494,6 +495,7 @@ commands:
           success: 완료!
           conversation-prefix: '>'
         description:
+          title: '[name] 설명'
           quit: 나가기
           instructions: |
             [name] 의 설명을 작성합니다. 작성후 엔터로 줄을 내릴수있습니다.
@@ -523,6 +525,11 @@ commands:
         edit-commands: 클릭하여 명령어 편집
         no-commands: 설정된 명령어 없음
         commands:
+          title: '[name] 명령어'
+          help: |
+            <white>이 번들을 붙여넣을 때 실행할 명령어입니다. 한 줄에 하나씩 입력하세요.</white>
+            <white><green>[player]</green> 및 <green>[owner]</green> 플레이스홀더를 지원합니다.</white>
+            <white>앞에 <green>[SUDO]</green> 를 붙이면 플레이어로 실행합니다.</white>
           quit: 종료
           clear: 지우기
           instructions: |
@@ -2123,6 +2130,22 @@ panels:
     click-to-toggle: '<yellow>클릭 </yellow><gray>해서 전환하세요.</gray>'
     left-click-to-cycle-down: '<yellow>왼쪽 클릭 </yellow><gray>하여 아래로 순환하세요.</gray>'
     right-click-to-cycle-up: '<yellow>오른쪽 클릭 </yellow><gray>하여 위로 순환합니다.</gray>'
+prompts:
+  buttons:
+    submit: '<green>제출</green>'
+  chat:
+    instructions: '<gray>채팅에 답을 입력하세요. 취소하려면 </gray><aqua>[cancel]</aqua><gray> 를 입력하세요.</gray>'
+    lines-instructions: '<gray>채팅에 한 줄씩 입력하세요. 끝내려면 </gray><aqua>[done]</aqua><gray>, 취소하려면 </gray><aqua>[cancel]</aqua><gray> 를 입력하세요.</gray>'
+    confirm-instructions: '<gray>확인하려면 채팅에 </gray><aqua>[confirm]</aqua><gray> 를 입력하세요. 다른 입력은 취소됩니다.</gray>'
+    cancel-word: '취소'
+    done-word: '완료'
+    confirm-word: '확인'
+    timed-out: '<red>응답 없음 - 요청이 취소되었습니다.</red>'
+  errors:
+    empty: '<red>먼저 내용을 입력하세요.</red>'
+    too-long: '<red>너무 깁니다. 최대 [number]자입니다.</red>'
+    not-a-number: '<red>올바른 숫자가 아닙니다.</red>'
+    out-of-range: '<red>[min]에서 [max] 사이의 숫자를 입력하세요.</red>'
 successfully-loaded: >
 
   <gold>  ____             _        ____</gold>

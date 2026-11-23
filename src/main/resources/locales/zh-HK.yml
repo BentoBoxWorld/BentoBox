@@ -483,6 +483,7 @@ commands:
           <gray>三個世界的藍圖的捆綁包。</gray>
           <gray>它將出現在玩家創建島嶼界面中。</gray>
         name:
+          title: '請輸入名稱'
           quit: 退出
           prompt: '<yellow>請輸入新名稱， 或 “</yellow><aqua>quit</aqua><yellow>” 來退出編輯。</yellow>'
           too-long: '<red>新名稱太長了！</red>'
@@ -491,6 +492,7 @@ commands:
           success: '<green>成功！</green>'
           conversation-prefix: '<dark_aqua>> </dark_aqua>'
         description:
+          title: '[name] 的描述'
           quit: 退出
           instructions: |-
             <yellow>請為 </yellow><aqua>[name] </aqua><yellow>輸入描述， 每輸入一次為一行。</yellow>
@@ -520,6 +522,11 @@ commands:
         edit-commands: 點擊編輯命令
         no-commands: 未設定命令
         commands:
+          title: '[name] 的指令'
+          help: |
+            <white>貼上此藍圖方案時執行的指令, 每行一條.</white>
+            <white>支援佔位符 <green>[player]</green> 和 <green>[owner]</green>.</white>
+            <white>在前面加上 <green>[SUDO]</green> 可以玩家身份執行.</white>
           quit: 退出
           clear: 清除
           instructions: |
@@ -2051,6 +2058,22 @@ panels:
     click-to-toggle: '<yellow>單擊切換。</yellow>'
     left-click-to-cycle-down: '<yellow>左鍵單擊以向下循環。</yellow>'
     right-click-to-cycle-up: '<yellow>右鍵單擊以向上循環。</yellow>'
+prompts:
+  buttons:
+    submit: '<green>提交</green>'
+  chat:
+    instructions: '<gray>請在聊天欄輸入你的回答, 或輸入 </gray><aqua>[cancel]</aqua><gray> 取消.</gray>'
+    lines-instructions: '<gray>請在聊天欄每次輸入一行. 輸入 </gray><aqua>[done]</aqua><gray> 完成, 或輸入 </gray><aqua>[cancel]</aqua><gray> 取消.</gray>'
+    confirm-instructions: '<gray>請在聊天欄輸入 </gray><aqua>[confirm]</aqua><gray> 以確認. 輸入其他內容將取消.</gray>'
+    cancel-word: '取消'
+    done-word: '完成'
+    confirm-word: '確認'
+    timed-out: '<red>沒有回答 - 請求已取消.</red>'
+  errors:
+    empty: '<red>請先輸入內容.</red>'
+    too-long: '<red>太長了. 最多 [number] 個字元.</red>'
+    not-a-number: '<red>這不是有效的數字.</red>'
+    out-of-range: '<red>請輸入 [min] 到 [max] 之間的數字.</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>

@@ -13,7 +13,10 @@ import world.bentobox.bentobox.api.user.User;
  * Require a confirmation in chat
  * @author tastybento
  *
+ * @deprecated Paper is removing {@code org.bukkit.conversations}, which this class is built on.
+ *             Use {@link world.bentobox.bentobox.api.prompts.Prompts#confirm(world.bentobox.bentobox.api.user.User)} instead.
  */
+@Deprecated(since = "3.25.0", forRemoval = true)
 public class ConfirmPrompt extends StringPrompt {
 
     @NonNull

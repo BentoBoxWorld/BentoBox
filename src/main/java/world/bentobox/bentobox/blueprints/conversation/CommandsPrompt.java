@@ -21,7 +21,10 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
  * Typing "clear" removes all previously entered commands in this session.
  * @author tastybento
  * @since 2.6.0
+ * @deprecated Paper is removing {@code org.bukkit.conversations}, which this class is built on.
+ *             Use the prompts in {@link world.bentobox.bentobox.panels.BlueprintManagementPanel} instead.
  */
+@Deprecated(since = "3.25.0", forRemoval = true)
 public class CommandsPrompt extends StringPrompt {
 
     private static final String COMMANDS = "commands";

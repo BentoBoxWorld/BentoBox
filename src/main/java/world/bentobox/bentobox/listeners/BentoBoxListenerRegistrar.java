@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners;
 import org.bukkit.plugin.PluginManager;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.prompts.ChatInputListener;
 import world.bentobox.bentobox.listeners.flags.protection.CushionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
@@ -38,6 +39,7 @@ public class BentoBoxListenerRegistrar {
         manager.registerEvents(new BannedCommands(plugin), plugin);
         manager.registerEvents(new DeathListener(plugin), plugin);
         manager.registerEvents(new DidYouMeanListener(plugin), plugin);
+        manager.registerEvents(new ChatInputListener(), plugin);
         // Register the plugin itself for any listeners it implements (e.g. MV unregister)
         manager.registerEvents(plugin, plugin);
         islandDeletionManager = new IslandDeletionManager(plugin);

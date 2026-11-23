@@ -532,6 +532,7 @@ commands:
         new-bundle: Paket Baru
         new-bundle-instructions: Klik untuk membuat bundel baru
         name:
+          title: 'Masukkan nama'
           quit: berhenti
           prompt: Masukkan nama, atau 'keluar' untuk keluar
           too-long: '<red>Nama terlalu panjang. Hanya 32 karakter yang diperbolehkan.</red>'
@@ -542,6 +543,7 @@ commands:
           success: Kesuksesan!
           conversation-prefix: '>'
         description:
+          title: 'Deskripsi [name]'
           quit: berhenti
           instructions: >
             Masukkan deskripsi multi baris untuk [name]
@@ -573,6 +575,11 @@ commands:
         edit-commands: Klik untuk mengedit perintah
         no-commands: Tidak ada perintah yang ditetapkan
         commands:
+          title: 'Perintah untuk [name]'
+          help: |
+            <white>Perintah yang dijalankan saat paket ini ditempel, satu per baris.</white>
+            <white>Mendukung placeholder <green>[player]</green> dan <green>[owner]</green>.</white>
+            <white>Awali dengan <green>[SUDO]</green> untuk menjalankannya sebagai pemain.</white>
           quit: keluar
           clear: hapus
           instructions: |
@@ -2291,6 +2298,22 @@ panels:
     click-to-toggle: '<yellow>Klik </yellow><gray>untuk mengubah.</gray>'
     left-click-to-cycle-down: '<yellow>Klik Kiri </yellow><gray>untuk berputar ke bawah.</gray>'
     right-click-to-cycle-up: '<yellow>Klik Kanan </yellow><gray>untuk berputar ke atas.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Kirim</green>'
+  chat:
+    instructions: '<gray>Ketik jawabanmu di obrolan, atau ketik </gray><aqua>[cancel]</aqua><gray> untuk membatalkan.</gray>'
+    lines-instructions: '<gray>Ketik satu baris setiap kali di obrolan. Ketik </gray><aqua>[done]</aqua><gray> untuk selesai, atau </gray><aqua>[cancel]</aqua><gray> untuk membatalkan.</gray>'
+    confirm-instructions: '<gray>Ketik </gray><aqua>[confirm]</aqua><gray> di obrolan untuk mengonfirmasi. Jawaban lain akan membatalkan.</gray>'
+    cancel-word: 'batal'
+    done-word: 'selesai'
+    confirm-word: 'konfirmasi'
+    timed-out: '<red>Tidak ada jawaban - permintaan dibatalkan.</red>'
+  errors:
+    empty: '<red>Ketik sesuatu terlebih dahulu.</red>'
+    too-long: '<red>Terlalu panjang. Batasnya [number] karakter.</red>'
+    not-a-number: '<red>Itu bukan angka yang valid.</red>'
+    out-of-range: '<red>Masukkan angka dari [min] sampai [max].</red>'
 successfully-loaded: |
 
   <gold>____ _ ____</gold>

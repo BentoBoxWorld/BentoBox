@@ -267,6 +267,10 @@ island:
     # more than one game mode is installed. Off by default: it is intrusive and
     # clicking a game runs that game mode's command for the player.
     game-mode-selection: false
+    # Ask for typed input, such as a name, a number or a description, in a dialog
+    # with a text box instead of asking the player to type it in chat.
+    # Added since 3.25.0.
+    prompts: true
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0

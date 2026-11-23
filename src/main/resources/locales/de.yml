@@ -543,6 +543,7 @@ commands:
         new-bundle: Neues Bundle
         new-bundle-instructions: Zum Erstellen eines neuen Bundles anklicken
         name:
+          title: 'Namen eingeben'
           quit: Beenden
           prompt: Gib einen Namen ein, oder 'quit' zum Beenden
           too-long: '<red>Zu lang</red>'
@@ -553,6 +554,7 @@ commands:
           success: Erfolg!
           conversation-prefix: '>'
         description:
+          title: 'Beschreibung von [name]'
           quit: Beenden
           instructions: |-
             Gib eine mehrzeilige Beschreibung für [name] ein.
@@ -582,6 +584,11 @@ commands:
         edit-commands: Klicke um Befehle zu bearbeiten
         no-commands: Keine Befehle gesetzt
         commands:
+          title: 'Befehle für [name]'
+          help: |
+            <white>Befehle, die beim Einfügen dieses Bundles ausgeführt werden, einer pro Zeile.</white>
+            <white>Unterstützt die Platzhalter <green>[player]</green> und <green>[owner]</green>.</white>
+            <white>Mit <green>[SUDO]</green> davor wird der Befehl als Spieler ausgeführt.</white>
           quit: beenden
           clear: leeren
           instructions: |
@@ -2310,6 +2317,22 @@ panels:
     click-to-toggle: '<yellow>Klicken</yellow><gray>zum Umschalten.</gray>'
     left-click-to-cycle-down: '<yellow>Linksklicken </yellow><gray>, um nach unten zu blättern.</gray>'
     right-click-to-cycle-up: '<yellow>Rechtsklicken </yellow><gray>, um nach oben zu blättern.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Absenden</green>'
+  chat:
+    instructions: '<gray>Gib deine Antwort im Chat ein oder tippe </gray><aqua>[cancel]</aqua><gray> zum Abbrechen.</gray>'
+    lines-instructions: '<gray>Gib im Chat jeweils eine Zeile ein. Tippe </gray><aqua>[done]</aqua><gray> zum Beenden oder </gray><aqua>[cancel]</aqua><gray> zum Abbrechen.</gray>'
+    confirm-instructions: '<gray>Tippe </gray><aqua>[confirm]</aqua><gray> im Chat, um zu bestätigen. Alles andere bricht ab.</gray>'
+    cancel-word: 'abbrechen'
+    done-word: 'fertig'
+    confirm-word: 'bestätigen'
+    timed-out: '<red>Keine Antwort - Anfrage abgebrochen.</red>'
+  errors:
+    empty: '<red>Gib zuerst etwas ein.</red>'
+    too-long: '<red>Das ist zu lang. Erlaubt sind höchstens [number] Zeichen.</red>'
+    not-a-number: '<red>Das ist keine gültige Zahl.</red>'
+    out-of-range: '<red>Gib eine Zahl von [min] bis [max] ein.</red>'
 successfully-loaded: >-
   <gold>  ____             _        ____</gold>
 

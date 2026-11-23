@@ -527,6 +527,7 @@ commands:
         new-bundle: Новый сборник
         new-bundle-instructions: Кликните для создания нового сборника
         name:
+          title: 'Введите название'
           quit: выйти
           prompt: Введите имя, или "выйти" для выхода
           too-long: <red>Слишком длинное имя. Установить можно до 32 знаков.</red>
@@ -536,6 +537,7 @@ commands:
           success: Успех!
           conversation-prefix: '>'
         description:
+          title: 'Описание: [name]'
           quit: выйти
           instructions: |-
             введите многострочное описание для [name]
@@ -565,6 +567,11 @@ commands:
         edit-commands: Нажмите для редактирования команд
         no-commands: Команды не установлены
         commands:
+          title: 'Команды: [name]'
+          help: |
+            <white>Команды, выполняемые при вставке этого сборника, по одной в строке.</white>
+            <white>Поддерживает заполнители <green>[player]</green> и <green>[owner]</green>.</white>
+            <white>Добавьте <green>[SUDO]</green> в начало, чтобы выполнить от имени игрока.</white>
           quit: выйти
           clear: очистить
           instructions: |-
@@ -2340,6 +2347,22 @@ panels:
     left-click-to-cycle-down: <gray><yellow>ЛКМ</yellow>, чтобы прокрутить вниз.</gray>
     right-click-to-cycle-up: <gray><yellow>ПКМ</yellow>, чтобы прокрутить вверх.</gray>
 
+prompts:
+  buttons:
+    submit: '<green>Отправить</green>'
+  chat:
+    instructions: '<gray>Введите ответ в чат или введите </gray><aqua>[cancel]</aqua><gray> для отмены.</gray>'
+    lines-instructions: '<gray>Вводите в чат по одной строке. Введите </gray><aqua>[done]</aqua><gray>, чтобы закончить, или </gray><aqua>[cancel]</aqua><gray> для отмены.</gray>'
+    confirm-instructions: '<gray>Введите </gray><aqua>[confirm]</aqua><gray> в чат для подтверждения. Любой другой ответ отменяет действие.</gray>'
+    cancel-word: 'отмена'
+    done-word: 'готово'
+    confirm-word: 'подтвердить'
+    timed-out: '<red>Нет ответа - запрос отменён.</red>'
+  errors:
+    empty: '<red>Сначала введите что-нибудь.</red>'
+    too-long: '<red>Слишком длинно. Лимит - [number] символов.</red>'
+    not-a-number: '<red>Это не допустимое число.</red>'
+    out-of-range: '<red>Введите число от [min] до [max].</red>'
 successfully-loaded: |2
 
   <gold>  ____             _        ____              </gold>

@@ -524,6 +524,7 @@ commands:
         new-bundle: Yeni paket
         new-bundle-instructions: Tıkla ve yeni paket oluştur.
         name:
+          title: 'Bir isim gir'
           quit: çık
           prompt: İsim gir ya da çıkmak için 'quit' yaz.
           too-long: '<red>Çok uzun.</red>'
@@ -534,6 +535,7 @@ commands:
           success: Başarılı!
           conversation-prefix: '>'
         description:
+          title: '[name] açıklaması'
           quit: çık
           instructions: |
             [name] için çok satırlı bir açıklama girin.
@@ -563,6 +565,11 @@ commands:
         edit-commands: Komutları düzenlemek için tıklayın
         no-commands: Ayarlanmış komut yok
         commands:
+          title: '[name] komutları'
+          help: |
+            <white>Bu paket yapıştırıldığında çalıştırılacak komutlar, her satıra bir tane.</white>
+            <white><green>[player]</green> ve <green>[owner]</green> yer tutucularını destekler.</white>
+            <white>Oyuncu olarak çalıştırmak için başına <green>[SUDO]</green> ekle.</white>
           quit: çıkış
           clear: temizle
           instructions: |
@@ -2150,6 +2157,22 @@ panels:
     click-to-toggle: '<yellow>Tıklayın </yellow><gray>açıp kapatmak için.</gray>'
     left-click-to-cycle-down: '<yellow>Sol Tıkla </yellow><gray>aşağı döngü yapmak için.</gray>'
     right-click-to-cycle-up: '<yellow>Sağ Tıkla </yellow><gray>yukarı döngü yapmak için.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Gönder</green>'
+  chat:
+    instructions: '<gray>Cevabını sohbete yaz veya iptal etmek için </gray><aqua>[cancel]</aqua><gray> yaz.</gray>'
+    lines-instructions: '<gray>Sohbete her seferinde bir satır yaz. Bitirmek için </gray><aqua>[done]</aqua><gray>, iptal etmek için </gray><aqua>[cancel]</aqua><gray> yaz.</gray>'
+    confirm-instructions: '<gray>Onaylamak için sohbete </gray><aqua>[confirm]</aqua><gray> yaz. Başka her şey iptal eder.</gray>'
+    cancel-word: 'iptal'
+    done-word: 'bitti'
+    confirm-word: 'onayla'
+    timed-out: '<red>Cevap yok - istek iptal edildi.</red>'
+  errors:
+    empty: '<red>Önce bir şey yaz.</red>'
+    too-long: '<red>Bu çok uzun. Sınır [number] karakter.</red>'
+    not-a-number: '<red>Bu geçerli bir sayı değil.</red>'
+    out-of-range: '<red>[min] ile [max] arasında bir sayı gir.</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>

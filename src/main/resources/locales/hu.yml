@@ -553,6 +553,7 @@ commands:
         new-bundle: Új csomag
         new-bundle-instructions: Kattintson egy új csomag létrehozásához
         name:
+          title: 'Adjon meg egy nevet'
           quit: Kilépés
           prompt: Írjon be egy nevet, vagy a kilépéshez „kilép”.
           too-long: '<red>Túl hosszú név. Csak 32 karakter megengedett.</red>'
@@ -563,6 +564,7 @@ commands:
           success: Siker!
           conversation-prefix: '>'
         description:
+          title: 'Leírás: [name]'
           quit: kilép
           instructions: |
             Írjon be többsoros leírást a következőhöz: [name]
@@ -592,6 +594,11 @@ commands:
         edit-commands: Kattints a parancsok szerkesztéséhez
         no-commands: Nincsenek beállított parancsok
         commands:
+          title: 'Parancsok: [name]'
+          help: |
+            <white>A csomag beillesztésekor lefutó parancsok, soronként egy.</white>
+            <white>Támogatja a <green>[player]</green> és <green>[owner]</green> helyőrzőket.</white>
+            <white>A <green>[SUDO]</green> előtaggal a parancs a játékos nevében fut.</white>
           quit: kilépés
           clear: törlés
           instructions: |
@@ -2336,6 +2343,22 @@ panels:
     click-to-toggle: '<yellow>Kattints </yellow><gray>az átkapcsoláshoz.</gray>'
     left-click-to-cycle-down: '<yellow>Bal kattintás </yellow><gray>a lefelé ciklizéshez.</gray>'
     right-click-to-cycle-up: '<yellow>Jobb kattintás </yellow><gray>a felfelé forgatáshoz.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Küldés</green>'
+  chat:
+    instructions: '<gray>Írja be a válaszát a chatbe, vagy írja be: </gray><aqua>[cancel]</aqua><gray> a megszakításhoz.</gray>'
+    lines-instructions: '<gray>Egyszerre egy sort írjon a chatbe. A befejezéshez írja be: </gray><aqua>[done]</aqua><gray>, a megszakításhoz: </gray><aqua>[cancel]</aqua><gray>.</gray>'
+    confirm-instructions: '<gray>A megerősítéshez írja be a chatbe: </gray><aqua>[confirm]</aqua><gray>. Bármi más megszakítja.</gray>'
+    cancel-word: 'mégse'
+    done-word: 'kész'
+    confirm-word: 'megerősít'
+    timed-out: '<red>Nincs válasz - a kérés megszakítva.</red>'
+  errors:
+    empty: '<red>Előbb írjon be valamit.</red>'
+    too-long: '<red>Ez túl hosszú. A korlát [number] karakter.</red>'
+    not-a-number: '<red>Ez nem érvényes szám.</red>'
+    out-of-range: '<red>Adjon meg egy számot [min] és [max] között.</red>'
 successfully-loaded: |
 
   <gold>____ _ ____</gold>

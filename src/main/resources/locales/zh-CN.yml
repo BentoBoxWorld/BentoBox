@@ -484,6 +484,7 @@ commands:
           <gray>三个世界的岛屿蓝图选择</gray>
           <gray>它将出现在玩家创建岛屿界面中</gray>
         name:
+          title: '请输入名称'
           quit: 退出
           prompt: 请输入蓝图方案名称, 或输入'退出'取消创建蓝图方案
           too-long: '<red>蓝图方案名称过长, 请确保在32个字符以内.</red>'
@@ -492,6 +493,7 @@ commands:
           success: '<green>蓝图方案创建成功!</green>'
           conversation-prefix: '<white>></white>'
         description:
+          title: '[name] 的描述'
           quit: 退出
           instructions: |-
             <gray>请为</gray><aqua>[name]</aqua><gray>蓝图方案输入描述</gray>
@@ -522,6 +524,11 @@ commands:
         edit-commands: 点击编辑命令
         no-commands: 未设置命令
         commands:
+          title: '[name] 的命令'
+          help: |
+            <white>粘贴此蓝图方案时执行的命令, 每行一条.</white>
+            <white>支持占位符 <green>[player]</green> 和 <green>[owner]</green>.</white>
+            <white>在前面加上 <green>[SUDO]</green> 可以玩家身份执行.</white>
           quit: 退出
           clear: 清除
           instructions: |
@@ -2048,6 +2055,22 @@ panels:
     click-to-toggle: '<yellow>点击 </yellow><gray>切换</gray>'
     left-click-to-cycle-down: '<yellow>左键 </yellow><gray>向下循环选择</gray>'
     right-click-to-cycle-up: '<yellow>右键 </yellow><gray>向上循环选择</gray>'
+prompts:
+  buttons:
+    submit: '<green>提交</green>'
+  chat:
+    instructions: '<gray>请在聊天栏输入你的回答, 或输入 </gray><aqua>[cancel]</aqua><gray> 取消.</gray>'
+    lines-instructions: '<gray>请在聊天栏每次输入一行. 输入 </gray><aqua>[done]</aqua><gray> 完成, 或输入 </gray><aqua>[cancel]</aqua><gray> 取消.</gray>'
+    confirm-instructions: '<gray>请在聊天栏输入 </gray><aqua>[confirm]</aqua><gray> 以确认. 输入其他内容将取消.</gray>'
+    cancel-word: '取消'
+    done-word: '完成'
+    confirm-word: '确认'
+    timed-out: '<red>没有回答 - 请求已取消.</red>'
+  errors:
+    empty: '<red>请先输入内容.</red>'
+    too-long: '<red>太长了. 最多 [number] 个字符.</red>'
+    not-a-number: '<red>这不是有效的数字.</red>'
+    out-of-range: '<red>请输入 [min] 到 [max] 之间的数字.</red>'
 successfully-loaded: >-
   <gold>  ____             _        ____ </gold><gold> |  _ \           | |      |  _</gold>
   \             <gray>由</gray><green>tastybento</green><gray>和</gray><green>Poslovitch</green><gray>构建 </gray><gold> | |_) | ___ _ __ | |_ ___</gold>
