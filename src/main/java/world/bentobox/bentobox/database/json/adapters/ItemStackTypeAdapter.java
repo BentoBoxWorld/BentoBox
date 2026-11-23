@@ -28,7 +28,9 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
 
     private static final int MAX_AMOUNT = 99;
     private static final Pattern ITEM_MARKER = Pattern.compile("^(\\s*)==: org\\.bukkit\\.inventory\\.ItemStack\\s*$");
-    private static final Pattern ITEM_KEY = Pattern.compile("^(\\s*)(?:id|type):\\s*(\\S.*?)\\s*$");
+    // Trailing whitespace stays in group 2 and is trimmed by the caller: matching it here with a
+    // lazy quantifier made the pattern backtrack.
+    private static final Pattern ITEM_KEY = Pattern.compile("(\\s*)(?:id|type):\\s*(\\S.*)");
 
     @Override
     public void write(JsonWriter out, ItemStack value) throws IOException {
