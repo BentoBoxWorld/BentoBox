@@ -7,6 +7,11 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * @deprecated Paper is removing {@code org.bukkit.conversations}, which this class is built on.
+ *             Use the prompts in {@link world.bentobox.bentobox.panels.BlueprintManagementPanel} instead.
+ */
+@Deprecated(since = "3.25.0", forRemoval = true)
 public class NameConversationPrefix implements ConversationPrefix {
 
     @Override

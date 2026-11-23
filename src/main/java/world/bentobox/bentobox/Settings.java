@@ -413,6 +413,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.dialogs.game-mode-selection", since = "3.21.0")
     private boolean dialogGameModeSelection = false;
 
+    @ConfigComment("Ask for typed input, such as a name, a number or a description, in a dialog")
+    @ConfigComment("with a text box instead of asking the player to type it in chat.")
+    @ConfigEntry(path = "island.dialogs.prompts", since = "3.25.0")
+    private boolean dialogPrompts = true;
+
     @ConfigComment("Sets the minimum length an island custom name is required to have.")
     @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength = 4;
@@ -1157,6 +1162,22 @@ public class Settings implements ConfigObject {
      */
     public void setDialogGameModeSelection(boolean dialogGameModeSelection) {
         this.dialogGameModeSelection = dialogGameModeSelection;
+    }
+
+    /**
+     * @return whether typed input is asked for in a dialog instead of in chat
+     * @since 3.25.0
+     */
+    public boolean isDialogPrompts() {
+        return dialogPrompts;
+    }
+
+    /**
+     * @param dialogPrompts whether typed input is asked for in a dialog instead of in chat
+     * @since 3.25.0
+     */
+    public void setDialogPrompts(boolean dialogPrompts) {
+        this.dialogPrompts = dialogPrompts;
     }
 
     /**

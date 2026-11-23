@@ -26,8 +26,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -228,9 +226,8 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         gui.build(user);
 
         // Trigger a failed invite attempt to set searchName = "al"
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
-        prompt.acceptInput(mock(ConversationContext.class), "al");
+        gui.nameEntered("al");
 
         // Rebuild after search is set
         gui.build(user);
@@ -542,55 +539,40 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     }
 
     // -----------------------------------------------------------------------
-    // InviteNamePrompt inner class
+    // Search prompt
     // -----------------------------------------------------------------------
 
     @Test
-    void testInviteNamePrompt_getPromptText_returnsTranslation() {
+    void testNameEntered_success_invitesWithoutRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
-        ConversationContext ctx = mock(ConversationContext.class);
-
-        assertEquals("commands.island.team.invite.gui.enter-name", prompt.getPromptText(ctx));
-    }
-
-    @Test
-    void testInviteNamePrompt_acceptInput_success_endsConversationWithoutRebuild() {
-        gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
         when(itic.execute(eq(user), anyString(), anyList())).thenReturn(true);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "validPlayer");
+        gui.nameEntered("validPlayer");
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(itic).canExecute(user, "invite", List.of("validPlayer"));
         verify(itic).execute(user, "invite", List.of("validPlayer"));
         verify(sch, never()).runTaskLater(any(), any(Runnable.class), anyLong());
     }
 
     @Test
-    void testInviteNamePrompt_acceptInput_cannotExecute_schedulesRebuild() {
+    void testNameEntered_cannotExecute_schedulesRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "unknownPlayer");
+        gui.nameEntered("unknownPlayer");
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
     }
 
     @Test
-    void testInviteNamePrompt_acceptInput_executeFails_schedulesRebuild() {
+    void testNameEntered_executeFails_schedulesRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
         when(itic.execute(eq(user), anyString(), anyList())).thenReturn(false);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "somePlayer");
+        gui.nameEntered("somePlayer");
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
     }
 

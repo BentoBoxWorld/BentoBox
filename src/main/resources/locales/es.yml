@@ -532,6 +532,7 @@ commands:
         new-bundle: Nuevo paquete
         new-bundle-instructions: Haga clic para hacer un nuevo paquete
         name:
+          title: 'Introduce un nombre'
           quit: dejar
           prompt: Ingrese un nombre o 'quit' para salir
           too-long: '<red>Demasiado largo</red>'
@@ -542,6 +543,7 @@ commands:
           success: ¡Éxito!
           conversation-prefix: '>'
         description:
+          title: 'Descripción de [name]'
           quit: dejar
           instructions: |-
             Ingrese una descripción de varias líneas para [name]
@@ -571,6 +573,11 @@ commands:
         edit-commands: Haz clic para editar comandos
         no-commands: No hay comandos configurados
         commands:
+          title: 'Comandos de [name]'
+          help: |
+            <white>Comandos que se ejecutan al pegar este paquete, uno por línea.</white>
+            <white>Admite los marcadores <green>[player]</green> y <green>[owner]</green>.</white>
+            <white>Añade <green>[SUDO]</green> delante para ejecutarlo como el jugador.</white>
           quit: salir
           clear: limpiar
           instructions: |
@@ -2257,6 +2264,22 @@ panels:
     click-to-toggle: '<yellow>Haz clic </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clic Izquierdo </yellow><gray>para ciclar hacia abajo.</gray>'
     right-click-to-cycle-up: '<yellow>Clic Derecho </yellow><gray>para cambiar hacia arriba.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Enviar</green>'
+  chat:
+    instructions: '<gray>Escribe tu respuesta en el chat, o escribe </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    lines-instructions: '<gray>Escribe una línea cada vez en el chat. Escribe </gray><aqua>[done]</aqua><gray> para terminar o </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    confirm-instructions: '<gray>Escribe </gray><aqua>[confirm]</aqua><gray> en el chat para confirmar. Cualquier otra cosa cancela.</gray>'
+    cancel-word: 'cancelar'
+    done-word: 'listo'
+    confirm-word: 'confirmar'
+    timed-out: '<red>Sin respuesta - solicitud cancelada.</red>'
+  errors:
+    empty: '<red>Escribe algo primero.</red>'
+    too-long: '<red>Es demasiado largo. El límite es de [number] caracteres.</red>'
+    not-a-number: '<red>No es un número válido.</red>'
+    out-of-range: '<red>Introduce un número entre [min] y [max].</red>'
 successfully-loaded: >-
   <gold> ____             _        ____ </gold><gold>|  _ \           | |      |  _</gold>
   \             <gray>Por </gray><green>tastybento </green><gray>y </gray><green>Poslovitch </green><gold>| |_) | ___ _ __ | |_ ___</gold>

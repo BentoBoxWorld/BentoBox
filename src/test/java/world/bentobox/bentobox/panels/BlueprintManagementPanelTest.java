@@ -1,5 +1,13 @@
 package world.bentobox.bentobox.panels;
 
+import world.bentobox.bentobox.api.prompts.PromptTestHelper;
+import world.bentobox.bentobox.api.prompts.ChatInputListener;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -110,7 +118,11 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
 
         // Settings
         Settings settings = new Settings();
+        // Ask in chat: a dialog cannot be built without a server
+        settings.setDialogPrompts(false);
         when(plugin.getSettings()).thenReturn(settings);
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Set up
         bmp = new BlueprintManagementPanel(plugin, user, addon);
@@ -120,6 +132,7 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
+        PromptTestHelper.clear(user.getUniqueId());
         super.tearDown();
     }
 
@@ -261,4 +274,141 @@ class BlueprintManagementPanelTest extends CommonTestSetup {
         verify(bb).getDisplayName();
     }
 
+
+    // ------------------------------------------------------------------
+    // Prompts
+    // ------------------------------------------------------------------
+
+    private static final String MGMT = "commands.admin.blueprint.management.";
+
+    private void say(String text) {
+        PromptTestHelper.say(user.getUniqueId(), text);
+    }
+
+    @Test
+    void testAskForNameMakesNewBundle() {
+        bmp.askForName(user, addon, (BlueprintBundle) null);
+        assertTrue(ChatInputListener.isWaitingFor(user.getUniqueId()));
+
+        say("My Island");
+
+        ArgumentCaptor<BlueprintBundle> made = ArgumentCaptor.forClass(BlueprintBundle.class);
+        verify(bpm).addBlueprintBundle(eq(addon), made.capture());
+        assertEquals("My Island", made.getValue().getDisplayName());
+        assertEquals("my_island", made.getValue().getUniqueId());
+        assertEquals(Material.RED_WOOL, made.getValue().getIcon());
+        verify(bpm).saveBlueprintBundle(addon, made.getValue());
+        verify(bpm, never()).deleteBlueprintBundle(any(), any());
+        verify(user).sendMessage(MGMT + "name.success");
+        assertFalse(ChatInputListener.isWaitingFor(user.getUniqueId()));
+    }
+
+    @Test
+    void testAskForNameRefusesTakenName() {
+        bmp.askForName(user, addon, (BlueprintBundle) null);
+
+        say("Test2");
+
+        verify(user).sendRawMessage(MGMT + "name.pick-a-unique-name");
+        verify(bpm, never()).addBlueprintBundle(any(), any());
+        assertTrue(ChatInputListener.isWaitingFor(user.getUniqueId()));
+    }
+
+    @Test
+    void testAskForNameRefusesLongName() {
+        bmp.askForName(user, addon, (BlueprintBundle) null);
+
+        say("x".repeat(33));
+
+        verify(user).sendRawMessage(MGMT + "name.too-long");
+        verify(bpm, never()).addBlueprintBundle(any(), any());
+    }
+
+    /** A bundle may be given a name that still makes its own id, e.g. to change its colors */
+    @Test
+    void testAskForNameRenamesBundleKeepingItsId() {
+        bmp.askForName(user, addon, bb);
+
+        say("&aTest");
+
+        verify(bpm).deleteBlueprintBundle(addon, bb);
+        verify(bb).setDisplayName("&aTest");
+        verify(bb).setUniqueId("test");
+        verify(bpm).addBlueprintBundle(addon, bb);
+        verify(bpm).saveBlueprintBundle(addon, bb);
+    }
+
+    @Test
+    void testAskForNameDefaultBundleKeepsDefaultId() {
+        when(bb.getUniqueId()).thenReturn(BlueprintsManager.DEFAULT_BUNDLE_NAME);
+
+        bmp.askForName(user, addon, bb);
+        say("Starter");
+
+        verify(bb).setDisplayName("Starter");
+        verify(bb).setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
+    }
+
+    @Test
+    void testAskForBlueprintName() {
+        bmp.askForBlueprintName(user, addon, blueprint, bb);
+
+        say("New Name");
+
+        verify(bpm).renameBlueprint(addon, blueprint, "new_name", "New Name");
+        verify(bpm, never()).addBlueprintBundle(any(), any());
+    }
+
+    @Test
+    void testAskForNameCancel() {
+        bmp.askForName(user, addon, bb);
+
+        say("prompts.chat.cancel-word");
+
+        verify(bpm, never()).deleteBlueprintBundle(any(), any());
+        verify(user).sendMessage("general.errors.command-cancelled");
+        assertFalse(ChatInputListener.isWaitingFor(user.getUniqueId()));
+    }
+
+    @Test
+    void testAskForDescription() {
+        bmp.askForDescription(user, addon, bb);
+
+        say("&aA green line");
+        say("Plain line");
+        verify(bb, never()).setDescription(anyList());
+        say("prompts.chat.done-word");
+
+        verify(bb).setDescription(List.of("\u00A7aA green line", "Plain line"));
+        verify(bpm).saveBlueprintBundle(addon, bb);
+        verify(user).sendMessage(MGMT + "description.success");
+    }
+
+    @Test
+    void testAskForCommandsDropsBlankLines() {
+        bmp.askForCommands(user, addon, bb);
+
+        say("say hello [player]");
+        say("");
+        say("[SUDO] spawn");
+        say("prompts.chat.done-word");
+
+        verify(bb).setCommands(List.of("say hello [player]", "[SUDO] spawn"));
+        verify(bpm).saveBlueprintBundle(addon, bb);
+        verify(user).sendMessage(MGMT + "commands.success");
+    }
+
+    /** The overloads that take Bukkit's Conversable still work while Paper has that type */
+    @SuppressWarnings("removal")
+    @Test
+    void testDeprecatedConversableOverloadStillAsks() {
+        Player player = mockPlayer;
+        User real = User.getInstance(player);
+        try {
+            bmp.askForName((org.bukkit.conversations.Conversable) player, addon, bb);
+            assertTrue(ChatInputListener.isWaitingFor(real.getUniqueId()));
+        } finally {
+            PromptTestHelper.clear(real.getUniqueId());
+        }
+    }
 }

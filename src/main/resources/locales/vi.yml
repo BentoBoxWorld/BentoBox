@@ -521,6 +521,7 @@ commands:
         new-bundle: Gói Mới
         new-bundle-instructions: Nhấp để tạo một gói mới
         name:
+          title: 'Nhập tên'
           quit: quit
           prompt: Nhập một tên, hoặc 'quit' để thoát
           too-long: '<red>Quá dài</red>'
@@ -531,6 +532,7 @@ commands:
           success: Thành công!
           conversation-prefix: '>'
         description:
+          title: 'Mô tả của [name]'
           quit: quit
           instructions: |-
             Nhập mô tả nhiều dòng cho [name]  
@@ -560,6 +562,11 @@ commands:
         edit-commands: Nhấp để chỉnh sửa lệnh
         no-commands: Không có lệnh nào được thiết lập
         commands:
+          title: 'Lệnh cho [name]'
+          help: |
+            <white>Các lệnh chạy khi gói này được dán, mỗi dòng một lệnh.</white>
+            <white>Hỗ trợ các biến <green>[player]</green> và <green>[owner]</green>.</white>
+            <white>Thêm <green>[SUDO]</green> ở đầu để chạy với tư cách người chơi.</white>
           quit: thoát
           clear: xóa
           instructions: |
@@ -2241,6 +2248,22 @@ panels:
     click-to-toggle: '<yellow>Nhấp </yellow><gray>để chuyển đổi.</gray>'
     left-click-to-cycle-down: '<yellow>Nhấn chuột trái </yellow><gray>để chuyển xuống.</gray>'
     right-click-to-cycle-up: '<yellow>Nhấp chuột phải </yellow><gray>để xoay lên trên.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Gửi</green>'
+  chat:
+    instructions: '<gray>Nhập câu trả lời vào khung chat, hoặc nhập </gray><aqua>[cancel]</aqua><gray> để hủy.</gray>'
+    lines-instructions: '<gray>Nhập từng dòng một vào khung chat. Nhập </gray><aqua>[done]</aqua><gray> để hoàn tất, hoặc </gray><aqua>[cancel]</aqua><gray> để hủy.</gray>'
+    confirm-instructions: '<gray>Nhập </gray><aqua>[confirm]</aqua><gray> vào khung chat để xác nhận. Nhập bất cứ gì khác sẽ hủy.</gray>'
+    cancel-word: 'huy'
+    done-word: 'xong'
+    confirm-word: 'xacnhan'
+    timed-out: '<red>Không có câu trả lời - yêu cầu đã bị hủy.</red>'
+  errors:
+    empty: '<red>Hãy nhập gì đó trước.</red>'
+    too-long: '<red>Quá dài. Giới hạn là [number] ký tự.</red>'
+    not-a-number: '<red>Đó không phải là số hợp lệ.</red>'
+    out-of-range: '<red>Nhập một số từ [min] đến [max].</red>'
 successfully-loaded: >
   <gold>  ____             _        ____ </gold><gold> |  _ \           | |      |  _</gold>
   \             <gray>by </gray><green>tastybento </green><gray>and </gray><green>Poslovitch </green><gold> | |_) | ___ _ __ |</gold>

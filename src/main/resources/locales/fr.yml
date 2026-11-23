@@ -557,6 +557,7 @@ commands:
         new-bundle: Créer un bundle
         new-bundle-instructions: Cliquez pour créer un nouveau bundle
         name:
+          title: 'Entrez un nom'
           quit: quitter
           prompt: Entrez un nom, ou "quitter" pour quitter
           too-long: '<red>Le nom est trop long.</red>'
@@ -567,6 +568,7 @@ commands:
           success: Succès!
           conversation-prefix: '>'
         description:
+          title: 'Description de [name]'
           quit: quitter
           instructions: >-
             Saisissez une description sur plusieurs lignes pour [name] et
@@ -596,6 +598,11 @@ commands:
         edit-commands: Cliquez pour modifier les commandes
         no-commands: Aucune commande définie
         commands:
+          title: 'Commandes de [name]'
+          help: |
+            <white>Commandes exécutées lorsque ce bundle est collé, une par ligne.</white>
+            <white>Prend en charge les variables <green>[player]</green> et <green>[owner]</green>.</white>
+            <white>Préfixez avec <green>[SUDO]</green> pour exécuter en tant que joueur.</white>
           quit: quitter
           clear: effacer
           instructions: |
@@ -2304,6 +2311,22 @@ panels:
     click-to-toggle: '<yellow>Cliquez </yellow><gray>pour basculer.</gray>'
     left-click-to-cycle-down: '<yellow>Clic gauche </yellow><gray>pour faire défiler vers le bas.</gray>'
     right-click-to-cycle-up: '<yellow>Clique Droit </yellow><gray>pour faire défiler vers le haut.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Valider</green>'
+  chat:
+    instructions: '<gray>Écrivez votre réponse dans le chat, ou écrivez </gray><aqua>[cancel]</aqua><gray> pour annuler.</gray>'
+    lines-instructions: '<gray>Écrivez une ligne à la fois dans le chat. Écrivez </gray><aqua>[done]</aqua><gray> pour terminer ou </gray><aqua>[cancel]</aqua><gray> pour annuler.</gray>'
+    confirm-instructions: '<gray>Écrivez </gray><aqua>[confirm]</aqua><gray> dans le chat pour confirmer. Toute autre réponse annule.</gray>'
+    cancel-word: 'annuler'
+    done-word: 'terminer'
+    confirm-word: 'confirmer'
+    timed-out: '<red>Pas de réponse - demande annulée.</red>'
+  errors:
+    empty: '<red>Écrivez d''abord quelque chose.</red>'
+    too-long: '<red>C''est trop long. La limite est de [number] caractères.</red>'
+    not-a-number: '<red>Ce n''est pas un nombre valide.</red>'
+    out-of-range: '<red>Entrez un nombre entre [min] et [max].</red>'
 successfully-loaded: >-
   <gold>  ____             _        ____ </gold><gold> |  _ \           | |      |  _</gold>
   \             <gray>par </gray><green>tastybento </green><gray>et </gray><green>Poslovitch </green><gold> | |_) | ___ _ __ |</gold>

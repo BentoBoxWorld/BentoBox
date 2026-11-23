@@ -537,6 +537,7 @@ commands:
         new-bundle: Pachet nou
         new-bundle-instructions: Faceți clic pentru a crea un pachet nou
         name:
+          title: 'Introduceți un nume'
           quit: părăsi
           prompt: Introduceți un nume sau „renunțați” pentru a renunța
           too-long: '<red>Prea mult</red>'
@@ -547,6 +548,7 @@ commands:
           success: Succes!
           conversation-prefix: '>'
         description:
+          title: 'Descrierea pentru [name]'
           quit: părăsi
           instructions: |
             Introduceți o descriere pe mai multe linii pentru [name]
@@ -576,6 +578,11 @@ commands:
         edit-commands: Click pentru a edita comenzile
         no-commands: Nu sunt comenzi setate
         commands:
+          title: 'Comenzi pentru [name]'
+          help: |
+            <white>Comenzi rulate când acest pachet este lipit, câte una pe linie.</white>
+            <white>Acceptă substituenții <green>[player]</green> și <green>[owner]</green>.</white>
+            <white>Puneți <green>[SUDO]</green> în față pentru a rula ca jucător.</white>
           quit: ieșire
           clear: șterge
           instructions: |
@@ -2310,6 +2317,22 @@ panels:
     click-to-toggle: '<yellow>Faceți clic pe </yellow><gray>pentru a comuta.</gray>'
     left-click-to-cycle-down: '<yellow>Faceți clic stânga pe </yellow><gray>pentru a merge în jos.</gray>'
     right-click-to-cycle-up: '<yellow>Faceți clic dreapta pe </yellow><gray>pentru a merge în sus.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Trimite</green>'
+  chat:
+    instructions: '<gray>Scrieți răspunsul în chat sau scrieți </gray><aqua>[cancel]</aqua><gray> pentru a anula.</gray>'
+    lines-instructions: '<gray>Scrieți câte o linie în chat. Scrieți </gray><aqua>[done]</aqua><gray> pentru a termina sau </gray><aqua>[cancel]</aqua><gray> pentru a anula.</gray>'
+    confirm-instructions: '<gray>Scrieți </gray><aqua>[confirm]</aqua><gray> în chat pentru a confirma. Orice altceva anulează.</gray>'
+    cancel-word: 'anulare'
+    done-word: 'gata'
+    confirm-word: 'confirm'
+    timed-out: '<red>Niciun răspuns - cerere anulată.</red>'
+  errors:
+    empty: '<red>Scrieți mai întâi ceva.</red>'
+    too-long: '<red>Este prea lung. Limita este de [number] caractere.</red>'
+    not-a-number: '<red>Acesta nu este un număr valid.</red>'
+    out-of-range: '<red>Introduceți un număr de la [min] la [max].</red>'
 successfully-loaded: >
 
   <gold>  ____             _        ____</gold>

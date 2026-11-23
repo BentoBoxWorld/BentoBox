@@ -478,6 +478,7 @@ commands:
         new-bundle: Новий пакет
         new-bundle-instructions: Натисніть, щоб створити новий пакет
         name:
+          title: 'Введіть назву'
           quit: вийти
           prompt: Введіть ім’я або 'quit' для виходу
           too-long: '<red>Надто довге ім’я. Дозволено лише 32 символи.</red>'
@@ -486,6 +487,7 @@ commands:
           success: Успіх!
           conversation-prefix: '>'
         description:
+          title: 'Опис: [name]'
           quit: вийти
           instructions: |
             Введіть багаторядковий опис для [name]
@@ -515,6 +517,11 @@ commands:
         edit-commands: Натисніть для редагування команд
         no-commands: Команди не встановлені
         commands:
+          title: 'Команди: [name]'
+          help: |
+            <white>Команди, що виконуються під час вставлення цього пакета, по одній у рядку.</white>
+            <white>Підтримує заповнювачі <green>[player]</green> та <green>[owner]</green>.</white>
+            <white>Додайте <green>[SUDO]</green> на початку, щоб виконати від імені гравця.</white>
           quit: вихід
           clear: очистити
           instructions: |
@@ -2185,6 +2192,22 @@ panels:
     left-click-to-cycle-down: '<yellow>ЛКМ </yellow><gray>— прогортати вниз.</gray>'
     right-click-to-cycle-up: '<yellow>ПКМ </yellow><gray>— прогортати вгору.</gray>'
 
+prompts:
+  buttons:
+    submit: '<green>Надіслати</green>'
+  chat:
+    instructions: '<gray>Введіть відповідь у чат або введіть </gray><aqua>[cancel]</aqua><gray>, щоб скасувати.</gray>'
+    lines-instructions: '<gray>Вводьте в чат по одному рядку. Введіть </gray><aqua>[done]</aqua><gray>, щоб завершити, або </gray><aqua>[cancel]</aqua><gray>, щоб скасувати.</gray>'
+    confirm-instructions: '<gray>Введіть </gray><aqua>[confirm]</aqua><gray> у чат для підтвердження. Будь-яка інша відповідь скасовує дію.</gray>'
+    cancel-word: 'скасувати'
+    done-word: 'готово'
+    confirm-word: 'підтвердити'
+    timed-out: '<red>Немає відповіді - запит скасовано.</red>'
+  errors:
+    empty: '<red>Спочатку щось введіть.</red>'
+    too-long: '<red>Це задовго. Обмеження - [number] символів.</red>'
+    not-a-number: '<red>Це не дійсне число.</red>'
+    out-of-range: '<red>Введіть число від [min] до [max].</red>'
 successfully-loaded: |2
 
   <gold>  ____             _        ____</gold>

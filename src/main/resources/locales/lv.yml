@@ -531,6 +531,7 @@ commands:
         new-bundle: Jauns shēmu saišķis
         new-bundle-instructions: Uzspied, lai izveidotu jaunu shēmu saišķi
         name:
+          title: 'Ievadiet nosaukumu'
           quit: iziet
           prompt: Ieraksti vārdu vai 'iziet', lai izietu
           too-long: '<red>Pārāk garš</red>'
@@ -541,6 +542,7 @@ commands:
           success: Izdevās!
           conversation-prefix: '>'
         description:
+          title: 'Apraksts: [name]'
           quit: iziet
           instructions: |
             Ieraksti vairāku rindiņu tekstu priekš
@@ -571,6 +573,11 @@ commands:
         edit-commands: Noklikšķiniet, lai rediģētu komandas
         no-commands: Nav iestatītu komandu
         commands:
+          title: 'Komandas: [name]'
+          help: |
+            <white>Komandas, kas tiek izpildītas, kad šis shēmu saišķis tiek ielīmēts, pa vienai katrā rindā.</white>
+            <white>Atbalsta vietturus <green>[player]</green> un <green>[owner]</green>.</white>
+            <white>Pievienojiet priekšā <green>[SUDO]</green>, lai izpildītu kā spēlētājs.</white>
           quit: iziet
           clear: notīrīt
           instructions: |
@@ -2298,6 +2305,22 @@ panels:
     click-to-toggle: '<yellow>Klikšķiniet </yellow><gray>, lai pārslēgtu.</gray>'
     left-click-to-cycle-down: '<yellow>Noklikšķiniet pa kreisi </yellow><gray>, lai pārvietotos uz leju.</gray>'
     right-click-to-cycle-up: '<yellow>Labais klikšķis </yellow><gray>, lai pārvietotos uz augšu.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Iesniegt</green>'
+  chat:
+    instructions: '<gray>Ierakstiet atbildi čatā vai ierakstiet </gray><aqua>[cancel]</aqua><gray>, lai atceltu.</gray>'
+    lines-instructions: '<gray>Rakstiet čatā pa vienai rindai. Ierakstiet </gray><aqua>[done]</aqua><gray>, lai pabeigtu, vai </gray><aqua>[cancel]</aqua><gray>, lai atceltu.</gray>'
+    confirm-instructions: '<gray>Ierakstiet čatā </gray><aqua>[confirm]</aqua><gray>, lai apstiprinātu. Jebkas cits atceļ darbību.</gray>'
+    cancel-word: 'atcelt'
+    done-word: 'gatavs'
+    confirm-word: 'apstiprināt'
+    timed-out: '<red>Nav atbildes - pieprasījums atcelts.</red>'
+  errors:
+    empty: '<red>Vispirms kaut ko ierakstiet.</red>'
+    too-long: '<red>Tas ir par garu. Ierobežojums ir [number] rakstzīmes.</red>'
+    not-a-number: '<red>Tas nav derīgs skaitlis.</red>'
+    out-of-range: '<red>Ievadiet skaitli no [min] līdz [max].</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>
