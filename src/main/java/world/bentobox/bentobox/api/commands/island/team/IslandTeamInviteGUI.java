@@ -183,7 +183,7 @@ public class IslandTeamInviteGUI {
                 .clickHandler((panel, user, clickType, clickSlot) -> {
                     user.closeInventory();
                     Prompts.text(user).title("commands.island.team.invite.gui.enter-name")
-                            .onSubmit(this::nameEntered).onCancel(() -> build(user)).open();
+                            .initial(searchName).optional().onSubmit(this::nameEntered).onCancel(() -> build(user)).open();
                     return true;
                 });
         if (!this.searchName.isBlank()) {
@@ -392,11 +392,17 @@ public class IslandTeamInviteGUI {
 
     /**
      * Acts on a name typed into the search prompt. If it names a player who can be invited,
-     * they are invited. Otherwise it becomes the search text and the panel reopens.
+     * they are invited. Otherwise it becomes the search text and the panel reopens. Nothing
+     * typed clears the search.
      *
      * @param input what the player typed
      */
     void nameEntered(String input) {
+        if (input.isBlank()) {
+            searchName = "";
+            build(user);
+            return;
+        }
         if (itic.canExecute(user, itic.getLabel(), List.of(input))
                 && itic.execute(user, itic.getLabel(), List.of(input))) {
             return;

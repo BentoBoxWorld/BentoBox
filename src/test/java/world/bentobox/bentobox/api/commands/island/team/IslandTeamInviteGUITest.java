@@ -555,6 +555,21 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         verify(sch, never()).runTaskLater(any(), any(Runnable.class), anyLong());
     }
 
+    /** An empty answer clears the search and does not try to invite anybody */
+    @Test
+    void testNameEntered_blank_clearsSearchAndReopens() {
+        gui.build(user);
+        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
+        gui.nameEntered("al");
+
+        gui.nameEntered("");
+
+        verify(itic, never()).canExecute(user, "invite", List.of(""));
+        // Reopened at once, with no second delayed rebuild
+        verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
+        assertNotNull(PanelListenerManager.getOpenPanels().get(uuid));
+    }
+
     @Test
     void testNameEntered_cannotExecute_schedulesRebuild() {
         gui.build(user);
