@@ -91,7 +91,7 @@ public abstract class Pladdon extends JavaPlugin {
      */
     @Override
     public void onLoad() {
-        if (isInAddonsFolder(getFile())) {
+        if (isInAddonsFolder(getJarFile())) {
             return;
         }
         misplaced = true;
@@ -161,7 +161,7 @@ public abstract class Pladdon extends JavaPlugin {
      * @return what happened
      */
     MoveResult relocate() {
-        File jar = getFile();
+        File jar = getJarFile();
         File pluginsFolder = jar.getParentFile();
         if (pluginsFolder == null) {
             return MoveResult.FAILED;
@@ -186,10 +186,17 @@ public abstract class Pladdon extends JavaPlugin {
     }
 
     /**
+     * @return this Pladdon's jar file; a seam over {@link #getFile()}, which is protected in {@link JavaPlugin}
+     */
+    File getJarFile() {
+        return getFile();
+    }
+
+    /**
      * Logs a boxed warning explaining where this jar belongs and what to do next.
      */
     private void logMisplaced() {
-        String name = getFile().getName();
+        String name = getJarFile().getName();
         String bar = "*".repeat(70);
         getLogger().severe(bar);
         getLogger().severe(name + " is a BentoBox addon, not a standalone plugin.");
@@ -237,7 +244,7 @@ public abstract class Pladdon extends JavaPlugin {
             }
             Bukkit.getScheduler().runTaskLater(Pladdon.this, () -> {
                 if (player.isOnline()) {
-                    User.getInstance(player).sendMessage(getMisplacedMessageKey(), "[name]", getFile().getName());
+                    User.getInstance(player).sendMessage(getMisplacedMessageKey(), "[name]", getJarFile().getName());
                 }
             }, JOIN_MESSAGE_DELAY);
         }

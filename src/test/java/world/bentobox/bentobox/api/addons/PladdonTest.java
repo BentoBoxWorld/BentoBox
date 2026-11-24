@@ -42,7 +42,7 @@ class PladdonTest {
         Files.createDirectories(folder);
         File jar = folder.resolve("BSkyBlock-1.0.jar").toFile();
         Files.writeString(jar.toPath(), "jar");
-        doReturn(jar).when(pladdon).getFile();
+        doReturn(jar).when(pladdon).getJarFile();
         return jar;
     }
 
