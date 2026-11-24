@@ -457,6 +457,13 @@ commands:
         no-trash-instructions: デフォルトのバンドルを破棄できません
         permission: 許可
         no-permission: 無許可
+        preview: 'プレイヤープレビュー'
+        preview-allowed: |-
+          <green>プレイヤーはこのバンドルをプレビューできます</green>
+          <gray>クリックして非表示にします</gray>
+        preview-hidden: |-
+          <red>プレイヤーはこのバンドルをプレビューできません</red>
+          <gray>クリックして許可します</gray>
         perm-required: 必須
         no-perm-required: デフォルトのバンドルに権限を設定することはできません
         perm-not-required: 必須ではありません
@@ -667,6 +674,12 @@ commands:
       too-many-islands: '<red>この世界には島が多すぎます。あなたの島を作成するのに十分なスペースがありません。</red>'
       cannot-create-island: '<red>時間内にスポットが見つかりませんでした。もう一度お試しください...</red>'
       unable-create-island: 島を生成することができませんでした, 管理者に連絡してください.
+      preview:
+        showing: '<green>これは</green><white>[name]</white><green>です。周りを飛んで見てください。[number]秒後に元の場所に戻ります。</green>'
+        choose: '<green><bold>[これを選ぶ]</bold></green>'
+        back: '<yellow><bold>[一覧に戻る]</bold></yellow>'
+        ended: '<gray>プレビューが終了しました。</gray>'
+        nothing: '<red>プレビューできるものがありません。</red>'
       creating-island: '<green>あなたの島の場所を見つけました。あなたのために準備しましょう。</green>'
       you-cannot-make: '<red>これ以上島を作ることはできません。</red>'
       max-uses: '<red>このタイプの[prefix_island]を作成することはできません！</red>'
@@ -2136,6 +2149,7 @@ panels:
   tips:
     click-to-next: '<yellow>次にクリックします。</yellow>'
     click-to-previous: '<yellow>以前にクリックしてください。</yellow>'
+    right-click-to-preview: '<yellow>右クリック</yellow><gray>でプレビューします。</gray>'
     click-to-choose: '<yellow>クリックして選択します。</yellow>'
     click-to-toggle: '<yellow>クリックして切り替えます。</yellow>'
     left-click-to-cycle-down: '<yellow>左クリックして下にサイクリングします。</yellow>'

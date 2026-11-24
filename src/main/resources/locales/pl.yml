@@ -517,6 +517,13 @@ commands:
         no-trash-instructions: Nie można usunąć domyślnego pakietu
         permission: Uprawnienie
         no-permission: Brak uprawnień
+        preview: 'Podgląd dla graczy'
+        preview-allowed: |-
+          <green>Gracze mogą obejrzeć ten pakiet</green>
+          <gray>Kliknij, aby go ukryć</gray>
+        preview-hidden: |-
+          <red>Gracze nie mogą obejrzeć tego pakietu</red>
+          <gray>Kliknij, aby na to pozwolić</gray>
         perm-required: wymagane
         no-perm-required: Nie można ustawić uprawnień dla domyślnego zestawu.
         perm-not-required: niewymagane
@@ -747,6 +754,12 @@ commands:
       unable-create-island: >-
         Twoja wyspa nie mogła zostać wygenerowana, skontaktuj się z
         administratorem.
+      preview:
+        showing: '<green>To jest </green><white>[name]</white><green>. Polataj dookoła. Wrócisz za [number] sekund.</green>'
+        choose: '<green><bold>[Wybierz ten]</bold></green>'
+        back: '<yellow><bold>[Wróć do listy]</bold></yellow>'
+        ended: '<gray>Podgląd zakończony.</gray>'
+        nothing: '<red>Nie ma nic do pokazania.</red>'
       creating-island: Tworzenie Twojej wyspy...
       you-cannot-make: '<red>Nie możesz stworzyć więcej wysp!</red>'
       max-uses: '<red>Nie możesz zrobić więcej tego rodzaju [prefix_island]!</red>'
@@ -2253,6 +2266,7 @@ panels:
   tips:
     click-to-next: '<yellow>Kliknij </yellow><gray>, aby przejść dalej.</gray>'
     click-to-previous: '<yellow>Kliknij </yellow><gray>, aby przejść do poprzedniego.</gray>'
+    right-click-to-preview: '<yellow>Prawy przycisk </yellow><gray>aby zobaczyć podgląd.</gray>'
     click-to-choose: '<yellow>Kliknij </yellow><gray>, aby wybrać.</gray>'
     click-to-toggle: '<yellow>Kliknij </yellow><gray>, aby przełączyć.</gray>'
     left-click-to-cycle-down: '<yellow>Kliknij lewym przyciskiem myszy </yellow><gray>, aby przewinąć w dół.</gray>'

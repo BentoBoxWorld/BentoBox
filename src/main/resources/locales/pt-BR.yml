@@ -513,6 +513,13 @@ commands:
         no-trash-instructions: Não é possível descartar o pacote padrão
         permission: Permissão
         no-permission: Sem Permissão
+        preview: 'Prévia para jogadores'
+        preview-allowed: |-
+          <green>Os jogadores podem ver este pacote</green>
+          <gray>Clique para ocultar</gray>
+        preview-hidden: |-
+          <red>Os jogadores não podem ver este pacote</red>
+          <gray>Clique para permitir</gray>
         perm-required: Necessária
         no-perm-required: Não é possível definir perm para o pacote padrão
         perm-not-required: Não necessária
@@ -737,6 +744,12 @@ commands:
         ser criada.
       cannot-create-island: '<red>Um lugar não foi encontrado a tempo, por favor tente novamente...</red>'
       unable-create-island: '<red>Sua ilha não pôde ser gerada, por favor contate um administrador.</red>'
+      preview:
+        showing: '<green>Esta é </green><white>[name]</white><green>. Voe ao redor. Você voltará em [number] segundos.</green>'
+        choose: '<green><bold>[Escolher esta]</bold></green>'
+        back: '<yellow><bold>[Voltar à lista]</bold></yellow>'
+        ended: '<gray>Prévia encerrada.</gray>'
+        nothing: '<red>Não há nada para mostrar.</red>'
       creating-island: '<green>Encontrando um lugar para sua ilha...</green>'
       you-cannot-make: '<red>Você não pode criar mais ilhas!</red>'
       max-uses: '<red>Você não pode fazer mais desse tipo de [prefix_island]!</red>'
@@ -2260,6 +2273,7 @@ panels:
   tips:
     click-to-next: '<yellow>Clique </yellow><gray>para o próximo.</gray>'
     click-to-previous: '<yellow>Clique </yellow><gray>para anterior.</gray>'
+    right-click-to-preview: '<yellow>Clique direito </yellow><gray>para ver uma prévia.</gray>'
     click-to-choose: '<yellow>Clique </yellow><gray>para selecionar.</gray>'
     click-to-toggle: '<yellow>Clique </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clique Esquerdo </yellow><gray>para girar para baixo.</gray>'

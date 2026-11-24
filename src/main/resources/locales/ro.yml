@@ -524,6 +524,13 @@ commands:
         no-trash-instructions: Nu se poate coșul de gunoi implicit
         permission: Permisiune
         no-permission: Fara permisiune
+        preview: 'Previzualizare pentru jucători'
+        preview-allowed: |-
+          <green>Jucătorii pot previzualiza acest pachet</green>
+          <gray>Clic pentru a-l ascunde</gray>
+        preview-hidden: |-
+          <red>Jucătorii nu pot previzualiza acest pachet</red>
+          <gray>Clic pentru a-l permite</gray>
         perm-required: Necesar
         no-perm-required: Nu se poate seta permisiunea pentru pachetul implicit
         perm-not-required: Nu este necesar
@@ -760,6 +767,12 @@ commands:
       unable-create-island: >-
         <red>Insula dvs. nu a putut fi generată, vă rugăm să contactați un</red>
         administrator.
+      preview:
+        showing: '<green>Aceasta este </green><white>[name]</white><green>. Zboară în jurul ei. Vei fi adus înapoi în [number] secunde.</green>'
+        choose: '<green><bold>[Alege-o pe aceasta]</bold></green>'
+        back: '<yellow><bold>[Înapoi la listă]</bold></yellow>'
+        ended: '<gray>Previzualizarea s-a încheiat.</gray>'
+        nothing: '<red>Nu este nimic de previzualizat.</red>'
       creating-island: '<green>Găsirea unui loc pentru insula ta ...</green>'
       you-cannot-make: '<red>Nu mai poți face insule!</red>'
       max-uses: '<red>Nu mai poți face din acel tip de insulă!</red>'
@@ -2313,6 +2326,7 @@ panels:
   tips:
     click-to-next: '<yellow>Faceți clic pe </yellow><gray>pentru următorul.</gray>'
     click-to-previous: '<yellow>Faceți clic pe </yellow><gray>pentru anterior.</gray>'
+    right-click-to-preview: '<yellow>Clic dreapta </yellow><gray>pentru previzualizare.</gray>'
     click-to-choose: '<yellow>Faceți clic pe </yellow><gray>pentru a selecta.</gray>'
     click-to-toggle: '<yellow>Faceți clic pe </yellow><gray>pentru a comuta.</gray>'
     left-click-to-cycle-down: '<yellow>Faceți clic stânga pe </yellow><gray>pentru a merge în jos.</gray>'

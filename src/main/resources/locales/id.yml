@@ -519,6 +519,13 @@ commands:
         no-trash-instructions: Tidak dapat membuang paket default
         permission: Izin
         no-permission: Tidak ada izin
+        preview: 'Pratinjau pemain'
+        preview-allowed: |-
+          <green>Pemain dapat melihat pratinjau paket ini</green>
+          <gray>Klik untuk menyembunyikannya</gray>
+        preview-hidden: |-
+          <red>Pemain tidak dapat melihat pratinjau paket ini</red>
+          <gray>Klik untuk mengizinkannya</gray>
         perm-required: Diperlukan
         no-perm-required: Tidak dapat menyetel izin untuk paket default
         perm-not-required: Tidak dibutuhkan
@@ -744,6 +751,12 @@ commands:
         membuat pulau Anda.
       cannot-create-island: '<red>Tempat tidak dapat ditemukan tepat waktu, silakan coba lagi...</red>'
       unable-create-island: '<red>Pulau Anda tidak dapat dibuat, harap hubungi administrator.</red>'
+      preview:
+        showing: '<green>Ini adalah </green><white>[name]</white><green>. Terbanglah mengelilinginya. Kamu akan dikembalikan dalam [number] detik.</green>'
+        choose: '<green><bold>[Pilih yang ini]</bold></green>'
+        back: '<yellow><bold>[Kembali ke daftar]</bold></yellow>'
+        ended: '<gray>Pratinjau selesai.</gray>'
+        nothing: '<red>Tidak ada yang bisa dipratinjau.</red>'
       creating-island: '<green>Menemukan tempat untuk pulau Anda...</green>'
       you-cannot-make: '<red>Anda tidak dapat membuat pulau lagi!</red>'
       max-uses: '<red>Anda tidak dapat membuat lagi jenis [prefix_island] itu!</red>'
@@ -2294,6 +2307,7 @@ panels:
   tips:
     click-to-next: '<yellow>Klik </yellow><gray>untuk selanjutnya.</gray>'
     click-to-previous: '<yellow>Klik </yellow><gray>untuk sebelumnya.</gray>'
+    right-click-to-preview: '<yellow>Klik kanan </yellow><gray>untuk pratinjau.</gray>'
     click-to-choose: '<yellow>Klik </yellow><gray>untuk memilih.</gray>'
     click-to-toggle: '<yellow>Klik </yellow><gray>untuk mengubah.</gray>'
     left-click-to-cycle-down: '<yellow>Klik Kiri </yellow><gray>untuk berputar ke bawah.</gray>'

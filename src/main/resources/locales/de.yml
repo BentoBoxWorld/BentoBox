@@ -530,6 +530,13 @@ commands:
         no-trash-instructions: Standardpaket kann nicht gelöscht werden
         permission: Berechtigung
         no-permission: Keine Permission
+        preview: 'Spieler-Vorschau'
+        preview-allowed: |-
+          <green>Spieler können dieses Bundle ansehen</green>
+          <gray>Klicken zum Verbergen</gray>
+        preview-hidden: |-
+          <red>Spieler können dieses Bundle nicht ansehen</red>
+          <gray>Klicken zum Erlauben</gray>
         perm-required: Erforderlich
         no-perm-required: Perm für Standardpaket kann nicht festgelegt werden
         perm-not-required: Nicht erforderlich
@@ -770,6 +777,12 @@ commands:
       unable-create-island: >-
         <red>Deine Insel konnte nicht generiert werden, bitte kontaktiere einen</red>
         Admin.
+      preview:
+        showing: '<green>Das ist </green><white>[name]</white><green>. Flieg herum. In [number] Sekunden wirst du zurückgebracht.</green>'
+        choose: '<green><bold>[Dieses wählen]</bold></green>'
+        back: '<yellow><bold>[Zurück zur Liste]</bold></yellow>'
+        ended: '<gray>Vorschau beendet.</gray>'
+        nothing: '<red>Es gibt nichts anzusehen.</red>'
       creating-island: '<green>Einen Ort für deine Insel finden...</green>'
       you-cannot-make: '<red>Du kannst keine weiteren Inseln erschaffen!</red>'
       max-uses: '<red>Von dieser Art Inseln kann man keine weiteren machen!</red>'
@@ -2313,6 +2326,7 @@ panels:
   tips:
     click-to-next: '<yellow>Klicken</yellow><gray>, um weiterzugehen.</gray>'
     click-to-previous: '<yellow>Klicken</yellow><gray>, um zum zurückgehen.</gray>'
+    right-click-to-preview: '<yellow>Rechtsklick </yellow><gray>für eine Vorschau.</gray>'
     click-to-choose: '<yellow>Klicken</yellow><gray>zum Auswählen.</gray>'
     click-to-toggle: '<yellow>Klicken</yellow><gray>zum Umschalten.</gray>'
     left-click-to-cycle-down: '<yellow>Linksklicken </yellow><gray>, um nach unten zu blättern.</gray>'

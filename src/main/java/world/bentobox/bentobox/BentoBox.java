@@ -23,6 +23,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintPreview;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.BentoBoxHookRegistrar;
@@ -343,6 +344,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         shutdown = true;
 
         HeadGetter.shutdown();
+        BlueprintPreview.endAll(this);
 
         if (addonsManager != null) {
             addonsManager.disableAddons();

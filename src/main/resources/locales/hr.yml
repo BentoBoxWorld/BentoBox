@@ -512,6 +512,13 @@ commands:
         no-trash-instructions: Zadani skup nije moguće baciti u smeće
         permission: Dopuštenje
         no-permission: Bez dozvole
+        preview: 'Pregled za igrače'
+        preview-allowed: |-
+          <green>Igrači mogu pregledati ovaj paket</green>
+          <gray>Kliknite da ga sakrijete</gray>
+        preview-hidden: |-
+          <red>Igrači ne mogu pregledati ovaj paket</red>
+          <gray>Kliknite da ga dopustite</gray>
         perm-required: Potreban
         no-perm-required: Nije moguće postaviti trajnu za zadani paket
         perm-not-required: Nije obavezno
@@ -737,6 +744,12 @@ commands:
         stvori.
       cannot-create-island: '<red>Mjesto nije bilo moguće pronaći na vrijeme, pokušajte ponovno...</red>'
       unable-create-island: '<red>Vaš otok nije mogao biti generiran, obratite se administratoru.</red>'
+      preview:
+        showing: '<green>Ovo je </green><white>[name]</white><green>. Letite oko njega. Bit ćete vraćeni za [number] sekundi.</green>'
+        choose: '<green><bold>[Odaberi ovaj]</bold></green>'
+        back: '<yellow><bold>[Natrag na popis]</bold></yellow>'
+        ended: '<gray>Pregled je završen.</gray>'
+        nothing: '<red>Nema ničega za pregled.</red>'
       creating-island: '<green>Traženje mjesta za vaš otok...</green>'
       you-cannot-make: '<red>Ne možete napraviti više otoka!</red>'
       max-uses: '<red>Ne možete napraviti više tog tipa [prefix_island]!</red>'
@@ -2274,6 +2287,7 @@ panels:
   tips:
     click-to-next: '<yellow>Kliknite </yellow><gray>za sljedeće.</gray>'
     click-to-previous: '<yellow>Klikni </yellow><gray>za prethodno.</gray>'
+    right-click-to-preview: '<yellow>Desni klik </yellow><gray>za pregled.</gray>'
     click-to-choose: '<yellow>Klikni </yellow><gray>za odabir.</gray>'
     click-to-toggle: '<yellow>Kliknite </yellow><gray>za prebacivanje.</gray>'
     left-click-to-cycle-down: '<yellow>Lijevi klik </yellow><gray>za cikliranje prema dolje.</gray>'

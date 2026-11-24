@@ -443,6 +443,13 @@ commands:
         no-trash-instructions: 預設套件無法刪除
         permission: 權限
         no-permission: 無權限
+        preview: '玩家預覽'
+        preview-allowed: |-
+          <green>玩家可以預覽此藍圖組合</green>
+          <gray>點擊隱藏</gray>
+        preview-hidden: |-
+          <red>玩家無法預覽此藍圖組合</red>
+          <gray>點擊允許</gray>
         perm-required: 必須具備
         no-perm-required: 預設套件無法設定權限
         perm-not-required: 不需要
@@ -660,6 +667,12 @@ commands:
       too-many-islands: <red>此世界中的[prefix_Islands]數量已達上限，沒有足夠的空間建立你的[prefix_island]。</red>
       cannot-create-island: <red>在限定時間內找不到可建立[prefix_island]的位置，請稍後再試……</red>
       unable-create-island: <red>無法建立你的[prefix_island]，請聯絡管理員。</red>
+      preview:
+        showing: '<green>這是 </green><white>[name]</white><green>。四處飛行看看吧。[number] 秒後會將你送回原處。</green>'
+        choose: '<green><bold>[選擇這個]</bold></green>'
+        back: '<yellow><bold>[返回列表]</bold></yellow>'
+        ended: '<gray>預覽結束。</gray>'
+        nothing: '<red>沒有可預覽的內容。</red>'
       creating-island: <green>正在為你的[prefix_island]尋找合適的位置……</green>
       you-cannot-make: <red>你不能再建立更多[prefix_Islands]了！</red>
       max-uses: <red>你不能再建立更多此類型的[prefix_island]了！</red>
@@ -2209,6 +2222,7 @@ panels:
   tips:
     click-to-next: <yellow>點擊 </yellow><gray>即可前往下一頁。</gray>
     click-to-previous: <yellow>點擊 </yellow><gray>即可返回上一頁。</gray>
+    right-click-to-preview: '<yellow>右鍵點擊 </yellow><gray>預覽</gray>'
     click-to-choose: <yellow>點擊 </yellow><gray>即可選擇。</gray>
     click-to-toggle: <yellow>點擊 </yellow><gray>即可切換。</gray>
     left-click-to-cycle-down: <yellow>左鍵點擊 </yellow><gray>即可循環切換至上一個。</gray>

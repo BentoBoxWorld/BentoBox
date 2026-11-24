@@ -517,6 +517,13 @@ commands:
         no-trash-instructions: Nevar izmest noklusējuma komplektu
         permission: Atļaujas
         no-permission: Nav atļauts
+        preview: 'Priekšskatījums spēlētājiem'
+        preview-allowed: |-
+          <green>Spēlētāji var apskatīt šo komplektu</green>
+          <gray>Noklikšķiniet, lai paslēptu</gray>
+        preview-hidden: |-
+          <red>Spēlētāji nevar apskatīt šo komplektu</red>
+          <gray>Noklikšķiniet, lai atļautu</gray>
         perm-required: Nepieciešams
         no-perm-required: Nevar iestatīt atļauju noklusējuma komplektam
         perm-not-required: Nav nepieciešams
@@ -739,6 +746,12 @@ commands:
       too-many-islands: '<red>Šajā pasaulē ir sasniegts salu limits. Tavai salai nav vietas.</red>'
       cannot-create-island: '<red>Neizdevās atrast brīvu salas vietu laikā, mēģini vēlreiz...</red>'
       unable-create-island: '<red>Neizdevās izveidot tavu salu, ziņo par kļūdu administratoram.</red>'
+      preview:
+        showing: '<green>Šis ir </green><white>[name]</white><green>. Aplidojiet to. Pēc [number] sekundēm jūs tiksiet atgriezts.</green>'
+        choose: '<green><bold>[Izvēlēties šo]</bold></green>'
+        back: '<yellow><bold>[Atpakaļ uz sarakstu]</bold></yellow>'
+        ended: '<gray>Priekšskatījums beidzies.</gray>'
+        nothing: '<red>Nav ko parādīt.</red>'
       creating-island: '<green>Tiek veidota tava sala. Uzgaidi mirklīti...</green>'
       you-cannot-make: '<red>Tu vairs nevari radīt nevienu salu!</red>'
       max-uses: '<red>Tu vairs nevari izveidot tādu pašu [prefix_island]!</red>'
@@ -2301,6 +2314,7 @@ panels:
   tips:
     click-to-next: '<yellow>Noklikšķini </yellow><gray>, lai turpinātu.</gray>'
     click-to-previous: '<yellow>Klikšķini </yellow><gray>, lai atgrieztos iepriekš.</gray>'
+    right-click-to-preview: '<yellow>Labais klikšķis </yellow><gray>lai apskatītu.</gray>'
     click-to-choose: '<yellow>Noklikšķiniet </yellow><gray>, lai izvēlētos.</gray>'
     click-to-toggle: '<yellow>Klikšķiniet </yellow><gray>, lai pārslēgtu.</gray>'
     left-click-to-cycle-down: '<yellow>Noklikšķiniet pa kreisi </yellow><gray>, lai pārvietotos uz leju.</gray>'

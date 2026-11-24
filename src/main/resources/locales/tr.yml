@@ -511,6 +511,13 @@ commands:
         no-trash-instructions: Varsayılan grup çöp kutusuna atılamaz
         permission: Yetki
         no-permission: İzin yok
+        preview: 'Oyuncu önizlemesi'
+        preview-allowed: |-
+          <green>Oyuncular bu paketi önizleyebilir</green>
+          <gray>Gizlemek için tıklayın</gray>
+        preview-hidden: |-
+          <red>Oyuncular bu paketi önizleyemez</red>
+          <gray>İzin vermek için tıklayın</gray>
         perm-required: Yetki ihtyacı gerekli.
         no-perm-required: Varsayılan paket için izin ayarlanamaz
         perm-not-required: Yetki ihtiyacı yok.
@@ -729,6 +736,12 @@ commands:
       too-many-islands: '<dark_red>Ada olusturulacak bolge kalmadı.</dark_red>'
       cannot-create-island: '<red>Zamanında bir yer bulunamadı, lütfen tekrar deneyin...</red>'
       unable-create-island: '<dark_red>Adan olusturulamıyor. Yetkili ile gorus!</dark_red>'
+      preview:
+        showing: '<green>Bu: </green><white>[name]</white><green>. Etrafında uçun. [number] saniye sonra geri döneceksiniz.</green>'
+        choose: '<green><bold>[Bunu seç]</bold></green>'
+        back: '<yellow><bold>[Listeye dön]</bold></yellow>'
+        ended: '<gray>Önizleme bitti.</gray>'
+        nothing: '<red>Önizlenecek bir şey yok.</red>'
       creating-island: '<blue>Adan oluşturuluyor, birazcık bekle!</blue>'
       you-cannot-make: '<red>Artık daha fazla ada yapamazsın!</red>'
       max-uses: '<red>Bu türden daha fazla [prefix_island] yapamazsınız!</red>'
@@ -2153,6 +2166,7 @@ panels:
   tips:
     click-to-next: '<yellow>Tıkla </yellow><gray>sonraki için.</gray>'
     click-to-previous: '<yellow>Tıkla </yellow><gray>önceki için.</gray>'
+    right-click-to-preview: '<yellow>Sağ tık </yellow><gray>ile önizleyin.</gray>'
     click-to-choose: '<yellow>Tıklayın </yellow><gray>seçmek için.</gray>'
     click-to-toggle: '<yellow>Tıklayın </yellow><gray>açıp kapatmak için.</gray>'
     left-click-to-cycle-down: '<yellow>Sol Tıkla </yellow><gray>aşağı döngü yapmak için.</gray>'

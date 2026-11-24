@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -31,6 +32,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintPreview;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.util.Util;
 
@@ -506,24 +508,19 @@ public class IslandCreationPanel extends AbstractPanel
                         || COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
                 .toList();
 
+        // A right click previews the bundle, unless the template gives the right click a job of its own
+        boolean preview = this.command.getAddon() instanceof GameModeAddon
+                && BlueprintPreview.isAllowed(this.plugin, bundle)
+                && actions.stream().noneMatch(action -> action.clickType() == ClickType.RIGHT);
+
         builder.clickHandler((panel, user, clickType, i) -> {
-            actions.forEach(action -> {
-                if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                {
-                    if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
-                        user.closeInventory();
-                        this.command.execute(user, this.mainLabel,
-                                Collections.singletonList(bundle.getUniqueId()));
-                    } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
-                        Util.runCommands(user,
-                                Arrays.stream(action.content()
-                                        .replaceAll(Pattern.quote(TextVariables.LABEL),
-                                                this.command.getTopLabel())
-                                        .split("\n")).toList(),
-                                ISLAND_CREATION_COMMANDS);
-                    }
-                }
-            });
+            if (preview && clickType == ClickType.RIGHT) {
+                showPreview(user, bundle);
+            } else {
+                actions.stream()
+                        .filter(action -> clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                        .forEach(action -> runAction(user, action, bundle));
+            }
             return true;
         });
 
@@ -532,13 +529,52 @@ public class IslandCreationPanel extends AbstractPanel
                 .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
                 .filter(Objects::nonNull)
                 .filter(text -> !text.isBlank())
-                .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
+                .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size() + 1)));
+        if (preview)
+        {
+            tooltips.add(this.user.getTranslation("panels.tips.right-click-to-preview"));
+        }
 
         if (!tooltips.isEmpty())
         {
             builder.description("");
             builder.description(tooltips);
         }
+    }
+
+    /**
+     * Runs a SELECT or COMMANDS action from the template.
+     *
+     * @param user   the player who clicked
+     * @param action the action to run
+     * @param bundle the bundle that was clicked
+     */
+    private void runAction(User user, ItemTemplateRecord.ActionRecords action, BlueprintBundle bundle)
+    {
+        if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
+            user.closeInventory();
+            this.command.execute(user, this.mainLabel, Collections.singletonList(bundle.getUniqueId()));
+        } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+            Util.runCommands(user,
+                    Arrays.stream(action.content()
+                            .replaceAll(Pattern.quote(TextVariables.LABEL), this.command.getTopLabel())
+                            .split("\n")).toList(),
+                    ISLAND_CREATION_COMMANDS);
+        }
+    }
+
+
+    /**
+     * Takes the player to a preview of the bundle. The buttons shown there run this panel's command.
+     *
+     * @param user   the player who clicked
+     * @param bundle the bundle to preview
+     */
+    private void showPreview(User user, BlueprintBundle bundle)
+    {
+        user.closeInventory();
+        String create = "/" + this.command.getTopLabel() + " " + this.command.getLabel();
+        BlueprintPreview.show(this.plugin, user, (GameModeAddon) this.command.getAddon(), bundle, create, create);
     }
 
     // ---------------------------------------------------------------------
