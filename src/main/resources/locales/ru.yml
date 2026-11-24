@@ -514,6 +514,13 @@ commands:
         no-trash-instructions: Не удается удалить пакет по умолчанию
         permission: Разрешение
         no-permission: Нет разрешения
+        preview: 'Предпросмотр для игроков'
+        preview-allowed: |-
+          <green>Игроки могут посмотреть этот набор</green>
+          <gray>Нажмите, чтобы скрыть</gray>
+        preview-hidden: |-
+          <red>Игроки не могут посмотреть этот набор</red>
+          <gray>Нажмите, чтобы разрешить</gray>
         perm-required: Требуется
         no-perm-required: Невозможно установить разрешения для сборника по умолчанию
         perm-not-required: Не требуется
@@ -734,6 +741,12 @@ commands:
       cannot-create-island: <red>Место не найдено в данный момент, попробуйте ещё
         раз позднее...</red>
       unable-create-island: <red>Ваш остров не был создан, свяжитесь с администрацией.</red>
+      preview:
+        showing: '<green>Это </green><white>[name]</white><green>. Облетите вокруг. Через [number] сек. вы вернётесь обратно.</green>'
+        choose: '<green><bold>[Выбрать этот]</bold></green>'
+        back: '<yellow><bold>[Назад к списку]</bold></yellow>'
+        ended: '<gray>Предпросмотр завершён.</gray>'
+        nothing: '<red>Нечего показывать.</red>'
       creating-island: <green>Поиск места для создания острова...</green>
       you-cannot-make: <red>Вы не можете создать больше островов!</red>
       max-uses: <red>Вы не можете создать больше такого типа [prefix_island]!</red>
@@ -2342,6 +2355,7 @@ panels:
     click-to-next: <gray><yellow>Нажмите</yellow>, чтобы перейти на следующую страницу.</gray>
     click-to-previous: <gray><yellow>Нажмите</yellow>, чтобы перейти на предыдущую
       страницу.</gray>
+    right-click-to-preview: '<yellow>ПКМ </yellow><gray>для предпросмотра.</gray>'
     click-to-choose: <gray><yellow>Нажмите</yellow>, чтобы выбрать.</gray>
     click-to-toggle: <gray><yellow>Нажмите</yellow>, чтобы переключить.</gray>
     left-click-to-cycle-down: <gray><yellow>ЛКМ</yellow>, чтобы прокрутить вниз.</gray>

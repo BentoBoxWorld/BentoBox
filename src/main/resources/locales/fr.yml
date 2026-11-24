@@ -544,6 +544,13 @@ commands:
         no-trash-instructions: Impossible de supprimer le bundle par défaut
         permission: Autorisation
         no-permission: Aucune autorisation
+        preview: 'Aperçu pour les joueurs'
+        preview-allowed: |-
+          <green>Les joueurs peuvent voir ce bundle</green>
+          <gray>Cliquez pour le masquer</gray>
+        preview-hidden: |-
+          <red>Les joueurs ne peuvent pas voir ce bundle</red>
+          <gray>Cliquez pour l'autoriser</gray>
         perm-required: Obligatoire
         no-perm-required: Impossible de définir la permanente pour le bundle par défaut
         perm-not-required: Non obligatoire
@@ -780,6 +787,12 @@ commands:
       unable-create-island: >-
         <red>Votre île n'a pas pu être générée, veuillez contacter un</red>
         administrateur.
+      preview:
+        showing: '<green>Voici </green><white>[name]</white><green>. Volez autour. Vous serez ramené dans [number] secondes.</green>'
+        choose: '<green><bold>[Choisir celui-ci]</bold></green>'
+        back: '<yellow><bold>[Retour à la liste]</bold></yellow>'
+        ended: '<gray>Aperçu terminé.</gray>'
+        nothing: '<red>Il n''y a rien à afficher.</red>'
       creating-island: '<green>Trouver un endroit pour votre île ...</green>'
       you-cannot-make: "<red>Vous ne pouvez plus créer d'îles\_!</red>"
       max-uses: '<red>Vous ne pouvez plus créer ce type de [prefix_island]!</red>'
@@ -2307,6 +2320,7 @@ panels:
   tips:
     click-to-next: '<yellow>Cliquez </yellow><gray>pour suivant.</gray>'
     click-to-previous: '<yellow>Cliquez </yellow><gray>pour précédent.</gray>'
+    right-click-to-preview: '<yellow>Clic droit </yellow><gray>pour un aperçu.</gray>'
     click-to-choose: '<yellow>Cliquez </yellow><gray>pour sélectionner.</gray>'
     click-to-toggle: '<yellow>Cliquez </yellow><gray>pour basculer.</gray>'
     left-click-to-cycle-down: '<yellow>Clic gauche </yellow><gray>pour faire défiler vers le bas.</gray>'

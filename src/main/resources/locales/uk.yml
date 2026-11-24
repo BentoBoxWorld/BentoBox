@@ -465,6 +465,13 @@ commands:
         no-trash-instructions: Не можна видаляти пакет за замовчуванням
         permission: Дозвіл
         no-permission: Немає дозволу
+        preview: 'Попередній перегляд для гравців'
+        preview-allowed: |-
+          <green>Гравці можуть переглянути цей набір</green>
+          <gray>Натисніть, щоб приховати</gray>
+        preview-hidden: |-
+          <red>Гравці не можуть переглянути цей набір</red>
+          <gray>Натисніть, щоб дозволити</gray>
         perm-required: Потрібен
         no-perm-required: Не можна встановити дозвіл для пакета за замовчуванням
         perm-not-required: Не потрібен
@@ -673,6 +680,12 @@ commands:
       too-many-islands: '<red>У цьому світі забагато [prefix_Islands]: недостатньо місця для вашого.</red>'
       cannot-create-island: '<red>Не вдалося знайти місце вчасно, спробуйте ще раз...</red>'
       unable-create-island: '<red>Ваш [prefix_island] не вдалося згенерувати, зверніться до адміністратора.</red>'
+      preview:
+        showing: '<green>Це </green><white>[name]</white><green>. Облетіть навколо. Через [number] с ви повернетеся назад.</green>'
+        choose: '<green><bold>[Обрати цей]</bold></green>'
+        back: '<yellow><bold>[Назад до списку]</bold></yellow>'
+        ended: '<gray>Перегляд завершено.</gray>'
+        nothing: '<red>Немає чого показувати.</red>'
       creating-island: '<green>Пошук місця для вашого [prefix_island]...</green>'
       you-cannot-make: '<red>Ви більше не можете створювати [prefix_Islands]!</red>'
       max-uses: '<red>Ви більше не можете створювати [prefix_island] цього типу!</red>'
@@ -2187,6 +2200,7 @@ panels:
   tips:
     click-to-next: '<yellow>Клік </yellow><gray>для наступної.</gray>'
     click-to-previous: '<yellow>Клік </yellow><gray>для попередньої.</gray>'
+    right-click-to-preview: '<yellow>ПКМ </yellow><gray>для перегляду.</gray>'
     click-to-choose: '<yellow>Клік </yellow><gray>щоб обрати.</gray>'
     click-to-toggle: '<yellow>Клік </yellow><gray>щоб перемкнути.</gray>'
     left-click-to-cycle-down: '<yellow>ЛКМ </yellow><gray>— прогортати вниз.</gray>'

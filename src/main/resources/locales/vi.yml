@@ -508,6 +508,13 @@ commands:
         no-trash-instructions: Không thể xóa gói mặc định
         permission: Quyền hạn
         no-permission: Không có quyền
+        preview: 'Xem trước cho người chơi'
+        preview-allowed: |-
+          <green>Người chơi có thể xem trước gói này</green>
+          <gray>Nhấp để ẩn</gray>
+        preview-hidden: |-
+          <red>Người chơi không thể xem trước gói này</red>
+          <gray>Nhấp để cho phép</gray>
         perm-required: Yêu cầu
         no-perm-required: Không thể thiết lập quyền cho gói mặc định
         perm-not-required: Không yêu cầu
@@ -733,6 +740,12 @@ commands:
       too-many-islands: '<red>Quá nhiều đảo trong thế giới này. Không có đủ chỗ cho bạn.</red>'
       cannot-create-island: '<red>Chưa tìm thấy vị trí. Thử lại...</red>'
       unable-create-island: '<red>Không thể tạo đảo của bạn. Hãy báo cáo với quản trị viên.</red>'
+      preview:
+        showing: '<green>Đây là </green><white>[name]</white><green>. Hãy bay xung quanh. Bạn sẽ được đưa trở lại sau [number] giây.</green>'
+        choose: '<green><bold>[Chọn cái này]</bold></green>'
+        back: '<yellow><bold>[Quay lại danh sách]</bold></yellow>'
+        ended: '<gray>Đã kết thúc xem trước.</gray>'
+        nothing: '<red>Không có gì để xem trước.</red>'
       creating-island: '<green>Đang tìm vị trí cho đảo của bạn...</green>'
       you-cannot-make: '<red>Bạn không thể tạo thêm đảo nào nữa!</red>'
       max-uses: '<red>Bạn không thể tạo thêm loại [prefix_island] nào nữa!</red>'
@@ -2244,6 +2257,7 @@ panels:
   tips:
     click-to-next: '<yellow>Nhấn </yellow><gray>để tiếp theo.</gray>'
     click-to-previous: '<yellow>Nhấp </yellow><gray>để trở về trước.</gray>'
+    right-click-to-preview: '<yellow>Nhấp chuột phải </yellow><gray>để xem trước.</gray>'
     click-to-choose: '<yellow>Nhấn </yellow><gray>để chọn.</gray>'
     click-to-toggle: '<yellow>Nhấp </yellow><gray>để chuyển đổi.</gray>'
     left-click-to-cycle-down: '<yellow>Nhấn chuột trái </yellow><gray>để chuyển xuống.</gray>'

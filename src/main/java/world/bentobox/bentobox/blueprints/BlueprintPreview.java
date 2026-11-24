@@ -107,16 +107,13 @@ public class BlueprintPreview implements Listener {
         }
     }
 
+    /** Where on the player the place they came from is noted. */
+    private static final NamespacedKey RETURN_KEY = new NamespacedKey("bentobox", "preview-return");
+
     private final BentoBox plugin;
-    private final NamespacedKey returnKey;
 
     public BlueprintPreview(BentoBox plugin) {
         this.plugin = plugin;
-        this.returnKey = returnKey(plugin);
-    }
-
-    private static NamespacedKey returnKey(BentoBox plugin) {
-        return new NamespacedKey(plugin, "preview-return");
     }
 
     /**
@@ -176,7 +173,7 @@ public class BlueprintPreview implements Listener {
         BoundingBox bounds = model.clone().expand(margin);
 
         Session session = new Session(player, chunks, bounds);
-        remember(plugin, player, session);
+        remember(player, session);
         SESSIONS.put(player.getUniqueId(), session);
 
         // Start outside the blueprint, a little above its middle, looking at it
@@ -290,7 +287,7 @@ public class BlueprintPreview implements Listener {
         player.setAllowFlight(session.allowFlight);
         player.setFlying(session.allowFlight && session.flying);
         player.setInvulnerable(session.invulnerable);
-        player.getPersistentDataContainer().remove(returnKey(plugin));
+        player.getPersistentDataContainer().remove(RETURN_KEY);
     }
 
     /**
@@ -410,9 +407,9 @@ public class BlueprintPreview implements Listener {
     // ---------------------------------------------------------------------
 
     /** Notes on the player where they came from, so they can be put back even after a crash. */
-    private static void remember(BentoBox plugin, Player player, Session session) {
+    private static void remember(Player player, Session session) {
         Location l = session.back;
-        player.getPersistentDataContainer().set(returnKey(plugin), PersistentDataType.STRING,
+        player.getPersistentDataContainer().set(RETURN_KEY, PersistentDataType.STRING,
                 String.join(";", l.getWorld().getName(), String.valueOf(l.getX()), String.valueOf(l.getY()),
                         String.valueOf(l.getZ()), String.valueOf(l.getYaw()), String.valueOf(l.getPitch()),
                         session.gameMode.name(), String.valueOf(session.invulnerable)));
@@ -517,11 +514,11 @@ public class BlueprintPreview implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        String saved = player.getPersistentDataContainer().get(returnKey, PersistentDataType.STRING);
+        String saved = player.getPersistentDataContainer().get(RETURN_KEY, PersistentDataType.STRING);
         if (saved == null && !player.getWorld().getName().equals(WORLD_NAME)) {
             return;
         }
-        player.getPersistentDataContainer().remove(returnKey);
+        player.getPersistentDataContainer().remove(RETURN_KEY);
         Location back = Bukkit.getWorlds().get(0).getSpawnLocation();
         GameMode gameMode = Bukkit.getDefaultGameMode();
         boolean invulnerable = false;

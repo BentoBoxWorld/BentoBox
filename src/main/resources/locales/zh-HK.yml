@@ -467,6 +467,13 @@ commands:
         no-trash-instructions: '<red>不能刪除預置藍圖方案</red>'
         permission: '<white><bold>權限</bold></white>'
         no-permission: '<white><bold>不需要權限</bold></white>'
+        preview: '玩家預覽'
+        preview-allowed: |-
+          <green>玩家可以預覽此藍圖方案</green>
+          <gray>點擊隱藏</gray>
+        preview-hidden: |-
+          <red>玩家無法預覽此藍圖方案</red>
+          <gray>點擊允許</gray>
         perm-required: '<red>需要：</red>'
         no-perm-required: '<red>不能為預置的藍圖方案設置權限</red>'
         perm-not-required: '<gray>不需要</gray>'
@@ -683,6 +690,12 @@ commands:
       too-many-islands: '<red>這個世界太擁擠了，已經沒有空餘空間為您創建島嶼。</red>'
       cannot-create-island: '<red>找不到合適的地點為您創建島嶼，請稍後重試...</red>'
       unable-create-island: '<red>無法生成您的島嶼，請聯系管理員。</red>'
+      preview:
+        showing: '<green>這是 </green><white>[name]</white><green>。四處飛行看看吧。[number] 秒後會將你送回原處。</green>'
+        choose: '<green><bold>[選擇這個]</bold></green>'
+        back: '<yellow><bold>[返回列表]</bold></yellow>'
+        ended: '<gray>預覽結束。</gray>'
+        nothing: '<red>沒有可預覽的內容。</red>'
       creating-island: '<green>正在尋找合適的地點創建島嶼, 請耐心等候...</green>'
       you-cannot-make: '<red>您不能再建立任何島嶼！</red>'
       max-uses: '<red>您不能再做任何類型的[prefix_island]！</red>'
@@ -2054,6 +2067,7 @@ panels:
   tips:
     click-to-next: '<yellow>單擊下一步。</yellow>'
     click-to-previous: '<yellow>單擊以獲取上一個。</yellow>'
+    right-click-to-preview: '<yellow>右鍵點擊 </yellow><gray>預覽</gray>'
     click-to-choose: '<yellow>單擊以選擇。</yellow>'
     click-to-toggle: '<yellow>單擊切換。</yellow>'
     left-click-to-cycle-down: '<yellow>左鍵單擊以向下循環。</yellow>'

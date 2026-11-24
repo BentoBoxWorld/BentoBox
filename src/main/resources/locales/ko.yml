@@ -473,6 +473,13 @@ commands:
         no-trash-instructions: 기본 번들을 버릴 수 없습니다.
         permission: 권한(퍼미션)
         no-permission: 권한 없음
+        preview: '플레이어 미리보기'
+        preview-allowed: |-
+          <green>플레이어가 이 번들을 미리 볼 수 있습니다</green>
+          <gray>클릭하여 숨기기</gray>
+        preview-hidden: |-
+          <red>플레이어가 이 번들을 미리 볼 수 없습니다</red>
+          <gray>클릭하여 허용하기</gray>
         perm-required: 요구되는(필요한)
         no-perm-required: 기본 번들에 대한 권한을 설정할 수 없습니다.
         perm-not-required: 요구되지 않는(필요하지 않은)
@@ -687,6 +694,12 @@ commands:
       too-many-islands: '<red>이 월드에는 섬이 너무 많습니다: 더 이상 섬을 생성할수 없습니다</red>'
       cannot-create-island: '<red>생성 가능한 스팟을 시간내에 찾을수 없었습니다. 다시시도해보세요</red>'
       unable-create-island: '<red>섬이 생성되지 않았습니다, 서버 관리자에게 문의하세요.</red>'
+      preview:
+        showing: '<green>이것은 </green><white>[name]</white><green>입니다. 주변을 날아다니며 살펴보세요. [number]초 후에 원래 위치로 돌아갑니다.</green>'
+        choose: '<green><bold>[이것으로 선택]</bold></green>'
+        back: '<yellow><bold>[목록으로 돌아가기]</bold></yellow>'
+        ended: '<gray>미리보기가 끝났습니다.</gray>'
+        nothing: '<red>미리 볼 것이 없습니다.</red>'
       creating-island: '<green>섬을 생성하기위한 스팟을 찾는중입니다...</green>'
       you-cannot-make: '<red>더 이상 섬을 만들 수 없습니다!</red>'
       max-uses: '<red>그 종류의 [prefix_island]를 더 이상 만들 수 없습니다!</red>'
@@ -2126,6 +2139,7 @@ panels:
   tips:
     click-to-next: '<yellow>클릭 </yellow><gray>하여 다음으로 가세요.</gray>'
     click-to-previous: '<yellow>클릭 </yellow><gray>하면 이전으로 돌아갑니다.</gray>'
+    right-click-to-preview: '<yellow>우클릭 </yellow><gray>으로 미리보기.</gray>'
     click-to-choose: '<yellow>클릭 </yellow><gray>하여 선택하세요.</gray>'
     click-to-toggle: '<yellow>클릭 </yellow><gray>해서 전환하세요.</gray>'
     left-click-to-cycle-down: '<yellow>왼쪽 클릭 </yellow><gray>하여 아래로 순환하세요.</gray>'

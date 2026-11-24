@@ -502,6 +502,13 @@ commands:
         no-trash-instructions: Výchozí balíček nelze vyhodit do koše
         permission: Oprávnění
         no-permission: Bez povolení
+        preview: 'Náhled pro hráče'
+        preview-allowed: |-
+          <green>Hráči si mohou tento balík prohlédnout</green>
+          <gray>Kliknutím jej skryjete</gray>
+        preview-hidden: |-
+          <red>Hráči si tento balík nemohou prohlédnout</red>
+          <gray>Kliknutím jej povolíte</gray>
         perm-required: Vyžadováno
         no-perm-required: Perm pro výchozí balíček nelze nastavit
         perm-not-required: Nevyžadováno
@@ -726,6 +733,12 @@ commands:
       unable-create-island: >-
         <red>Tvůj ostrov se nepovedlo vygenerovat, prosím, kontaktuj</red>
         administrátora.
+      preview:
+        showing: '<green>Toto je </green><white>[name]</white><green>. Proleťte se kolem. Za [number] sekund budete vráceni zpět.</green>'
+        choose: '<green><bold>[Vybrat tento]</bold></green>'
+        back: '<yellow><bold>[Zpět na seznam]</bold></yellow>'
+        ended: '<gray>Náhled skončil.</gray>'
+        nothing: '<red>Není co zobrazit.</red>'
       creating-island: '<green>Hledám místo pro tvůj ostrov...</green>'
       you-cannot-make: '<red>Nemůžete vytvořit žádné další ostrovy!</red>'
       max-uses: '<red>Už nemůžete udělat další typ [prefix_island]!</red>'
@@ -2226,6 +2239,7 @@ panels:
   tips:
     click-to-next: '<yellow>Klikněte pro další.</yellow>'
     click-to-previous: '<yellow>Klikněte pro předchozí.</yellow>'
+    right-click-to-preview: '<yellow>Pravé kliknutí </yellow><gray>pro náhled.</gray>'
     click-to-choose: '<yellow>Kliknutím vyberte.</yellow>'
     click-to-toggle: '<yellow>Kliknutím přepínáte.</yellow>'
     left-click-to-cycle-down: '<yellow>Levé kliknutí na cyklus dolů.</yellow>'

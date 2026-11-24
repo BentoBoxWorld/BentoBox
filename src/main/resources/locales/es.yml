@@ -520,6 +520,13 @@ commands:
         no-trash-instructions: No se puede eliminar el paquete predeterminado
         permission: Permiso
         no-permission: Sin autorización
+        preview: 'Vista previa para jugadores'
+        preview-allowed: |-
+          <green>Los jugadores pueden ver este paquete</green>
+          <gray>Haz clic para ocultarlo</gray>
+        preview-hidden: |-
+          <red>Los jugadores no pueden ver este paquete</red>
+          <gray>Haz clic para permitirlo</gray>
         perm-required: Requerido
         no-perm-required: No se puede establecer la permanente para el paquete predeterminado
         perm-not-required: No requerido
@@ -755,6 +762,12 @@ commands:
         las tuyas sean creadas.
       cannot-create-island: '<red>No se pudo encontrar un lugar a tiempo, intente nuevamente...</red>'
       unable-create-island: '<red>Tu isla no se pudo generar, póngase en contacto con un administrador.</red>'
+      preview:
+        showing: '<green>Esto es </green><white>[name]</white><green>. Vuela a su alrededor. Volverás en [number] segundos.</green>'
+        choose: '<green><bold>[Elegir este]</bold></green>'
+        back: '<yellow><bold>[Volver a la lista]</bold></yellow>'
+        ended: '<gray>Vista previa terminada.</gray>'
+        nothing: '<red>No hay nada que mostrar.</red>'
       creating-island: '<green>Creando tu isla, espera un momento...</green>'
       you-cannot-make: '<red>¡No puedes crear más islas!</red>'
       max-uses: '<red>¡No puedes hacer más de ese tipo de [prefix_island]!</red>'
@@ -2260,6 +2273,7 @@ panels:
   tips:
     click-to-next: '<yellow>Haz clic </yellow><gray>para continuar.</gray>'
     click-to-previous: '<yellow>Haz clic </yellow><gray>para anterior.</gray>'
+    right-click-to-preview: '<yellow>Clic derecho </yellow><gray>para ver una vista previa.</gray>'
     click-to-choose: '<yellow>Haz clic </yellow><gray>para seleccionar.</gray>'
     click-to-toggle: '<yellow>Haz clic </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clic Izquierdo </yellow><gray>para ciclar hacia abajo.</gray>'

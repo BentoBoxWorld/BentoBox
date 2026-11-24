@@ -540,6 +540,13 @@ commands:
         no-trash-instructions: Az alapértelmezett csomag nem törölhető a kukába
         permission: Engedély
         no-permission: Nincs engedélye
+        preview: 'Játékos előnézet'
+        preview-allowed: |-
+          <green>A játékosok megnézhetik ezt a csomagot</green>
+          <gray>Kattintson az elrejtéshez</gray>
+        preview-hidden: |-
+          <red>A játékosok nem nézhetik meg ezt a csomagot</red>
+          <gray>Kattintson az engedélyezéshez</gray>
         perm-required: Kívánt
         no-perm-required: Nem lehet engedélyt beállítani az alapértelmezett csomaghoz
         perm-not-required: Nem szükséges
@@ -772,6 +779,12 @@ commands:
       unable-create-island: >-
         <red>A szigetet nem sikerült létrehozni, kérjük, forduljon a</red>
         rendszergazdához.
+      preview:
+        showing: '<green>Ez itt: </green><white>[name]</white><green>. Repülje körbe. [number] másodperc múlva visszakerül.</green>'
+        choose: '<green><bold>[Ezt választom]</bold></green>'
+        back: '<yellow><bold>[Vissza a listához]</bold></yellow>'
+        ended: '<gray>Az előnézet véget ért.</gray>'
+        nothing: '<red>Nincs mit megjeleníteni.</red>'
       creating-island: '<green>Hely keresése a szigeten...</green>'
       you-cannot-make: '<red>Nem csinálhatsz több szigetet!</red>'
       max-uses: '<red>Nem készíthetsz több [prefix_island] típusú dolgot!</red>'
@@ -2339,6 +2352,7 @@ panels:
   tips:
     click-to-next: '<yellow>Kattints </yellow><gray>a következőhöz.</gray>'
     click-to-previous: '<yellow>Kattints </yellow><gray>az előzőhöz.</gray>'
+    right-click-to-preview: '<yellow>Jobb kattintás </yellow><gray>az előnézethez.</gray>'
     click-to-choose: '<yellow>Kattints </yellow><gray>a kiválasztáshoz.</gray>'
     click-to-toggle: '<yellow>Kattints </yellow><gray>az átkapcsoláshoz.</gray>'
     left-click-to-cycle-down: '<yellow>Bal kattintás </yellow><gray>a lefelé ciklizéshez.</gray>'

@@ -539,6 +539,13 @@ commands:
         no-trash-instructions: Kan standaardbundel niet weggooien
         permission: Toestemming
         no-permission: Geen toestemming
+        preview: 'Voorbeeld voor spelers'
+        preview-allowed: |-
+          <green>Spelers kunnen deze bundel bekijken</green>
+          <gray>Klik om te verbergen</gray>
+        preview-hidden: |-
+          <red>Spelers kunnen deze bundel niet bekijken</red>
+          <gray>Klik om toe te staan</gray>
         perm-required: Verplicht
         no-perm-required: Kan geen permissie instellen voor standaardbundel
         perm-not-required: Niet verplicht
@@ -773,6 +780,12 @@ commands:
       unable-create-island: >-
         <red>Uw eiland kon niet worden gegenereerd, neem contact op met een</red>
         beheerder.
+      preview:
+        showing: '<green>Dit is </green><white>[name]</white><green>. Vlieg eromheen. Over [number] seconden word je teruggebracht.</green>'
+        choose: '<green><bold>[Deze kiezen]</bold></green>'
+        back: '<yellow><bold>[Terug naar de lijst]</bold></yellow>'
+        ended: '<gray>Voorbeeld afgelopen.</gray>'
+        nothing: '<red>Er is niets om te bekijken.</red>'
       creating-island: '<green>Een plek vinden voor uw eiland ...</green>'
       you-cannot-make: '<red>Je kunt geen eilanden meer maken!</red>'
       max-uses: '<red>Je kunt geen meer van dat type [prefix_island] maken!</red>'
@@ -2317,6 +2330,7 @@ panels:
   tips:
     click-to-next: '<yellow>Klik </yellow><gray>voor volgende.</gray>'
     click-to-previous: '<yellow>Klik </yellow><gray>voor vorige.</gray>'
+    right-click-to-preview: '<yellow>Rechtsklik </yellow><gray>voor een voorbeeld.</gray>'
     click-to-choose: '<yellow>Klik </yellow><gray>om te selecteren.</gray>'
     click-to-toggle: '<yellow>Klik </yellow><gray>om te schakelen.</gray>'
     left-click-to-cycle-down: '<yellow>Linker Klik </yellow><gray>om naar beneden te cycelen.</gray>'

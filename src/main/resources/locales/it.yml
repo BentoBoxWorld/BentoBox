@@ -539,6 +539,13 @@ commands:
         no-trash-instructions: Impossibile eliminare il pacchetto predefinito
         permission: Permesso
         no-permission: Nessun permesso
+        preview: 'Anteprima per i giocatori'
+        preview-allowed: |-
+          <green>I giocatori possono vedere questo pacchetto</green>
+          <gray>Clicca per nasconderlo</gray>
+        preview-hidden: |-
+          <red>I giocatori non possono vedere questo pacchetto</red>
+          <gray>Clicca per consentirlo</gray>
         perm-required: Obbligatorio
         no-perm-required: Impossibile impostare il perm per il pacchetto predefinito
         perm-not-required: Non obbligatorio
@@ -769,6 +776,12 @@ commands:
       unable-create-island: >-
         <red>Non è stato possibile generare la tua isola, contatta un</red>
         amministratore.
+      preview:
+        showing: '<green>Questa è </green><white>[name]</white><green>. Volaci intorno. Tornerai indietro tra [number] secondi.</green>'
+        choose: '<green><bold>[Scegli questa]</bold></green>'
+        back: '<yellow><bold>[Torna alla lista]</bold></yellow>'
+        ended: '<gray>Anteprima terminata.</gray>'
+        nothing: '<red>Non c''è niente da mostrare.</red>'
       creating-island: '<green>Creando la tua isola, aspetta un attimo...</green>'
       you-cannot-make: '<red>Non puoi creare altre isole!</red>'
       max-uses: '<red>Non puoi creare ulteriori [prefix_island] di quel tipo!</red>'
@@ -2282,6 +2295,7 @@ panels:
   tips:
     click-to-next: '<yellow>Clicca </yellow><gray>per il prossimo.</gray>'
     click-to-previous: '<yellow>Clicca </yellow><gray>per precedente.</gray>'
+    right-click-to-preview: '<yellow>Clic destro </yellow><gray>per l''anteprima.</gray>'
     click-to-choose: '<yellow>Clicca </yellow><gray>per selezionare.</gray>'
     click-to-toggle: '<yellow>Fai clic </yellow><gray>per attivare/disattivare.</gray>'
     left-click-to-cycle-down: '<yellow>Clicca Sinistro </yellow><gray>per scorrere verso il basso.</gray>'

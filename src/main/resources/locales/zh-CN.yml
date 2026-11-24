@@ -468,6 +468,13 @@ commands:
         no-trash-instructions: '<red>不能删除默认蓝图方案</red>'
         permission: '<white>权限</white>'
         no-permission: '<white>无需权限</white>'
+        preview: '玩家预览'
+        preview-allowed: |-
+          <green>玩家可以预览此蓝图方案</green>
+          <gray>点击隐藏</gray>
+        preview-hidden: |-
+          <red>玩家无法预览此蓝图方案</red>
+          <gray>点击允许</gray>
         perm-required: '<white>需要: </white>'
         no-perm-required: '<red>不能为默认蓝图方案设置权限</red>'
         perm-not-required: '<gray>不需要权限</gray>'
@@ -685,6 +692,12 @@ commands:
       too-many-islands: '<red>这个世界太拥挤了, 没有足够的空间来创建你的岛屿.</red>'
       cannot-create-island: '<red>找不到合适的地点为您创建岛屿, 请稍后重试...</red>'
       unable-create-island: '<red>无法为你生成岛屿, 请联系管理员.</red>'
+      preview:
+        showing: '<green>这是 </green><white>[name]</white><green>。四处飞行看看吧。[number] 秒后将把你送回原处。</green>'
+        choose: '<green><bold>[选择这个]</bold></green>'
+        back: '<yellow><bold>[返回列表]</bold></yellow>'
+        ended: '<gray>预览结束。</gray>'
+        nothing: '<red>没有可预览的内容。</red>'
       creating-island: '<green>正在为你的岛屿寻找合适的地点...</green>'
       you-cannot-make: '<red>你不能再建造任何岛屿了!</red>'
       max-uses: '<red>你已达到该类型岛屿的最大创建次数, 无法再创建更多该类型的岛屿!</red>'
@@ -2051,6 +2064,7 @@ panels:
   tips:
     click-to-next: '<yellow>点击 </yellow><gray>往下翻</gray>'
     click-to-previous: '<yellow>点击 </yellow><gray>往上翻</gray>'
+    right-click-to-preview: '<yellow>右键点击 </yellow><gray>预览</gray>'
     click-to-choose: '<yellow>点击 </yellow><gray>选择</gray>'
     click-to-toggle: '<yellow>点击 </yellow><gray>切换</gray>'
     left-click-to-cycle-down: '<yellow>左键 </yellow><gray>向下循环选择</gray>'

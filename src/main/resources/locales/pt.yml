@@ -518,6 +518,13 @@ commands:
         no-trash-instructions: Não é possível descartar o pacote padrão
         permission: Permissão
         no-permission: Sem permissão
+        preview: 'Pré-visualização para jogadores'
+        preview-allowed: |-
+          <green>Os jogadores podem ver este pacote</green>
+          <gray>Clique para ocultar</gray>
+        preview-hidden: |-
+          <red>Os jogadores não podem ver este pacote</red>
+          <gray>Clique para permitir</gray>
         perm-required: Obrigatório
         no-perm-required: Não é possível definir a permissão para o pacote padrão
         perm-not-required: Não requerido
@@ -748,6 +755,12 @@ commands:
         ser criada.
       cannot-create-island: '<red>Não foi possível encontrar um local a tempo. Tente novamente...</red>'
       unable-create-island: '<red>Sua ilha não pôde ser gerada, entre em contato com um administrador.</red>'
+      preview:
+        showing: '<green>Esta é </green><white>[name]</white><green>. Voe à volta. Regressará dentro de [number] segundos.</green>'
+        choose: '<green><bold>[Escolher esta]</bold></green>'
+        back: '<yellow><bold>[Voltar à lista]</bold></yellow>'
+        ended: '<gray>Pré-visualização terminada.</gray>'
+        nothing: '<red>Não há nada para mostrar.</red>'
       creating-island: '<green>Encontrando um lugar para sua ilha...</green>'
       you-cannot-make: '<red>Você não pode fazer mais ilhas!</red>'
       max-uses: '<red>Você não pode fazer mais desse tipo de [prefix_island]!</red>'
@@ -2292,6 +2305,7 @@ panels:
   tips:
     click-to-next: '<yellow>Clique </yellow><gray>para o próximo.</gray>'
     click-to-previous: '<yellow>Clique </yellow><gray>para anterior.</gray>'
+    right-click-to-preview: '<yellow>Clique direito </yellow><gray>para pré-visualizar.</gray>'
     click-to-choose: '<yellow>Clique </yellow><gray>para selecionar.</gray>'
     click-to-toggle: '<yellow>Clique </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clique Esquerdo </yellow><gray>para ciclar para baixo.</gray>'
