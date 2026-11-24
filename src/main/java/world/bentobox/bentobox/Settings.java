@@ -390,7 +390,7 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("Let players preview a blueprint bundle before they choose it. A right click on a")
     @ConfigComment("bundle in the island creation panel takes the player to an empty world kept for")
-    @ConfigComment("previews, as a spectator, where they see the bundle's overworld blueprint. Only that")
+    @ConfigComment("previews, where they can fly around the bundle's overworld blueprint. Only that")
     @ConfigComment("player sees the blocks; nothing is built. They are put back when the preview ends.")
     @ConfigComment("A bundle can be excluded in the blueprint management panel.")
     @ConfigEntry(path = "island.blueprint-preview.enabled", since = "3.25.0")

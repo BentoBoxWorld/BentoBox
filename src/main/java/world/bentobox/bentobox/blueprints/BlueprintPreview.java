@@ -22,13 +22,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -51,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Lets a player look at a blueprint before choosing it.
  * <p>
- * The player is moved to an empty world kept for previews, put in spectator mode and kept
+ * The player is moved to an empty world kept for previews, left able to fly, and kept
  * inside a box around the blueprint. The blueprint's blocks are sent to that player only: they
  * are never placed in the world, so nothing has to be cleaned up and several players can preview
  * different blueprints in the same spot without seeing each other's. When the preview ends the
@@ -80,6 +85,9 @@ public class BlueprintPreview implements Listener {
         /** Where to put the player back, and in which game mode. */
         private final Location back;
         private final GameMode gameMode;
+        private final boolean allowFlight;
+        private final boolean flying;
+        private final boolean invulnerable;
         /** The blueprint's blocks, grouped by the chunk they are in. */
         private final Map<Long, Map<Position, BlockData>> chunks;
         /** The space the player may fly in. */
@@ -88,9 +96,12 @@ public class BlueprintPreview implements Listener {
         /** True while this class is moving the player, so its own teleports are let through. */
         private boolean moving;
 
-        Session(Location back, GameMode gameMode, Map<Long, Map<Position, BlockData>> chunks, BoundingBox bounds) {
-            this.back = back;
-            this.gameMode = gameMode;
+        Session(Player player, Map<Long, Map<Position, BlockData>> chunks, BoundingBox bounds) {
+            this.back = player.getLocation();
+            this.gameMode = player.getGameMode();
+            this.allowFlight = player.getAllowFlight();
+            this.flying = player.isFlying();
+            this.invulnerable = player.isInvulnerable();
             this.chunks = chunks;
             this.bounds = bounds;
         }
@@ -164,7 +175,7 @@ public class BlueprintPreview implements Listener {
         double margin = Math.clamp(longest, MIN_MARGIN, MAX_MARGIN);
         BoundingBox bounds = model.clone().expand(margin);
 
-        Session session = new Session(player.getLocation(), player.getGameMode(), chunks, bounds);
+        Session session = new Session(player, chunks, bounds);
         remember(plugin, player, session);
         SESSIONS.put(player.getUniqueId(), session);
 
@@ -189,7 +200,16 @@ public class BlueprintPreview implements Listener {
     private static void begin(BentoBox plugin, User user, BlueprintBundle bundle, Session session, Vector centre,
             String chooseCommand, String listCommand) {
         Player player = user.getPlayer();
-        player.setGameMode(GameMode.SPECTATOR);
+        // Flying, but not as a spectator: a spectator can fly into blocks and see what is hidden inside.
+        // The player's client treats the blueprint's blocks as solid, so they cannot pass through them.
+        player.setGameMode(GameMode.ADVENTURE);
+        player.setAllowFlight(true);
+        player.setFlying(true);
+        player.setInvulnerable(true);
+        // The blocks exist only on the player's client, which does not always light them. Night vision,
+        // also sent to the client only, shows them at full brightness whatever the light is.
+        player.sendPotionEffectChange(player,
+                new PotionEffect(PotionEffectType.NIGHT_VISION, PotionEffect.INFINITE_DURATION, 0, false, false, false));
         // Always midday and clear, whatever the preview world is doing
         player.setPlayerTime(6000, false);
         player.setPlayerWeather(WeatherType.CLEAR);
@@ -250,6 +270,12 @@ public class BlueprintPreview implements Listener {
         player.resetPlayerTime();
         player.resetPlayerWeather();
         player.setWorldBorder(null);
+        player.sendPotionEffectChangeRemove(player, PotionEffectType.NIGHT_VISION);
+        PotionEffect nightVision = player.getPotionEffect(PotionEffectType.NIGHT_VISION);
+        if (nightVision != null) {
+            // The player really had night vision: show it again
+            player.sendPotionEffectChange(player, nightVision);
+        }
         SESSIONS.keySet().stream().map(Bukkit::getPlayer).filter(p -> p != null).forEach(p -> {
             p.showPlayer(plugin, player);
             player.showPlayer(plugin, p);
@@ -261,6 +287,9 @@ public class BlueprintPreview implements Listener {
                     : session.back);
         }
         player.setGameMode(session.gameMode);
+        player.setAllowFlight(session.allowFlight);
+        player.setFlying(session.allowFlight && session.flying);
+        player.setInvulnerable(session.invulnerable);
         player.getPersistentDataContainer().remove(returnKey(plugin));
     }
 
@@ -386,7 +415,7 @@ public class BlueprintPreview implements Listener {
         player.getPersistentDataContainer().set(returnKey(plugin), PersistentDataType.STRING,
                 String.join(";", l.getWorld().getName(), String.valueOf(l.getX()), String.valueOf(l.getY()),
                         String.valueOf(l.getZ()), String.valueOf(l.getYaw()), String.valueOf(l.getPitch()),
-                        session.gameMode.name()));
+                        session.gameMode.name(), String.valueOf(session.invulnerable)));
     }
 
     /** Sends a chunk's share of the blueprint when the player is sent that chunk. */
@@ -418,12 +447,58 @@ public class BlueprintPreview implements Listener {
         if (session == null || session.moving) {
             return;
         }
-        if (e.getCause() == TeleportCause.SPECTATE) {
-            // No jumping to other players through the spectator menu
+        if (e.getCause() == TeleportCause.ENDER_PEARL || e.getCause() == TeleportCause.CONSUMABLE_EFFECT) {
             e.setCancelled(true);
         } else if (!e.getTo().getWorld().getName().equals(WORLD_NAME)) {
             // Something else is taking the player away: let it, and tidy up
             end(plugin, e.getPlayer(), false);
+        }
+    }
+
+    /** The player stays in the air: on the server there is nothing under them to land on. */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onToggleFlight(PlayerToggleFlightEvent e) {
+        if (!e.isFlying() && SESSIONS.containsKey(e.getPlayer().getUniqueId())) {
+            e.setCancelled(true);
+        }
+    }
+
+    /**
+     * Stops the player using or placing anything. A click on one of the blueprint's blocks also
+     * makes the server tell the client that nothing is there, so the blocks are sent again.
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInteract(PlayerInteractEvent e) {
+        Player player = e.getPlayer();
+        Session session = SESSIONS.get(player.getUniqueId());
+        if (session == null) {
+            return;
+        }
+        e.setCancelled(true);
+        if (e.getClickedBlock() != null) {
+            int x = e.getClickedBlock().getX() >> 4;
+            int z = e.getClickedBlock().getZ() >> 4;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (SESSIONS.get(player.getUniqueId()) == session) {
+                    // The clicked block and the one next to it may be in different chunks
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            Map<Position, BlockData> blocks = session.chunks.get(Chunk.getChunkKey(x + dx, z + dz));
+                            if (blocks != null) {
+                                player.sendMultiBlockChange(blocks);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /** Nothing the player drops here could be picked up again. */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onDrop(PlayerDropItemEvent e) {
+        if (SESSIONS.containsKey(e.getPlayer().getUniqueId())) {
+            e.setCancelled(true);
         }
     }
 
@@ -449,6 +524,7 @@ public class BlueprintPreview implements Listener {
         player.getPersistentDataContainer().remove(returnKey);
         Location back = Bukkit.getWorlds().get(0).getSpawnLocation();
         GameMode gameMode = Bukkit.getDefaultGameMode();
+        boolean invulnerable = false;
         if (saved != null) {
             try {
                 String[] s = saved.split(";");
@@ -458,6 +534,7 @@ public class BlueprintPreview implements Listener {
                             Double.parseDouble(s[3]), Float.parseFloat(s[4]), Float.parseFloat(s[5]));
                 }
                 gameMode = GameMode.valueOf(s[6]);
+                invulnerable = Boolean.parseBoolean(s[7]);
             } catch (RuntimeException ex) {
                 plugin.logWarning("Could not read where " + player.getName() + " was before a blueprint preview.");
             }
@@ -465,6 +542,7 @@ public class BlueprintPreview implements Listener {
         if (player.getWorld().getName().equals(WORLD_NAME)) {
             player.teleport(back);
             player.setGameMode(gameMode);
+            player.setInvulnerable(invulnerable);
         }
     }
 }

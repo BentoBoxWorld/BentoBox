@@ -251,7 +251,7 @@ island:
   blueprint-preview:
     # Let players preview a blueprint bundle before they choose it. A right click on a
     # bundle in the island creation panel takes the player to an empty world kept for
-    # previews, as a spectator, where they see the bundle's overworld blueprint. Only that
+    # previews, where they can fly around the bundle's overworld blueprint. Only that
     # player sees the blocks; nothing is built. They are put back when the preview ends.
     # A bundle can be excluded in the blueprint management panel.
     # Added since 3.25.0.
