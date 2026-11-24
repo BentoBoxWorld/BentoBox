@@ -483,6 +483,13 @@ commands:
         no-perm-required: Cannot set perm for default bundle
         perm-not-required: Not Required
         perm-format: '<yellow></yellow>'
+        preview: Player preview
+        preview-allowed: |-
+          <green>Players can preview this bundle</green>
+          <gray>Click to hide it</gray>
+        preview-hidden: |-
+          <red>Players cannot preview this bundle</red>
+          <gray>Click to allow it</gray>
         remove: Right click to remove
         blueprint-instruction: |
           Click to select,
@@ -697,6 +704,9 @@ commands:
       unable-create-island: '<red>Your [prefix_island] could not be generated, please
         contact an administrator.</red>'
       creating-island: '<green>Finding a spot for your [prefix_island]...</green>'
+      preview:
+        showing: '<green>This is </green><white>[name]</white><green>. Walk around it; it disappears in [number] seconds.</green>'
+        nothing: '<red>There is nothing to preview.</red>'
       you-cannot-make: '<red>You cannot make any more [prefix_Islands]!</red>'
       max-uses: '<red>You cannot make any more of that type of [prefix_island]!</red>'
       you-cannot-make-team: '<red>Team members cannot make [prefix_Islands] in the same world
@@ -2260,6 +2270,7 @@ panels:
     click-to-next: '<yellow>Click </yellow><gray>for next.</gray>'
     click-to-previous: '<yellow>Click </yellow><gray>for previous.</gray>'
     click-to-choose: '<yellow>Click </yellow><gray>to select.</gray>'
+    right-click-to-preview: '<yellow>Right Click </yellow><gray>to preview.</gray>'
     click-to-toggle: '<yellow>Click </yellow><gray>to toggle.</gray>'
     left-click-to-cycle-down: '<yellow>Left Click </yellow><gray>to cycle downwards.</gray>'
     right-click-to-cycle-up: '<yellow>Right Click </yellow><gray>to cycle upwards.</gray>'

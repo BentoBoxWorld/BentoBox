@@ -248,6 +248,24 @@ island:
     # Color of the locked island border. Options are RED, GREEN or BLUE.
     # Added since 3.24.0.
     color: RED
+  blueprint-preview:
+    # Let players preview a blueprint bundle before they choose it. A right click on a
+    # bundle in the island creation panel shows a miniature of its overworld blueprint in
+    # front of the player. Only that player sees it and nothing is placed in the world.
+    # A bundle can be excluded in the blueprint management panel.
+    # Added since 3.25.0.
+    enabled: true
+    # How long a preview stays, in seconds.
+    # Added since 3.25.0.
+    duration: 30
+    # How large the miniature is, in blocks along its longest side.
+    # A blueprint smaller than this is shown at its real size.
+    # Added since 3.25.0.
+    size: 6
+    # The most blocks a preview is made of. A blueprint with more visible blocks than this
+    # is drawn more coarsely. Each block is an entity the player's client has to draw.
+    # Added since 3.25.0.
+    max-blocks: 4000
   # Modal dialog options. Dialogs are the 'menu they can't click away' shown to
   # players for high-friction flows. They require a server that supports dialogs
   # (Minecraft 26+); on older servers every option below falls back automatically

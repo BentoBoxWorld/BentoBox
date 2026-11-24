@@ -388,6 +388,27 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.locked-border.color", since = "3.24.0")
     private BorderColor lockedBorderColor = BorderColor.RED;
 
+    @ConfigComment("Let players preview a blueprint bundle before they choose it. A right click on a")
+    @ConfigComment("bundle in the island creation panel shows a miniature of its overworld blueprint in")
+    @ConfigComment("front of the player. Only that player sees it and nothing is placed in the world.")
+    @ConfigComment("A bundle can be excluded in the blueprint management panel.")
+    @ConfigEntry(path = "island.blueprint-preview.enabled", since = "3.25.0")
+    private boolean blueprintPreview = true;
+
+    @ConfigComment("How long a preview stays, in seconds.")
+    @ConfigEntry(path = "island.blueprint-preview.duration", since = "3.25.0")
+    private int blueprintPreviewDuration = 30;
+
+    @ConfigComment("How large the miniature is, in blocks along its longest side.")
+    @ConfigComment("A blueprint smaller than this is shown at its real size.")
+    @ConfigEntry(path = "island.blueprint-preview.size", since = "3.25.0")
+    private int blueprintPreviewSize = 6;
+
+    @ConfigComment("The most blocks a preview is made of. A blueprint with more visible blocks than this")
+    @ConfigComment("is drawn more coarsely. Each block is an entity the player's client has to draw.")
+    @ConfigEntry(path = "island.blueprint-preview.max-blocks", since = "3.25.0")
+    private int blueprintPreviewMaxBlocks = 4000;
+
     @ConfigComment("Modal dialog options. Dialogs are the 'menu they can't click away' shown to")
     @ConfigComment("players for high-friction flows. They require a server that supports dialogs")
     @ConfigComment("(Minecraft 26+); on older servers every option below falls back automatically")
@@ -1162,6 +1183,70 @@ public class Settings implements ConfigObject {
      */
     public void setDialogGameModeSelection(boolean dialogGameModeSelection) {
         this.dialogGameModeSelection = dialogGameModeSelection;
+    }
+
+    /**
+     * @return whether players may preview blueprint bundles
+     * @since 3.25.0
+     */
+    public boolean isBlueprintPreview() {
+        return blueprintPreview;
+    }
+
+    /**
+     * @param blueprintPreview whether players may preview blueprint bundles
+     * @since 3.25.0
+     */
+    public void setBlueprintPreview(boolean blueprintPreview) {
+        this.blueprintPreview = blueprintPreview;
+    }
+
+    /**
+     * @return how long a blueprint preview stays, in seconds
+     * @since 3.25.0
+     */
+    public int getBlueprintPreviewDuration() {
+        return blueprintPreviewDuration;
+    }
+
+    /**
+     * @param blueprintPreviewDuration how long a blueprint preview stays, in seconds
+     * @since 3.25.0
+     */
+    public void setBlueprintPreviewDuration(int blueprintPreviewDuration) {
+        this.blueprintPreviewDuration = blueprintPreviewDuration;
+    }
+
+    /**
+     * @return the length of a blueprint preview's longest side, in blocks
+     * @since 3.25.0
+     */
+    public int getBlueprintPreviewSize() {
+        return blueprintPreviewSize;
+    }
+
+    /**
+     * @param blueprintPreviewSize the length of a blueprint preview's longest side, in blocks
+     * @since 3.25.0
+     */
+    public void setBlueprintPreviewSize(int blueprintPreviewSize) {
+        this.blueprintPreviewSize = blueprintPreviewSize;
+    }
+
+    /**
+     * @return the most blocks a blueprint preview is made of
+     * @since 3.25.0
+     */
+    public int getBlueprintPreviewMaxBlocks() {
+        return blueprintPreviewMaxBlocks;
+    }
+
+    /**
+     * @param blueprintPreviewMaxBlocks the most blocks a blueprint preview is made of
+     * @since 3.25.0
+     */
+    public void setBlueprintPreviewMaxBlocks(int blueprintPreviewMaxBlocks) {
+        this.blueprintPreviewMaxBlocks = blueprintPreviewMaxBlocks;
     }
 
     /**

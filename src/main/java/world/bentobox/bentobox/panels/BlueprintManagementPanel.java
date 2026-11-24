@@ -81,6 +81,9 @@ public class BlueprintManagementPanel {
         environmentToBlueprint = Map.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
+    /** Slot of the button that sets whether players may preview a bundle */
+    private static final int PREVIEW_SLOT = 17;
+
     /**
      * Translate "commands.admin.blueprint.management." + t reference
      * @param t - end of reference
@@ -206,6 +209,10 @@ public class BlueprintManagementPanel {
             pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
         blueprints.forEach((key, value) -> pb.item(getBlueprintItem(addon, key, bb, value)));
+        // Whether players may preview this bundle
+        if (plugin.getSettings().isBlueprintPreview()) {
+            pb.item(PREVIEW_SLOT, getPreviewIcon(addon, bb));
+        }
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
             // Panel has a No Trash icon. If right-clicked it is discarded
@@ -425,6 +432,18 @@ public class BlueprintManagementPanel {
                     // Save
                     plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                     panel.getInventory().setItem(39, getPermissionIcon(addon, bb).getItem());
+                    return true;
+                }).build();
+    }
+
+    private PanelItem getPreviewIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.SPYGLASS).name(t("preview"))
+                .description(t(bb.isPreviewHidden() ? "preview-hidden" : "preview-allowed"))
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    bb.setPreviewHidden(!bb.isPreviewHidden());
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(PREVIEW_SLOT, getPreviewIcon(addon, bb).getItem());
                     return true;
                 }).build();
     }

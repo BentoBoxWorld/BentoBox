@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -31,6 +32,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintPreview;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.util.Util;
 
@@ -506,7 +508,17 @@ public class IslandCreationPanel extends AbstractPanel
                         || COMMANDS_ACTION.equalsIgnoreCase(action.actionType()))
                 .toList();
 
+        // A right click previews the bundle, unless the template gives the right click a job of its own
+        boolean preview = this.command.getAddon() instanceof GameModeAddon
+                && BlueprintPreview.isAllowed(this.plugin, bundle)
+                && actions.stream().noneMatch(action -> action.clickType() == ClickType.RIGHT);
+
         builder.clickHandler((panel, user, clickType, i) -> {
+            if (preview && clickType == ClickType.RIGHT) {
+                user.closeInventory();
+                BlueprintPreview.show(this.plugin, user, (GameModeAddon) this.command.getAddon(), bundle);
+                return true;
+            }
             actions.forEach(action -> {
                 if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
                 {
@@ -532,7 +544,11 @@ public class IslandCreationPanel extends AbstractPanel
                 .map(action -> this.user.getTranslation(this.command.getWorld(), action.tooltip()))
                 .filter(Objects::nonNull)
                 .filter(text -> !text.isBlank())
-                .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size())));
+                .collect(Collectors.toCollection(() -> new ArrayList<>(actions.size() + 1)));
+        if (preview)
+        {
+            tooltips.add(this.user.getTranslation("panels.tips.right-click-to-preview"));
+        }
 
         if (!tooltips.isEmpty())
         {

@@ -89,6 +89,13 @@ public class BlueprintBundle implements DataObject {
     private List<String> commands = new ArrayList<>();
 
     /**
+     * True if players must not be shown a preview of this bundle, for example because its
+     * blueprints hold things players are meant to find for themselves.
+     */
+    @Expose
+    private boolean previewHidden;
+
+    /**
      * @return the uniqueId
      */
     @Override
@@ -291,5 +298,21 @@ public class BlueprintBundle implements DataObject {
      */
     public void setCommands(List<String> commands) {
         this.commands = commands;
+    }
+
+    /**
+     * @return true if players must not be shown a preview of this bundle
+     * @since 3.25.0
+     */
+    public boolean isPreviewHidden() {
+        return previewHidden;
+    }
+
+    /**
+     * @param previewHidden true if players must not be shown a preview of this bundle
+     * @since 3.25.0
+     */
+    public void setPreviewHidden(boolean previewHidden) {
+        this.previewHidden = previewHidden;
     }
 }
