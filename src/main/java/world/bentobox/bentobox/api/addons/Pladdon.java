@@ -139,7 +139,7 @@ public abstract class Pladdon extends JavaPlugin {
      * Pladdon does not run its addon; it only reports the problem until the server is restarted.
      *
      * @return {@code true} if this Pladdon was loaded from the wrong folder
-     * @since 3.23.3
+     * @since 3.25.0
      */
     public boolean isMisplaced() {
         return misplaced;
