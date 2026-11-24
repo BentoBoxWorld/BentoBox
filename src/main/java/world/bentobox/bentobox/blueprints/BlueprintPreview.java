@@ -317,9 +317,8 @@ public class BlueprintPreview implements Listener {
             world = WorldCreator.name(WORLD_NAME).generator(new EmptyWorld()).generateStructures(false)
                     .createWorld();
             if (world != null) {
-                // Nothing is ever built here, so there is nothing to save or to spawn
+                // Nothing is ever built here, so there is nothing to save
                 world.setAutoSave(false);
-                world.setSpawnFlags(false, false);
             }
         }
         return world;
@@ -366,7 +365,7 @@ public class BlueprintPreview implements Listener {
         try {
             BlockData data = DefaultPasteUtil.createBlockData(block);
             return data == null || data.getMaterial().isAir() ? null : data;
-        } catch (RuntimeException e) {
+        } catch (RuntimeException _) {
             // A block from another server version or a missing plugin: leave it out
             return null;
         }
@@ -475,19 +474,25 @@ public class BlueprintPreview implements Listener {
         if (e.getClickedBlock() != null) {
             int x = e.getClickedBlock().getX() >> 4;
             int z = e.getClickedBlock().getZ() >> 4;
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (SESSIONS.get(player.getUniqueId()) == session) {
-                    // The clicked block and the one next to it may be in different chunks
-                    for (int dx = -1; dx <= 1; dx++) {
-                        for (int dz = -1; dz <= 1; dz++) {
-                            Map<Position, BlockData> blocks = session.chunks.get(Chunk.getChunkKey(x + dx, z + dz));
-                            if (blocks != null) {
-                                player.sendMultiBlockChange(blocks);
-                            }
-                        }
-                    }
+            Bukkit.getScheduler().runTask(plugin, () -> resend(player, session, x, z));
+        }
+    }
+
+    /**
+     * Sends a chunk's blocks again, and those of the chunks around it: a clicked block and the
+     * block next to it may be in different chunks.
+     */
+    private static void resend(Player player, Session session, int chunkX, int chunkZ) {
+        if (SESSIONS.get(player.getUniqueId()) != session) {
+            return;
+        }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                Map<Position, BlockData> blocks = session.chunks.get(Chunk.getChunkKey(chunkX + dx, chunkZ + dz));
+                if (blocks != null) {
+                    player.sendMultiBlockChange(blocks);
                 }
-            });
+            }
         }
     }
 
@@ -532,7 +537,7 @@ public class BlueprintPreview implements Listener {
                 }
                 gameMode = GameMode.valueOf(s[6]);
                 invulnerable = Boolean.parseBoolean(s[7]);
-            } catch (RuntimeException ex) {
+            } catch (RuntimeException _) {
                 plugin.logWarning("Could not read where " + player.getName() + " was before a blueprint preview.");
             }
         }

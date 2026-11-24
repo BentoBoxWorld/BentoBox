@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -83,7 +84,8 @@ class BlueprintPreviewTest extends CommonTestSetup {
         mockedBukkit.when(() -> Bukkit.getWorld(BlueprintPreview.WORLD_NAME)).thenReturn(previewWorld);
         mockedBukkit.when(() -> Bukkit.getPlayer(uuid)).thenReturn(mockPlayer);
 
-        when(mockPlayer.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
+        PersistentDataContainer pdc = mock(PersistentDataContainer.class);
+        when(mockPlayer.getPersistentDataContainer()).thenReturn(pdc);
         when(mockPlayer.getGameMode()).thenReturn(GameMode.SURVIVAL);
         when(mockPlayer.getServer()).thenReturn(server);
         when(mockPlayer.teleportAsync(any())).thenReturn(CompletableFuture.completedFuture(true));
@@ -176,7 +178,7 @@ class BlueprintPreviewTest extends CommonTestSetup {
         verify(sch).runTaskLater(eq(plugin), task.capture(), eq(20L));
         task.getValue().run();
         // The two blocks are in different chunks
-        verify(mockPlayer, org.mockito.Mockito.times(2)).sendMultiBlockChange(anyMap());
+        verify(mockPlayer, times(2)).sendMultiBlockChange(anyMap());
     }
 
     // ---- listeners ----

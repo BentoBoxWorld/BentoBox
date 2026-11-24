@@ -515,29 +515,12 @@ public class IslandCreationPanel extends AbstractPanel
 
         builder.clickHandler((panel, user, clickType, i) -> {
             if (preview && clickType == ClickType.RIGHT) {
-                user.closeInventory();
-                String create = "/" + this.command.getTopLabel() + " " + this.command.getLabel();
-                BlueprintPreview.show(this.plugin, user, (GameModeAddon) this.command.getAddon(), bundle, create,
-                        create);
-                return true;
+                showPreview(user, bundle);
+            } else {
+                actions.stream()
+                        .filter(action -> clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
+                        .forEach(action -> runAction(user, action, bundle));
             }
-            actions.forEach(action -> {
-                if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN)
-                {
-                    if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
-                        user.closeInventory();
-                        this.command.execute(user, this.mainLabel,
-                                Collections.singletonList(bundle.getUniqueId()));
-                    } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
-                        Util.runCommands(user,
-                                Arrays.stream(action.content()
-                                        .replaceAll(Pattern.quote(TextVariables.LABEL),
-                                                this.command.getTopLabel())
-                                        .split("\n")).toList(),
-                                ISLAND_CREATION_COMMANDS);
-                    }
-                }
-            });
             return true;
         });
 
@@ -557,6 +540,41 @@ public class IslandCreationPanel extends AbstractPanel
             builder.description("");
             builder.description(tooltips);
         }
+    }
+
+    /**
+     * Runs a SELECT or COMMANDS action from the template.
+     *
+     * @param user   the player who clicked
+     * @param action the action to run
+     * @param bundle the bundle that was clicked
+     */
+    private void runAction(User user, ItemTemplateRecord.ActionRecords action, BlueprintBundle bundle)
+    {
+        if (SELECT_ACTION.equalsIgnoreCase(action.actionType())) {
+            user.closeInventory();
+            this.command.execute(user, this.mainLabel, Collections.singletonList(bundle.getUniqueId()));
+        } else if (COMMANDS_ACTION.equalsIgnoreCase(action.actionType())) {
+            Util.runCommands(user,
+                    Arrays.stream(action.content()
+                            .replaceAll(Pattern.quote(TextVariables.LABEL), this.command.getTopLabel())
+                            .split("\n")).toList(),
+                    ISLAND_CREATION_COMMANDS);
+        }
+    }
+
+
+    /**
+     * Takes the player to a preview of the bundle. The buttons shown there run this panel's command.
+     *
+     * @param user   the player who clicked
+     * @param bundle the bundle to preview
+     */
+    private void showPreview(User user, BlueprintBundle bundle)
+    {
+        user.closeInventory();
+        String create = "/" + this.command.getTopLabel() + " " + this.command.getLabel();
+        BlueprintPreview.show(this.plugin, user, (GameModeAddon) this.command.getAddon(), bundle, create, create);
     }
 
     // ---------------------------------------------------------------------
