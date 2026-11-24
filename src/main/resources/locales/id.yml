@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klik untuk menjalankan [command]]'
   success: '<green>Berhasil!</green>'
   invalid: Tidak valid
+  misplaced-addon:
+    moved: '<red>[name] adalah addon BentoBox dan berada di folder plugins. Addon ini sudah dipindahkan ke plugins/BentoBox/addons. Mulai ulang server untuk memuatnya.</red>'
+    move-failed: '<red>[name] adalah addon BentoBox dan harus berada di plugins/BentoBox/addons, bukan di folder plugins. Pindahkan ke sana lalu mulai ulang server.</red>'
+    duplicate: '<red>[name] ada di folder plugins dan juga di plugins/BentoBox/addons. Hapus yang ada di folder plugins lalu mulai ulang server.</red>'
   beta: '<light_purple><bold>Perintah ini dalam beta. Pastikan Anda memiliki cadangan!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Perintah dibatalkan.</red>'

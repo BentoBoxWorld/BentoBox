@@ -21,6 +21,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 클릭하여 [command] 실행]'
   success: '<green>성공!</green>'
   invalid: 올바르지 않음
+  misplaced-addon:
+    moved: '<red>[name]은(는) BentoBox 애드온이며 plugins 폴더에 있었습니다. plugins/BentoBox/addons(으)로 옮겼습니다. 불러오려면 서버를 재시작하세요.</red>'
+    move-failed: '<red>[name]은(는) BentoBox 애드온이므로 plugins 폴더가 아니라 plugins/BentoBox/addons에 있어야 합니다. 그곳으로 옮기고 서버를 재시작하세요.</red>'
+    duplicate: '<red>[name]이(가) plugins 폴더와 plugins/BentoBox/addons 양쪽에 있습니다. plugins 폴더에 있는 것을 삭제하고 서버를 재시작하세요.</red>'
   beta: '<light_purple><bold>이 명령은 베타입니다. 백업이 있는지 확인하십시오!</bold></light_purple>'
   errors:
     command-cancelled: '<red>명령이 취소되었습니다.</red>'

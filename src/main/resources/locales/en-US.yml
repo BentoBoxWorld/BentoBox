@@ -21,6 +21,10 @@ prefixes:
 general:
   success: '<green>Success!</green>'
   invalid: Invalid
+  misplaced-addon:
+    moved: '<red>[name] is a BentoBox addon and was in the plugins folder. It has been moved to plugins/BentoBox/addons. Restart the server to load it.</red>'
+    move-failed: '<red>[name] is a BentoBox addon and must go in plugins/BentoBox/addons, not the plugins folder. Move it there and restart the server.</red>'
+    duplicate: '<red>[name] is in both the plugins folder and plugins/BentoBox/addons. Delete the one in the plugins folder and restart the server.</red>'
   beta: '<light_purple><bold>This command is in beta. Make sure you have backups!</bold></light_purple>'
   dialogs:
     game-mode-selection:

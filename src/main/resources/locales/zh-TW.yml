@@ -26,6 +26,10 @@ prefixes:
 general:
   success: <green>成功！</green>
   invalid: 無效
+  misplaced-addon:
+    moved: '<red>[name] 是 BentoBox 的附加元件，先前被放在 plugins 資料夾中。現已移至 plugins/BentoBox/addons。請重新啟動伺服器以載入它。</red>'
+    move-failed: '<red>[name] 是 BentoBox 的附加元件，必須放在 plugins/BentoBox/addons 中，而不是 plugins 資料夾。請將它移到該處並重新啟動伺服器。</red>'
+    duplicate: '<red>[name] 同時存在於 plugins 資料夾和 plugins/BentoBox/addons 中。請刪除 plugins 資料夾中的那一個並重新啟動伺服器。</red>'
   beta: <light_purple><bold>此指令仍處於 Beta 測試階段，請務必先做好備份！</bold></light_purple>
   dialogs:
     game-mode-selection:

@@ -21,6 +21,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klicken, um [command] auszuführen]'
   success: '<green>Erfolg!</green>'
   invalid: Ungültig
+  misplaced-addon:
+    moved: '<red>[name] ist ein BentoBox-Addon und lag im Ordner plugins. Es wurde nach plugins/BentoBox/addons verschoben. Starte den Server neu, um es zu laden.</red>'
+    move-failed: '<red>[name] ist ein BentoBox-Addon und gehört nach plugins/BentoBox/addons, nicht in den Ordner plugins. Verschiebe es dorthin und starte den Server neu.</red>'
+    duplicate: '<red>[name] liegt sowohl im Ordner plugins als auch in plugins/BentoBox/addons. Lösche die Datei im Ordner plugins und starte den Server neu.</red>'
   beta: '<light_purple><bold>Dieser Befehl ist in Beta. Stellen Sie sicher, dass Sie Backups haben!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Befehl abgebrochen.</red>'

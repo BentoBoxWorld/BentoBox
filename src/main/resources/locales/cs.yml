@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknutím spustíte [command]]'
   success: '<green>Povedlo se!</green>'
   invalid: Neplatné
+  misplaced-addon:
+    moved: '<red>[name] je doplněk BentoBoxu a byl ve složce plugins. Byl přesunut do plugins/BentoBox/addons. Restartuj server, aby se načetl.</red>'
+    move-failed: '<red>[name] je doplněk BentoBoxu a musí být v plugins/BentoBox/addons, ne ve složce plugins. Přesuň ho tam a restartuj server.</red>'
+    duplicate: '<red>[name] je ve složce plugins i v plugins/BentoBox/addons. Smaž ten ve složce plugins a restartuj server.</red>'
   beta: '<light_purple><bold>Tento příkaz je v beta verzi. Ujisti se, že máš zálohy!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Příkaz zrušen.</red>'

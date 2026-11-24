@@ -24,6 +24,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 点击执行 [command]]'
   success: '<green>成功!</green>'
   invalid: 无效
+  misplaced-addon:
+    moved: '<red>[name] 是 BentoBox 的附属插件，之前放在了 plugins 文件夹中。现已移动到 plugins/BentoBox/addons。请重启服务器以加载它。</red>'
+    move-failed: '<red>[name] 是 BentoBox 的附属插件，必须放在 plugins/BentoBox/addons 中，而不是 plugins 文件夹。请将其移动到那里并重启服务器。</red>'
+    duplicate: '<red>[name] 同时存在于 plugins 文件夹和 plugins/BentoBox/addons 中。请删除 plugins 文件夹中的那个并重启服务器。</red>'
   beta: '<light_purple><bold>此命令在Beta中。确保您有备份！</bold></light_purple>'
   errors:
     command-cancelled: '<red>命令已取消.</red>'
