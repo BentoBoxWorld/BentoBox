@@ -344,7 +344,7 @@ public class BentoBox extends JavaPlugin implements Listener {
         shutdown = true;
 
         HeadGetter.shutdown();
-        BlueprintPreview.clearAll();
+        BlueprintPreview.endAll(this);
 
         if (addonsManager != null) {
             addonsManager.disableAddons();

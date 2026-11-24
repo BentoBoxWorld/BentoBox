@@ -41,7 +41,7 @@ public class BentoBoxListenerRegistrar {
         manager.registerEvents(new DeathListener(plugin), plugin);
         manager.registerEvents(new DidYouMeanListener(plugin), plugin);
         manager.registerEvents(new ChatInputListener(), plugin);
-        manager.registerEvents(new BlueprintPreview(), plugin);
+        manager.registerEvents(new BlueprintPreview(plugin), plugin);
         // Register the plugin itself for any listeners it implements (e.g. MV unregister)
         manager.registerEvents(plugin, plugin);
         islandDeletionManager = new IslandDeletionManager(plugin);

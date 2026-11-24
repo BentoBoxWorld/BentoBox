@@ -516,7 +516,9 @@ public class IslandCreationPanel extends AbstractPanel
         builder.clickHandler((panel, user, clickType, i) -> {
             if (preview && clickType == ClickType.RIGHT) {
                 user.closeInventory();
-                BlueprintPreview.show(this.plugin, user, (GameModeAddon) this.command.getAddon(), bundle);
+                String create = "/" + this.command.getTopLabel() + " " + this.command.getLabel();
+                BlueprintPreview.show(this.plugin, user, (GameModeAddon) this.command.getAddon(), bundle, create,
+                        create);
                 return true;
             }
             actions.forEach(action -> {

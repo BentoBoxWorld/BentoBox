@@ -705,7 +705,10 @@ commands:
         contact an administrator.</red>'
       creating-island: '<green>Finding a spot for your [prefix_island]...</green>'
       preview:
-        showing: '<green>This is </green><white>[name]</white><green>. Walk around it; it disappears in [number] seconds.</green>'
+        showing: '<green>This is </green><white>[name]</white><green>. Fly around it. You will be taken back in [number] seconds.</green>'
+        choose: '<green><bold>[Choose this one]</bold></green>'
+        back: '<yellow><bold>[Back to the list]</bold></yellow>'
+        ended: '<gray>Preview over.</gray>'
         nothing: '<red>There is nothing to preview.</red>'
       you-cannot-make: '<red>You cannot make any more [prefix_Islands]!</red>'
       max-uses: '<red>You cannot make any more of that type of [prefix_island]!</red>'
