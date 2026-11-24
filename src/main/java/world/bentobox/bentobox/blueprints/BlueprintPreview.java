@@ -125,7 +125,7 @@ public class BlueprintPreview implements Listener {
      * @return true if previews are switched on and this bundle may be previewed
      */
     public static boolean isAllowed(@NonNull BentoBox plugin, @NonNull BlueprintBundle bundle) {
-        return plugin.getSettings().isBlueprintPreview() && !bundle.isPreviewHidden();
+        return plugin.getSettings().isBlueprintPreview() && bundle.isPreviewAllowed();
     }
 
     /**

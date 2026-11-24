@@ -253,7 +253,8 @@ island:
     # bundle in the island creation panel takes the player to an empty world kept for
     # previews, where they can fly around the bundle's overworld blueprint. Only that
     # player sees the blocks; nothing is built. They are put back when the preview ends.
-    # A bundle can be excluded in the blueprint management panel.
+    # Only the default bundle can be previewed until other bundles are allowed in the
+    # blueprint management panel.
     # Added since 3.25.0.
     enabled: true
     # How long a preview lasts, in seconds, before the player is put back.

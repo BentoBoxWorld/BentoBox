@@ -24,6 +24,8 @@ import world.bentobox.bentobox.util.ItemParser;
 public class BlueprintBundle implements DataObject {
 
     private static final String DEFAULT_ICON = "PAPER";
+    /** The id of the bundle every game mode has. Same as {@code BlueprintsManager.DEFAULT_BUNDLE_NAME}. */
+    private static final String DEFAULT_BUNDLE_ID = "default";
 
     /**
      * The unique id of this bundle
@@ -89,11 +91,12 @@ public class BlueprintBundle implements DataObject {
     private List<String> commands = new ArrayList<>();
 
     /**
-     * True if players must not be shown a preview of this bundle, for example because its
-     * blueprints hold things players are meant to find for themselves.
+     * Whether players may preview this bundle. Null means nobody has chosen: the default bundle
+     * can then be previewed and any other bundle cannot, as its blueprints may hold things
+     * players are meant to find for themselves.
      */
     @Expose
-    private boolean previewHidden;
+    private Boolean preview;
 
     /**
      * @return the uniqueId
@@ -301,18 +304,21 @@ public class BlueprintBundle implements DataObject {
     }
 
     /**
-     * @return true if players must not be shown a preview of this bundle
+     * Whether players may preview this bundle before choosing it. Until it is set with
+     * {@link #setPreviewAllowed(boolean)}, only the default bundle can be previewed.
+     *
+     * @return true if players may preview this bundle
      * @since 3.25.0
      */
-    public boolean isPreviewHidden() {
-        return previewHidden;
+    public boolean isPreviewAllowed() {
+        return preview != null ? preview : DEFAULT_BUNDLE_ID.equals(uniqueId);
     }
 
     /**
-     * @param previewHidden true if players must not be shown a preview of this bundle
+     * @param previewAllowed true if players may preview this bundle
      * @since 3.25.0
      */
-    public void setPreviewHidden(boolean previewHidden) {
-        this.previewHidden = previewHidden;
+    public void setPreviewAllowed(boolean previewAllowed) {
+        this.preview = previewAllowed;
     }
 }

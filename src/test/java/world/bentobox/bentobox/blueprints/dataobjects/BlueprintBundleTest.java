@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -129,5 +131,29 @@ class BlueprintBundleTest extends CommonTestSetup {
         ItemStack is = bundle.getIconItemStack();
         assertNotNull(is);
         assertEquals(Material.PAPER, is.getType());
+    }
+
+    /**
+     * Until an admin chooses, only the default bundle can be previewed.
+     */
+    @Test
+    void testPreviewAllowedOnlyForDefaultBundleUntilSet() {
+        bundle.setUniqueId("default");
+        assertTrue(bundle.isPreviewAllowed());
+        bundle.setUniqueId("secret_base");
+        assertFalse(bundle.isPreviewAllowed());
+    }
+
+    /**
+     * An admin's choice wins over the rule for untouched bundles.
+     */
+    @Test
+    void testPreviewAllowedFollowsTheAdminsChoice() {
+        bundle.setUniqueId("default");
+        bundle.setPreviewAllowed(false);
+        assertFalse(bundle.isPreviewAllowed());
+        bundle.setUniqueId("secret_base");
+        bundle.setPreviewAllowed(true);
+        assertTrue(bundle.isPreviewAllowed());
     }
 }

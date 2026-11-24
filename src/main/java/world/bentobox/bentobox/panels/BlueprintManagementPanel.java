@@ -438,10 +438,10 @@ public class BlueprintManagementPanel {
 
     private PanelItem getPreviewIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
         return new PanelItemBuilder().icon(Material.SPYGLASS).name(t("preview"))
-                .description(t(bb.isPreviewHidden() ? "preview-hidden" : "preview-allowed"))
+                .description(t(bb.isPreviewAllowed() ? "preview-allowed" : "preview-hidden"))
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
-                    bb.setPreviewHidden(!bb.isPreviewHidden());
+                    bb.setPreviewAllowed(!bb.isPreviewAllowed());
                     plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                     panel.getInventory().setItem(PREVIEW_SLOT, getPreviewIcon(addon, bb).getItem());
                     return true;
