@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klik om [command] uit te voeren]'
   success: '<green>Succes!</green>'
   invalid: Ongeldig
+  misplaced-addon:
+    moved: '<red>[name] is een BentoBox-addon en stond in de map plugins. Het is verplaatst naar plugins/BentoBox/addons. Herstart de server om het te laden.</red>'
+    move-failed: '<red>[name] is een BentoBox-addon en hoort in plugins/BentoBox/addons, niet in de map plugins. Verplaats het daarheen en herstart de server.</red>'
+    duplicate: '<red>[name] staat zowel in de map plugins als in plugins/BentoBox/addons. Verwijder het exemplaar in de map plugins en herstart de server.</red>'
   beta: '<light_purple><bold>Deze opdracht is in bèta. Zorg ervoor dat je back -ups hebt!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Commando geannuleerd.</red>'

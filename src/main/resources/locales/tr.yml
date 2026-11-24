@@ -21,6 +21,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: [command] çalıştırmak için tıklayın]'
   success: '<blue>Başarılı!</blue>'
   invalid: '<dark_red>Geçersiz!</dark_red>'
+  misplaced-addon:
+    moved: '<red>[name] bir BentoBox eklentisidir ve plugins klasöründeydi. plugins/BentoBox/addons klasörüne taşındı. Yüklemek için sunucuyu yeniden başlatın.</red>'
+    move-failed: '<red>[name] bir BentoBox eklentisidir ve plugins klasörüne değil, plugins/BentoBox/addons klasörüne konmalıdır. Oraya taşıyın ve sunucuyu yeniden başlatın.</red>'
+    duplicate: '<red>[name] hem plugins klasöründe hem de plugins/BentoBox/addons klasöründe var. plugins klasöründekini silin ve sunucuyu yeniden başlatın.</red>'
   beta: '<light_purple><bold>Bu komut beta. Yedeklemeleriniz olduğundan emin olun!</bold></light_purple>'
   errors:
     command-cancelled: '<dark_red>Komut iptal edildi!</dark_red>'

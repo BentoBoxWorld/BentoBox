@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Noklikšķiniet, lai palaistu [command]]'
   success: '<green>Darīts!</green>'
   invalid: Nederīgs!
+  misplaced-addon:
+    moved: '<red>[name] ir BentoBox papildinājums, un tas atradās mapē plugins. Tas ir pārvietots uz plugins/BentoBox/addons. Restartējiet serveri, lai to ielādētu.</red>'
+    move-failed: '<red>[name] ir BentoBox papildinājums, un tam jāatrodas plugins/BentoBox/addons, nevis mapē plugins. Pārvietojiet to turp un restartējiet serveri.</red>'
+    duplicate: '<red>[name] atrodas gan mapē plugins, gan plugins/BentoBox/addons. Izdzēsiet to, kas ir mapē plugins, un restartējiet serveri.</red>'
   beta: '<light_purple><bold>Šī komanda ir beta versijā. Pārliecinieties, ka jums ir dublējumi!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Komanda atcleta.</red>'

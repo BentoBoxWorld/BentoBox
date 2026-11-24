@@ -26,6 +26,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Нажмите, чтобы выполнить [command]]'
   success: <green>Успешно!</green>
   invalid: Некорректно
+  misplaced-addon:
+    moved: '<red>[name] — это аддон BentoBox, и он лежал в папке plugins. Он перемещён в plugins/BentoBox/addons. Перезапустите сервер, чтобы загрузить его.</red>'
+    move-failed: '<red>[name] — это аддон BentoBox, его нужно положить в plugins/BentoBox/addons, а не в папку plugins. Переместите его туда и перезапустите сервер.</red>'
+    duplicate: '<red>[name] лежит и в папке plugins, и в plugins/BentoBox/addons. Удалите файл из папки plugins и перезапустите сервер.</red>'
   beta: <light_purple><bold>Эта команда в бета-версии. Убедитесь, что у вас есть резервные
     копии!</bold></light_purple>
   errors:

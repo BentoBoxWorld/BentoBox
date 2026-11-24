@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kattints a futtatáshoz: [command]]'
   success: '<green>Siker!</green>'
   invalid: Érvénytelen
+  misplaced-addon:
+    moved: '<red>A(z) [name] egy BentoBox kiegészítő, és a plugins mappában volt. Át lett helyezve ide: plugins/BentoBox/addons. Indítsd újra a szervert a betöltéséhez.</red>'
+    move-failed: '<red>A(z) [name] egy BentoBox kiegészítő, és a(z) plugins/BentoBox/addons mappába kell kerülnie, nem a plugins mappába. Helyezd át oda, és indítsd újra a szervert.</red>'
+    duplicate: '<red>A(z) [name] a plugins mappában és a(z) plugins/BentoBox/addons mappában is megtalálható. Töröld a plugins mappában lévőt, és indítsd újra a szervert.</red>'
   beta: '<light_purple><bold>Ez a parancs béta. Győződjön meg róla, hogy van biztonsági másolata!</bold></light_purple>'
   errors:
     command-cancelled: '<red>A parancs megszakítva.</red>'

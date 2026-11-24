@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknite za pokretanje [command]]'
   success: '<green>Uspjeh!</green>'
   invalid: Neispravno
+  misplaced-addon:
+    moved: '<red>[name] je BentoBox dodatak i bio je u mapi plugins. Premješten je u plugins/BentoBox/addons. Ponovno pokreni server da bi se učitao.</red>'
+    move-failed: '<red>[name] je BentoBox dodatak i mora biti u plugins/BentoBox/addons, a ne u mapi plugins. Premjesti ga tamo i ponovno pokreni server.</red>'
+    duplicate: '<red>[name] se nalazi i u mapi plugins i u plugins/BentoBox/addons. Obriši onaj u mapi plugins i ponovno pokreni server.</red>'
   beta: '<light_purple><bold>Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Naredba otkazana.</red>'

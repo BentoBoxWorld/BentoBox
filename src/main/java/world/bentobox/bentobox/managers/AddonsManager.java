@@ -171,6 +171,12 @@ public class AddonsManager {
                 });
                 return;
             }
+            // A Pladdon that the server loaded from the plugins folder this boot has just moved itself
+            // here. Its classes are already loaded, so loading it again would run a second copy.
+            if (isMisplacedPladdonLoaded(jar)) {
+                plugin.logWarning(f.getName() + " was moved into the addons folder during this startup. Restart the server to load it.");
+                return;
+            }
             // Load the pladdon or addon if it isn't a pladdon
             result = loadPladdon(data, f);
         } catch (Exception e) {
@@ -524,6 +530,29 @@ public class AddonsManager {
     public <T extends Addon> Optional<T> getAddonByMainClassName(@NonNull String name) {
         return addons.stream().filter(a -> a.getDescription().getMain().equalsIgnoreCase(name)).map(a -> (T) a)
                 .findFirst();
+    }
+
+    /**
+     * Checks whether the server already loaded this jar as a plugin from the wrong folder this boot.
+     * Such a {@link Pladdon} moves itself into the addons folder during {@code onLoad}, which is
+     * before BentoBox scans that folder.
+     *
+     * @param jar the addon jar
+     * @return true if a misplaced Pladdon with this jar's plugin name is loaded
+     */
+    private boolean isMisplacedPladdonLoaded(@NonNull JarFile jar) throws IOException {
+        JarEntry entry = jar.getJarEntry("plugin.yml");
+        if (entry == null) {
+            return false;
+        }
+        YamlConfiguration pluginYml = new YamlConfiguration();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)))) {
+            pluginYml.load(reader);
+        } catch (InvalidConfigurationException e) {
+            return false;
+        }
+        String name = pluginYml.getString("name");
+        return name != null && Bukkit.getPluginManager().getPlugin(name) instanceof Pladdon pl && pl.isMisplaced();
     }
 
     @NonNull

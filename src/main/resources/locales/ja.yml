@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: クリックで [command] を実行]'
   success: '<green>成功！</green>'
   invalid: 無効
+  misplaced-addon:
+    moved: '<red>[name] は BentoBox のアドオンで、plugins フォルダーに置かれていました。plugins/BentoBox/addons に移動しました。読み込むにはサーバーを再起動してください。</red>'
+    move-failed: '<red>[name] は BentoBox のアドオンなので、plugins フォルダーではなく plugins/BentoBox/addons に置く必要があります。そこへ移動してサーバーを再起動してください。</red>'
+    duplicate: '<red>[name] が plugins フォルダーと plugins/BentoBox/addons の両方にあります。plugins フォルダーの方を削除してサーバーを再起動してください。</red>'
   beta: '<light_purple><bold>このコマンドはベータ版です。バックアップがあることを確認してください！</bold></light_purple>'
   errors:
     command-cancelled: '<red>Commandはキャンセルされました。</red>'

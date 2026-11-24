@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Dă clic pentru a rula [command]]'
   success: '<green>Succes!</green>'
   invalid: Invalid
+  misplaced-addon:
+    moved: '<red>[name] este un addon BentoBox și se afla în folderul plugins. A fost mutat în plugins/BentoBox/addons. Repornește serverul pentru a-l încărca.</red>'
+    move-failed: '<red>[name] este un addon BentoBox și trebuie pus în plugins/BentoBox/addons, nu în folderul plugins. Mută-l acolo și repornește serverul.</red>'
+    duplicate: '<red>[name] se află atât în folderul plugins, cât și în plugins/BentoBox/addons. Șterge-l pe cel din folderul plugins și repornește serverul.</red>'
   beta: >-
     <light_purple><bold>Această comandă este în versiune beta. Asigurați -vă că aveți copii de</bold></light_purple>
     rezervă!
