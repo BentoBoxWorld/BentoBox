@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.bukkit.World;
 
 import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.dialogs.DialogBuilder;
@@ -313,10 +315,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 islandMap.put(Util.stripColor(island.getName()), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = Util.stripColor(
-                        user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                                user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index);
-                islandMap.put(text, new IslandInfo(island, true));
+                islandMap.put(getIslandLabel(user, island, index, islandMap.keySet()), new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified
             island.getHomes().keySet().stream().filter(n -> !n.isBlank())
@@ -325,6 +324,31 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
         return islandMap;
 
+    }
+
+    /**
+     * Gets the text that stands for an island with no name in a list the player picks from.
+     * The game mode is asked first, see {@link GameModeAddon#getIslandLabel(User, Island)}.
+     * Otherwise it is the usual "player's island" text followed by the island's number.
+     *
+     * @param user the player who will see the label
+     * @param island the island
+     * @param index number of the island among the player's islands, starting at 1
+     * @param taken labels already in use, which the result will differ from
+     * @return label without color codes, because they are not allowed in chat
+     * @since 3.25.0
+     */
+    public static String getIslandLabel(User user, Island island, int index, Collection<String> taken) {
+        String label = island.getWorld() == null ? null
+                : BentoBox.getInstance().getIWM().getAddon(island.getWorld()).map(gm -> gm.getIslandLabel(user, island))
+                        .map(Util::stripColor).filter(l -> !l.isBlank()).orElse(null);
+        if (label != null && !taken.contains(label)) {
+            return label;
+        }
+        String base = label != null ? label
+                : Util.stripColor(user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()));
+        return base + " " + index;
     }
 
 }

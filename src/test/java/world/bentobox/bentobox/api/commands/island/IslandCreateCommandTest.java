@@ -141,6 +141,7 @@ class IslandCreateCommandTest extends CommonTestSetup {
         Map<String, BlueprintBundle> map = new HashMap<>();
         when(bpm.getBlueprintBundles(addon)).thenReturn(map);
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
+        when(bpm.checkAvailable(any(), any(), any(), any())).thenReturn(true);
 
         // IslandCreationPanel
         Mockito.mockStatic(IslandCreationPanel.class);

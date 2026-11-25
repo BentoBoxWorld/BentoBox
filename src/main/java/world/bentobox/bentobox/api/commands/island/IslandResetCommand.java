@@ -202,6 +202,11 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
+        // The game mode may not allow this bundle for this player right now. This must be
+        // checked before the old island is touched, or the player would be left with nothing.
+        if (!getPlugin().getBlueprintsManager().checkAvailable(getAddon(), user, name, oldIsland)) {
+            return false;
+        }
         deleteOldIsland(user, oldIsland);
 
         user.sendMessage("commands.island.create.creating-island");

@@ -7,6 +7,10 @@
 package world.bentobox.bentobox.panels.customizable;
 
 
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.blueprints.BundleAvailability;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,6 +93,11 @@ public class IslandCreationPanel extends AbstractPanel
 
 
     /**
+     * What the game mode says about each bundle, by bundle id
+     */
+    private final Map<String, BundleAvailability> availability = new HashMap<>();
+
+    /**
      * This is internal constructor. It is used internally in current class to avoid creating objects everywhere.
      *
      * @param command CompositeCommand object
@@ -104,10 +113,22 @@ public class IslandCreationPanel extends AbstractPanel
         this.world = command.getWorld();
         this.reset = reset;
 
-        this.elementList = this.plugin.getBlueprintsManager().getBlueprintBundles(command.getAddon()).values().stream().
+        // The island that a reset would replace. The game mode may need it to decide.
+        Island oldIsland = reset && this.world != null ? this.plugin.getIslands().getIsland(this.world, user) : null;
+        GameModeAddon gameMode = command.getAddon();
+        this.elementList = this.plugin.getBlueprintsManager().getBlueprintBundles(gameMode).values().stream().
                 sorted(Comparator.comparingInt(BlueprintBundle::getSlot).thenComparing(BlueprintBundle::getUniqueId))
                 .filter(bundle -> !bundle.isRequirePermission() || this.user
                         .hasPermission(command.getPermissionPrefix() + "island.create." + bundle.getUniqueId()))
+                .filter(bundle -> {
+                    // Ask the game mode. Hidden bundles are left out; locked ones are shown.
+                    BundleAvailability result = gameMode.getBundleAvailability(user, bundle, oldIsland);
+                    if (result == null) {
+                        return true;
+                    }
+                    this.availability.put(bundle.getUniqueId(), result);
+                    return result.state() != BundleAvailability.State.HIDDEN;
+                })
                 .toList();
 
     }
@@ -396,7 +417,13 @@ public class IslandCreationPanel extends AbstractPanel
         boolean usedUp = addUsageLimitInfo(builder, bundle);
         addCostInfo(builder, bundle);
         if (usedUp && plugin.getSettings().isHideUsedBlueprints()) return null;
-        if (!usedUp) addClickHandler(builder, template, bundle);
+        // A bundle the game mode has locked is shown with the reason and cannot be clicked
+        BundleAvailability available = this.availability.getOrDefault(bundle.getUniqueId(),
+                BundleAvailability.available());
+        if (!available.isAvailable() && available.message() != null) {
+            builder.description(available.message());
+        }
+        if (!usedUp && available.isAvailable()) addClickHandler(builder, template, bundle);
         return builder.build();
     }
 
