@@ -7,6 +7,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Location;
@@ -300,6 +301,27 @@ public abstract class GameModeAddon extends Addon {
     @Nullable
     public String getIslandLabel(@NonNull User user, @NonNull Island island) {
         return null;
+    }
+
+    /**
+     * Gets the settings this game mode asks another addon to use in this game mode's worlds.
+     * A game mode that only plays properly when a helper addon is set up a certain way can
+     * ask for that here, so the admin does not have to edit the other addon's config.
+     * <p>
+     * The keys are paths in the other addon's config file, for example
+     * {@code options.islands.advancements}, and the values are booleans, numbers, strings or
+     * enum names. It is up to the other addon whether it supports requests and which paths it
+     * accepts, and the admin can turn requests off in that addon's config. A request never
+     * changes the other addon's config file or its behaviour in other game modes.
+     *
+     * @param addonName name of the addon being asked, as in its addon.yml
+     * @return config path to requested value. The default is no requests.
+     * @since 3.25.0
+     * @see world.bentobox.bentobox.api.configuration.RequestedSettings
+     */
+    @NonNull
+    public Map<String, Object> getRequestedSettings(@NonNull String addonName) {
+        return Map.of();
     }
 
 }
