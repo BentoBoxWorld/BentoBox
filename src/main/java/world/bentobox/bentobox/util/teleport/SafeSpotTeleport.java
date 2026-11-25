@@ -294,7 +294,7 @@ public class SafeSpotTeleport {
         int minY = world.getMinHeight();
         int limit = plugin.getSettings().getSafeSpotSearchVerticalRange();
         // The target may be outside the world's height, e.g. an island centre below the world
-        int startY = Math.clamp(location.getBlockY() - 1, minY, maxHeight);
+        int startY = Math.clamp(location.getBlockY() - 1L, minY, maxHeight);
         long best = Long.MAX_VALUE;
         int bestX = 0;
         int bestY = 0;
@@ -440,8 +440,8 @@ public class SafeSpotTeleport {
             // nearest safe spot to it. The centre can be far from where players live; in some
             // game modes it is deep underground.
             Location home = island.getHome("");
-            this.location = home != null && home.getWorld() != null
-                    && home.getWorld().equals(island.getWorld()) ? home : island.getProtectionCenter();
+            this.location = home != null && Objects.equals(home.getWorld(), island.getWorld()) ? home
+                    : island.getProtectionCenter();
             return this;
         }
 
