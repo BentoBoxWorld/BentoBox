@@ -463,6 +463,32 @@ class IslandGoCommandTest extends CommonTestSetup {
         verify(notifier).notify(any(), eq("commands.delay.moved-so-command-cancelled"));
     }
 
+    /**
+     * Test method for {@link IslandGoCommand#getIslandLabel(User, Island, int, java.util.Collection)}
+     */
+    @Test
+    void testGetIslandLabelDefault() {
+        User u = mock(User.class);
+        when(u.getTranslation(anyString(), any(String[].class))).thenReturn("tasty's island");
+        when(island.getWorld()).thenReturn(world);
+        assertEquals("tasty's island 2", IslandGoCommand.getIslandLabel(u, island, 2, List.of()));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#getIslandLabel(User, Island, int, java.util.Collection)}
+     */
+    @Test
+    void testGetIslandLabelFromGameMode() {
+        User u = mock(User.class);
+        when(island.getWorld()).thenReturn(world);
+        world.bentobox.bentobox.api.addons.GameModeAddon gm = mock(world.bentobox.bentobox.api.addons.GameModeAddon.class);
+        when(gm.getIslandLabel(u, island)).thenReturn("Icelands");
+        when(plugin.getIWM().getAddon(world)).thenReturn(Optional.of(gm));
+        assertEquals("Icelands", IslandGoCommand.getIslandLabel(u, island, 2, List.of()));
+        // A label that is already in use gets the island's number
+        assertEquals("Icelands 2", IslandGoCommand.getIslandLabel(u, island, 2, List.of("Icelands")));
+    }
+
     class MyWorldSettings implements WorldSettings {
 
         private Map<String, Boolean> worldFlags = new HashMap<>();

@@ -1,5 +1,11 @@
 package world.bentobox.bentobox.api.addons;
 
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
+import world.bentobox.bentobox.blueprints.BundleAvailability;
+import world.bentobox.bentobox.managers.island.NewIslandLocationStrategy;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -232,4 +238,68 @@ public abstract class GameModeAddon extends Addon {
     public int getPregenIslandsAhead() {
         return -1;
     }
+
+    /**
+     * Lets the game mode decide where a new island is placed. It is called whenever an island
+     * is created or reset without an explicit location strategy. The blueprint bundle the
+     * player picked is given so that the location can depend on it, for example to keep
+     * different kinds of island in different parts of the world.
+     *
+     * <p>
+     * The game mode can also refuse the island here, for example because the player has not
+     * unlocked that kind of island yet, by throwing an exception. Nothing has been created at
+     * that point, so there is nothing to undo.
+     *
+     * @param user the player the island is for
+     * @param blueprintBundle the unique id of the chosen blueprint bundle, may be null
+     * @param oldIsland the island that the new one replaces when an island is being reset,
+     *                  otherwise null
+     * @return the strategy to use, or null to use the default
+     *         {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy}
+     * @throws IOException if the island must not be made. The message is a locale reference
+     *                     that is shown to the player.
+     * @since 3.25.0
+     */
+    @Nullable
+    public NewIslandLocationStrategy getNewIslandLocationStrategy(@NonNull User user,
+            @Nullable String blueprintBundle, @Nullable Island oldIsland) throws IOException {
+        return null;
+    }
+
+    /**
+     * Says whether a player can use a blueprint bundle right now. Game modes can lock bundles,
+     * for example until the player has unlocked them in the game, or hide them completely.
+     * A locked bundle is shown in the selection panel with the reason but cannot be picked,
+     * and a hidden one is not shown. Either way the bundle is refused if the player asks for
+     * it by name. This is checked before anything is done to the player's current island.
+     * Permissions, costs and usage limits of bundles are checked separately.
+     *
+     * @param user the player
+     * @param bundle the blueprint bundle
+     * @param oldIsland the island that would be replaced if this is a reset, otherwise null
+     * @return whether the bundle can be used. The default is that it can.
+     * @since 3.25.0
+     */
+    @NonNull
+    public BundleAvailability getBundleAvailability(@NonNull User user, @NonNull BlueprintBundle bundle,
+            @Nullable Island oldIsland) {
+        return BundleAvailability.available();
+    }
+
+    /**
+     * Gets the text that stands for one of a player's islands when it has no name, in lists
+     * the player picks from such as the homes panel and the go command. Game modes where a
+     * player's islands differ in a way the player knows, for example by the kind of land they
+     * are on, can name them by that instead of numbering them.
+     *
+     * @param user the player who will see the label
+     * @param island the island, which has no name
+     * @return the label, or null to use the default of the owner's name and a number
+     * @since 3.25.0
+     */
+    @Nullable
+    public String getIslandLabel(@NonNull User user, @NonNull Island island) {
+        return null;
+    }
+
 }

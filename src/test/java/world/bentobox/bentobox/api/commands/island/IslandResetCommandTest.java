@@ -128,6 +128,7 @@ class IslandResetCommandTest extends CommonTestSetup {
 
         // Bundles manager
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
+        when(bpm.checkAvailable(any(), any(), any(), any())).thenReturn(true);
         when(bpm.validate(any(), any())).thenReturn("custom");
 
         // Give the user some resets
@@ -445,6 +446,23 @@ class IslandResetCommandTest extends CommonTestSetup {
         // Verify event (13 * 2)
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
 
+    }
+
+    /**
+     * If the game mode does not allow the bundle, nothing must happen to the old island.
+     */
+    @Test
+    void testResetRefusedByGameModeLeavesIslandAlone() {
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
+        when(bpm.checkAvailable(any(), any(), any(), any())).thenReturn(false);
+        assertFalse(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
+        // The old island is offered to the game mode so it can decide
+        verify(bpm).checkAvailable(any(), eq(user), eq("custom"), eq(island));
+        // Nobody was kicked, no reset was used up and no island was started
+        verify(user, never()).sendMessage("commands.island.create.creating-island");
+        verify(pm, never()).addReset(any(), any());
+        verify(pim, never()).callEvent(any(IslandBaseEvent.class));
     }
 
     /**

@@ -215,6 +215,10 @@ public class IslandCreateCommand extends CompositeCommand {
      * @return true if island creation was successful
      */
     private boolean makeIsland(User user, String name) {
+        // The game mode may not allow this bundle for this player right now
+        if (!getPlugin().getBlueprintsManager().checkAvailable(getAddon(), user, name, null)) {
+            return false;
+        }
         if (!checkCost(user, name, false)) {
             return false;
         }

@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -217,6 +219,58 @@ class NewIslandTest extends CommonTestSetup {
         verify(ire).getBlueprintBundle();
         verify(pm).setDeaths(world, uuid, 0);
         verify(im, never()).setHomeLocation(eq(user), any());
+    }
+
+    /**
+     * The game mode can supply the location strategy, and is told the blueprint bundle.
+     */
+    @Test
+    void testBuilderGameModeLocationStrategy() throws Exception {
+        Location chosen = mock(Location.class);
+        NewIslandLocationStrategy strategy = mock(NewIslandLocationStrategy.class);
+        when(strategy.getNextLocation(world, user)).thenReturn(chosen);
+        when(addon.getNewIslandLocationStrategy(user, NAME, null)).thenReturn(strategy);
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
+        verify(im).createIsland(chosen, uuid);
+        // The default strategy was not used
+        verify(im, never()).getLast(any());
+    }
+
+    /**
+     * The game mode can refuse the island before anything is created.
+     */
+    @Test
+    void testBuilderGameModeRefuses() throws Exception {
+        when(addon.getNewIslandLocationStrategy(user, NAME, null)).thenThrow(new IOException("my.addon.not-unlocked"));
+        NewIsland.Builder b = NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE);
+        IOException e = assertThrows(IOException.class, b::build);
+        assertEquals("my.addon.not-unlocked", e.getMessage());
+        verify(im, never()).createIsland(any(), any());
+    }
+
+    /**
+     * On a reset the game mode is told which island is being replaced.
+     */
+    @Test
+    void testBuilderGameModeToldOldIslandOnReset() throws Exception {
+        when(builder.build()).thenReturn(ire);
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland)
+                .build();
+        verify(addon).getNewIslandLocationStrategy(user, NAME, oldIsland);
+    }
+
+    /**
+     * A strategy given to the builder wins over the game mode's.
+     */
+    @Test
+    void testBuilderExplicitLocationStrategyWins() throws Exception {
+        Location chosen = mock(Location.class);
+        NewIslandLocationStrategy strategy = mock(NewIslandLocationStrategy.class);
+        when(strategy.getNextLocation(world, user)).thenReturn(chosen);
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE)
+                .locationStrategy(strategy).build();
+        verify(im).createIsland(chosen, uuid);
+        verify(addon, never()).getNewIslandLocationStrategy(any(), any(), any());
     }
 
     /**
