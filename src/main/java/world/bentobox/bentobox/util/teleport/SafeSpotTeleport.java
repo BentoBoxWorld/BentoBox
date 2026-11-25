@@ -301,7 +301,9 @@ public class SafeSpotTeleport {
         int bestZ = 0;
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                long flat = (long) (x - targetX) * (x - targetX) + (long) (z - targetZ) * (z - targetZ);
+                long dx = (long) x - targetX;
+                long dz = (long) z - targetZ;
+                long flat = dx * dx + dz * dz;
                 int top = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight);
                 // Work outwards from the target height. The first hit is the nearest in this column.
                 for (int dy = 0; dy <= limit && flat + (long) dy * dy < best; dy++) {
@@ -438,8 +440,8 @@ public class SafeSpotTeleport {
             // nearest safe spot to it. The centre can be far from where players live; in some
             // game modes it is deep underground.
             Location home = island.getHome("");
-            this.location = home != null && island.getWorld() != null
-                    && island.getWorld().equals(home.getWorld()) ? home : island.getProtectionCenter();
+            this.location = home != null && home.getWorld() != null
+                    && home.getWorld().equals(island.getWorld()) ? home : island.getProtectionCenter();
             return this;
         }
 

@@ -751,7 +751,7 @@ public class BlueprintsManager {
             return true;
         }
         BundleAvailability availability = addon.getBundleAvailability(user, bb, oldIsland);
-        if (availability == null || availability.isAvailable()) {
+        if (availability.isAvailable()) {
             return true;
         }
         if (availability.message() != null) {

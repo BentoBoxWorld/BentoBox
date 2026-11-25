@@ -123,29 +123,38 @@ public final class RequestedSettings {
             return value instanceof Boolean ? value : null;
         }
         if (value instanceof Number n) {
-            if (type == int.class || type == Integer.class) {
-                return n.intValue();
-            } else if (type == long.class || type == Long.class) {
-                return n.longValue();
-            } else if (type == double.class || type == Double.class) {
-                return n.doubleValue();
-            } else if (type == float.class || type == Float.class) {
-                return n.floatValue();
-            }
+            return convertNumber(type, n);
         }
         if (type == String.class) {
             return value.toString();
         }
         if (type.isEnum()) {
-            if (type.isInstance(value)) {
-                return value;
-            }
-            try {
-                return Enum.valueOf((Class<Enum>) type, value.toString().toUpperCase(Locale.ENGLISH));
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
+            return type.isInstance(value) ? value : convertEnum((Class<Enum>) type, value.toString());
         }
         return null;
+    }
+
+    private static Object convertNumber(Class<?> type, Number n) {
+        if (type == int.class || type == Integer.class) {
+            return n.intValue();
+        } else if (type == long.class || type == Long.class) {
+            return n.longValue();
+        } else if (type == double.class || type == Double.class) {
+            return n.doubleValue();
+        } else if (type == float.class || type == Float.class) {
+            return n.floatValue();
+        } else if (type == String.class) {
+            return n.toString();
+        }
+        return null;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static Object convertEnum(Class<Enum> type, String name) {
+        try {
+            return Enum.valueOf(type, name.toUpperCase(Locale.ENGLISH));
+        } catch (IllegalArgumentException _) {
+            return null;
+        }
     }
 }
