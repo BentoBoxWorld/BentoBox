@@ -297,6 +297,10 @@ public final class InputPrompt<T> {
         if (parsed.value() == null) {
             return parsed.error();
         }
+        // A parser can empty the answer, e.g. an id made only of color codes
+        if (required && parsed.value() instanceof String s && s.isBlank()) {
+            return user.getTranslation("prompts.errors.empty");
+        }
         for (Function<T, String> check : checks) {
             String error = check.apply(parsed.value());
             if (error != null) {

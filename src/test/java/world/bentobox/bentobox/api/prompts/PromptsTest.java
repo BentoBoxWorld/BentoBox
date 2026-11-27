@@ -128,6 +128,13 @@ class PromptsTest extends CommonTestSetup {
     }
 
     @Test
+    void testIdOfOnlyColorCodesIsRefused() {
+        AtomicReference<String> got = new AtomicReference<>();
+        assertEquals("prompts.errors.empty", Prompts.id(user).onSubmit(got::set).submit("&c&l"));
+        assertNull(got.get());
+    }
+
+    @Test
     void testInteger() {
         AtomicReference<Integer> got = new AtomicReference<>();
         InputPrompt<Integer> prompt = Prompts.integer(user, 1, 5000).onSubmit(got::set);
