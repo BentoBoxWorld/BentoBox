@@ -21,6 +21,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: [command] çalıştırmak için tıklayın]'
   success: '<blue>Başarılı!</blue>'
   invalid: '<dark_red>Geçersiz!</dark_red>'
+  misplaced-addon:
+    moved: '<red>[name] bir BentoBox eklentisidir ve plugins klasöründeydi. plugins/BentoBox/addons klasörüne taşındı. Yüklemek için sunucuyu yeniden başlatın.</red>'
+    move-failed: '<red>[name] bir BentoBox eklentisidir ve plugins klasörüne değil, plugins/BentoBox/addons klasörüne konmalıdır. Oraya taşıyın ve sunucuyu yeniden başlatın.</red>'
+    duplicate: '<red>[name] hem plugins klasöründe hem de plugins/BentoBox/addons klasöründe var. plugins klasöründekini silin ve sunucuyu yeniden başlatın.</red>'
   beta: '<light_purple><bold>Bu komut beta. Yedeklemeleriniz olduğundan emin olun!</bold></light_purple>'
   errors:
     command-cancelled: '<dark_red>Komut iptal edildi!</dark_red>'
@@ -511,6 +515,13 @@ commands:
         no-trash-instructions: Varsayılan grup çöp kutusuna atılamaz
         permission: Yetki
         no-permission: İzin yok
+        preview: 'Oyuncu önizlemesi'
+        preview-allowed: |-
+          <green>Oyuncular bu paketi önizleyebilir</green>
+          <gray>Gizlemek için tıklayın</gray>
+        preview-hidden: |-
+          <red>Oyuncular bu paketi önizleyemez</red>
+          <gray>İzin vermek için tıklayın</gray>
         perm-required: Yetki ihtyacı gerekli.
         no-perm-required: Varsayılan paket için izin ayarlanamaz
         perm-not-required: Yetki ihtiyacı yok.
@@ -524,6 +535,7 @@ commands:
         new-bundle: Yeni paket
         new-bundle-instructions: Tıkla ve yeni paket oluştur.
         name:
+          title: 'Bir isim gir'
           quit: çık
           prompt: İsim gir ya da çıkmak için 'quit' yaz.
           too-long: '<red>Çok uzun.</red>'
@@ -534,6 +546,7 @@ commands:
           success: Başarılı!
           conversation-prefix: '>'
         description:
+          title: '[name] açıklaması'
           quit: çık
           instructions: |
             [name] için çok satırlı bir açıklama girin.
@@ -563,6 +576,11 @@ commands:
         edit-commands: Komutları düzenlemek için tıklayın
         no-commands: Ayarlanmış komut yok
         commands:
+          title: '[name] komutları'
+          help: |
+            <white>Bu paket yapıştırıldığında çalıştırılacak komutlar, her satıra bir tane.</white>
+            <white><green>[player]</green> ve <green>[owner]</green> yer tutucularını destekler.</white>
+            <white>Oyuncu olarak çalıştırmak için başına <green>[SUDO]</green> ekle.</white>
           quit: çıkış
           clear: temizle
           instructions: |
@@ -722,6 +740,12 @@ commands:
       too-many-islands: '<dark_red>Ada olusturulacak bolge kalmadı.</dark_red>'
       cannot-create-island: '<red>Zamanında bir yer bulunamadı, lütfen tekrar deneyin...</red>'
       unable-create-island: '<dark_red>Adan olusturulamıyor. Yetkili ile gorus!</dark_red>'
+      preview:
+        showing: '<green>Bu: </green><white>[name]</white><green>. Etrafında uçun. [number] saniye sonra geri döneceksiniz.</green>'
+        choose: '<green><bold>[Bunu seç]</bold></green>'
+        back: '<yellow><bold>[Listeye dön]</bold></yellow>'
+        ended: '<gray>Önizleme bitti.</gray>'
+        nothing: '<red>Önizlenecek bir şey yok.</red>'
       creating-island: '<blue>Adan oluşturuluyor, birazcık bekle!</blue>'
       you-cannot-make: '<red>Artık daha fazla ada yapamazsın!</red>'
       max-uses: '<red>Bu türden daha fazla [prefix_island] yapamazsınız!</red>'
@@ -828,6 +852,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Tıkla</aqua> <green>ve işlemleri gör</green>'
+          kick: '<red>Oyuncuyu at</red>'
+          setowner: '<gold>Sahip yap</gold>'
+          leave: '<red>Takımdan ayrıl</red>'
+          accept: '<green>Kabul et</green>'
+          reject: '<red>Reddet</red>'
+          back: '<white>Geri</white>'
         tips:
           LEFT:
             name: '<aqua>Sol Tıkla</aqua>'
@@ -924,6 +956,12 @@ commands:
               <aqua>Aranıyor</aqua>
               <red>[name]</red>
           enter-name: '<green>İsim girin:</green>'
+          mode:
+            name: '<white>Bir oyuncuya tıklamak</white>'
+            invite: '<green>Onu takımına davet eder</green>'
+            coop: '<green>Onu kooperatif yapar</green>'
+            trust: '<green>Ona güvenir</green>'
+            change: '<gray>Değiştirmek için tıkla</gray>'
           tips:
             LEFT:
               name: '<aqua>Sol Tıklama</aqua>'
@@ -2132,10 +2170,27 @@ panels:
   tips:
     click-to-next: '<yellow>Tıkla </yellow><gray>sonraki için.</gray>'
     click-to-previous: '<yellow>Tıkla </yellow><gray>önceki için.</gray>'
+    right-click-to-preview: '<yellow>Sağ tık </yellow><gray>ile önizleyin.</gray>'
     click-to-choose: '<yellow>Tıklayın </yellow><gray>seçmek için.</gray>'
     click-to-toggle: '<yellow>Tıklayın </yellow><gray>açıp kapatmak için.</gray>'
     left-click-to-cycle-down: '<yellow>Sol Tıkla </yellow><gray>aşağı döngü yapmak için.</gray>'
     right-click-to-cycle-up: '<yellow>Sağ Tıkla </yellow><gray>yukarı döngü yapmak için.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Gönder</green>'
+  chat:
+    instructions: '<gray>Cevabını sohbete yaz veya iptal etmek için </gray><aqua>[cancel]</aqua><gray> yaz.</gray>'
+    lines-instructions: '<gray>Sohbete her seferinde bir satır yaz. Bitirmek için </gray><aqua>[done]</aqua><gray>, iptal etmek için </gray><aqua>[cancel]</aqua><gray> yaz.</gray>'
+    confirm-instructions: '<gray>Onaylamak için sohbete </gray><aqua>[confirm]</aqua><gray> yaz. Başka her şey iptal eder.</gray>'
+    cancel-word: 'iptal'
+    done-word: 'bitti'
+    confirm-word: 'onayla'
+    timed-out: '<red>Cevap yok - istek iptal edildi.</red>'
+  errors:
+    empty: '<red>Önce bir şey yaz.</red>'
+    too-long: '<red>Bu çok uzun. Sınır [number] karakter.</red>'
+    not-a-number: '<red>Bu geçerli bir sayı değil.</red>'
+    out-of-range: '<red>[min] ile [max] arasında bir sayı gir.</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>

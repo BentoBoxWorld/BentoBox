@@ -23,6 +23,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: 點擊執行 [command]]'
   success: '<green>成功!</green>'
   invalid: 無效
+  misplaced-addon:
+    moved: '<red>[name] 是 BentoBox 的附加元件，之前放了在 plugins 資料夾中。現已移至 plugins/BentoBox/addons。請重新啟動伺服器以載入它。</red>'
+    move-failed: '<red>[name] 是 BentoBox 的附加元件，必須放在 plugins/BentoBox/addons 中，而不是 plugins 資料夾。請把它移到那裡並重新啟動伺服器。</red>'
+    duplicate: '<red>[name] 同時存在於 plugins 資料夾和 plugins/BentoBox/addons 中。請刪除 plugins 資料夾中的那個並重新啟動伺服器。</red>'
   beta: '<light_purple><bold>此命令在Beta中。確保您有備份！</bold></light_purple>'
   errors:
     command-cancelled: '<red>命令已取消執行</red>'
@@ -467,6 +471,13 @@ commands:
         no-trash-instructions: '<red>不能刪除預置藍圖方案</red>'
         permission: '<white><bold>權限</bold></white>'
         no-permission: '<white><bold>不需要權限</bold></white>'
+        preview: '玩家預覽'
+        preview-allowed: |-
+          <green>玩家可以預覽此藍圖方案</green>
+          <gray>點擊隱藏</gray>
+        preview-hidden: |-
+          <red>玩家無法預覽此藍圖方案</red>
+          <gray>點擊允許</gray>
         perm-required: '<red>需要：</red>'
         no-perm-required: '<red>不能為預置的藍圖方案設置權限</red>'
         perm-not-required: '<gray>不需要</gray>'
@@ -483,6 +494,7 @@ commands:
           <gray>三個世界的藍圖的捆綁包。</gray>
           <gray>它將出現在玩家創建島嶼界面中。</gray>
         name:
+          title: '請輸入名稱'
           quit: 退出
           prompt: '<yellow>請輸入新名稱， 或 “</yellow><aqua>quit</aqua><yellow>” 來退出編輯。</yellow>'
           too-long: '<red>新名稱太長了！</red>'
@@ -491,6 +503,7 @@ commands:
           success: '<green>成功！</green>'
           conversation-prefix: '<dark_aqua>> </dark_aqua>'
         description:
+          title: '[name] 的描述'
           quit: 退出
           instructions: |-
             <yellow>請為 </yellow><aqua>[name] </aqua><yellow>輸入描述， 每輸入一次為一行。</yellow>
@@ -520,6 +533,11 @@ commands:
         edit-commands: 點擊編輯命令
         no-commands: 未設定命令
         commands:
+          title: '[name] 的指令'
+          help: |
+            <white>貼上此藍圖方案時執行的指令, 每行一條.</white>
+            <white>支援佔位符 <green>[player]</green> 和 <green>[owner]</green>.</white>
+            <white>在前面加上 <green>[SUDO]</green> 可以玩家身份執行.</white>
           quit: 退出
           clear: 清除
           instructions: |
@@ -676,6 +694,12 @@ commands:
       too-many-islands: '<red>這個世界太擁擠了，已經沒有空餘空間為您創建島嶼。</red>'
       cannot-create-island: '<red>找不到合適的地點為您創建島嶼，請稍後重試...</red>'
       unable-create-island: '<red>無法生成您的島嶼，請聯系管理員。</red>'
+      preview:
+        showing: '<green>這是 </green><white>[name]</white><green>。四處飛行看看吧。[number] 秒後會將你送回原處。</green>'
+        choose: '<green><bold>[選擇這個]</bold></green>'
+        back: '<yellow><bold>[返回列表]</bold></yellow>'
+        ended: '<gray>預覽結束。</gray>'
+        nothing: '<red>沒有可預覽的內容。</red>'
       creating-island: '<green>正在尋找合適的地點創建島嶼, 請耐心等候...</green>'
       you-cannot-make: '<red>您不能再建立任何島嶼！</red>'
       max-uses: '<red>您不能再做任何類型的[prefix_island]！</red>'
@@ -777,6 +801,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>點擊</aqua> <green>查看操作</green>'
+          kick: '<red>踢出玩家</red>'
+          setowner: '<gold>設為島主</gold>'
+          leave: '<red>離開隊伍</red>'
+          accept: '<green>接受</green>'
+          reject: '<red>拒絕</red>'
+          back: '<white>返回</white>'
         tips:
           LEFT:
             name: '<aqua>左點擊</aqua>'
@@ -871,6 +903,12 @@ commands:
               <aqua>搜索</aqua>
               <red>[name]</red>
           enter-name: '<green>輸入名稱：</green>'
+          mode:
+            name: '<white>點擊玩家將</white>'
+            invite: '<green>邀請加入您的隊伍</green>'
+            coop: '<green>設為協作者</green>'
+            trust: '<green>信任玩家</green>'
+            change: '<gray>點擊切換</gray>'
           tips:
             LEFT:
               name: '<aqua>左點擊</aqua>'
@@ -2033,10 +2071,27 @@ panels:
   tips:
     click-to-next: '<yellow>單擊下一步。</yellow>'
     click-to-previous: '<yellow>單擊以獲取上一個。</yellow>'
+    right-click-to-preview: '<yellow>右鍵點擊 </yellow><gray>預覽</gray>'
     click-to-choose: '<yellow>單擊以選擇。</yellow>'
     click-to-toggle: '<yellow>單擊切換。</yellow>'
     left-click-to-cycle-down: '<yellow>左鍵單擊以向下循環。</yellow>'
     right-click-to-cycle-up: '<yellow>右鍵單擊以向上循環。</yellow>'
+prompts:
+  buttons:
+    submit: '<green>提交</green>'
+  chat:
+    instructions: '<gray>請在聊天欄輸入你的回答, 或輸入 </gray><aqua>[cancel]</aqua><gray> 取消.</gray>'
+    lines-instructions: '<gray>請在聊天欄每次輸入一行. 輸入 </gray><aqua>[done]</aqua><gray> 完成, 或輸入 </gray><aqua>[cancel]</aqua><gray> 取消.</gray>'
+    confirm-instructions: '<gray>請在聊天欄輸入 </gray><aqua>[confirm]</aqua><gray> 以確認. 輸入其他內容將取消.</gray>'
+    cancel-word: '取消'
+    done-word: '完成'
+    confirm-word: '確認'
+    timed-out: '<red>沒有回答 - 請求已取消.</red>'
+  errors:
+    empty: '<red>請先輸入內容.</red>'
+    too-long: '<red>太長了. 最多 [number] 個字元.</red>'
+    not-a-number: '<red>這不是有效的數字.</red>'
+    out-of-range: '<red>請輸入 [min] 到 [max] 之間的數字.</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>

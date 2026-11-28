@@ -389,9 +389,8 @@ public class IslandHomesPanel extends AbstractPanel
                 localIslandMap.put(island.getName(), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
-                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
-                localIslandMap.put(text, new IslandInfo(island, true));
+                localIslandMap.put(IslandGoCommand.getIslandLabel(user, island, index, localIslandMap.keySet()),
+                        new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified
             island.getHomes().keySet().stream().filter(n -> !n.isBlank())

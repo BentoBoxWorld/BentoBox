@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: クリックで [command] を実行]'
   success: '<green>成功！</green>'
   invalid: 無効
+  misplaced-addon:
+    moved: '<red>[name] は BentoBox のアドオンで、plugins フォルダーに置かれていました。plugins/BentoBox/addons に移動しました。読み込むにはサーバーを再起動してください。</red>'
+    move-failed: '<red>[name] は BentoBox のアドオンなので、plugins フォルダーではなく plugins/BentoBox/addons に置く必要があります。そこへ移動してサーバーを再起動してください。</red>'
+    duplicate: '<red>[name] が plugins フォルダーと plugins/BentoBox/addons の両方にあります。plugins フォルダーの方を削除してサーバーを再起動してください。</red>'
   beta: '<light_purple><bold>このコマンドはベータ版です。バックアップがあることを確認してください！</bold></light_purple>'
   errors:
     command-cancelled: '<red>Commandはキャンセルされました。</red>'
@@ -457,6 +461,13 @@ commands:
         no-trash-instructions: デフォルトのバンドルを破棄できません
         permission: 許可
         no-permission: 無許可
+        preview: 'プレイヤープレビュー'
+        preview-allowed: |-
+          <green>プレイヤーはこのバンドルをプレビューできます</green>
+          <gray>クリックして非表示にします</gray>
+        preview-hidden: |-
+          <red>プレイヤーはこのバンドルをプレビューできません</red>
+          <gray>クリックして許可します</gray>
         perm-required: 必須
         no-perm-required: デフォルトのバンドルに権限を設定することはできません
         perm-not-required: 必須ではありません
@@ -470,6 +481,7 @@ commands:
         new-bundle: 新しいバンドル
         new-bundle-instructions: クリックして新しいバンドルを作成します
         name:
+          title: '名前を入力してください'
           quit: やめる
           prompt: 名前を入力するか、「quit」で終了します
           too-long: '<red>長すぎる</red>'
@@ -478,6 +490,7 @@ commands:
           success: 成功！
           conversation-prefix: '>'
         description:
+          title: '[name] の説明'
           quit: やめる
           instructions: |
             [name]に複数行の説明を入力してください
@@ -507,6 +520,11 @@ commands:
         edit-commands: クリックしてコマンドを編集
         no-commands: コマンドが設定されていません
         commands:
+          title: '[name] のコマンド'
+          help: |
+            <white>このバンドルが貼り付けられたときに実行するコマンドです。1行に1つ入力します。</white>
+            <white>プレースホルダー <green>[player]</green> と <green>[owner]</green> が使えます。</white>
+            <white>先頭に <green>[SUDO]</green> を付けるとプレイヤーとして実行します。</white>
           quit: 終了
           clear: クリア
           instructions: |
@@ -660,6 +678,12 @@ commands:
       too-many-islands: '<red>この世界には島が多すぎます。あなたの島を作成するのに十分なスペースがありません。</red>'
       cannot-create-island: '<red>時間内にスポットが見つかりませんでした。もう一度お試しください...</red>'
       unable-create-island: 島を生成することができませんでした, 管理者に連絡してください.
+      preview:
+        showing: '<green>これは</green><white>[name]</white><green>です。周りを飛んで見てください。[number]秒後に元の場所に戻ります。</green>'
+        choose: '<green><bold>[これを選ぶ]</bold></green>'
+        back: '<yellow><bold>[一覧に戻る]</bold></yellow>'
+        ended: '<gray>プレビューが終了しました。</gray>'
+        nothing: '<red>プレビューできるものがありません。</red>'
       creating-island: '<green>あなたの島の場所を見つけました。あなたのために準備しましょう。</green>'
       you-cannot-make: '<red>これ以上島を作ることはできません。</red>'
       max-uses: '<red>このタイプの[prefix_island]を作成することはできません！</red>'
@@ -765,6 +789,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>クリック</aqua> <green>で操作を表示</green>'
+          kick: '<red>プレーヤーをキック</red>'
+          setowner: '<gold>所有者にする</gold>'
+          leave: '<red>チームを去る</red>'
+          accept: '<green>承諾</green>'
+          reject: '<red>拒否</red>'
+          back: '<white>戻る</white>'
         tips:
           LEFT:
             name: '<aqua>左クリック</aqua>'
@@ -857,6 +889,12 @@ commands:
               <aqua>検索</aqua>
               <red>[name]</red>
           enter-name: '<green>名前を入力してください：</green>'
+          mode:
+            name: '<white>プレーヤーをクリックすると</white>'
+            invite: '<green>チームに招待します</green>'
+            coop: '<green>コープにします</green>'
+            trust: '<green>信頼します</green>'
+            change: '<gray>クリックで切り替え</gray>'
           tips:
             LEFT:
               name: '<aqua>左クリック</aqua>'
@@ -2115,10 +2153,27 @@ panels:
   tips:
     click-to-next: '<yellow>次にクリックします。</yellow>'
     click-to-previous: '<yellow>以前にクリックしてください。</yellow>'
+    right-click-to-preview: '<yellow>右クリック</yellow><gray>でプレビューします。</gray>'
     click-to-choose: '<yellow>クリックして選択します。</yellow>'
     click-to-toggle: '<yellow>クリックして切り替えます。</yellow>'
     left-click-to-cycle-down: '<yellow>左クリックして下にサイクリングします。</yellow>'
     right-click-to-cycle-up: '<yellow>右クリックして上にサイクリングします。</yellow>'
+prompts:
+  buttons:
+    submit: '<green>送信</green>'
+  chat:
+    instructions: '<gray>チャットに答えを入力してください。キャンセルするには </gray><aqua>[cancel]</aqua><gray> と入力します。</gray>'
+    lines-instructions: '<gray>チャットに1行ずつ入力してください。終了するには </gray><aqua>[done]</aqua><gray>、キャンセルするには </gray><aqua>[cancel]</aqua><gray> と入力します。</gray>'
+    confirm-instructions: '<gray>確認するにはチャットに </gray><aqua>[confirm]</aqua><gray> と入力してください。それ以外はキャンセルになります。</gray>'
+    cancel-word: 'キャンセル'
+    done-word: '完了'
+    confirm-word: '確認'
+    timed-out: '<red>応答がありません - リクエストはキャンセルされました。</red>'
+  errors:
+    empty: '<red>先に何か入力してください。</red>'
+    too-long: '<red>長すぎます。上限は[number]文字です。</red>'
+    not-a-number: '<red>有効な数値ではありません。</red>'
+    out-of-range: '<red>[min]から[max]までの数値を入力してください。</red>'
 successfully-loaded: |
 
   <gold>____ _ ____</gold>

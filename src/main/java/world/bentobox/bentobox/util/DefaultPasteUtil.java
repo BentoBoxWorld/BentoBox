@@ -36,6 +36,7 @@ import net.kyori.adventure.text.Component;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintBooks;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
@@ -134,7 +135,7 @@ public class DefaultPasteUtil {
         // ItemFrames
         if (bs instanceof ItemFrame frame ) {
             if (!bpBlock.getInventory().isEmpty()) {
-                frame.setItem(bpBlock.getInventory().get(0));
+                frame.setItem(BlueprintBooks.resolve(island, bpBlock.getInventory().get(0)));
                 bs.update();
             }
         } else
@@ -149,7 +150,8 @@ public class DefaultPasteUtil {
                 Inventory ih = holder.getInventory();
                 // Double chests are pasted as two blocks so inventory is filled twice.
                 // This code stops over-filling for the first block.
-                bpBlock.getInventory().forEach(ih::setItem);
+                // Books marked with a tag are given their text
+                bpBlock.getInventory().forEach((slot, item) -> ih.setItem(slot, BlueprintBooks.resolve(island, item)));
             }
         // Mob spawners
             else if (bs instanceof CreatureSpawner spawner) {

@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klik om [command] uit te voeren]'
   success: '<green>Succes!</green>'
   invalid: Ongeldig
+  misplaced-addon:
+    moved: '<red>[name] is een BentoBox-addon en stond in de map plugins. Het is verplaatst naar plugins/BentoBox/addons. Herstart de server om het te laden.</red>'
+    move-failed: '<red>[name] is een BentoBox-addon en hoort in plugins/BentoBox/addons, niet in de map plugins. Verplaats het daarheen en herstart de server.</red>'
+    duplicate: '<red>[name] staat zowel in de map plugins als in plugins/BentoBox/addons. Verwijder het exemplaar in de map plugins en herstart de server.</red>'
   beta: '<light_purple><bold>Deze opdracht is in bèta. Zorg ervoor dat je back -ups hebt!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Commando geannuleerd.</red>'
@@ -539,6 +543,13 @@ commands:
         no-trash-instructions: Kan standaardbundel niet weggooien
         permission: Toestemming
         no-permission: Geen toestemming
+        preview: 'Voorbeeld voor spelers'
+        preview-allowed: |-
+          <green>Spelers kunnen deze bundel bekijken</green>
+          <gray>Klik om te verbergen</gray>
+        preview-hidden: |-
+          <red>Spelers kunnen deze bundel niet bekijken</red>
+          <gray>Klik om toe te staan</gray>
         perm-required: Verplicht
         no-perm-required: Kan geen permissie instellen voor standaardbundel
         perm-not-required: Niet verplicht
@@ -552,6 +563,7 @@ commands:
         new-bundle: Nieuwe bundel
         new-bundle-instructions: Klik om een nieuwe bundel te maken
         name:
+          title: 'Voer een naam in'
           quit: stoppen
           prompt: Voer een naam in of 'quit' om te stoppen
           too-long: '<red>Te lang</red>'
@@ -562,6 +574,7 @@ commands:
           success: Succes!
           conversation-prefix: '>'
         description:
+          title: 'Beschrijving van [name]'
           quit: stoppen
           instructions: |
             Voer een beschrijving van meerdere regels in voor [name]
@@ -591,6 +604,11 @@ commands:
         edit-commands: Klik om commando's te bewerken
         no-commands: Geen commando's ingesteld
         commands:
+          title: 'Commando''s voor [name]'
+          help: |
+            <white>Commando's die worden uitgevoerd wanneer deze bundel wordt geplakt, één per regel.</white>
+            <white>Ondersteunt de plaatshouders <green>[player]</green> en <green>[owner]</green>.</white>
+            <white>Zet <green>[SUDO]</green> ervoor om het als de speler uit te voeren.</white>
           quit: stoppen
           clear: wissen
           instructions: |
@@ -766,6 +784,12 @@ commands:
       unable-create-island: >-
         <red>Uw eiland kon niet worden gegenereerd, neem contact op met een</red>
         beheerder.
+      preview:
+        showing: '<green>Dit is </green><white>[name]</white><green>. Vlieg eromheen. Over [number] seconden word je teruggebracht.</green>'
+        choose: '<green><bold>[Deze kiezen]</bold></green>'
+        back: '<yellow><bold>[Terug naar de lijst]</bold></yellow>'
+        ended: '<gray>Voorbeeld afgelopen.</gray>'
+        nothing: '<red>Er is niets om te bekijken.</red>'
       creating-island: '<green>Een plek vinden voor uw eiland ...</green>'
       you-cannot-make: '<red>Je kunt geen eilanden meer maken!</red>'
       max-uses: '<red>Je kunt geen meer van dat type [prefix_island] maken!</red>'
@@ -877,6 +901,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klik</aqua> <green>voor acties</green>'
+          kick: '<red>Speler schoppen</red>'
+          setowner: '<gold>Eigenaar maken</gold>'
+          leave: '<red>Team verlaten</red>'
+          accept: '<green>Accepteren</green>'
+          reject: '<red>Weigeren</red>'
+          back: '<white>Terug</white>'
         tips:
           LEFT:
             name: '<aqua>Linker Klik</aqua>'
@@ -977,6 +1009,12 @@ commands:
               <aqua>Zoeken naar</aqua>
               <red>[name]</red>
           enter-name: '<green>Voer naam in:</green>'
+          mode:
+            name: '<white>Klikken op een speler</white>'
+            invite: '<green>Nodigt hem uit voor je team</green>'
+            coop: '<green>Maakt hem coöp</green>'
+            trust: '<green>Vertrouwt hem</green>'
+            change: '<gray>Klik om te wijzigen</gray>'
           tips:
             LEFT:
               name: '<aqua>Linker Muisklik</aqua>'
@@ -2296,10 +2334,27 @@ panels:
   tips:
     click-to-next: '<yellow>Klik </yellow><gray>voor volgende.</gray>'
     click-to-previous: '<yellow>Klik </yellow><gray>voor vorige.</gray>'
+    right-click-to-preview: '<yellow>Rechtsklik </yellow><gray>voor een voorbeeld.</gray>'
     click-to-choose: '<yellow>Klik </yellow><gray>om te selecteren.</gray>'
     click-to-toggle: '<yellow>Klik </yellow><gray>om te schakelen.</gray>'
     left-click-to-cycle-down: '<yellow>Linker Klik </yellow><gray>om naar beneden te cycelen.</gray>'
     right-click-to-cycle-up: '<yellow>Rechtsklik </yellow><gray>om omhoog te cykelen.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Verzenden</green>'
+  chat:
+    instructions: '<gray>Typ je antwoord in de chat, of typ </gray><aqua>[cancel]</aqua><gray> om te annuleren.</gray>'
+    lines-instructions: '<gray>Typ één regel per keer in de chat. Typ </gray><aqua>[done]</aqua><gray> om af te ronden of </gray><aqua>[cancel]</aqua><gray> om te annuleren.</gray>'
+    confirm-instructions: '<gray>Typ </gray><aqua>[confirm]</aqua><gray> in de chat om te bevestigen. Al het andere annuleert.</gray>'
+    cancel-word: 'annuleren'
+    done-word: 'klaar'
+    confirm-word: 'bevestigen'
+    timed-out: '<red>Geen antwoord - verzoek geannuleerd.</red>'
+  errors:
+    empty: '<red>Typ eerst iets.</red>'
+    too-long: '<red>Dat is te lang. De limiet is [number] tekens.</red>'
+    not-a-number: '<red>Dat is geen geldig getal.</red>'
+    out-of-range: '<red>Voer een getal in van [min] tot [max].</red>'
 successfully-loaded: >
 
   <gold>____ _ ____</gold>

@@ -21,6 +21,10 @@ prefixes:
 general:
   success: '<green>Success!</green>'
   invalid: Invalid
+  misplaced-addon:
+    moved: '<red>[name] is a BentoBox addon and was in the plugins folder. It has been moved to plugins/BentoBox/addons. Restart the server to load it.</red>'
+    move-failed: '<red>[name] is a BentoBox addon and must go in plugins/BentoBox/addons, not the plugins folder. Move it there and restart the server.</red>'
+    duplicate: '<red>[name] is in both the plugins folder and plugins/BentoBox/addons. Delete the one in the plugins folder and restart the server.</red>'
   beta: '<light_purple><bold>This command is in beta. Make sure you have backups!</bold></light_purple>'
   dialogs:
     game-mode-selection:
@@ -483,6 +487,13 @@ commands:
         no-perm-required: Cannot set perm for default bundle
         perm-not-required: Not Required
         perm-format: '<yellow></yellow>'
+        preview: Player preview
+        preview-allowed: |-
+          <green>Players can preview this bundle</green>
+          <gray>Click to hide it</gray>
+        preview-hidden: |-
+          <red>Players cannot preview this bundle</red>
+          <gray>Click to allow it</gray>
         remove: Right click to remove
         blueprint-instruction: |
           Click to select,
@@ -492,6 +503,7 @@ commands:
         new-bundle: New Bundle
         new-bundle-instructions: Click to make a new bundle
         name:
+          title: Enter a name
           quit: quit
           prompt: Enter a name, or 'quit' to quit
           too-long: '<red>Too long name. Only 32 chars are allowed.</red>'
@@ -501,6 +513,7 @@ commands:
           success: Success!
           conversation-prefix: '>'
         description:
+          title: Description of [name]
           quit: quit
           instructions: |
             Enter a multi line description for [name]
@@ -530,6 +543,11 @@ commands:
         next-page: '<white>Next Page</white>'
         previous-page: '<white>Previous Page</white>'
         commands:
+          title: Commands for [name]
+          help: |
+            <white>Commands to run when this bundle is pasted, one per line.</white>
+            <white>Supports <green>[player]</green> and <green>[owner]</green> placeholders.</white>
+            <white>Prefix with <green>[SUDO]</green> to run as the player.</white>
           quit: quit
           clear: clear
           instructions: |
@@ -690,6 +708,12 @@ commands:
       unable-create-island: '<red>Your [prefix_island] could not be generated, please
         contact an administrator.</red>'
       creating-island: '<green>Finding a spot for your [prefix_island]...</green>'
+      preview:
+        showing: '<green>This is </green><white>[name]</white><green>. Fly around it. You will be taken back in [number] seconds.</green>'
+        choose: '<green><bold>[Choose this one]</bold></green>'
+        back: '<yellow><bold>[Back to the list]</bold></yellow>'
+        ended: '<gray>Preview over.</gray>'
+        nothing: '<red>There is nothing to preview.</red>'
       you-cannot-make: '<red>You cannot make any more [prefix_Islands]!</red>'
       max-uses: '<red>You cannot make any more of that type of [prefix_island]!</red>'
       you-cannot-make-team: '<red>Team members cannot make [prefix_Islands] in the same world
@@ -796,6 +820,16 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        # The menu opened by a plain click on a member or an invitation. It lists the shift and right click
+        # actions as buttons, for players who can only tap (Bedrock touch screens).
+        actions:
+          tip: '<aqua>Click</aqua> <green>for actions</green>'
+          kick: '<red>Kick player</red>'
+          setowner: '<gold>Make owner</gold>'
+          leave: '<red>Leave team</red>'
+          accept: '<green>Accept</green>'
+          reject: '<red>Reject</red>'
+          back: '<white>Back</white>'
         tips:
           LEFT:
             name: '<aqua>Left Click</aqua>'
@@ -907,6 +941,13 @@ commands:
               # Optional description line shown above the click tips. Placeholders: [name], [display_name].
               description: ""
           enter-name: '<green>Enter name:</green>'
+          # The button that changes what a left click on a player does.
+          mode:
+            name: '<white>Clicking a player will</white>'
+            invite: '<green>Invite them to your team</green>'
+            coop: '<green>Coop them</green>'
+            trust: '<green>Trust them</green>'
+            change: '<gray>Click to change</gray>'
           tips:
             LEFT:
               name: '<aqua>Left Click</aqua>'
@@ -2236,9 +2277,26 @@ panels:
     click-to-next: '<yellow>Click </yellow><gray>for next.</gray>'
     click-to-previous: '<yellow>Click </yellow><gray>for previous.</gray>'
     click-to-choose: '<yellow>Click </yellow><gray>to select.</gray>'
+    right-click-to-preview: '<yellow>Right Click </yellow><gray>to preview.</gray>'
     click-to-toggle: '<yellow>Click </yellow><gray>to toggle.</gray>'
     left-click-to-cycle-down: '<yellow>Left Click </yellow><gray>to cycle downwards.</gray>'
     right-click-to-cycle-up: '<yellow>Right Click </yellow><gray>to cycle upwards.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Submit</green>'
+  chat:
+    instructions: '<gray>Type your answer in chat, or type </gray><aqua>[cancel]</aqua><gray> to cancel.</gray>'
+    lines-instructions: '<gray>Type one line at a time in chat. Type </gray><aqua>[done]</aqua><gray> to finish, or </gray><aqua>[cancel]</aqua><gray> to cancel.</gray>'
+    confirm-instructions: '<gray>Type </gray><aqua>[confirm]</aqua><gray> in chat to confirm. Anything else cancels.</gray>'
+    cancel-word: cancel
+    done-word: done
+    confirm-word: confirm
+    timed-out: '<red>No answer - request cancelled.</red>'
+  errors:
+    empty: '<red>Type something first.</red>'
+    too-long: '<red>That is too long. The limit is [number] characters.</red>'
+    not-a-number: '<red>That is not a valid number.</red>'
+    out-of-range: '<red>Enter a number from [min] to [max].</red>'
 
 successfully-loaded: |2
 

@@ -14,6 +14,11 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.panels.BlueprintManagementPanel;
 
+/**
+ * @deprecated Paper is removing {@code org.bukkit.conversations}, which this class is built on.
+ *             Use the prompts in {@link world.bentobox.bentobox.panels.BlueprintManagementPanel} instead.
+ */
+@Deprecated(since = "3.25.0", forRemoval = true)
 public class DescriptionSuccessPrompt extends MessagePrompt {
 
     private final GameModeAddon addon;

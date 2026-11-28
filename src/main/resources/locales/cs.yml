@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknutím spustíte [command]]'
   success: '<green>Povedlo se!</green>'
   invalid: Neplatné
+  misplaced-addon:
+    moved: '<red>[name] je doplněk BentoBoxu a byl ve složce plugins. Byl přesunut do plugins/BentoBox/addons. Restartuj server, aby se načetl.</red>'
+    move-failed: '<red>[name] je doplněk BentoBoxu a musí být v plugins/BentoBox/addons, ne ve složce plugins. Přesuň ho tam a restartuj server.</red>'
+    duplicate: '<red>[name] je ve složce plugins i v plugins/BentoBox/addons. Smaž ten ve složce plugins a restartuj server.</red>'
   beta: '<light_purple><bold>Tento příkaz je v beta verzi. Ujisti se, že máš zálohy!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Příkaz zrušen.</red>'
@@ -502,6 +506,13 @@ commands:
         no-trash-instructions: Výchozí balíček nelze vyhodit do koše
         permission: Oprávnění
         no-permission: Bez povolení
+        preview: 'Náhled pro hráče'
+        preview-allowed: |-
+          <green>Hráči si mohou tento balík prohlédnout</green>
+          <gray>Kliknutím jej skryjete</gray>
+        preview-hidden: |-
+          <red>Hráči si tento balík nemohou prohlédnout</red>
+          <gray>Kliknutím jej povolíte</gray>
         perm-required: Vyžadováno
         no-perm-required: Perm pro výchozí balíček nelze nastavit
         perm-not-required: Nevyžadováno
@@ -515,6 +526,7 @@ commands:
         new-bundle: Nový balík
         new-bundle-instructions: Klikni pro vytvoření nového balíku
         name:
+          title: 'Zadejte název'
           quit: přestat
           prompt: Napiš jméno, nebo 'quit' ke zrušení
           too-long: '<red>Příliš dlouhé</red>'
@@ -525,6 +537,7 @@ commands:
           success: Povedlo se!
           conversation-prefix: '>'
         description:
+          title: 'Popis: [name]'
           quit: přestat
           instructions: |
             Napiš víceřádkový popis pro [name]
@@ -554,6 +567,11 @@ commands:
         edit-commands: Klikněte pro úpravu příkazů
         no-commands: Žádné příkazy nastaveny
         commands:
+          title: 'Příkazy: [name]'
+          help: |
+            <white>Příkazy spuštěné při vložení tohoto balíku, jeden na řádek.</white>
+            <white>Podporuje zástupné symboly <green>[player]</green> a <green>[owner]</green>.</white>
+            <white>Předponou <green>[SUDO]</green> se příkaz spustí jako hráč.</white>
           quit: konec
           clear: vymazat
           instructions: |
@@ -719,6 +737,12 @@ commands:
       unable-create-island: >-
         <red>Tvůj ostrov se nepovedlo vygenerovat, prosím, kontaktuj</red>
         administrátora.
+      preview:
+        showing: '<green>Toto je </green><white>[name]</white><green>. Proleťte se kolem. Za [number] sekund budete vráceni zpět.</green>'
+        choose: '<green><bold>[Vybrat tento]</bold></green>'
+        back: '<yellow><bold>[Zpět na seznam]</bold></yellow>'
+        ended: '<gray>Náhled skončil.</gray>'
+        nothing: '<red>Není co zobrazit.</red>'
       creating-island: '<green>Hledám místo pro tvůj ostrov...</green>'
       you-cannot-make: '<red>Nemůžete vytvořit žádné další ostrovy!</red>'
       max-uses: '<red>Už nemůžete udělat další typ [prefix_island]!</red>'
@@ -825,6 +849,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klikni</aqua> <green>pro akce</green>'
+          kick: '<red>Vyhodit hráče</red>'
+          setowner: '<gold>Nastavit jako vlastníka</gold>'
+          leave: '<red>Opustit tým</red>'
+          accept: '<green>Přijmout</green>'
+          reject: '<red>Odmítnout</red>'
+          back: '<white>Zpět</white>'
         tips:
           LEFT:
             name: '<aqua>Levý klik</aqua>'
@@ -921,6 +953,12 @@ commands:
               <aqua>Hledání</aqua>
               <red>[name]</red>
           enter-name: '<green>Zadejte název:</green>'
+          mode:
+            name: '<white>Kliknutí na hráče</white>'
+            invite: '<green>Pozve ho do týmu</green>'
+            coop: '<green>Nastaví ho jako kooperujícího</green>'
+            trust: '<green>Nastaví ho jako důvěryhodného</green>'
+            change: '<gray>Klikni pro změnu</gray>'
           tips:
             LEFT:
               name: '<aqua>Levý klik</aqua>'
@@ -2205,10 +2243,27 @@ panels:
   tips:
     click-to-next: '<yellow>Klikněte pro další.</yellow>'
     click-to-previous: '<yellow>Klikněte pro předchozí.</yellow>'
+    right-click-to-preview: '<yellow>Pravé kliknutí </yellow><gray>pro náhled.</gray>'
     click-to-choose: '<yellow>Kliknutím vyberte.</yellow>'
     click-to-toggle: '<yellow>Kliknutím přepínáte.</yellow>'
     left-click-to-cycle-down: '<yellow>Levé kliknutí na cyklus dolů.</yellow>'
     right-click-to-cycle-up: '<yellow>Kliknutím pravým tlačítkem je cyklujte nahoru.</yellow>'
+prompts:
+  buttons:
+    submit: '<green>Odeslat</green>'
+  chat:
+    instructions: '<gray>Napište odpověď do chatu, nebo napište </gray><aqua>[cancel]</aqua><gray> pro zrušení.</gray>'
+    lines-instructions: '<gray>Pište do chatu jeden řádek po druhém. Napište </gray><aqua>[done]</aqua><gray> pro dokončení, nebo </gray><aqua>[cancel]</aqua><gray> pro zrušení.</gray>'
+    confirm-instructions: '<gray>Napište do chatu </gray><aqua>[confirm]</aqua><gray> pro potvrzení. Cokoli jiného akci zruší.</gray>'
+    cancel-word: 'zrušit'
+    done-word: 'hotovo'
+    confirm-word: 'potvrdit'
+    timed-out: '<red>Žádná odpověď - požadavek zrušen.</red>'
+  errors:
+    empty: '<red>Nejprve něco napište.</red>'
+    too-long: '<red>To je příliš dlouhé. Limit je [number] znaků.</red>'
+    not-a-number: '<red>To není platné číslo.</red>'
+    out-of-range: '<red>Zadejte číslo od [min] do [max].</red>'
 successfully-loaded: >
 
   <gold>  ____             _        ____</gold>

@@ -22,12 +22,9 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.api.dialogs.DialogBuilder;
-import world.bentobox.bentobox.api.dialogs.DialogButton;
-import world.bentobox.bentobox.api.dialogs.DialogField;
-import world.bentobox.bentobox.api.dialogs.Dialogs;
 import world.bentobox.bentobox.api.panels.builders.PagedPanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.prompts.Prompts;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
@@ -44,8 +41,8 @@ import world.bentobox.bentobox.util.Util;
  * <li>{@link #fromInventory(Function) Inventory picking}: the player clicks an item in their own
  * inventory to choose it - the quickest way to pick a block. On by default for materials and,
  * with spawn eggs, entities.</li>
- * <li>{@link #search(boolean) Search}: a Search button asks for text in a dialog and narrows the
- * list to names containing it. On by default; hidden where dialogs are not supported.</li>
+ * <li>{@link #search(boolean) Search}: a Search button asks for text and narrows the list to
+ * names containing it. On by default.</li>
  * <li>{@link #onCancel(Runnable) Back}: a Back button that runs the given action, e.g. to return to
  * the panel that opened the picker.</li>
  * </ul>
@@ -246,7 +243,7 @@ public class PickerPanel<T> {
     }
 
     /**
-     * @param search whether to show a Search button (only shown where dialogs are supported)
+     * @param search whether to show a Search button
      * @return this picker
      */
     public PickerPanel<T> search(boolean search) {
@@ -291,7 +288,7 @@ public class PickerPanel<T> {
                         onCancel.run();
                     }));
         }
-        if (search && Dialogs.isSupported()) {
+        if (search) {
             b.control(SEARCH_COLUMN, searchButton());
         }
         if (fromInventory != null) {
@@ -373,11 +370,10 @@ public class PickerPanel<T> {
         }
         return control(Material.SPYGLASS, "panels.picker.search.name", "panels.picker.search.description", () -> {
             user.closeInventory();
-            new DialogBuilder().title(user, "panels.picker.search.title")
-                    .input(DialogField.text(user, "query", "panels.picker.search.field", query).maxLength(MAX_SEARCH))
-                    .button(DialogButton.submit(user, "panels.picker.search.button",
-                            (u, response) -> query(response.getText("query").orElse("")).open()))
-                    .button(DialogButton.of(user, "panels.picker.back.name", u -> open())).build().show(user);
+            Prompts.text(user).title("panels.picker.search.title").label("panels.picker.search.field")
+                    .initial(query).maxLength(MAX_SEARCH).optional()
+                    .submitButton("panels.picker.search.button").cancelButton("panels.picker.back.name")
+                    .onSubmit(text -> query(text).open()).onCancel(this::open).open();
         });
     }
 

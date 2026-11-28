@@ -26,8 +26,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -60,6 +58,7 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
 
     private static final int SLOT_PREVIOUS = 1;
     private static final int SLOT_NEXT = 7;
+    private static final int SLOT_MODE = 6;
     private static final int SLOT_FIRST_PROSPECT = 10;
     private static final int SLOT_BACK = 53;
 
@@ -227,9 +226,8 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
         gui.build(user);
 
         // Trigger a failed invite attempt to set searchName = "al"
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
-        prompt.acceptInput(mock(ConversationContext.class), "al");
+        gui.nameEntered("al");
 
         // Rebuild after search is set
         gui.build(user);
@@ -447,6 +445,85 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
                 "A blank member.description key must not leak into the lore");
     }
 
+    // -----------------------------------------------------------------------
+    // Mode button for players who can only tap (#3137)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void testModeButton_oneClick_leftClickCoopsPlayer() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(coopCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickProspect(ClickType.LEFT);
+
+        verify(coopCommand).execute(user, "invite", List.of("target"));
+        verify(itic, never()).execute(any(), anyString(), anyList());
+    }
+
+    @Test
+    void testModeButton_twoClicks_leftClickTrustsPlayer() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(trustCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickProspect(ClickType.LEFT);
+
+        verify(trustCommand).execute(user, "invite", List.of("target"));
+        verify(coopCommand, never()).execute(any(), anyString(), anyList());
+    }
+
+    @Test
+    void testModeButton_threeClicks_wrapsBackToInvite() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        for (int i = 0; i < 3; i++) {
+            clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        }
+        clickProspect(ClickType.LEFT);
+
+        verify(itic).execute(user, "invite", List.of("target"));
+    }
+
+    @Test
+    void testModeButton_inCoopMode_rightAndShiftClicksKeepTheirOwnAction() {
+        setupSingleVisibleProspect("target", UUID.randomUUID());
+        when(trustCommand.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
+
+        gui.build(user);
+        clickHandler(PanelListenerManager.getOpenPanels().get(uuid), SLOT_MODE, ClickType.LEFT);
+        clickProspect(ClickType.SHIFT_LEFT);
+
+        verify(trustCommand).execute(user, "invite", List.of("target"));
+    }
+
+    @Test
+    void testModeButton_hiddenWhenOnlyInviteIsPossible() {
+        when(itc.getCoopCommand()).thenReturn(null);
+        when(itc.getTrustCommand()).thenReturn(null);
+
+        gui.build(user);
+
+        PanelItem item = PanelListenerManager.getOpenPanels().get(uuid).getItems().get(SLOT_MODE);
+        assertNotNull(item);
+        assertTrue(item.getClickHandler().isEmpty());
+    }
+
+    @Test
+    void testModeButton_hiddenWhenRankTooLowForCoopAndTrust() {
+        when(island.getRankCommand(anyString())).thenReturn(1000);
+
+        gui.build(user);
+
+        assertTrue(PanelListenerManager.getOpenPanels().get(uuid).getItems().get(SLOT_MODE).getClickHandler()
+                .isEmpty());
+    }
+
     @Test
     void testProspectUnknownClickType_isIgnored() {
         setupSingleVisibleProspect("target", UUID.randomUUID());
@@ -462,55 +539,55 @@ class IslandTeamInviteGUITest extends RanksManagerTestSetup {
     }
 
     // -----------------------------------------------------------------------
-    // InviteNamePrompt inner class
+    // Search prompt
     // -----------------------------------------------------------------------
 
     @Test
-    void testInviteNamePrompt_getPromptText_returnsTranslation() {
+    void testNameEntered_success_invitesWithoutRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
-        ConversationContext ctx = mock(ConversationContext.class);
-
-        assertEquals("commands.island.team.invite.gui.enter-name", prompt.getPromptText(ctx));
-    }
-
-    @Test
-    void testInviteNamePrompt_acceptInput_success_endsConversationWithoutRebuild() {
-        gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
         when(itic.execute(eq(user), anyString(), anyList())).thenReturn(true);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "validPlayer");
+        gui.nameEntered("validPlayer");
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(itic).canExecute(user, "invite", List.of("validPlayer"));
         verify(itic).execute(user, "invite", List.of("validPlayer"));
         verify(sch, never()).runTaskLater(any(), any(Runnable.class), anyLong());
     }
 
+    /** An empty answer clears the search and does not try to invite anybody */
     @Test
-    void testInviteNamePrompt_acceptInput_cannotExecute_schedulesRebuild() {
+    void testNameEntered_blank_clearsSearchAndReopens() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
+        when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
+        gui.nameEntered("al");
+
+        gui.nameEntered("");
+
+        verify(itic, never()).canExecute(user, "invite", List.of(""));
+        // Reopened at once, with no second delayed rebuild
+        verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
+        assertNotNull(PanelListenerManager.getOpenPanels().get(uuid));
+    }
+
+    @Test
+    void testNameEntered_cannotExecute_schedulesRebuild() {
+        gui.build(user);
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(false);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "unknownPlayer");
+        gui.nameEntered("unknownPlayer");
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
     }
 
     @Test
-    void testInviteNamePrompt_acceptInput_executeFails_schedulesRebuild() {
+    void testNameEntered_executeFails_schedulesRebuild() {
         gui.build(user);
-        IslandTeamInviteGUI.InviteNamePrompt prompt = gui.new InviteNamePrompt();
         when(itic.canExecute(eq(user), anyString(), anyList())).thenReturn(true);
         when(itic.execute(eq(user), anyString(), anyList())).thenReturn(false);
 
-        Prompt result = prompt.acceptInput(mock(ConversationContext.class), "somePlayer");
+        gui.nameEntered("somePlayer");
 
-        assertEquals(Prompt.END_OF_CONVERSATION, result);
         verify(sch).runTaskLater(eq(plugin), any(Runnable.class), eq(20L));
     }
 

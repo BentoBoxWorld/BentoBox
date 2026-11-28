@@ -20,14 +20,17 @@ BentoBox powers island-style game modes for Paper servers. Pick the game modes y
 - **AcidIsland** — survive in a sea of acid
 - **Boxed** — expand your world by completing advancements
 - **CaveBlock** — underground survival
+- **ChunkBlock** — one magic block, one chunk; level up to unlock more
 - **SkyGrid** — scattered blocks, maximum adventure
 - **Poseidon** — underwater island challenge
-- And more community-created game modes
+- **StrangerRealms** — survival with a dark mirror dimension, the Upside Down
+- **TradeWinds** — sea trading, smuggling and piracy
+- **Parkour** — build parkour courses and race them
 
 **Why server admins choose BentoBox:**
 
 - Run multiple game modes on one server with shared features (challenges, warps, levels, leaderboards)
-- 20+ addons let you customize exactly the experience you want
+- 25+ addons let you customize exactly the experience you want
 - Actively maintained and always up to date with the latest Minecraft version
 - Free and open source — used on 1,100+ servers worldwide
 - Rich API for developers who want to build custom addons
@@ -42,18 +45,22 @@ BentoBox powers island-style game modes for Paper servers. Pick the game modes y
 4. Restart the server — you're good to go
 
 ## Addons
-These are some popular Gamemodes:
+Game modes:
 * [**AcidIsland**](https://github.com/BentoBoxWorld/AcidIsland): You are marooned in a sea of acid!
 * [**AOneBlock**](https://github.com/BentoBoxWorld/AOneBlock): Start to play with only 1 magical block.
 * [**Boxed**](https://github.com/BentoBoxWorld/Boxed): A game mode where you are boxed into a tiny space that only expands by completing advancements.
 * [**BSkyBlock**](https://github.com/BentoBoxWorld/BSkyBlock): The successor to the popular ASkyBlock.
 * [**CaveBlock**](https://github.com/BentoBoxWorld/CaveBlock): Try to live underground!
+* [**ChunkBlock**](https://github.com/BentoBoxWorld/ChunkBlock): One magic block in one chunk. Raise your island level to unlock the chunks around you.
+* [**Parkour**](https://github.com/BentoBoxWorld/Parkour): Build parkour courses and challenge others to beat your time.
+* [**Poseidon**](https://github.com/BentoBoxWorld/poseidon): Shipwrecked survival under the sea.
 * [**SkyGrid**](https://github.com/BentoBoxWorld/SkyGrid): Survive in world made up of scattered blocks - what an adventure!
+* [**StrangerRealms**](https://github.com/BentoBoxWorld/StrangerRealms): The Nether is replaced by the Upside Down, a dark copy of the Overworld.
+* [**TradeWinds**](https://github.com/BentoBoxWorld/TradeWinds): Sea trading, smuggling and piracy across an endless ocean.
 
-All official Addons are listed here:
-* [**Addons**](https://github.com/BentoBoxWorld/BentoBox/blob/develop/ADDON.md)
+All official game modes and feature addons are listed in [**ADDON.md**](ADDON.md).
 
-There are also plenty of other official or community-made Addons you can try and use for your server!
+There are also plenty of community-made Addons you can try and use for your server!
 
 ## Documentation
 

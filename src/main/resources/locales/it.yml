@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Clicca per eseguire [command]]'
   success: '<green>Successo!</green>'
   invalid: Non valido
+  misplaced-addon:
+    moved: '<red>[name] è un addon di BentoBox ed era nella cartella plugins. È stato spostato in plugins/BentoBox/addons. Riavvia il server per caricarlo.</red>'
+    move-failed: '<red>[name] è un addon di BentoBox e va messo in plugins/BentoBox/addons, non nella cartella plugins. Spostalo lì e riavvia il server.</red>'
+    duplicate: '<red>[name] è sia nella cartella plugins sia in plugins/BentoBox/addons. Elimina quello nella cartella plugins e riavvia il server.</red>'
   beta: '<light_purple><bold>Questo comando è in beta. Assicurati di avere backup!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Comando annullato.</red>'
@@ -539,6 +543,13 @@ commands:
         no-trash-instructions: Impossibile eliminare il pacchetto predefinito
         permission: Permesso
         no-permission: Nessun permesso
+        preview: 'Anteprima per i giocatori'
+        preview-allowed: |-
+          <green>I giocatori possono vedere questo pacchetto</green>
+          <gray>Clicca per nasconderlo</gray>
+        preview-hidden: |-
+          <red>I giocatori non possono vedere questo pacchetto</red>
+          <gray>Clicca per consentirlo</gray>
         perm-required: Obbligatorio
         no-perm-required: Impossibile impostare il perm per il pacchetto predefinito
         perm-not-required: Non obbligatorio
@@ -552,6 +563,7 @@ commands:
         new-bundle: Nuovo pacchetto
         new-bundle-instructions: Clicca per creare un nuovo pacchetto
         name:
+          title: 'Inserisci un nome'
           quit: esci
           prompt: Inserisci un nome, o 'quit' per uscire
           too-long: '<red>Troppo lungo</red>'
@@ -562,6 +574,7 @@ commands:
           success: Successo!
           conversation-prefix: '>'
         description:
+          title: 'Descrizione di [name]'
           quit: abbandonare
           instructions: |
             Inserisci una descrizione a più linee per [name]
@@ -591,6 +604,11 @@ commands:
         edit-commands: Clicca per modificare i comandi
         no-commands: Nessun comando impostato
         commands:
+          title: 'Comandi per [name]'
+          help: |
+            <white>Comandi eseguiti quando questo pacchetto viene incollato, uno per riga.</white>
+            <white>Supporta i segnaposto <green>[player]</green> e <green>[owner]</green>.</white>
+            <white>Anteponi <green>[SUDO]</green> per eseguirlo come giocatore.</white>
           quit: esci
           clear: cancella
           instructions: |
@@ -762,6 +780,12 @@ commands:
       unable-create-island: >-
         <red>Non è stato possibile generare la tua isola, contatta un</red>
         amministratore.
+      preview:
+        showing: '<green>Questa è </green><white>[name]</white><green>. Volaci intorno. Tornerai indietro tra [number] secondi.</green>'
+        choose: '<green><bold>[Scegli questa]</bold></green>'
+        back: '<yellow><bold>[Torna alla lista]</bold></yellow>'
+        ended: '<gray>Anteprima terminata.</gray>'
+        nothing: '<red>Non c''è niente da mostrare.</red>'
       creating-island: '<green>Creando la tua isola, aspetta un attimo...</green>'
       you-cannot-make: '<red>Non puoi creare altre isole!</red>'
       max-uses: '<red>Non puoi creare ulteriori [prefix_island] di quel tipo!</red>'
@@ -875,6 +899,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Clicca</aqua> <green>per le azioni</green>'
+          kick: '<red>Espelli giocatore</red>'
+          setowner: '<gold>Rendi proprietario</gold>'
+          leave: '<red>Lascia la squadra</red>'
+          accept: '<green>Accetta</green>'
+          reject: '<red>Rifiuta</red>'
+          back: '<white>Indietro</white>'
         tips:
           LEFT:
             name: '<aqua>Clic Sinistro</aqua>'
@@ -971,6 +1003,12 @@ commands:
               <aqua>Ricercando</aqua>
               <red>[name]</red>
           enter-name: '<green>Inserisci nome:</green>'
+          mode:
+            name: '<white>Cliccando su un giocatore</white>'
+            invite: '<green>Lo inviti nella tua squadra</green>'
+            coop: '<green>Cooperi con lui</green>'
+            trust: '<green>Ti fidi di lui</green>'
+            change: '<gray>Clicca per cambiare</gray>'
           tips:
             LEFT:
               name: '<aqua>Clic Sinistro</aqua>'
@@ -2261,10 +2299,27 @@ panels:
   tips:
     click-to-next: '<yellow>Clicca </yellow><gray>per il prossimo.</gray>'
     click-to-previous: '<yellow>Clicca </yellow><gray>per precedente.</gray>'
+    right-click-to-preview: '<yellow>Clic destro </yellow><gray>per l''anteprima.</gray>'
     click-to-choose: '<yellow>Clicca </yellow><gray>per selezionare.</gray>'
     click-to-toggle: '<yellow>Fai clic </yellow><gray>per attivare/disattivare.</gray>'
     left-click-to-cycle-down: '<yellow>Clicca Sinistro </yellow><gray>per scorrere verso il basso.</gray>'
     right-click-to-cycle-up: '<yellow>Fai clic destro </yellow><gray>per completare un ciclo in alto.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Invia</green>'
+  chat:
+    instructions: '<gray>Scrivi la risposta in chat, oppure scrivi </gray><aqua>[cancel]</aqua><gray> per annullare.</gray>'
+    lines-instructions: '<gray>Scrivi una riga alla volta in chat. Scrivi </gray><aqua>[done]</aqua><gray> per finire o </gray><aqua>[cancel]</aqua><gray> per annullare.</gray>'
+    confirm-instructions: '<gray>Scrivi </gray><aqua>[confirm]</aqua><gray> in chat per confermare. Qualsiasi altra risposta annulla.</gray>'
+    cancel-word: 'annulla'
+    done-word: 'fatto'
+    confirm-word: 'conferma'
+    timed-out: '<red>Nessuna risposta - richiesta annullata.</red>'
+  errors:
+    empty: '<red>Scrivi prima qualcosa.</red>'
+    too-long: '<red>È troppo lungo. Il limite è di [number] caratteri.</red>'
+    not-a-number: '<red>Non è un numero valido.</red>'
+    out-of-range: '<red>Inserisci un numero da [min] a [max].</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>

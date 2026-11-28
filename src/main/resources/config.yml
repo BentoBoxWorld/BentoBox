@@ -248,6 +248,18 @@ island:
     # Color of the locked island border. Options are RED, GREEN or BLUE.
     # Added since 3.24.0.
     color: RED
+  blueprint-preview:
+    # Let players preview a blueprint bundle before they choose it. A right click on a
+    # bundle in the island creation panel takes the player to an empty world kept for
+    # previews, where they can fly around the bundle's overworld blueprint. Only that
+    # player sees the blocks; nothing is built. They are put back when the preview ends.
+    # Only the default bundle can be previewed until other bundles are allowed in the
+    # blueprint management panel.
+    # Added since 3.25.0.
+    enabled: true
+    # How long a preview lasts, in seconds, before the player is put back.
+    # Added since 3.25.0.
+    duration: 60
   # Modal dialog options. Dialogs are the 'menu they can't click away' shown to
   # players for high-friction flows. They require a server that supports dialogs
   # (Minecraft 26+); on older servers every option below falls back automatically
@@ -267,6 +279,10 @@ island:
     # more than one game mode is installed. Off by default: it is intrusive and
     # clicking a game runs that game mode's command for the player.
     game-mode-selection: false
+    # Ask for typed input, such as a name, a number or a description, in a dialog
+    # with a text box instead of asking the player to type it in chat.
+    # Added since 3.25.0.
+    prompts: true
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0

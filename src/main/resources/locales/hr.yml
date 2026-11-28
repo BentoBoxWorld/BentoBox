@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kliknite za pokretanje [command]]'
   success: '<green>Uspjeh!</green>'
   invalid: Neispravno
+  misplaced-addon:
+    moved: '<red>[name] je BentoBox dodatak i bio je u mapi plugins. Premješten je u plugins/BentoBox/addons. Ponovno pokreni server da bi se učitao.</red>'
+    move-failed: '<red>[name] je BentoBox dodatak i mora biti u plugins/BentoBox/addons, a ne u mapi plugins. Premjesti ga tamo i ponovno pokreni server.</red>'
+    duplicate: '<red>[name] se nalazi i u mapi plugins i u plugins/BentoBox/addons. Obriši onaj u mapi plugins i ponovno pokreni server.</red>'
   beta: '<light_purple><bold>Ova je naredba u beta verziji. Obavezno imate sigurnosne kopije!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Naredba otkazana.</red>'
@@ -512,6 +516,13 @@ commands:
         no-trash-instructions: Zadani skup nije moguće baciti u smeće
         permission: Dopuštenje
         no-permission: Bez dozvole
+        preview: 'Pregled za igrače'
+        preview-allowed: |-
+          <green>Igrači mogu pregledati ovaj paket</green>
+          <gray>Kliknite da ga sakrijete</gray>
+        preview-hidden: |-
+          <red>Igrači ne mogu pregledati ovaj paket</red>
+          <gray>Kliknite da ga dopustite</gray>
         perm-required: Potreban
         no-perm-required: Nije moguće postaviti trajnu za zadani paket
         perm-not-required: Nije obavezno
@@ -525,6 +536,7 @@ commands:
         new-bundle: Novi paket
         new-bundle-instructions: Kliknite da biste napravili novi paket
         name:
+          title: 'Unesite naziv'
           quit: prestati
           prompt: Unesite ime ili 'quit' za izlaz
           too-long: '<red>Predugo ime. Dopuštena su samo 32 znaka.</red>'
@@ -535,6 +547,7 @@ commands:
           success: Uspjeh!
           conversation-prefix: '>'
         description:
+          title: 'Opis: [name]'
           quit: prestati
           instructions: |
             Unesite višeredni opis za [name]
@@ -564,6 +577,11 @@ commands:
         edit-commands: Kliknite za uređivanje naredbi
         no-commands: Nema postavljenih naredbi
         commands:
+          title: 'Naredbe: [name]'
+          help: |
+            <white>Naredbe koje se izvršavaju kada se ovaj paket zalijepi, jedna po retku.</white>
+            <white>Podržava oznake <green>[player]</green> i <green>[owner]</green>.</white>
+            <white>Stavite <green>[SUDO]</green> ispred naredbe da se izvrši kao igrač.</white>
           quit: izlaz
           clear: očisti
           instructions: |
@@ -730,6 +748,12 @@ commands:
         stvori.
       cannot-create-island: '<red>Mjesto nije bilo moguće pronaći na vrijeme, pokušajte ponovno...</red>'
       unable-create-island: '<red>Vaš otok nije mogao biti generiran, obratite se administratoru.</red>'
+      preview:
+        showing: '<green>Ovo je </green><white>[name]</white><green>. Letite oko njega. Bit ćete vraćeni za [number] sekundi.</green>'
+        choose: '<green><bold>[Odaberi ovaj]</bold></green>'
+        back: '<yellow><bold>[Natrag na popis]</bold></yellow>'
+        ended: '<gray>Pregled je završen.</gray>'
+        nothing: '<red>Nema ničega za pregled.</red>'
       creating-island: '<green>Traženje mjesta za vaš otok...</green>'
       you-cannot-make: '<red>Ne možete napraviti više otoka!</red>'
       max-uses: '<red>Ne možete napraviti više tog tipa [prefix_island]!</red>'
@@ -837,6 +861,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klikni</aqua> <green>za radnje</green>'
+          kick: '<red>Izbaci igrača</red>'
+          setowner: '<gold>Postavi za vlasnika</gold>'
+          leave: '<red>Napusti tim</red>'
+          accept: '<green>Prihvati</green>'
+          reject: '<red>Odbij</red>'
+          back: '<white>Natrag</white>'
         tips:
           LEFT:
             name: '<aqua>Lijevi Klip</aqua>'
@@ -937,6 +969,12 @@ commands:
               <aqua>Traženje za</aqua>
               <red>[name]</red>
           enter-name: '<green>Unesi ime:</green>'
+          mode:
+            name: '<white>Klik na igrača</white>'
+            invite: '<green>Poziva ga u tvoj tim</green>'
+            coop: '<green>Udružuje ga (coop)</green>'
+            trust: '<green>Daje mu povjerenje</green>'
+            change: '<gray>Klikni za promjenu</gray>'
           tips:
             LEFT:
               name: '<aqua>Lijevi Klik</aqua>'
@@ -2253,10 +2291,27 @@ panels:
   tips:
     click-to-next: '<yellow>Kliknite </yellow><gray>za sljedeće.</gray>'
     click-to-previous: '<yellow>Klikni </yellow><gray>za prethodno.</gray>'
+    right-click-to-preview: '<yellow>Desni klik </yellow><gray>za pregled.</gray>'
     click-to-choose: '<yellow>Klikni </yellow><gray>za odabir.</gray>'
     click-to-toggle: '<yellow>Kliknite </yellow><gray>za prebacivanje.</gray>'
     left-click-to-cycle-down: '<yellow>Lijevi klik </yellow><gray>za cikliranje prema dolje.</gray>'
     right-click-to-cycle-up: '<yellow>Desni klik </yellow><gray>za ciklus prema gore.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Pošalji</green>'
+  chat:
+    instructions: '<gray>Upišite odgovor u chat ili upišite </gray><aqua>[cancel]</aqua><gray> za odustajanje.</gray>'
+    lines-instructions: '<gray>Upisujte jedan po jedan redak u chat. Upišite </gray><aqua>[done]</aqua><gray> za kraj ili </gray><aqua>[cancel]</aqua><gray> za odustajanje.</gray>'
+    confirm-instructions: '<gray>Upišite </gray><aqua>[confirm]</aqua><gray> u chat za potvrdu. Sve ostalo znači odustajanje.</gray>'
+    cancel-word: 'odustani'
+    done-word: 'gotovo'
+    confirm-word: 'potvrdi'
+    timed-out: '<red>Nema odgovora - zahtjev je otkazan.</red>'
+  errors:
+    empty: '<red>Prvo nešto upišite.</red>'
+    too-long: '<red>To je predugo. Ograničenje je [number] znakova.</red>'
+    not-a-number: '<red>To nije valjan broj.</red>'
+    out-of-range: '<red>Unesite broj od [min] do [max].</red>'
 successfully-loaded: >
   <gold>____ _ ____ </gold><gold>| _ \ | | | _ \ </gold><gray>od </gray><green>tastybento </green><gray>i </gray><green>Poslovitch </green><gold>|</gold>
   |_) | ___ _ __ | |_ ___ | |_) | _____ __ <gray>2017. - 2023 </gray><gold>| _ < / _ \ '_ \|</gold>

@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klik untuk menjalankan [command]]'
   success: '<green>Berhasil!</green>'
   invalid: Tidak valid
+  misplaced-addon:
+    moved: '<red>[name] adalah addon BentoBox dan berada di folder plugins. Addon ini sudah dipindahkan ke plugins/BentoBox/addons. Mulai ulang server untuk memuatnya.</red>'
+    move-failed: '<red>[name] adalah addon BentoBox dan harus berada di plugins/BentoBox/addons, bukan di folder plugins. Pindahkan ke sana lalu mulai ulang server.</red>'
+    duplicate: '<red>[name] ada di folder plugins dan juga di plugins/BentoBox/addons. Hapus yang ada di folder plugins lalu mulai ulang server.</red>'
   beta: '<light_purple><bold>Perintah ini dalam beta. Pastikan Anda memiliki cadangan!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Perintah dibatalkan.</red>'
@@ -519,6 +523,13 @@ commands:
         no-trash-instructions: Tidak dapat membuang paket default
         permission: Izin
         no-permission: Tidak ada izin
+        preview: 'Pratinjau pemain'
+        preview-allowed: |-
+          <green>Pemain dapat melihat pratinjau paket ini</green>
+          <gray>Klik untuk menyembunyikannya</gray>
+        preview-hidden: |-
+          <red>Pemain tidak dapat melihat pratinjau paket ini</red>
+          <gray>Klik untuk mengizinkannya</gray>
         perm-required: Diperlukan
         no-perm-required: Tidak dapat menyetel izin untuk paket default
         perm-not-required: Tidak dibutuhkan
@@ -532,6 +543,7 @@ commands:
         new-bundle: Paket Baru
         new-bundle-instructions: Klik untuk membuat bundel baru
         name:
+          title: 'Masukkan nama'
           quit: berhenti
           prompt: Masukkan nama, atau 'keluar' untuk keluar
           too-long: '<red>Nama terlalu panjang. Hanya 32 karakter yang diperbolehkan.</red>'
@@ -542,6 +554,7 @@ commands:
           success: Kesuksesan!
           conversation-prefix: '>'
         description:
+          title: 'Deskripsi [name]'
           quit: berhenti
           instructions: >
             Masukkan deskripsi multi baris untuk [name]
@@ -573,6 +586,11 @@ commands:
         edit-commands: Klik untuk mengedit perintah
         no-commands: Tidak ada perintah yang ditetapkan
         commands:
+          title: 'Perintah untuk [name]'
+          help: |
+            <white>Perintah yang dijalankan saat paket ini ditempel, satu per baris.</white>
+            <white>Mendukung placeholder <green>[player]</green> dan <green>[owner]</green>.</white>
+            <white>Awali dengan <green>[SUDO]</green> untuk menjalankannya sebagai pemain.</white>
           quit: keluar
           clear: hapus
           instructions: |
@@ -737,6 +755,12 @@ commands:
         membuat pulau Anda.
       cannot-create-island: '<red>Tempat tidak dapat ditemukan tepat waktu, silakan coba lagi...</red>'
       unable-create-island: '<red>Pulau Anda tidak dapat dibuat, harap hubungi administrator.</red>'
+      preview:
+        showing: '<green>Ini adalah </green><white>[name]</white><green>. Terbanglah mengelilinginya. Kamu akan dikembalikan dalam [number] detik.</green>'
+        choose: '<green><bold>[Pilih yang ini]</bold></green>'
+        back: '<yellow><bold>[Kembali ke daftar]</bold></yellow>'
+        ended: '<gray>Pratinjau selesai.</gray>'
+        nothing: '<red>Tidak ada yang bisa dipratinjau.</red>'
       creating-island: '<green>Menemukan tempat untuk pulau Anda...</green>'
       you-cannot-make: '<red>Anda tidak dapat membuat pulau lagi!</red>'
       max-uses: '<red>Anda tidak dapat membuat lagi jenis [prefix_island] itu!</red>'
@@ -848,6 +872,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klik</aqua> <green>untuk tindakan</green>'
+          kick: '<red>Keluarkan pemain</red>'
+          setowner: '<gold>Jadikan pemilik</gold>'
+          leave: '<red>Tinggalkan tim</red>'
+          accept: '<green>Terima</green>'
+          reject: '<red>Tolak</red>'
+          back: '<white>Kembali</white>'
         tips:
           LEFT:
             name: '<aqua>Klik Kiri</aqua>'
@@ -948,6 +980,12 @@ commands:
               <aqua>Mencari</aqua>
               <red>[name]</red>
           enter-name: '<green>Masukkan nama:</green>'
+          mode:
+            name: '<white>Mengeklik pemain akan</white>'
+            invite: '<green>Mengundangnya ke timmu</green>'
+            coop: '<green>Menjadikannya coop</green>'
+            trust: '<green>Mempercayainya</green>'
+            change: '<gray>Klik untuk mengubah</gray>'
           tips:
             LEFT:
               name: '<aqua>Klik Kiri</aqua>'
@@ -2273,10 +2311,27 @@ panels:
   tips:
     click-to-next: '<yellow>Klik </yellow><gray>untuk selanjutnya.</gray>'
     click-to-previous: '<yellow>Klik </yellow><gray>untuk sebelumnya.</gray>'
+    right-click-to-preview: '<yellow>Klik kanan </yellow><gray>untuk pratinjau.</gray>'
     click-to-choose: '<yellow>Klik </yellow><gray>untuk memilih.</gray>'
     click-to-toggle: '<yellow>Klik </yellow><gray>untuk mengubah.</gray>'
     left-click-to-cycle-down: '<yellow>Klik Kiri </yellow><gray>untuk berputar ke bawah.</gray>'
     right-click-to-cycle-up: '<yellow>Klik Kanan </yellow><gray>untuk berputar ke atas.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Kirim</green>'
+  chat:
+    instructions: '<gray>Ketik jawabanmu di obrolan, atau ketik </gray><aqua>[cancel]</aqua><gray> untuk membatalkan.</gray>'
+    lines-instructions: '<gray>Ketik satu baris setiap kali di obrolan. Ketik </gray><aqua>[done]</aqua><gray> untuk selesai, atau </gray><aqua>[cancel]</aqua><gray> untuk membatalkan.</gray>'
+    confirm-instructions: '<gray>Ketik </gray><aqua>[confirm]</aqua><gray> di obrolan untuk mengonfirmasi. Jawaban lain akan membatalkan.</gray>'
+    cancel-word: 'batal'
+    done-word: 'selesai'
+    confirm-word: 'konfirmasi'
+    timed-out: '<red>Tidak ada jawaban - permintaan dibatalkan.</red>'
+  errors:
+    empty: '<red>Ketik sesuatu terlebih dahulu.</red>'
+    too-long: '<red>Terlalu panjang. Batasnya [number] karakter.</red>'
+    not-a-number: '<red>Itu bukan angka yang valid.</red>'
+    out-of-range: '<red>Masukkan angka dari [min] sampai [max].</red>'
 successfully-loaded: |
 
   <gold>____ _ ____</gold>

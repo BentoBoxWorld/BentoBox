@@ -5,15 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.bukkit.conversations.ConversationFactory;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.commands.admin.conversations.NamePrompt;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.prompts.Prompts;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -42,6 +40,8 @@ import world.bentobox.bentobox.util.Util;
  * @since 1.0
  */
 public class IslandRenamehomeCommand extends ConfirmableCommand {
+
+    private static final String ALREADY_EXISTS = "commands.island.renamehome.already-exists";
 
     /**
      * Cached island instance to avoid multiple database lookups.
@@ -122,13 +122,13 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        assert island != null;
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args)))
-        .buildConversation(user.getPlayer()).begin();
+        Island home = Objects.requireNonNull(island);
+        String oldName = String.join(" ", args);
+        Prompts.text(user).title("commands.island.renamehome.enter-new-name").initial(oldName)
+                .validate(name -> home.getHomes().containsKey(name.toLowerCase()) ? user.getTranslation(ALREADY_EXISTS)
+                        : null)
+                .onSubmit(name -> user.sendMessage(home.renameHome(oldName, name) ? "general.success" : ALREADY_EXISTS))
+                .open();
         return true;
     }
 

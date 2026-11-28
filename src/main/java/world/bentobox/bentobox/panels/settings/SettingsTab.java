@@ -12,13 +12,11 @@ import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
@@ -30,6 +28,7 @@ import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.prompts.Prompts;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -215,19 +214,12 @@ public class SettingsTab implements Tab, ClickHandler {
                     .description(user.getTranslation(PROTECTION_PANEL + "reset-to-default.description"))
                     .clickHandler((panel, user1, clickType, slot) -> {
                         user.closeInventory(); // let them see the confirmation
-                        String confirmation = user
-                                .getTranslationOrNothing(PROTECTION_PANEL + "reset-to-default.confirm");
-                        if (confirmation.isBlank()) {
-                            confirmation = "confirm";
-                        }
-                        new ConversationFactory(BentoBox.getInstance()).withModality(true).withLocalEcho(false)
-                                .withTimeout(90)
-                                .withFirstPrompt(new ConfirmPrompt(user, plugin,
-                                        PROTECTION_PANEL + "reset-to-default.instructions",
-                                        confirmation, () -> {
+                        Prompts.confirm(user).message(PROTECTION_PANEL + "reset-to-default.description")
+                                .onConfirm(() -> {
                                     island.setFlagsDefaults();
                                     user.getPlayer().playSound(user.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
-                                })).buildConversation(user.getPlayer()).begin();
+                                    user.sendMessage("general.success");
+                                }).open();
                         return true;
                     })
                     .build());

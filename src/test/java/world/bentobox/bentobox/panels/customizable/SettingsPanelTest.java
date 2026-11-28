@@ -1,5 +1,8 @@
 package world.bentobox.bentobox.panels.customizable;
 
+import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.api.prompts.PromptTestHelper;
+import world.bentobox.bentobox.api.prompts.ChatInputListener;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -428,6 +431,45 @@ class SettingsPanelTest extends RanksManagerTestSetup {
         hidden.add("P_BETA");
         SettingsPanel sp = openWithIsland();
         assertEquals(Material.LIGHT_BLUE_STAINED_GLASS_PANE, material(items(sp), MODE));
+    }
+
+    /**
+     * Reset asks first, and only resets once the player has confirmed.
+     */
+    @Test
+    void testResetAsksForConfirmation() {
+        plugin.getSettings().setDialogPrompts(false);
+        when(user.isPlayer()).thenReturn(true);
+        SettingsPanel sp = openWithIsland();
+
+        click(items(sp), RESET, user, ClickType.LEFT);
+
+        assertTrue(ChatInputListener.isWaitingFor(uuid));
+        verify(island, never()).setFlagsDefaults();
+        try {
+            PromptTestHelper.say(uuid, Util.stripColor(user.getTranslation("prompts.chat.confirm-word")));
+        } finally {
+            PromptTestHelper.clear(uuid);
+        }
+        verify(island).setFlagsDefaults();
+        verify(user).sendMessage("general.success");
+    }
+
+    @Test
+    void testResetIsNotDoneIfDeclined() {
+        plugin.getSettings().setDialogPrompts(false);
+        when(user.isPlayer()).thenReturn(true);
+        SettingsPanel sp = openWithIsland();
+
+        click(items(sp), RESET, user, ClickType.LEFT);
+        try {
+            PromptTestHelper.say(uuid, "no thanks");
+        } finally {
+            PromptTestHelper.clear(uuid);
+        }
+
+        verify(island, never()).setFlagsDefaults();
+        assertFalse(ChatInputListener.isWaitingFor(uuid));
     }
 
     @Test

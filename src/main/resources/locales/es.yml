@@ -21,6 +21,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Haz clic para ejecutar [command]]'
   success: '<green>Éxito!</green>'
   invalid: Inválido
+  misplaced-addon:
+    moved: '<red>[name] es un addon de BentoBox y estaba en la carpeta plugins. Se ha movido a plugins/BentoBox/addons. Reinicia el servidor para cargarlo.</red>'
+    move-failed: '<red>[name] es un addon de BentoBox y debe ir en plugins/BentoBox/addons, no en la carpeta plugins. Muévelo allí y reinicia el servidor.</red>'
+    duplicate: '<red>[name] está tanto en la carpeta plugins como en plugins/BentoBox/addons. Borra el de la carpeta plugins y reinicia el servidor.</red>'
   beta: '<light_purple><bold>Este comando está en beta. ¡Asegúrate de tener copias de seguridad!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Comando cancelado.</red>'
@@ -520,6 +524,13 @@ commands:
         no-trash-instructions: No se puede eliminar el paquete predeterminado
         permission: Permiso
         no-permission: Sin autorización
+        preview: 'Vista previa para jugadores'
+        preview-allowed: |-
+          <green>Los jugadores pueden ver este paquete</green>
+          <gray>Haz clic para ocultarlo</gray>
+        preview-hidden: |-
+          <red>Los jugadores no pueden ver este paquete</red>
+          <gray>Haz clic para permitirlo</gray>
         perm-required: Requerido
         no-perm-required: No se puede establecer la permanente para el paquete predeterminado
         perm-not-required: No requerido
@@ -532,6 +543,7 @@ commands:
         new-bundle: Nuevo paquete
         new-bundle-instructions: Haga clic para hacer un nuevo paquete
         name:
+          title: 'Introduce un nombre'
           quit: dejar
           prompt: Ingrese un nombre o 'quit' para salir
           too-long: '<red>Demasiado largo</red>'
@@ -542,6 +554,7 @@ commands:
           success: ¡Éxito!
           conversation-prefix: '>'
         description:
+          title: 'Descripción de [name]'
           quit: dejar
           instructions: |-
             Ingrese una descripción de varias líneas para [name]
@@ -571,6 +584,11 @@ commands:
         edit-commands: Haz clic para editar comandos
         no-commands: No hay comandos configurados
         commands:
+          title: 'Comandos de [name]'
+          help: |
+            <white>Comandos que se ejecutan al pegar este paquete, uno por línea.</white>
+            <white>Admite los marcadores <green>[player]</green> y <green>[owner]</green>.</white>
+            <white>Añade <green>[SUDO]</green> delante para ejecutarlo como el jugador.</white>
           quit: salir
           clear: limpiar
           instructions: |
@@ -748,6 +766,12 @@ commands:
         las tuyas sean creadas.
       cannot-create-island: '<red>No se pudo encontrar un lugar a tiempo, intente nuevamente...</red>'
       unable-create-island: '<red>Tu isla no se pudo generar, póngase en contacto con un administrador.</red>'
+      preview:
+        showing: '<green>Esto es </green><white>[name]</white><green>. Vuela a su alrededor. Volverás en [number] segundos.</green>'
+        choose: '<green><bold>[Elegir este]</bold></green>'
+        back: '<yellow><bold>[Volver a la lista]</bold></yellow>'
+        ended: '<gray>Vista previa terminada.</gray>'
+        nothing: '<red>No hay nada que mostrar.</red>'
       creating-island: '<green>Creando tu isla, espera un momento...</green>'
       you-cannot-make: '<red>¡No puedes crear más islas!</red>'
       max-uses: '<red>¡No puedes hacer más de ese tipo de [prefix_island]!</red>'
@@ -859,6 +883,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Clic</aqua> <green>para ver acciones</green>'
+          kick: '<red>Expulsar jugador</red>'
+          setowner: '<gold>Hacer propietario</gold>'
+          leave: '<red>Dejar el equipo</red>'
+          accept: '<green>Aceptar</green>'
+          reject: '<red>Rechazar</red>'
+          back: '<white>Atrás</white>'
         tips:
           LEFT:
             name: '<aqua>Clic Izquierdo</aqua>'
@@ -959,6 +991,12 @@ commands:
               <aqua>Buscando por</aqua>
               <red>[name]</red>
           enter-name: '<green>Ingrese nombre:</green>'
+          mode:
+            name: '<white>Al hacer clic en un jugador</white>'
+            invite: '<green>Lo invitas a tu equipo</green>'
+            coop: '<green>Lo coopeas</green>'
+            trust: '<green>Confías en él</green>'
+            change: '<gray>Clic para cambiar</gray>'
           tips:
             LEFT:
               name: '<aqua>Clic izquierdo</aqua>'
@@ -2239,10 +2277,27 @@ panels:
   tips:
     click-to-next: '<yellow>Haz clic </yellow><gray>para continuar.</gray>'
     click-to-previous: '<yellow>Haz clic </yellow><gray>para anterior.</gray>'
+    right-click-to-preview: '<yellow>Clic derecho </yellow><gray>para ver una vista previa.</gray>'
     click-to-choose: '<yellow>Haz clic </yellow><gray>para seleccionar.</gray>'
     click-to-toggle: '<yellow>Haz clic </yellow><gray>para alternar.</gray>'
     left-click-to-cycle-down: '<yellow>Clic Izquierdo </yellow><gray>para ciclar hacia abajo.</gray>'
     right-click-to-cycle-up: '<yellow>Clic Derecho </yellow><gray>para cambiar hacia arriba.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Enviar</green>'
+  chat:
+    instructions: '<gray>Escribe tu respuesta en el chat, o escribe </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    lines-instructions: '<gray>Escribe una línea cada vez en el chat. Escribe </gray><aqua>[done]</aqua><gray> para terminar o </gray><aqua>[cancel]</aqua><gray> para cancelar.</gray>'
+    confirm-instructions: '<gray>Escribe </gray><aqua>[confirm]</aqua><gray> en el chat para confirmar. Cualquier otra cosa cancela.</gray>'
+    cancel-word: 'cancelar'
+    done-word: 'listo'
+    confirm-word: 'confirmar'
+    timed-out: '<red>Sin respuesta - solicitud cancelada.</red>'
+  errors:
+    empty: '<red>Escribe algo primero.</red>'
+    too-long: '<red>Es demasiado largo. El límite es de [number] caracteres.</red>'
+    not-a-number: '<red>No es un número válido.</red>'
+    out-of-range: '<red>Introduce un número entre [min] y [max].</red>'
 successfully-loaded: >-
   <gold> ____             _        ____ </gold><gold>|  _ \           | |      |  _</gold>
   \             <gray>Por </gray><green>tastybento </green><gray>y </gray><green>Poslovitch </green><gold>| |_) | ___ _ __ | |_ ___</gold>

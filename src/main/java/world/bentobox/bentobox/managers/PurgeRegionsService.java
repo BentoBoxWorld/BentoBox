@@ -1057,7 +1057,8 @@ public class PurgeRegionsService {
     }
 
     private boolean deleteIfExists(File file) {
-        if (!file.getParentFile().exists()) {
+        File parent = file.getParentFile();
+        if (parent == null || !parent.exists()) {
             return true;
         }
         try {

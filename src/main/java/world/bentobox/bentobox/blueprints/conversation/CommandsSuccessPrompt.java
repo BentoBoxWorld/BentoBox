@@ -18,7 +18,10 @@ import world.bentobox.bentobox.panels.BlueprintManagementPanel;
  * Saves the collected commands to the blueprint bundle.
  * @author tastybento
  * @since 2.6.0
+ * @deprecated Paper is removing {@code org.bukkit.conversations}, which this class is built on.
+ *             Use the prompts in {@link world.bentobox.bentobox.panels.BlueprintManagementPanel} instead.
  */
+@Deprecated(since = "3.25.0", forRemoval = true)
 public class CommandsSuccessPrompt extends MessagePrompt {
 
     private final GameModeAddon addon;

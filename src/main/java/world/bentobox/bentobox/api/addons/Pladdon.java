@@ -2,10 +2,18 @@ package world.bentobox.bentobox.api.addons;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.io.Files;
+
+import world.bentobox.bentobox.api.user.User;
 
 /**
  * A wrapper class that allows a BentoBox {@link Addon} to be loaded as a Bukkit {@link JavaPlugin}.
@@ -19,8 +27,13 @@ import com.google.common.io.Files;
  *     <li>It provides a standard Bukkit plugin entry point, which can make it easier for
  *     other plugins to access the addon's API.</li>
  * </ol>
- * A Pladdon is expected to be placed in the {@code /plugins/BentoBox/addons} folder. If it is
- * placed in the main {@code /plugins} folder, it will attempt to move itself.
+ * A Pladdon is expected to be placed in the {@code /plugins/BentoBox/addons} folder. If the server
+ * loads it from the main {@code /plugins} folder instead, it stays inert for this run, moves its jar
+ * into the addons folder, and tells the console and any operator who joins that a restart is needed.
+ * <p>
+ * None of this can run when BentoBox itself is not installed: the addon's main class extends this
+ * class, so the server cannot even load it. That case has to be handled in the addon's
+ * {@code plugin.yml} (for example with {@code depend: [BentoBox]}), not here.
  *
  * @author tastybento
  * @since 1.0
@@ -33,6 +46,35 @@ public abstract class Pladdon extends JavaPlugin {
     private static final String ADDONS_FOLDER = "BentoBox" + File.separator + "addons";
 
     /**
+     * Ticks to wait after a player joins before telling them about a misplaced addon, so the message
+     * is not lost among the other join messages.
+     */
+    private static final long JOIN_MESSAGE_DELAY = 40L;
+
+    /**
+     * What happened when a misplaced jar was relocated.
+     */
+    enum MoveResult {
+        /** The jar now sits in the addons folder. */
+        MOVED,
+        /** A jar of the same name was already in the addons folder, so this one was left alone. */
+        ALREADY_THERE,
+        /** The jar could not be moved; the admin has to do it by hand. */
+        FAILED
+    }
+
+    /**
+     * True when the server loaded this jar from somewhere other than the BentoBox addons folder,
+     * typically the main {@code /plugins} folder.
+     */
+    private boolean misplaced;
+
+    /**
+     * Outcome of trying to relocate a misplaced jar, or {@code null} if it was not misplaced.
+     */
+    private MoveResult moveResult;
+
+    /**
      * This method must be implemented to provide an instance of the associated {@link Addon}.
      * This instance is used by BentoBox's addon manager.
      *
@@ -43,34 +85,64 @@ public abstract class Pladdon extends JavaPlugin {
     /**
      * Called when the plugin is loaded.
      * <p>
-     * This implementation checks if the Pladdon's JAR file is in the correct
-     * {@code /plugins/BentoBox/addons} directory. If not, it will attempt to move it.
-     * The moving logic is currently commented out.
+     * If the jar is not in the {@code /plugins/BentoBox/addons} folder, the Pladdon marks itself as
+     * misplaced, moves the jar there and logs what the admin needs to do next.
      * </p>
      */
     @Override
     public void onLoad() {
-        String parentFolder = getFile().getParent();
-        // Check if the JAR is in the correct addons folder.
-        if (parentFolder == null || !parentFolder.endsWith(ADDONS_FOLDER)) {
-            // The JAR is in the wrong location. It should be in the /plugins/BentoBox/addons/ folder.
-            // The logic to move the jar is commented out by default.
+        if (isInAddonsFolder(getJarFile())) {
+            return;
         }
+        misplaced = true;
+        moveResult = relocate();
+        logMisplaced();
+    }
+
+    /**
+     * Called when the server enables this plugin.
+     * <p>
+     * A correctly placed Pladdon is enabled by BentoBox's addon manager, which drives the addon's
+     * lifecycle itself, so nothing happens here. A misplaced one repeats its warning once startup has
+     * finished (so it is not buried in the boot log) and tells operators about it when they join.
+     * </p>
+     */
+    @Override
+    public void onEnable() {
+        if (!misplaced) {
+            return;
+        }
+        Bukkit.getScheduler().runTask(this, this::logMisplaced);
+        Bukkit.getPluginManager().registerEvents(new MisplacedJoinListener(), this);
     }
 
     /**
      * Called when the plugin is disabled.
      * <p>
      * This implementation ensures that the associated addon's {@link Addon#onDisable()}
-     * method is called.
+     * method is called. A misplaced Pladdon never enabled its addon, so it has nothing to disable.
      * </p>
      */
     @Override
     public void onDisable() {
+        if (misplaced) {
+            return;
+        }
         Addon addon = getAddon();
         if (addon != null) {
             addon.onDisable();
         }
+    }
+
+    /**
+     * Whether the server loaded this Pladdon from outside the BentoBox addons folder. A misplaced
+     * Pladdon does not run its addon; it only reports the problem until the server is restarted.
+     *
+     * @return {@code true} if this Pladdon was loaded from the wrong folder
+     * @since 3.25.0
+     */
+    public boolean isMisplaced() {
+        return misplaced;
     }
 
     /**
@@ -80,30 +152,103 @@ public abstract class Pladdon extends JavaPlugin {
      * </p>
      */
     protected void moveJar() {
-        getLogger().severe(getFile().getName() + " must be in the " + ADDONS_FOLDER + " folder! Trying to move it there...");
-        File addons = new File(getFile().getParent(), ADDONS_FOLDER);
-        // Create the addons folder if it doesn't exist.
-        if (addons.exists() || addons.mkdirs()) {
-            File to = new File(addons, getFile().getName());
-            if (!to.exists()) {
-                try {
-                    // Move the file.
-                    Files.move(getFile(), to);
-                    getLogger().severe(getFile().getName() + " moved successfully.");
-
-                } catch (IOException ex) {
-                    getLogger().severe("Failed to move it. " + ex.getMessage());
-                    getLogger().severe("Move " + getFile().getName() + " manually into the " + ADDONS_FOLDER + " folder. Then restart server.");
-                }
-            } else {
-                getLogger().warning(getFile().getName() + " already is in the addons folder. Delete the one in the plugins folder.");
-            }
-        } else {
-            getLogger().severe("BentoBox addons folder could not be made! " + addons.getAbsolutePath());
-        }
-
+        relocate();
     }
 
+    /**
+     * Moves the jar into the BentoBox addons folder, creating the folder if needed.
+     *
+     * @return what happened
+     */
+    MoveResult relocate() {
+        File jar = getJarFile();
+        File pluginsFolder = jar.getParentFile();
+        if (pluginsFolder == null) {
+            return MoveResult.FAILED;
+        }
+        File addons = new File(pluginsFolder, ADDONS_FOLDER);
+        if (!addons.exists() && !addons.mkdirs()) {
+            getLogger().severe("BentoBox addons folder could not be made! " + addons.getAbsolutePath());
+            return MoveResult.FAILED;
+        }
+        File to = new File(addons, jar.getName());
+        if (to.exists()) {
+            return MoveResult.ALREADY_THERE;
+        }
+        try {
+            Files.move(jar, to);
+            return MoveResult.MOVED;
+        } catch (IOException ex) {
+            // Typically Windows, which locks a jar the server has open
+            getLogger().log(Level.WARNING, "Could not move " + jar.getName() + ": " + ex.getMessage());
+            return MoveResult.FAILED;
+        }
+    }
+
+    /**
+     * @return this Pladdon's jar file; a seam over {@link #getFile()}, which is protected in {@link JavaPlugin}
+     */
+    File getJarFile() {
+        return getFile();
+    }
+
+    /**
+     * Logs a boxed warning explaining where this jar belongs and what to do next.
+     */
+    private void logMisplaced() {
+        String name = getJarFile().getName();
+        String bar = "*".repeat(70);
+        getLogger().severe(bar);
+        getLogger().severe(name + " is a BentoBox addon, not a standalone plugin.");
+        getLogger().severe("Addons go in plugins" + File.separator + ADDONS_FOLDER + ", not in the plugins folder.");
+        switch (moveResult == null ? MoveResult.FAILED : moveResult) {
+        case MOVED -> getLogger().severe("It has been moved there for you. Restart the server to load it.");
+        case ALREADY_THERE -> getLogger().severe(
+                "A copy is already in the addons folder. Delete this one from the plugins folder and restart.");
+        case FAILED -> getLogger().severe("It could not be moved automatically. Move it there, then restart the server.");
+        }
+        getLogger().severe(bar);
+    }
+
+    /**
+     * @param jar the jar file
+     * @return true if the jar sits in the {@code BentoBox/addons} folder
+     */
+    static boolean isInAddonsFolder(File jar) {
+        File parent = jar.getParentFile();
+        return parent != null && parent.getName().equals("addons") && parent.getParentFile() != null
+                && parent.getParentFile().getName().equals("BentoBox");
+    }
+
+    /**
+     * @return the locale key for the message operators see about a misplaced jar
+     */
+    String getMisplacedMessageKey() {
+        return switch (moveResult == null ? MoveResult.FAILED : moveResult) {
+        case MOVED -> "general.misplaced-addon.moved";
+        case ALREADY_THERE -> "general.misplaced-addon.duplicate";
+        case FAILED -> "general.misplaced-addon.move-failed";
+        };
+    }
+
+    /**
+     * Tells operators who join that this addon is in the wrong folder. Many server owners never
+     * read the console, so this is the message most likely to be seen.
+     */
+    private class MisplacedJoinListener implements Listener {
+        @EventHandler
+        public void onJoin(PlayerJoinEvent e) {
+            Player player = e.getPlayer();
+            if (!player.isOp() && !player.hasPermission("bentobox.admin")) {
+                return;
+            }
+            Bukkit.getScheduler().runTaskLater(Pladdon.this, () -> {
+                if (player.isOnline()) {
+                    User.getInstance(player).sendMessage(getMisplacedMessageKey(), "[name]", getJarFile().getName());
+                }
+            }, JOIN_MESSAGE_DELAY);
+        }
+    }
 
     /**
      * Manually sets the enabled state of this Pladdon to {@code true}.

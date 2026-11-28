@@ -24,6 +24,8 @@ import world.bentobox.bentobox.util.ItemParser;
 public class BlueprintBundle implements DataObject {
 
     private static final String DEFAULT_ICON = "PAPER";
+    /** The id of the bundle every game mode has. Same as {@code BlueprintsManager.DEFAULT_BUNDLE_NAME}. */
+    private static final String DEFAULT_BUNDLE_ID = "default";
 
     /**
      * The unique id of this bundle
@@ -87,6 +89,14 @@ public class BlueprintBundle implements DataObject {
      */
     @Expose
     private List<String> commands = new ArrayList<>();
+
+    /**
+     * Whether players may preview this bundle. Null means nobody has chosen: the default bundle
+     * can then be previewed and any other bundle cannot, as its blueprints may hold things
+     * players are meant to find for themselves.
+     */
+    @Expose
+    private Boolean preview;
 
     /**
      * @return the uniqueId
@@ -291,5 +301,24 @@ public class BlueprintBundle implements DataObject {
      */
     public void setCommands(List<String> commands) {
         this.commands = commands;
+    }
+
+    /**
+     * Whether players may preview this bundle before choosing it. Until it is set with
+     * {@link #setPreviewAllowed(boolean)}, only the default bundle can be previewed.
+     *
+     * @return true if players may preview this bundle
+     * @since 3.25.0
+     */
+    public boolean isPreviewAllowed() {
+        return preview != null ? preview : DEFAULT_BUNDLE_ID.equals(uniqueId);
+    }
+
+    /**
+     * @param previewAllowed true if players may preview this bundle
+     * @since 3.25.0
+     */
+    public void setPreviewAllowed(boolean previewAllowed) {
+        this.preview = previewAllowed;
     }
 }

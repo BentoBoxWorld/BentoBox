@@ -12,15 +12,12 @@ import java.util.Objects;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.conversations.ConfirmPrompt;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.HideWhen;
 import world.bentobox.bentobox.api.flags.Flag.Mode;
@@ -33,6 +30,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
 import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord;
+import world.bentobox.bentobox.api.prompts.Prompts;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.ItemParser;
@@ -612,18 +610,11 @@ public class SettingsPanel extends AbstractRefreshingPanel {
 
     private void confirmReset(User u) {
         u.closeInventory(); // let them see the confirmation
-        String confirmation = u.getTranslationOrNothing(PROTECTION_PANEL + "reset-to-default.confirm");
-        if (confirmation.isBlank()) {
-            confirmation = "confirm";
-        }
-        new ConversationFactory(BentoBox.getInstance()).withModality(true).withLocalEcho(false)
-                .withTimeout(90)
-                .withFirstPrompt(new ConfirmPrompt(u, plugin, PROTECTION_PANEL + "reset-to-default.instructions",
-                        confirmation, () -> {
-                            Objects.requireNonNull(island).setFlagsDefaults();
-                            u.getPlayer().playSound(u.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
-                        }))
-                .buildConversation(u.getPlayer()).begin();
+        Prompts.confirm(u).message(PROTECTION_PANEL + "reset-to-default.description").onConfirm(() -> {
+            Objects.requireNonNull(island).setFlagsDefaults();
+            u.getPlayer().playSound(u.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
+            u.sendMessage("general.success");
+        }).open();
     }
 
     /**

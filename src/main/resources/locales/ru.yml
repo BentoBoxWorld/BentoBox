@@ -26,6 +26,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Нажмите, чтобы выполнить [command]]'
   success: <green>Успешно!</green>
   invalid: Некорректно
+  misplaced-addon:
+    moved: '<red>[name] — это аддон BentoBox, и он лежал в папке plugins. Он перемещён в plugins/BentoBox/addons. Перезапустите сервер, чтобы загрузить его.</red>'
+    move-failed: '<red>[name] — это аддон BentoBox, его нужно положить в plugins/BentoBox/addons, а не в папку plugins. Переместите его туда и перезапустите сервер.</red>'
+    duplicate: '<red>[name] лежит и в папке plugins, и в plugins/BentoBox/addons. Удалите файл из папки plugins и перезапустите сервер.</red>'
   beta: <light_purple><bold>Эта команда в бета-версии. Убедитесь, что у вас есть резервные
     копии!</bold></light_purple>
   errors:
@@ -514,6 +518,13 @@ commands:
         no-trash-instructions: Не удается удалить пакет по умолчанию
         permission: Разрешение
         no-permission: Нет разрешения
+        preview: 'Предпросмотр для игроков'
+        preview-allowed: |-
+          <green>Игроки могут посмотреть этот набор</green>
+          <gray>Нажмите, чтобы скрыть</gray>
+        preview-hidden: |-
+          <red>Игроки не могут посмотреть этот набор</red>
+          <gray>Нажмите, чтобы разрешить</gray>
         perm-required: Требуется
         no-perm-required: Невозможно установить разрешения для сборника по умолчанию
         perm-not-required: Не требуется
@@ -527,6 +538,7 @@ commands:
         new-bundle: Новый сборник
         new-bundle-instructions: Кликните для создания нового сборника
         name:
+          title: 'Введите название'
           quit: выйти
           prompt: Введите имя, или "выйти" для выхода
           too-long: <red>Слишком длинное имя. Установить можно до 32 знаков.</red>
@@ -536,6 +548,7 @@ commands:
           success: Успех!
           conversation-prefix: '>'
         description:
+          title: 'Описание: [name]'
           quit: выйти
           instructions: |-
             введите многострочное описание для [name]
@@ -565,6 +578,11 @@ commands:
         edit-commands: Нажмите для редактирования команд
         no-commands: Команды не установлены
         commands:
+          title: 'Команды: [name]'
+          help: |
+            <white>Команды, выполняемые при вставке этого сборника, по одной в строке.</white>
+            <white>Поддерживает заполнители <green>[player]</green> и <green>[owner]</green>.</white>
+            <white>Добавьте <green>[SUDO]</green> в начало, чтобы выполнить от имени игрока.</white>
           quit: выйти
           clear: очистить
           instructions: |-
@@ -727,6 +745,12 @@ commands:
       cannot-create-island: <red>Место не найдено в данный момент, попробуйте ещё
         раз позднее...</red>
       unable-create-island: <red>Ваш остров не был создан, свяжитесь с администрацией.</red>
+      preview:
+        showing: '<green>Это </green><white>[name]</white><green>. Облетите вокруг. Через [number] сек. вы вернётесь обратно.</green>'
+        choose: '<green><bold>[Выбрать этот]</bold></green>'
+        back: '<yellow><bold>[Назад к списку]</bold></yellow>'
+        ended: '<gray>Предпросмотр завершён.</gray>'
+        nothing: '<red>Нечего показывать.</red>'
       creating-island: <green>Поиск места для создания острова...</green>
       you-cannot-make: <red>Вы не можете создать больше островов!</red>
       max-uses: <red>Вы не можете создать больше такого типа [prefix_island]!</red>
@@ -831,6 +855,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Нажмите</aqua> <green>для действий</green>'
+          kick: '<red>Кикнуть игрока</red>'
+          setowner: '<gold>Сделать владельцем</gold>'
+          leave: '<red>Покинуть команду</red>'
+          accept: '<green>Принять</green>'
+          reject: '<red>Отклонить</red>'
+          back: '<white>Назад</white>'
         tips:
           LEFT:
             name: <aqua>ЛКМ</aqua>
@@ -932,6 +964,12 @@ commands:
               <aqua>Поиск за</aqua>
               <red>[name]</red>
           enter-name: <green>Введите имя:</green>
+          mode:
+            name: '<white>Нажатие на игрока</white>'
+            invite: '<green>Приглашает его в команду</green>'
+            coop: '<green>Добавляет его для совместной игры</green>'
+            trust: '<green>Делает его доверенным</green>'
+            change: '<gray>Нажмите, чтобы изменить</gray>'
           tips:
             LEFT:
               name: <aqua>ЛКМ</aqua>
@@ -2321,11 +2359,28 @@ panels:
     click-to-next: <gray><yellow>Нажмите</yellow>, чтобы перейти на следующую страницу.</gray>
     click-to-previous: <gray><yellow>Нажмите</yellow>, чтобы перейти на предыдущую
       страницу.</gray>
+    right-click-to-preview: '<yellow>ПКМ </yellow><gray>для предпросмотра.</gray>'
     click-to-choose: <gray><yellow>Нажмите</yellow>, чтобы выбрать.</gray>
     click-to-toggle: <gray><yellow>Нажмите</yellow>, чтобы переключить.</gray>
     left-click-to-cycle-down: <gray><yellow>ЛКМ</yellow>, чтобы прокрутить вниз.</gray>
     right-click-to-cycle-up: <gray><yellow>ПКМ</yellow>, чтобы прокрутить вверх.</gray>
 
+prompts:
+  buttons:
+    submit: '<green>Отправить</green>'
+  chat:
+    instructions: '<gray>Введите ответ в чат или введите </gray><aqua>[cancel]</aqua><gray> для отмены.</gray>'
+    lines-instructions: '<gray>Вводите в чат по одной строке. Введите </gray><aqua>[done]</aqua><gray>, чтобы закончить, или </gray><aqua>[cancel]</aqua><gray> для отмены.</gray>'
+    confirm-instructions: '<gray>Введите </gray><aqua>[confirm]</aqua><gray> в чат для подтверждения. Любой другой ответ отменяет действие.</gray>'
+    cancel-word: 'отмена'
+    done-word: 'готово'
+    confirm-word: 'подтвердить'
+    timed-out: '<red>Нет ответа - запрос отменён.</red>'
+  errors:
+    empty: '<red>Сначала введите что-нибудь.</red>'
+    too-long: '<red>Слишком длинно. Лимит - [number] символов.</red>'
+    not-a-number: '<red>Это не допустимое число.</red>'
+    out-of-range: '<red>Введите число от [min] до [max].</red>'
 successfully-loaded: |2
 
   <gold>  ____             _        ____              </gold>

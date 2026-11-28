@@ -1,6 +1,13 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -13,8 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.OfflinePlayer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -194,5 +203,113 @@ class IslandTeamGUIMemberTest extends RanksManagerTestSetup {
         when(lm.get(any(), eq(MEMBER_NAME_REF))).thenReturn("Member: [display_name][last_seen]");
 
         assertEquals("Member: Bento", buildMemberButton().getName());
+    }
+
+    // -----------------------------------------------------------------------
+    // Action menu for players who can only tap (#3137)
+    // -----------------------------------------------------------------------
+
+    private static final int SLOT_MENU_FIRST = 0;
+    private static final int SLOT_MENU_BACK = 8;
+    private static final String ACTIONS_TIP_REF = "commands.island.team.gui.actions.tip";
+
+    /** Makes the viewer an ordinary member who is allowed to leave the team. */
+    private void viewerCanLeave() {
+        when(island.getRank(any(User.class))).thenReturn(MEMBER_RANK);
+        when(rm.getRank(MEMBER_RANK)).thenReturn("ranks.member");
+        when(island.getOwner()).thenReturn(UUID.randomUUID());
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
+    }
+
+    private Panel openPanel() {
+        Panel panel = PanelListenerManager.getOpenPanels().get(uuid);
+        assertNotNull(panel);
+        return panel;
+    }
+
+    private void click(Panel panel, int slot, ClickType clickType) {
+        PanelItem item = panel.getItems().get(slot);
+        assertNotNull(item, "Expected a panel item at slot " + slot);
+        item.getClickHandler().orElseThrow(() -> new AssertionError("No click handler at slot " + slot))
+                .onClick(panel, user, clickType, slot);
+    }
+
+    @Test
+    void testMemberLeftClick_opensActionMenuWithLeaveAndBack() {
+        viewerCanLeave();
+        buildMemberButton();
+        Panel teamPanel = openPanel();
+
+        click(teamPanel, SLOT_FIRST_MEMBER, ClickType.LEFT);
+
+        Panel menu = openPanel();
+        assertNotSame(teamPanel, menu);
+        assertEquals(2, menu.getItems().size());
+        assertTrue(menu.getItems().containsKey(SLOT_MENU_FIRST));
+        assertTrue(menu.getItems().containsKey(SLOT_MENU_BACK));
+    }
+
+    @Test
+    void testActionMenuLeaveButton_leavesTeam() {
+        viewerCanLeave();
+        buildMemberButton();
+        click(openPanel(), SLOT_FIRST_MEMBER, ClickType.LEFT);
+
+        click(openPanel(), SLOT_MENU_FIRST, ClickType.LEFT);
+
+        verify(leaveCommand).leave(user);
+    }
+
+    @Test
+    void testActionMenuBackButton_returnsToTeamPanel() {
+        viewerCanLeave();
+        buildMemberButton();
+        click(openPanel(), SLOT_FIRST_MEMBER, ClickType.LEFT);
+        Panel menu = openPanel();
+
+        click(menu, SLOT_MENU_BACK, ClickType.LEFT);
+
+        Panel teamPanel = openPanel();
+        assertNotSame(menu, teamPanel);
+        assertNotNull(teamPanel.getItems().get(SLOT_FIRST_MEMBER));
+        verify(leaveCommand, never()).leave(any());
+    }
+
+    @Test
+    void testMemberLeftClick_noActionsAvailable_opensNothing() {
+        // The owner looking at their own head can neither kick, hand over nor leave
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
+        buildMemberButton();
+        Panel teamPanel = openPanel();
+
+        click(teamPanel, SLOT_FIRST_MEMBER, ClickType.LEFT);
+
+        assertSame(teamPanel, openPanel());
+    }
+
+    @Test
+    void testMemberShiftRightClick_stillLeavesDirectly() {
+        viewerCanLeave();
+        buildMemberButton();
+
+        click(openPanel(), SLOT_FIRST_MEMBER, ClickType.SHIFT_RIGHT);
+
+        verify(leaveCommand).leave(user);
+    }
+
+    @Test
+    void testMemberDescription_showsActionsTipWhenActionsAvailable() {
+        viewerCanLeave();
+        when(lm.get(any(), eq(ACTIONS_TIP_REF))).thenReturn("Click for actions");
+
+        assertTrue(buildMemberButton().getDescription().contains("Click for actions"));
+    }
+
+    @Test
+    void testMemberDescription_noActionsTipWhenNoActionsAvailable() {
+        when(mockPlayer.hasPermission(anyString())).thenReturn(true);
+        when(lm.get(any(), eq(ACTIONS_TIP_REF))).thenReturn("Click for actions");
+
+        assertFalse(buildMemberButton().getDescription().contains("Click for actions"));
     }
 }

@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.managers;
 
+import world.bentobox.bentobox.blueprints.BundleAvailability;
+import java.util.Locale;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -728,6 +730,36 @@ public class BlueprintsManager {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Checks with the game mode that a player can use a blueprint bundle right now, and tells
+     * the player if they cannot.
+     *
+     * @param addon the game mode
+     * @param user the player
+     * @param name the name of the blueprint bundle
+     * @param oldIsland the island that would be replaced if this is a reset, otherwise null
+     * @return true if the bundle can be used
+     * @since 3.25.0
+     */
+    public boolean checkAvailable(@NonNull GameModeAddon addon, @NonNull User user, @NonNull String name,
+            @Nullable Island oldIsland) {
+        BlueprintBundle bb = getBlueprintBundles(addon).get(name.toLowerCase(Locale.ENGLISH));
+        if (bb == null) {
+            // Nothing to ask about. The caller deals with unknown bundles.
+            return true;
+        }
+        BundleAvailability availability = addon.getBundleAvailability(user, bb, oldIsland);
+        if (availability.isAvailable()) {
+            return true;
+        }
+        if (availability.message() != null) {
+            user.sendRawMessage(availability.message());
+        } else {
+            user.sendMessage("commands.island.create.unknown-blueprint");
+        }
+        return false;
     }
 
     /**

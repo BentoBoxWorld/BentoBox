@@ -26,6 +26,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
@@ -67,6 +68,13 @@ public class IslandTeamGUI {
 
     private static final String NAME = ".name";
     private static final String TIPS = "commands.island.team.gui.tips.";
+    /** Locale keys for the action menu, opened by a plain click for players who cannot shift or right click (#3137). */
+    private static final String ACTIONS = "commands.island.team.gui.actions.";
+    private static final String KICK = "kick";
+    private static final String SETOWNER = "setowner";
+    private static final String LEAVE = "leave";
+    /** Slots in the one-row action menu. */
+    private static final int ACTION_MENU_SIZE = 9;
     /** Locale key for the (customisable) member button name. Placeholders: [name], [display_name]. */
     private static final String MEMBER_NAME_REF = "commands.island.team.gui.buttons.member.name";
     /** Locale key for the (customisable) member button rank line. Placeholder: [rank]. */
@@ -276,30 +284,103 @@ public class IslandTeamGUI {
         Type type = invite.getType();
         builder.clickHandler((panel, user, clickType, clickSlot) -> {
             if (list.stream().noneMatch(ar -> clickType.equals(ar.clickType()))) {
-                // If the click type is not in the template, don't do anything
+                // Not a click the template uses: offer the same actions as buttons instead
+                if (opensActionMenu(clickType)) {
+                    openInviteActions(invite);
+                }
                 return true;
             }
-            if (clickType.equals(ClickType.SHIFT_LEFT)
-                    && user.hasPermission(parent.getAcceptCommand().getPermission())) {
-                plugin.log("Invite accepted: " + user.getName() + " accepted " + type);
-                // Accept
-                switch (type) {
-                case COOP -> parent.getAcceptCommand().acceptCoopInvite(user, invite);
-                case TRUST -> parent.getAcceptCommand().acceptTrustInvite(user, invite);
-                default -> parent.getAcceptCommand().acceptTeamInvite(user, invite);
-                }
-                user.closeInventory();
+            if (clickType.equals(ClickType.SHIFT_LEFT)) {
+                acceptInvite(user, invite);
             }
-            if (clickType.equals(ClickType.SHIFT_RIGHT)
-                    && user.hasPermission(parent.getRejectCommand().getPermission())) {
-                // Reject
-                plugin.log("Invite rejected: " + user.getName() + " rejected " + type + " invite.");
-                parent.getRejectCommand().execute(user, "", List.of());
-                user.closeInventory();
+            if (clickType.equals(ClickType.SHIFT_RIGHT)) {
+                rejectInvite(user, type);
             }
             return true;
         });
 
+    }
+
+    private void acceptInvite(User clickingUser, TeamInvite invite) {
+        if (!clickingUser.hasPermission(parent.getAcceptCommand().getPermission())) {
+            return;
+        }
+        plugin.log("Invite accepted: " + clickingUser.getName() + " accepted " + invite.getType());
+        switch (invite.getType()) {
+        case COOP -> parent.getAcceptCommand().acceptCoopInvite(clickingUser, invite);
+        case TRUST -> parent.getAcceptCommand().acceptTrustInvite(clickingUser, invite);
+        default -> parent.getAcceptCommand().acceptTeamInvite(clickingUser, invite);
+        }
+        clickingUser.closeInventory();
+    }
+
+    private void rejectInvite(User clickingUser, Type type) {
+        if (!clickingUser.hasPermission(parent.getRejectCommand().getPermission())) {
+            return;
+        }
+        plugin.log("Invite rejected: " + clickingUser.getName() + " rejected " + type + " invite.");
+        parent.getRejectCommand().execute(clickingUser, "", List.of());
+        clickingUser.closeInventory();
+    }
+
+    /**
+     * Opens the action menu for a pending invitation: Accept and Reject as buttons.
+     */
+    private void openInviteActions(TeamInvite invite) {
+        List<PanelItem> items = new ArrayList<>();
+        if (user.hasPermission(parent.getAcceptCommand().getPermission())) {
+            items.add(actionButton("accept", Material.LIME_CONCRETE, () -> acceptInvite(user, invite)));
+        }
+        if (user.hasPermission(parent.getRejectCommand().getPermission())) {
+            items.add(actionButton("reject", Material.RED_CONCRETE, () -> rejectInvite(user, invite.getType())));
+        }
+        openActionMenu(user.getTranslation("commands.island.team.gui.buttons.invitation"), items);
+    }
+
+    /**
+     * A plain left or right click that the template gives no action to opens the action menu.
+     * Touch-screen Bedrock players (through Geyser) can only tap, which arrives as a left click,
+     * so every shift or right click action has to be reachable this way (#3137).
+     */
+    private static boolean opensActionMenu(ClickType clickType) {
+        return clickType == ClickType.LEFT || clickType == ClickType.RIGHT;
+    }
+
+    /**
+     * The "click for actions" line for a button's description, or empty if the template already
+     * uses the left click for something, or the locale has no such line.
+     */
+    private Optional<String> actionsTip(@NonNull List<ActionRecords> actions) {
+        if (actions.stream().anyMatch(ar -> ClickType.LEFT.equals(ar.clickType()))) {
+            return Optional.empty();
+        }
+        String tip = translateOr(ACTIONS + "tip", "");
+        return tip.isBlank() ? Optional.empty() : Optional.of(tip);
+    }
+
+    private PanelItem actionButton(String action, Material icon, Runnable onClick) {
+        return new PanelItemBuilder().icon(icon).name(user.getTranslation(ACTIONS + action))
+                .clickHandler((panel, clicker, clickType, clickSlot) -> {
+                    onClick.run();
+                    return true;
+                }).build();
+    }
+
+    /**
+     * Opens a one-row menu with a button per action and a Back button that returns to the team panel.
+     * Does nothing if there are no actions to show.
+     */
+    private void openActionMenu(String title, List<PanelItem> items) {
+        if (items.isEmpty()) {
+            return;
+        }
+        PanelBuilder menu = new PanelBuilder().user(user).world(user.getWorld()).name(title).size(ACTION_MENU_SIZE);
+        // The last slot is kept for Back
+        for (int i = 0; i < Math.min(items.size(), ACTION_MENU_SIZE - 1); i++) {
+            menu.item(i, items.get(i));
+        }
+        menu.item(ACTION_MENU_SIZE - 1, actionButton("back", Material.ARROW, this::build));
+        menu.build();
     }
 
     private void createInviteDescription(PanelItemBuilder builder, Type type, String name,
@@ -318,6 +399,7 @@ public class IslandTeamGUI {
                 .map(ar -> user.getTranslation(TIPS + ar.clickType().name() + NAME) + " "
                         + user.getTranslation(ar.tooltip()))
                 .toList());
+        actionsTip(list).ifPresent(builder::description);
 
     }
 
@@ -401,32 +483,32 @@ public class IslandTeamGUI {
         List<ActionRecords> actions = template.actions();
         // Make button description depending on viewer
         List<String> desc = new ArrayList<>();
-        int userRank = Objects.requireNonNull(is).getRank(user);
         // Add the tooltip for kicking
-        if (user.hasPermission(parent.getKickCommand().getPermission())
-                && userRank >= is.getRankCommand(parent.getLabel() + " kick") && !user.equals(member)) {
-            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("kick"))
+        if (canKick(is, member)) {
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase(KICK))
                     .map(ar -> user.getTranslation(TIPS + ar.clickType().name() + NAME)
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
         }
         // Set Owner
-        if (user.hasPermission(parent.getSetOwnerCommand().getPermission()) && !user.equals(member)
-                && userRank >= RanksManager.OWNER_RANK && rank >= RanksManager.MEMBER_RANK) {
+        if (canSetOwner(is, member)) {
             // Add the tooltip for setowner
-            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("setowner"))
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase(SETOWNER))
                     .map(ar -> user.getTranslation(TIPS + ar.clickType().name() + NAME)
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
         }
         // Leave
-        if (user.hasPermission(parent.getLeaveCommand().getPermission()) && user.equals(member)
-                && userRank < RanksManager.OWNER_RANK) {
+        if (canLeave(is, member)) {
             // Add the tooltip for leave
-            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase("leave"))
+            actions.stream().filter(ar -> ar.actionType().equalsIgnoreCase(LEAVE))
                     .map(ar -> user.getTranslation(TIPS + ar.clickType().name() + NAME)
                             + " " + user.getTranslation(ar.tooltip()))
                     .findFirst().ifPresent(desc::add);
+        }
+        // Tell the viewer that a plain click lists the same actions as buttons
+        if (canKick(is, member) || canSetOwner(is, member) || canLeave(is, member)) {
+            actionsTip(actions).ifPresent(desc::add);
         }
         // Rank line, styled through a customisable locale key ([rank] placeholder), shown first.
         // Fall back to the raw rank name if the key is absent (e.g. an older custom locale file).
@@ -445,6 +527,50 @@ public class IslandTeamGUI {
                 .clickHandler(
                         (panel, user, clickType, i) -> clickListener(user, clickType, member, actions))
                 .build();
+    }
+
+    /** @return true if this member is the player looking at the panel */
+    private boolean isViewer(User member) {
+        return Objects.equals(user.getUniqueId(), member.getUniqueId());
+    }
+
+    /** @return true if the viewer may kick (or uncoop, or untrust) this member */
+    private boolean canKick(Island is, User member) {
+        return user.hasPermission(parent.getKickCommand().getPermission()) && !isViewer(member)
+                && is.getRank(user) >= is.getRankCommand(parent.getLabel() + " kick");
+    }
+
+    /** @return true if the viewer owns the island and may hand it to this member */
+    private boolean canSetOwner(Island is, User member) {
+        return user.hasPermission(parent.getSetOwnerCommand().getPermission()) && !isViewer(member)
+                && is.getRank(user) >= RanksManager.OWNER_RANK && is.getRank(member) >= RanksManager.MEMBER_RANK;
+    }
+
+    /** @return true if this member is the viewer and the viewer may leave the team */
+    private boolean canLeave(Island is, User member) {
+        return user.hasPermission(parent.getLeaveCommand().getPermission()) && isViewer(member)
+                && is.getRank(user) < RanksManager.OWNER_RANK;
+    }
+
+    /**
+     * Opens the action menu for a team member: the actions the viewer may take on them, as buttons.
+     */
+    private void openMemberActions(User target) {
+        Island is = plugin.getIslands().getPrimaryIsland(parent.getWorld(), user.getUniqueId());
+        if (is == null) {
+            return;
+        }
+        List<PanelItem> items = new ArrayList<>();
+        if (canKick(is, target)) {
+            items.add(actionButton(KICK, Material.IRON_BOOTS, () -> kickPlayer(user, target, island.getRank(user))));
+        }
+        if (canSetOwner(is, target)) {
+            items.add(actionButton(SETOWNER, Material.GOLDEN_HELMET, () -> setOwner(user, target)));
+        }
+        if (canLeave(is, target)) {
+            items.add(actionButton(LEAVE, Material.OAK_DOOR, () -> leave(user, target)));
+        }
+        openActionMenu(target.getName(), items);
     }
 
     /**
@@ -490,7 +616,10 @@ public class IslandTeamGUI {
      */
     private boolean clickListener(User clickingUser, ClickType clickType, User target, List<ActionRecords> actions) {
         if (actions.stream().noneMatch(ar -> clickType.equals(ar.clickType()))) {
-            // If the click type is not in the template, don't do anything
+            // Not a click the template uses: offer the same actions as buttons instead
+            if (opensActionMenu(clickType)) {
+                openMemberActions(target);
+            }
             return true;
         }
         int rank = Objects.requireNonNull(island).getRank(clickingUser);

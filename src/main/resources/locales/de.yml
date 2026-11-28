@@ -21,6 +21,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Klicken, um [command] auszuführen]'
   success: '<green>Erfolg!</green>'
   invalid: Ungültig
+  misplaced-addon:
+    moved: '<red>[name] ist ein BentoBox-Addon und lag im Ordner plugins. Es wurde nach plugins/BentoBox/addons verschoben. Starte den Server neu, um es zu laden.</red>'
+    move-failed: '<red>[name] ist ein BentoBox-Addon und gehört nach plugins/BentoBox/addons, nicht in den Ordner plugins. Verschiebe es dorthin und starte den Server neu.</red>'
+    duplicate: '<red>[name] liegt sowohl im Ordner plugins als auch in plugins/BentoBox/addons. Lösche die Datei im Ordner plugins und starte den Server neu.</red>'
   beta: '<light_purple><bold>Dieser Befehl ist in Beta. Stellen Sie sicher, dass Sie Backups haben!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Befehl abgebrochen.</red>'
@@ -530,6 +534,13 @@ commands:
         no-trash-instructions: Standardpaket kann nicht gelöscht werden
         permission: Berechtigung
         no-permission: Keine Permission
+        preview: 'Spieler-Vorschau'
+        preview-allowed: |-
+          <green>Spieler können dieses Bundle ansehen</green>
+          <gray>Klicken zum Verbergen</gray>
+        preview-hidden: |-
+          <red>Spieler können dieses Bundle nicht ansehen</red>
+          <gray>Klicken zum Erlauben</gray>
         perm-required: Erforderlich
         no-perm-required: Perm für Standardpaket kann nicht festgelegt werden
         perm-not-required: Nicht erforderlich
@@ -543,6 +554,7 @@ commands:
         new-bundle: Neues Bundle
         new-bundle-instructions: Zum Erstellen eines neuen Bundles anklicken
         name:
+          title: 'Namen eingeben'
           quit: Beenden
           prompt: Gib einen Namen ein, oder 'quit' zum Beenden
           too-long: '<red>Zu lang</red>'
@@ -553,6 +565,7 @@ commands:
           success: Erfolg!
           conversation-prefix: '>'
         description:
+          title: 'Beschreibung von [name]'
           quit: Beenden
           instructions: |-
             Gib eine mehrzeilige Beschreibung für [name] ein.
@@ -582,6 +595,11 @@ commands:
         edit-commands: Klicke um Befehle zu bearbeiten
         no-commands: Keine Befehle gesetzt
         commands:
+          title: 'Befehle für [name]'
+          help: |
+            <white>Befehle, die beim Einfügen dieses Bundles ausgeführt werden, einer pro Zeile.</white>
+            <white>Unterstützt die Platzhalter <green>[player]</green> und <green>[owner]</green>.</white>
+            <white>Mit <green>[SUDO]</green> davor wird der Befehl als Spieler ausgeführt.</white>
           quit: beenden
           clear: leeren
           instructions: |
@@ -763,6 +781,12 @@ commands:
       unable-create-island: >-
         <red>Deine Insel konnte nicht generiert werden, bitte kontaktiere einen</red>
         Admin.
+      preview:
+        showing: '<green>Das ist </green><white>[name]</white><green>. Flieg herum. In [number] Sekunden wirst du zurückgebracht.</green>'
+        choose: '<green><bold>[Dieses wählen]</bold></green>'
+        back: '<yellow><bold>[Zurück zur Liste]</bold></yellow>'
+        ended: '<gray>Vorschau beendet.</gray>'
+        nothing: '<red>Es gibt nichts anzusehen.</red>'
       creating-island: '<green>Einen Ort für deine Insel finden...</green>'
       you-cannot-make: '<red>Du kannst keine weiteren Inseln erschaffen!</red>'
       max-uses: '<red>Von dieser Art Inseln kann man keine weiteren machen!</red>'
@@ -876,6 +900,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klicken</aqua> <green>für Aktionen</green>'
+          kick: '<red>Spieler rauswerfen</red>'
+          setowner: '<gold>Zum Besitzer machen</gold>'
+          leave: '<red>Team verlassen</red>'
+          accept: '<green>Annehmen</green>'
+          reject: '<red>Ablehnen</red>'
+          back: '<white>Zurück</white>'
         tips:
           LEFT:
             name: '<aqua>Linksklick</aqua>'
@@ -982,6 +1014,12 @@ commands:
               <aqua>Suche nach</aqua>
               <red>[name]</red>
           enter-name: '<green>Namen eingeben:</green>'
+          mode:
+            name: '<white>Klick auf einen Spieler</white>'
+            invite: '<green>Lädt ihn in dein Team ein</green>'
+            coop: '<green>Macht ihn zum Koop-Spieler</green>'
+            trust: '<green>Vertraut ihm</green>'
+            change: '<gray>Klicken zum Ändern</gray>'
           tips:
             LEFT:
               name: '<aqua>Linksklick</aqua>'
@@ -2292,10 +2330,27 @@ panels:
   tips:
     click-to-next: '<yellow>Klicken</yellow><gray>, um weiterzugehen.</gray>'
     click-to-previous: '<yellow>Klicken</yellow><gray>, um zum zurückgehen.</gray>'
+    right-click-to-preview: '<yellow>Rechtsklick </yellow><gray>für eine Vorschau.</gray>'
     click-to-choose: '<yellow>Klicken</yellow><gray>zum Auswählen.</gray>'
     click-to-toggle: '<yellow>Klicken</yellow><gray>zum Umschalten.</gray>'
     left-click-to-cycle-down: '<yellow>Linksklicken </yellow><gray>, um nach unten zu blättern.</gray>'
     right-click-to-cycle-up: '<yellow>Rechtsklicken </yellow><gray>, um nach oben zu blättern.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Absenden</green>'
+  chat:
+    instructions: '<gray>Gib deine Antwort im Chat ein oder tippe </gray><aqua>[cancel]</aqua><gray> zum Abbrechen.</gray>'
+    lines-instructions: '<gray>Gib im Chat jeweils eine Zeile ein. Tippe </gray><aqua>[done]</aqua><gray> zum Beenden oder </gray><aqua>[cancel]</aqua><gray> zum Abbrechen.</gray>'
+    confirm-instructions: '<gray>Tippe </gray><aqua>[confirm]</aqua><gray> im Chat, um zu bestätigen. Alles andere bricht ab.</gray>'
+    cancel-word: 'abbrechen'
+    done-word: 'fertig'
+    confirm-word: 'bestätigen'
+    timed-out: '<red>Keine Antwort - Anfrage abgebrochen.</red>'
+  errors:
+    empty: '<red>Gib zuerst etwas ein.</red>'
+    too-long: '<red>Das ist zu lang. Erlaubt sind höchstens [number] Zeichen.</red>'
+    not-a-number: '<red>Das ist keine gültige Zahl.</red>'
+    out-of-range: '<red>Gib eine Zahl von [min] bis [max] ein.</red>'
 successfully-loaded: >-
   <gold>  ____             _        ____</gold>
 

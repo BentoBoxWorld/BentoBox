@@ -20,7 +20,10 @@ import world.bentobox.bentobox.util.Util;
  * Collects a description
  * @author tastybento
  *
+ * @deprecated Paper is removing {@code org.bukkit.conversations}, which this class is built on.
+ *             Use the prompts in {@link world.bentobox.bentobox.panels.BlueprintManagementPanel} instead.
  */
+@Deprecated(since = "3.25.0", forRemoval = true)
 public class DescriptionPrompt extends StringPrompt {
 
     private static final String DESCRIPTION = "description";

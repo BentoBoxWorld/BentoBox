@@ -12,10 +12,10 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -23,12 +23,9 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.prompts.Prompts;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
-import world.bentobox.bentobox.blueprints.conversation.CommandsPrompt;
-import world.bentobox.bentobox.blueprints.conversation.DescriptionPrompt;
-import world.bentobox.bentobox.blueprints.conversation.NameConversationPrefix;
-import world.bentobox.bentobox.blueprints.conversation.NamePrompt;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
@@ -38,6 +35,9 @@ import world.bentobox.bentobox.util.Util;
  * @since 1.5.0
  */
 public class BlueprintManagementPanel {
+
+    private static final String MANAGEMENT = "commands.admin.blueprint.management.";
+    private static final int MAX_NAME_LENGTH = 32;
 
     private final BentoBox plugin;
     private final Blueprint normalBlueprint;
@@ -81,13 +81,16 @@ public class BlueprintManagementPanel {
         environmentToBlueprint = Map.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
+    /** Slot of the button that sets whether players may preview a bundle */
+    private static final int PREVIEW_SLOT = 17;
+
     /**
      * Translate "commands.admin.blueprint.management." + t reference
      * @param t - end of reference
      * @return translation
      */
     private String t(String t) {
-        return user.getTranslation("commands.admin.blueprint.management." + t);
+        return user.getTranslation(MANAGEMENT + t);
     }
 
     /**
@@ -97,7 +100,7 @@ public class BlueprintManagementPanel {
      * @return translation
      */
     private String t(String t, String... vars) {
-        return user.getTranslation("commands.admin.blueprint.management." + t, vars);
+        return user.getTranslation(MANAGEMENT + t, vars);
     }
 
     /**
@@ -138,7 +141,7 @@ public class BlueprintManagementPanel {
                         u.closeInventory();
                         if (clickType.equals(ClickType.RIGHT)) {
                             // Rename
-                            askForName(u.getPlayer(), addon, bb);
+                            askForName(u, addon, bb);
                         } else {
                             blueprintPage = 0;
                             openBB(bb);
@@ -206,6 +209,10 @@ public class BlueprintManagementPanel {
             pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
         blueprints.forEach((key, value) -> pb.item(getBlueprintItem(addon, key, bb, value)));
+        // Whether players may preview this bundle
+        if (plugin.getSettings().isBlueprintPreview()) {
+            pb.item(PREVIEW_SLOT, getPreviewIcon(addon, bb));
+        }
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
             // Panel has a No Trash icon. If right-clicked it is discarded
@@ -353,7 +360,7 @@ public class BlueprintManagementPanel {
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
                     // Description conversation
-                    askForDescription(u.getPlayer(), addon, bb);
+                    askForDescription(u, addon, bb);
                     return true;
                 })
                 .build();
@@ -429,6 +436,18 @@ public class BlueprintManagementPanel {
                 }).build();
     }
 
+    private PanelItem getPreviewIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.SPYGLASS).name(t("preview"))
+                .description(t(bb.isPreviewAllowed() ? "preview-allowed" : "preview-hidden"))
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    bb.setPreviewAllowed(!bb.isPreviewAllowed());
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(PREVIEW_SLOT, getPreviewIcon(addon, bb).getItem());
+                    return true;
+                }).build();
+    }
+
     private PanelItem getNoPermissionIcon() {
         return new PanelItemBuilder().icon(Material.PAINTING).name(t("no-permission"))
                 .description(t("no-perm-required"))
@@ -470,7 +489,7 @@ public class BlueprintManagementPanel {
                             plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                             openBB(bb);
                         } else if (selected == null) {
-                            u.sendMessage("commands.admin.blueprint.management.select-first");
+                            u.sendMessage(MANAGEMENT + "select-first");
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                         } else {
                             // Add
@@ -488,7 +507,7 @@ public class BlueprintManagementPanel {
                             // Renaming blueprint
                             if (clickType.equals(ClickType.RIGHT)) {
                                 u.closeInventory();
-                                this.askForBlueprintName(u.getPlayer(), addon, blueprint, bb);
+                                this.askForBlueprintName(u, addon, blueprint, bb);
                                 return true;
                             }
                             if (selected != null && slot == selected.getKey()){
@@ -514,42 +533,216 @@ public class BlueprintManagementPanel {
                 .icon(Material.GREEN_BANNER)
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
-                    askForName(u.getPlayer(), addon, null);
+                    askForName(u, addon, (BlueprintBundle) null);
                     return true;
                 })
                 .build();
     }
 
-    public void askForName(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(addon, bb))
-        .withEscapeSequence(t("name.quit"))
-        .buildConversation(whom).begin();
+    /**
+     * Asks for the name of a new bundle, or a new name for an existing one.
+     * @param whom - who to ask
+     * @param addon - game mode addon
+     * @param bb - the bundle to rename, or null to make a new bundle
+     * @since 3.25.0
+     */
+    public void askForName(User whom, GameModeAddon addon, @Nullable BlueprintBundle bb) {
+        askName(whom, addon, null, bb);
     }
 
-    public void askForBlueprintName(Conversable whom, GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(addon, bp, bb))
-        .withEscapeSequence(t("name.quit"))
-        .buildConversation(whom).begin();
+    /**
+     * Asks for a new name for a blueprint.
+     * @param whom - who to ask
+     * @param addon - game mode addon
+     * @param bp - the blueprint to rename
+     * @param bb - the bundle being edited, shown again afterwards
+     * @since 3.25.0
+     */
+    public void askForBlueprintName(User whom, GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
+        askName(whom, addon, bp, bb);
     }
 
-    public void askForDescription(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
-        .withFirstPrompt(new DescriptionPrompt(addon, bb))
-        .buildConversation(whom).begin();
+    private void askName(User whom, GameModeAddon addon, @Nullable Blueprint bp, @Nullable BlueprintBundle bb) {
+        // The default bundle keeps its id whatever it is called
+        String fixedId = bb != null && bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)
+                ? bb.getUniqueId()
+                : null;
+        // A bundle being renamed may keep its own id; a blueprint has no claim on one
+        BlueprintBundle renaming = bp == null ? bb : null;
+        Prompts.text(whom).title(MANAGEMENT + "name.title").initial(editable(currentName(bp, bb)))
+                .validate(this::checkNameLength)
+                .validate(name -> fixedId == null && isBundleIdTaken(addon, Util.sanitizeInput(name), renaming)
+                        ? t("name.pick-a-unique-name")
+                        : null)
+                .onSubmit(name -> named(whom, addon, bp, bb, fixedId == null ? Util.sanitizeInput(name) : fixedId, name))
+                .onCancel(() -> reopen(whom, addon, bp == null ? null : bb)).open();
+    }
+
+    /**
+     * @return the name being edited, or nothing for a new bundle
+     */
+    private static String currentName(@Nullable Blueprint bp, @Nullable BlueprintBundle bb) {
+        if (bp != null) {
+            return bp.getDisplayName() == null ? bp.getName() : bp.getDisplayName();
+        }
+        return bb == null ? "" : bb.getDisplayName();
+    }
+
+    /**
+     * @return a message if the name is too long once its colors are removed, otherwise null
+     */
+    @Nullable
+    private String checkNameLength(String name) {
+        return Util.stripColor(Util.translateColorCodes(name)).length() > MAX_NAME_LENGTH ? t("name.too-long") : null;
+    }
+
+    /**
+     * @param renaming the bundle being renamed, which may keep its own id, or null
+     * @return true if another bundle already has this id
+     */
+    private boolean isBundleIdTaken(GameModeAddon addon, String uniqueId, @Nullable BlueprintBundle renaming) {
+        return (renaming == null || !uniqueId.equals(renaming.getUniqueId()))
+                && plugin.getBlueprintsManager().getBlueprintBundles(addon).containsKey(uniqueId);
+    }
+
+    private void named(User whom, GameModeAddon addon, @Nullable Blueprint bp, @Nullable BlueprintBundle bb,
+            String uniqueId, String name) {
+        BlueprintsManager manager = plugin.getBlueprintsManager();
+        if (bp != null) {
+            manager.renameBlueprint(addon, bp, uniqueId, name);
+            reopen(whom, addon, bb);
+        } else {
+            BlueprintBundle bundle = bb;
+            if (bundle == null) {
+                bundle = new BlueprintBundle();
+                bundle.setIcon(Material.RED_WOOL);
+            } else {
+                manager.deleteBlueprintBundle(addon, bundle);
+            }
+            bundle.setDisplayName(name);
+            bundle.setUniqueId(uniqueId);
+            manager.addBlueprintBundle(addon, bundle);
+            manager.saveBlueprintBundle(addon, bundle);
+            reopen(whom, addon, null);
+        }
+        whom.sendMessage(MANAGEMENT + "name.success");
+    }
+
+    /**
+     * Asks for the description of a bundle.
+     * @param whom - who to ask
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     * @since 3.25.0
+     */
+    public void askForDescription(User whom, GameModeAddon addon, BlueprintBundle bb) {
+        Prompts.lines(whom).title(MANAGEMENT + "description.title", TextVariables.NAME, bb.getDisplayName())
+                .initial(bb.getDescription().stream().map(BlueprintManagementPanel::editable).toList())
+                .onSubmit(lines -> {
+                    bb.setDescription(new ArrayList<>(lines.stream().map(Util::translateColorCodes).toList()));
+                    save(whom, addon, bb, "description.success");
+                }).onCancel(() -> reopen(whom, addon, bb)).open();
+    }
+
+    /**
+     * Asks for the commands to run when a bundle is pasted, one per line.
+     * @param whom - who to ask
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     * @since 3.25.0
+     */
+    public void askForCommands(User whom, GameModeAddon addon, BlueprintBundle bb) {
+        Prompts.lines(whom).title(MANAGEMENT + "commands.title", TextVariables.NAME, bb.getDisplayName())
+                .message(MANAGEMENT + "commands.help").initial(bb.getCommands())
+                .onSubmit(lines -> {
+                    bb.setCommands(new ArrayList<>(lines.stream().map(String::strip).filter(l -> !l.isEmpty()).toList()));
+                    save(whom, addon, bb, "commands.success");
+                }).onCancel(() -> reopen(whom, addon, bb)).open();
+    }
+
+    private void save(User whom, GameModeAddon addon, BlueprintBundle bb, String success) {
+        plugin.getBlueprintsManager().addBlueprintBundle(addon, bb);
+        plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+        reopen(whom, addon, bb);
+        whom.sendMessage(MANAGEMENT + success);
+    }
+
+    /**
+     * Opens a fresh management panel, on a bundle or on the list of bundles.
+     */
+    private void reopen(User whom, GameModeAddon addon, @Nullable BlueprintBundle bb) {
+        BlueprintManagementPanel panel = new BlueprintManagementPanel(plugin, whom, addon);
+        if (bb == null) {
+            panel.openPanel();
+        } else {
+            panel.openBB(bb);
+        }
+    }
+
+    /**
+     * Color codes are stored with section signs, which a text box will not accept.
+     * @return the text with ampersand color codes, as an admin would type it
+     */
+    private static String editable(String text) {
+        return text.replace('\u00A7', '&');
+    }
+
+    /**
+     * @param whom - the player
+     * @param addon - game mode addon
+     * @param bb - the bundle to rename, or null to make a new bundle
+     * @deprecated Paper is removing {@code org.bukkit.conversations}. Use
+     *             {@link #askForName(User, GameModeAddon, BlueprintBundle)}.
+     */
+    @Deprecated(since = "3.25.0", forRemoval = true)
+    public void askForName(org.bukkit.conversations.Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        if (whom instanceof Player player) {
+            askForName(User.getInstance(player), addon, bb);
+        }
+    }
+
+    /**
+     * @param whom - the player
+     * @param addon - game mode addon
+     * @param bp - the blueprint to rename
+     * @param bb - the bundle being edited
+     * @deprecated Paper is removing {@code org.bukkit.conversations}. Use
+     *             {@link #askForBlueprintName(User, GameModeAddon, Blueprint, BlueprintBundle)}.
+     */
+    @Deprecated(since = "3.25.0", forRemoval = true)
+    public void askForBlueprintName(org.bukkit.conversations.Conversable whom, GameModeAddon addon, Blueprint bp,
+            BlueprintBundle bb) {
+        if (whom instanceof Player player) {
+            askForBlueprintName(User.getInstance(player), addon, bp, bb);
+        }
+    }
+
+    /**
+     * @param whom - the player
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     * @deprecated Paper is removing {@code org.bukkit.conversations}. Use
+     *             {@link #askForDescription(User, GameModeAddon, BlueprintBundle)}.
+     */
+    @Deprecated(since = "3.25.0", forRemoval = true)
+    public void askForDescription(org.bukkit.conversations.Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        if (whom instanceof Player player) {
+            askForDescription(User.getInstance(player), addon, bb);
+        }
+    }
+
+    /**
+     * @param whom - the player
+     * @param addon - game mode addon
+     * @param bb - blueprint bundle
+     * @deprecated Paper is removing {@code org.bukkit.conversations}. Use
+     *             {@link #askForCommands(User, GameModeAddon, BlueprintBundle)}.
+     */
+    @Deprecated(since = "3.25.0", forRemoval = true)
+    public void askForCommands(org.bukkit.conversations.Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        if (whom instanceof Player player) {
+            askForCommands(User.getInstance(player), addon, bb);
+        }
     }
 
     /**
@@ -564,26 +757,9 @@ public class BlueprintManagementPanel {
                 .description(cmds.isEmpty() ? List.of(t("no-commands")) : cmds)
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
-                    askForCommands(u.getPlayer(), addon, bb);
+                    askForCommands(u, addon, bb);
                     return true;
                 }).build();
-    }
-
-    /**
-     * Opens a conversation to collect commands for the blueprint bundle
-     * @param whom - the conversable player
-     * @param addon - game mode addon
-     * @param bb - blueprint bundle
-     */
-    public void askForCommands(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withPrefix(new NameConversationPrefix())
-        .withTimeout(90)
-        .withFirstPrompt(new CommandsPrompt(addon, bb))
-        .withEscapeSequence(t("commands.quit"))
-        .buildConversation(whom).begin();
     }
 
     /**

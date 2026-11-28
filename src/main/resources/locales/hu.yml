@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Kattints a futtatáshoz: [command]]'
   success: '<green>Siker!</green>'
   invalid: Érvénytelen
+  misplaced-addon:
+    moved: '<red>A(z) [name] egy BentoBox kiegészítő, és a plugins mappában volt. Át lett helyezve ide: plugins/BentoBox/addons. Indítsd újra a szervert a betöltéséhez.</red>'
+    move-failed: '<red>A(z) [name] egy BentoBox kiegészítő, és a(z) plugins/BentoBox/addons mappába kell kerülnie, nem a plugins mappába. Helyezd át oda, és indítsd újra a szervert.</red>'
+    duplicate: '<red>A(z) [name] a plugins mappában és a(z) plugins/BentoBox/addons mappában is megtalálható. Töröld a plugins mappában lévőt, és indítsd újra a szervert.</red>'
   beta: '<light_purple><bold>Ez a parancs béta. Győződjön meg róla, hogy van biztonsági másolata!</bold></light_purple>'
   errors:
     command-cancelled: '<red>A parancs megszakítva.</red>'
@@ -540,6 +544,13 @@ commands:
         no-trash-instructions: Az alapértelmezett csomag nem törölhető a kukába
         permission: Engedély
         no-permission: Nincs engedélye
+        preview: 'Játékos előnézet'
+        preview-allowed: |-
+          <green>A játékosok megnézhetik ezt a csomagot</green>
+          <gray>Kattintson az elrejtéshez</gray>
+        preview-hidden: |-
+          <red>A játékosok nem nézhetik meg ezt a csomagot</red>
+          <gray>Kattintson az engedélyezéshez</gray>
         perm-required: Kívánt
         no-perm-required: Nem lehet engedélyt beállítani az alapértelmezett csomaghoz
         perm-not-required: Nem szükséges
@@ -553,6 +564,7 @@ commands:
         new-bundle: Új csomag
         new-bundle-instructions: Kattintson egy új csomag létrehozásához
         name:
+          title: 'Adjon meg egy nevet'
           quit: Kilépés
           prompt: Írjon be egy nevet, vagy a kilépéshez „kilép”.
           too-long: '<red>Túl hosszú név. Csak 32 karakter megengedett.</red>'
@@ -563,6 +575,7 @@ commands:
           success: Siker!
           conversation-prefix: '>'
         description:
+          title: 'Leírás: [name]'
           quit: kilép
           instructions: |
             Írjon be többsoros leírást a következőhöz: [name]
@@ -592,6 +605,11 @@ commands:
         edit-commands: Kattints a parancsok szerkesztéséhez
         no-commands: Nincsenek beállított parancsok
         commands:
+          title: 'Parancsok: [name]'
+          help: |
+            <white>A csomag beillesztésekor lefutó parancsok, soronként egy.</white>
+            <white>Támogatja a <green>[player]</green> és <green>[owner]</green> helyőrzőket.</white>
+            <white>A <green>[SUDO]</green> előtaggal a parancs a játékos nevében fut.</white>
           quit: kilépés
           clear: törlés
           instructions: |
@@ -765,6 +783,12 @@ commands:
       unable-create-island: >-
         <red>A szigetet nem sikerült létrehozni, kérjük, forduljon a</red>
         rendszergazdához.
+      preview:
+        showing: '<green>Ez itt: </green><white>[name]</white><green>. Repülje körbe. [number] másodperc múlva visszakerül.</green>'
+        choose: '<green><bold>[Ezt választom]</bold></green>'
+        back: '<yellow><bold>[Vissza a listához]</bold></yellow>'
+        ended: '<gray>Az előnézet véget ért.</gray>'
+        nothing: '<red>Nincs mit megjeleníteni.</red>'
       creating-island: '<green>Hely keresése a szigeten...</green>'
       you-cannot-make: '<red>Nem csinálhatsz több szigetet!</red>'
       max-uses: '<red>Nem készíthetsz több [prefix_island] típusú dolgot!</red>'
@@ -879,6 +903,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Kattints</aqua> <green>a műveletekhez</green>'
+          kick: '<red>Játékos kirúgása</red>'
+          setowner: '<gold>Tulajdonossá tétel</gold>'
+          leave: '<red>Csapat elhagyása</red>'
+          accept: '<green>Elfogadás</green>'
+          reject: '<red>Elutasítás</red>'
+          back: '<white>Vissza</white>'
         tips:
           LEFT:
             name: '<aqua>Bal Kattintás</aqua>'
@@ -979,6 +1011,12 @@ commands:
               <aqua>Keresés</aqua>
               <red>[name]</red>
           enter-name: '<green>Írd be a nevet:</green>'
+          mode:
+            name: '<white>Játékosra kattintva</white>'
+            invite: '<green>Meghívod a csapatodba</green>'
+            coop: '<green>Együttműködővé teszed</green>'
+            trust: '<green>Megbízottá teszed</green>'
+            change: '<gray>Kattints a váltáshoz</gray>'
           tips:
             LEFT:
               name: '<aqua>Bal Kattintás</aqua>'
@@ -2318,10 +2356,27 @@ panels:
   tips:
     click-to-next: '<yellow>Kattints </yellow><gray>a következőhöz.</gray>'
     click-to-previous: '<yellow>Kattints </yellow><gray>az előzőhöz.</gray>'
+    right-click-to-preview: '<yellow>Jobb kattintás </yellow><gray>az előnézethez.</gray>'
     click-to-choose: '<yellow>Kattints </yellow><gray>a kiválasztáshoz.</gray>'
     click-to-toggle: '<yellow>Kattints </yellow><gray>az átkapcsoláshoz.</gray>'
     left-click-to-cycle-down: '<yellow>Bal kattintás </yellow><gray>a lefelé ciklizéshez.</gray>'
     right-click-to-cycle-up: '<yellow>Jobb kattintás </yellow><gray>a felfelé forgatáshoz.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Küldés</green>'
+  chat:
+    instructions: '<gray>Írja be a válaszát a chatbe, vagy írja be: </gray><aqua>[cancel]</aqua><gray> a megszakításhoz.</gray>'
+    lines-instructions: '<gray>Egyszerre egy sort írjon a chatbe. A befejezéshez írja be: </gray><aqua>[done]</aqua><gray>, a megszakításhoz: </gray><aqua>[cancel]</aqua><gray>.</gray>'
+    confirm-instructions: '<gray>A megerősítéshez írja be a chatbe: </gray><aqua>[confirm]</aqua><gray>. Bármi más megszakítja.</gray>'
+    cancel-word: 'mégse'
+    done-word: 'kész'
+    confirm-word: 'megerősít'
+    timed-out: '<red>Nincs válasz - a kérés megszakítva.</red>'
+  errors:
+    empty: '<red>Előbb írjon be valamit.</red>'
+    too-long: '<red>Ez túl hosszú. A korlát [number] karakter.</red>'
+    not-a-number: '<red>Ez nem érvényes szám.</red>'
+    out-of-range: '<red>Adjon meg egy számot [min] és [max] között.</red>'
 successfully-loaded: |
 
   <gold>____ _ ____</gold>

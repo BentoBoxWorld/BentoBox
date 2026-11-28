@@ -337,12 +337,60 @@ class SafeSpotTeleportTest extends CommonTestSetup {
                 .build();
 
         ChunkSnapshot chunk = mock(ChunkSnapshot.class);
-        when(chunk.getBlockType(anyInt(), anyInt(), anyInt())).thenReturn(Material.AIR);
+        when(chunk.getBlockType(anyInt(), anyInt(), anyInt())).thenReturn(Material.STONE);
         when(chunk.getHighestBlockYAt(anyInt(), anyInt())).thenReturn(64);
         // Make checkIfSafe return true for the first block
         when(im.checkIfSafe(any(World.class), any(Material.class), any(Material.class), any(Material.class))).thenReturn(true);
 
         assertTrue(sst.scanChunk(chunk));
+    }
+
+    /**
+     * The spot chosen is the one nearest to the target, not the first one in the chunk.
+     */
+    @Test
+    void testScanChunkPicksNearestSafeSpot() {
+        mockedUtil.when(() -> Util.teleportAsync(any(Entity.class), any(Location.class)))
+                .thenReturn(CompletableFuture.completedFuture(true));
+        BukkitTask mockTask = mock(BukkitTask.class);
+        when(sch.runTask(any(), any(Runnable.class))).thenAnswer(inv -> {
+            ((Runnable) inv.getArgument(1)).run();
+            return mockTask;
+        });
+        // Target is block 5, 64, 7 of chunk 0, 0
+        when(location.getBlockX()).thenReturn(5);
+        when(location.getBlockZ()).thenReturn(7);
+
+        SafeSpotTeleport sst = new SafeSpotTeleport.Builder(plugin)
+                .entity(mockPlayer)
+                .location(location)
+                .build();
+
+        ChunkSnapshot chunk = mock(ChunkSnapshot.class);
+        when(chunk.getBlockType(anyInt(), anyInt(), anyInt())).thenReturn(Material.AIR);
+        when(chunk.getHighestBlockYAt(anyInt(), anyInt())).thenReturn(70);
+        // Safe ground far away at the target height, in a cave below, and two blocks under the target
+        when(chunk.getBlockType(0, 63, 0)).thenReturn(Material.STONE);
+        when(chunk.getBlockType(5, 20, 7)).thenReturn(Material.STONE);
+        when(chunk.getBlockType(5, 61, 7)).thenReturn(Material.STONE);
+        when(im.checkIfSafe(any(World.class), any(Material.class), any(Material.class), any(Material.class))).thenReturn(true);
+
+        assertTrue(sst.scanChunk(chunk));
+        mockedUtil.verify(() -> Util.teleportAsync(any(Entity.class),
+                org.mockito.ArgumentMatchers.argThat((Location l) -> l.getX() == 5.5 && l.getY() == 62 && l.getZ() == 7.5)));
+    }
+
+    /**
+     * A search for an island starts at its home when it has one in the island's world.
+     */
+    @Test
+    void testBuilderIslandUsesHome() {
+        Location home = mock(Location.class);
+        when(home.getWorld()).thenReturn(world);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getHome("")).thenReturn(home);
+        SafeSpotTeleport.Builder builder = new SafeSpotTeleport.Builder(plugin).entity(mockPlayer).island(island);
+        assertEquals(home, builder.getLocation());
     }
 
     @Test

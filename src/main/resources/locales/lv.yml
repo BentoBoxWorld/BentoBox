@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Noklikšķiniet, lai palaistu [command]]'
   success: '<green>Darīts!</green>'
   invalid: Nederīgs!
+  misplaced-addon:
+    moved: '<red>[name] ir BentoBox papildinājums, un tas atradās mapē plugins. Tas ir pārvietots uz plugins/BentoBox/addons. Restartējiet serveri, lai to ielādētu.</red>'
+    move-failed: '<red>[name] ir BentoBox papildinājums, un tam jāatrodas plugins/BentoBox/addons, nevis mapē plugins. Pārvietojiet to turp un restartējiet serveri.</red>'
+    duplicate: '<red>[name] atrodas gan mapē plugins, gan plugins/BentoBox/addons. Izdzēsiet to, kas ir mapē plugins, un restartējiet serveri.</red>'
   beta: '<light_purple><bold>Šī komanda ir beta versijā. Pārliecinieties, ka jums ir dublējumi!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Komanda atcleta.</red>'
@@ -517,6 +521,13 @@ commands:
         no-trash-instructions: Nevar izmest noklusējuma komplektu
         permission: Atļaujas
         no-permission: Nav atļauts
+        preview: 'Priekšskatījums spēlētājiem'
+        preview-allowed: |-
+          <green>Spēlētāji var apskatīt šo komplektu</green>
+          <gray>Noklikšķiniet, lai paslēptu</gray>
+        preview-hidden: |-
+          <red>Spēlētāji nevar apskatīt šo komplektu</red>
+          <gray>Noklikšķiniet, lai atļautu</gray>
         perm-required: Nepieciešams
         no-perm-required: Nevar iestatīt atļauju noklusējuma komplektam
         perm-not-required: Nav nepieciešams
@@ -531,6 +542,7 @@ commands:
         new-bundle: Jauns shēmu saišķis
         new-bundle-instructions: Uzspied, lai izveidotu jaunu shēmu saišķi
         name:
+          title: 'Ievadiet nosaukumu'
           quit: iziet
           prompt: Ieraksti vārdu vai 'iziet', lai izietu
           too-long: '<red>Pārāk garš</red>'
@@ -541,6 +553,7 @@ commands:
           success: Izdevās!
           conversation-prefix: '>'
         description:
+          title: 'Apraksts: [name]'
           quit: iziet
           instructions: |
             Ieraksti vairāku rindiņu tekstu priekš
@@ -571,6 +584,11 @@ commands:
         edit-commands: Noklikšķiniet, lai rediģētu komandas
         no-commands: Nav iestatītu komandu
         commands:
+          title: 'Komandas: [name]'
+          help: |
+            <white>Komandas, kas tiek izpildītas, kad šis shēmu saišķis tiek ielīmēts, pa vienai katrā rindā.</white>
+            <white>Atbalsta vietturus <green>[player]</green> un <green>[owner]</green>.</white>
+            <white>Pievienojiet priekšā <green>[SUDO]</green>, lai izpildītu kā spēlētājs.</white>
           quit: iziet
           clear: notīrīt
           instructions: |
@@ -732,6 +750,12 @@ commands:
       too-many-islands: '<red>Šajā pasaulē ir sasniegts salu limits. Tavai salai nav vietas.</red>'
       cannot-create-island: '<red>Neizdevās atrast brīvu salas vietu laikā, mēģini vēlreiz...</red>'
       unable-create-island: '<red>Neizdevās izveidot tavu salu, ziņo par kļūdu administratoram.</red>'
+      preview:
+        showing: '<green>Šis ir </green><white>[name]</white><green>. Aplidojiet to. Pēc [number] sekundēm jūs tiksiet atgriezts.</green>'
+        choose: '<green><bold>[Izvēlēties šo]</bold></green>'
+        back: '<yellow><bold>[Atpakaļ uz sarakstu]</bold></yellow>'
+        ended: '<gray>Priekšskatījums beidzies.</gray>'
+        nothing: '<red>Nav ko parādīt.</red>'
       creating-island: '<green>Tiek veidota tava sala. Uzgaidi mirklīti...</green>'
       you-cannot-make: '<red>Tu vairs nevari radīt nevienu salu!</red>'
       max-uses: '<red>Tu vairs nevari izveidot tādu pašu [prefix_island]!</red>'
@@ -842,6 +866,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Klikšķini,</aqua> <green>lai redzētu darbības</green>'
+          kick: '<red>Izmest spēlētāju</red>'
+          setowner: '<gold>Padarīt par īpašnieku</gold>'
+          leave: '<red>Pamest komandu</red>'
+          accept: '<green>Pieņemt</green>'
+          reject: '<red>Noraidīt</red>'
+          back: '<white>Atpakaļ</white>'
         tips:
           LEFT:
             name: '<aqua>Kreiso klikšķi</aqua>'
@@ -938,6 +970,12 @@ commands:
               <aqua>Meklēšana pēc</aqua>
               <red>[name]</red>
           enter-name: '<green>Ievadi vārdu:</green>'
+          mode:
+            name: '<white>Klikšķis uz spēlētāja</white>'
+            invite: '<green>Uzaicina viņu komandā</green>'
+            coop: '<green>Padara viņu par sadarbības biedru</green>'
+            trust: '<green>Uztic viņam</green>'
+            change: '<gray>Klikšķini, lai mainītu</gray>'
           tips:
             LEFT:
               name: '<aqua>Kreisa Klikšķis</aqua>'
@@ -2280,10 +2318,27 @@ panels:
   tips:
     click-to-next: '<yellow>Noklikšķini </yellow><gray>, lai turpinātu.</gray>'
     click-to-previous: '<yellow>Klikšķini </yellow><gray>, lai atgrieztos iepriekš.</gray>'
+    right-click-to-preview: '<yellow>Labais klikšķis </yellow><gray>lai apskatītu.</gray>'
     click-to-choose: '<yellow>Noklikšķiniet </yellow><gray>, lai izvēlētos.</gray>'
     click-to-toggle: '<yellow>Klikšķiniet </yellow><gray>, lai pārslēgtu.</gray>'
     left-click-to-cycle-down: '<yellow>Noklikšķiniet pa kreisi </yellow><gray>, lai pārvietotos uz leju.</gray>'
     right-click-to-cycle-up: '<yellow>Labais klikšķis </yellow><gray>, lai pārvietotos uz augšu.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Iesniegt</green>'
+  chat:
+    instructions: '<gray>Ierakstiet atbildi čatā vai ierakstiet </gray><aqua>[cancel]</aqua><gray>, lai atceltu.</gray>'
+    lines-instructions: '<gray>Rakstiet čatā pa vienai rindai. Ierakstiet </gray><aqua>[done]</aqua><gray>, lai pabeigtu, vai </gray><aqua>[cancel]</aqua><gray>, lai atceltu.</gray>'
+    confirm-instructions: '<gray>Ierakstiet čatā </gray><aqua>[confirm]</aqua><gray>, lai apstiprinātu. Jebkas cits atceļ darbību.</gray>'
+    cancel-word: 'atcelt'
+    done-word: 'gatavs'
+    confirm-word: 'apstiprināt'
+    timed-out: '<red>Nav atbildes - pieprasījums atcelts.</red>'
+  errors:
+    empty: '<red>Vispirms kaut ko ierakstiet.</red>'
+    too-long: '<red>Tas ir par garu. Ierobežojums ir [number] rakstzīmes.</red>'
+    not-a-number: '<red>Tas nav derīgs skaitlis.</red>'
+    out-of-range: '<red>Ievadiet skaitli no [min] līdz [max].</red>'
 successfully-loaded: >
 
   <gold> ____             _        ____</gold>

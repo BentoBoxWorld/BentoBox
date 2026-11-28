@@ -228,6 +228,9 @@ public class SafeSpotTeleport {
      * @return true if a safe spot was found
      */
     boolean scanChunk(ChunkSnapshot chunk) {
+        if (!portal) {
+            return scanChunkForNearest(chunk);
+        }
         int startY = location.getBlockY();
         int minY = world.getMinHeight();
         int maxY = 60; // Just a dummy value
@@ -277,6 +280,71 @@ public class SafeSpotTeleport {
 
         // We can't find a safe spot
         return false;
+    }
+
+    /**
+     * Looks for the safe spot in the chunk that is nearest to the target location, so that
+     * the entity ends up as close as possible to where it was meant to go.
+     * @param chunk - chunk snapshot
+     * @return true if a safe spot was found
+     */
+    private boolean scanChunkForNearest(ChunkSnapshot chunk) {
+        int targetX = location.getBlockX() - (chunk.getX() << 4);
+        int targetZ = location.getBlockZ() - (chunk.getZ() << 4);
+        int minY = world.getMinHeight();
+        int limit = plugin.getSettings().getSafeSpotSearchVerticalRange();
+        // The target may be outside the world's height, e.g. an island centre below the world
+        int startY = Math.clamp(location.getBlockY() - 1L, minY, maxHeight);
+        long best = Long.MAX_VALUE;
+        int bestX = 0;
+        int bestY = 0;
+        int bestZ = 0;
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                long dx = (long) x - targetX;
+                long dz = (long) z - targetZ;
+                long flat = dx * dx + dz * dz;
+                int top = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight);
+                // Work outwards from the target height. The first hit is the nearest in this column.
+                for (int dy = 0; dy <= limit && flat + (long) dy * dy < best; dy++) {
+                    int y = safeGround(chunk, x, z, startY, dy, minY, top);
+                    if (y != Integer.MIN_VALUE) {
+                        best = flat + (long) dy * dy;
+                        bestX = x;
+                        bestY = y;
+                        bestZ = z;
+                        break;
+                    }
+                }
+            }
+        }
+        if (best == Long.MAX_VALUE) {
+            return false;
+        }
+        teleportEntity(new Vector((chunk.getX() << 4) + bestX + 0.5D, bestY + 1.0D, (chunk.getZ() << 4) + bestZ + 0.5D)
+                .toLocation(world));
+        return true;
+    }
+
+    /**
+     * @return y of safe ground that is dy above or below startY in this column, or
+     *         Integer.MIN_VALUE if neither is safe
+     */
+    private int safeGround(ChunkSnapshot chunk, int x, int z, int startY, int dy, int minY, int top) {
+        if (startY + dy <= top && isSafeGround(chunk, x, startY + dy, z)) {
+            return startY + dy;
+        }
+        if (dy > 0 && startY - dy >= minY && startY - dy <= top && isSafeGround(chunk, x, startY - dy, z)) {
+            return startY - dy;
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    private boolean isSafeGround(ChunkSnapshot chunk, int x, int y, int z) {
+        Material ground = chunk.getBlockType(x, y, z);
+        return !ground.isAir() && plugin.getIslands().checkIfSafe(world, ground,
+                chunk.getBlockType(x, Math.min(y + 1, maxHeight), z),
+                chunk.getBlockType(x, Math.min(y + 2, maxHeight), z));
     }
 
     /**
@@ -368,7 +436,12 @@ public class SafeSpotTeleport {
          * @return Builder
          */
         public Builder island(Island island) {
-            this.location = island.getProtectionCenter();
+            // Search from the island's home if it has one, so that an unsafe home leads to the
+            // nearest safe spot to it. The centre can be far from where players live; in some
+            // game modes it is deep underground.
+            Location home = island.getHome("");
+            this.location = home != null && Objects.equals(home.getWorld(), island.getWorld()) ? home
+                    : island.getProtectionCenter();
             return this;
         }
 

@@ -20,6 +20,10 @@ general:
     option: '<yellow>  [command]</yellow>[run_command: [command]][hover: Nhấp để chạy [command]]'
   success: '<green>Thành công!</green>'
   invalid: Không hợp lệ
+  misplaced-addon:
+    moved: '<red>[name] là addon của BentoBox và đang nằm trong thư mục plugins. Nó đã được chuyển vào plugins/BentoBox/addons. Hãy khởi động lại máy chủ để tải nó.</red>'
+    move-failed: '<red>[name] là addon của BentoBox và phải nằm trong plugins/BentoBox/addons, không phải thư mục plugins. Hãy chuyển nó vào đó rồi khởi động lại máy chủ.</red>'
+    duplicate: '<red>[name] có ở cả thư mục plugins và plugins/BentoBox/addons. Hãy xóa bản trong thư mục plugins rồi khởi động lại máy chủ.</red>'
   beta: '<light_purple><bold>Lệnh này là trong phiên bản beta. Hãy chắc chắn rằng bạn có bản sao lưu!</bold></light_purple>'
   errors:
     command-cancelled: '<red>Lệnh đã bị hủy.</red>'
@@ -508,6 +512,13 @@ commands:
         no-trash-instructions: Không thể xóa gói mặc định
         permission: Quyền hạn
         no-permission: Không có quyền
+        preview: 'Xem trước cho người chơi'
+        preview-allowed: |-
+          <green>Người chơi có thể xem trước gói này</green>
+          <gray>Nhấp để ẩn</gray>
+        preview-hidden: |-
+          <red>Người chơi không thể xem trước gói này</red>
+          <gray>Nhấp để cho phép</gray>
         perm-required: Yêu cầu
         no-perm-required: Không thể thiết lập quyền cho gói mặc định
         perm-not-required: Không yêu cầu
@@ -521,6 +532,7 @@ commands:
         new-bundle: Gói Mới
         new-bundle-instructions: Nhấp để tạo một gói mới
         name:
+          title: 'Nhập tên'
           quit: quit
           prompt: Nhập một tên, hoặc 'quit' để thoát
           too-long: '<red>Quá dài</red>'
@@ -531,6 +543,7 @@ commands:
           success: Thành công!
           conversation-prefix: '>'
         description:
+          title: 'Mô tả của [name]'
           quit: quit
           instructions: |-
             Nhập mô tả nhiều dòng cho [name]  
@@ -560,6 +573,11 @@ commands:
         edit-commands: Nhấp để chỉnh sửa lệnh
         no-commands: Không có lệnh nào được thiết lập
         commands:
+          title: 'Lệnh cho [name]'
+          help: |
+            <white>Các lệnh chạy khi gói này được dán, mỗi dòng một lệnh.</white>
+            <white>Hỗ trợ các biến <green>[player]</green> và <green>[owner]</green>.</white>
+            <white>Thêm <green>[SUDO]</green> ở đầu để chạy với tư cách người chơi.</white>
           quit: thoát
           clear: xóa
           instructions: |
@@ -726,6 +744,12 @@ commands:
       too-many-islands: '<red>Quá nhiều đảo trong thế giới này. Không có đủ chỗ cho bạn.</red>'
       cannot-create-island: '<red>Chưa tìm thấy vị trí. Thử lại...</red>'
       unable-create-island: '<red>Không thể tạo đảo của bạn. Hãy báo cáo với quản trị viên.</red>'
+      preview:
+        showing: '<green>Đây là </green><white>[name]</white><green>. Hãy bay xung quanh. Bạn sẽ được đưa trở lại sau [number] giây.</green>'
+        choose: '<green><bold>[Chọn cái này]</bold></green>'
+        back: '<yellow><bold>[Quay lại danh sách]</bold></yellow>'
+        ended: '<gray>Đã kết thúc xem trước.</gray>'
+        nothing: '<red>Không có gì để xem trước.</red>'
       creating-island: '<green>Đang tìm vị trí cho đảo của bạn...</green>'
       you-cannot-make: '<red>Bạn không thể tạo thêm đảo nào nữa!</red>'
       max-uses: '<red>Bạn không thể tạo thêm loại [prefix_island] nào nữa!</red>'
@@ -832,6 +856,14 @@ commands:
             description: '[rank]'
             # Suffix appended to an offline member's name. Placeholder: [last_seen]. Blank for online members.
             last-seen: ' <gray>([last_seen])</gray>'
+        actions:
+          tip: '<aqua>Nhấp</aqua> <green>để xem hành động</green>'
+          kick: '<red>Đuổi người chơi</red>'
+          setowner: '<gold>Đặt làm chủ sở hữu</gold>'
+          leave: '<red>Rời nhóm</red>'
+          accept: '<green>Chấp nhận</green>'
+          reject: '<red>Từ chối</red>'
+          back: '<white>Quay lại</white>'
         tips:
           LEFT:
             name: '<aqua>Nhấp Chuột Trái</aqua>'
@@ -928,6 +960,12 @@ commands:
               <aqua>Đang tìm kiếm</aqua>
               <red>[name]</red>
           enter-name: '<green>Nhập tên:</green>'
+          mode:
+            name: '<white>Nhấp vào một người chơi sẽ</white>'
+            invite: '<green>Mời họ vào đội của bạn</green>'
+            coop: '<green>Cho họ chơi chung (coop)</green>'
+            trust: '<green>Tin tưởng họ</green>'
+            change: '<gray>Nhấp để thay đổi</gray>'
           tips:
             LEFT:
               name: '<aqua>Nhấn Chuột Trái</aqua>'
@@ -2223,10 +2261,27 @@ panels:
   tips:
     click-to-next: '<yellow>Nhấn </yellow><gray>để tiếp theo.</gray>'
     click-to-previous: '<yellow>Nhấp </yellow><gray>để trở về trước.</gray>'
+    right-click-to-preview: '<yellow>Nhấp chuột phải </yellow><gray>để xem trước.</gray>'
     click-to-choose: '<yellow>Nhấn </yellow><gray>để chọn.</gray>'
     click-to-toggle: '<yellow>Nhấp </yellow><gray>để chuyển đổi.</gray>'
     left-click-to-cycle-down: '<yellow>Nhấn chuột trái </yellow><gray>để chuyển xuống.</gray>'
     right-click-to-cycle-up: '<yellow>Nhấp chuột phải </yellow><gray>để xoay lên trên.</gray>'
+prompts:
+  buttons:
+    submit: '<green>Gửi</green>'
+  chat:
+    instructions: '<gray>Nhập câu trả lời vào khung chat, hoặc nhập </gray><aqua>[cancel]</aqua><gray> để hủy.</gray>'
+    lines-instructions: '<gray>Nhập từng dòng một vào khung chat. Nhập </gray><aqua>[done]</aqua><gray> để hoàn tất, hoặc </gray><aqua>[cancel]</aqua><gray> để hủy.</gray>'
+    confirm-instructions: '<gray>Nhập </gray><aqua>[confirm]</aqua><gray> vào khung chat để xác nhận. Nhập bất cứ gì khác sẽ hủy.</gray>'
+    cancel-word: 'huy'
+    done-word: 'xong'
+    confirm-word: 'xacnhan'
+    timed-out: '<red>Không có câu trả lời - yêu cầu đã bị hủy.</red>'
+  errors:
+    empty: '<red>Hãy nhập gì đó trước.</red>'
+    too-long: '<red>Quá dài. Giới hạn là [number] ký tự.</red>'
+    not-a-number: '<red>Đó không phải là số hợp lệ.</red>'
+    out-of-range: '<red>Nhập một số từ [min] đến [max].</red>'
 successfully-loaded: >
   <gold>  ____             _        ____ </gold><gold> |  _ \           | |      |  _</gold>
   \             <gray>by </gray><green>tastybento </green><gray>and </gray><green>Poslovitch </green><gold> | |_) | ___ _ __ |</gold>

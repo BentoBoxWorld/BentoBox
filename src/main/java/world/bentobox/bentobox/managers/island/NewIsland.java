@@ -71,6 +71,10 @@ public class NewIsland {
         this.addon = builder.addon2;
         this.locationStrategy = builder.locationStrategy2;
 
+        // Let the game mode choose where the island goes, for example based on the blueprint bundle
+        if (this.locationStrategy == null && this.addon != null) {
+            this.locationStrategy = this.addon.getNewIslandLocationStrategy(user, name, builder.oldIsland2);
+        }
         // Use default location strategy if none provided
         if (this.locationStrategy == null) {
             this.locationStrategy = new DefaultNewIslandLocationStrategy();

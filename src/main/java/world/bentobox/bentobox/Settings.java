@@ -388,6 +388,19 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.locked-border.color", since = "3.24.0")
     private BorderColor lockedBorderColor = BorderColor.RED;
 
+    @ConfigComment("Let players preview a blueprint bundle before they choose it. A right click on a")
+    @ConfigComment("bundle in the island creation panel takes the player to an empty world kept for")
+    @ConfigComment("previews, where they can fly around the bundle's overworld blueprint. Only that")
+    @ConfigComment("player sees the blocks; nothing is built. They are put back when the preview ends.")
+    @ConfigComment("Only the default bundle can be previewed until other bundles are allowed in the")
+    @ConfigComment("blueprint management panel.")
+    @ConfigEntry(path = "island.blueprint-preview.enabled", since = "3.25.0")
+    private boolean blueprintPreview = true;
+
+    @ConfigComment("How long a preview lasts, in seconds, before the player is put back.")
+    @ConfigEntry(path = "island.blueprint-preview.duration", since = "3.25.0")
+    private int blueprintPreviewDuration = 60;
+
     @ConfigComment("Modal dialog options. Dialogs are the 'menu they can't click away' shown to")
     @ConfigComment("players for high-friction flows. They require a server that supports dialogs")
     @ConfigComment("(Minecraft 26+); on older servers every option below falls back automatically")
@@ -412,6 +425,11 @@ public class Settings implements ConfigObject {
     @ConfigComment("clicking a game runs that game mode's command for the player.")
     @ConfigEntry(path = "island.dialogs.game-mode-selection", since = "3.21.0")
     private boolean dialogGameModeSelection = false;
+
+    @ConfigComment("Ask for typed input, such as a name, a number or a description, in a dialog")
+    @ConfigComment("with a text box instead of asking the player to type it in chat.")
+    @ConfigEntry(path = "island.dialogs.prompts", since = "3.25.0")
+    private boolean dialogPrompts = true;
 
     @ConfigComment("Sets the minimum length an island custom name is required to have.")
     @ConfigEntry(path = "island.name.min-length")
@@ -1157,6 +1175,54 @@ public class Settings implements ConfigObject {
      */
     public void setDialogGameModeSelection(boolean dialogGameModeSelection) {
         this.dialogGameModeSelection = dialogGameModeSelection;
+    }
+
+    /**
+     * @return whether players may preview blueprint bundles
+     * @since 3.25.0
+     */
+    public boolean isBlueprintPreview() {
+        return blueprintPreview;
+    }
+
+    /**
+     * @param blueprintPreview whether players may preview blueprint bundles
+     * @since 3.25.0
+     */
+    public void setBlueprintPreview(boolean blueprintPreview) {
+        this.blueprintPreview = blueprintPreview;
+    }
+
+    /**
+     * @return how long a blueprint preview lasts, in seconds
+     * @since 3.25.0
+     */
+    public int getBlueprintPreviewDuration() {
+        return blueprintPreviewDuration;
+    }
+
+    /**
+     * @param blueprintPreviewDuration how long a blueprint preview lasts, in seconds
+     * @since 3.25.0
+     */
+    public void setBlueprintPreviewDuration(int blueprintPreviewDuration) {
+        this.blueprintPreviewDuration = blueprintPreviewDuration;
+    }
+
+    /**
+     * @return whether typed input is asked for in a dialog instead of in chat
+     * @since 3.25.0
+     */
+    public boolean isDialogPrompts() {
+        return dialogPrompts;
+    }
+
+    /**
+     * @param dialogPrompts whether typed input is asked for in a dialog instead of in chat
+     * @since 3.25.0
+     */
+    public void setDialogPrompts(boolean dialogPrompts) {
+        this.dialogPrompts = dialogPrompts;
     }
 
     /**

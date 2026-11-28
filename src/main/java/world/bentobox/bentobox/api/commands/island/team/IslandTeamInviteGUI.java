@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -10,10 +11,6 @@ import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.Prompt;
-import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -21,12 +18,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
+import world.bentobox.bentobox.api.prompts.Prompts;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecords;
 import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 import world.bentobox.bentobox.api.user.User;
@@ -50,6 +49,29 @@ public class IslandTeamInviteGUI {
     private String searchName = "";
     private final BentoBox plugin;
     private final Island island;
+    /** What a left click on a player does. Changed with the MODE button (#3137). */
+    private Mode mode = Mode.INVITE;
+
+    /**
+     * What a left click on a player in the list does. Coop and trust also have their own right and
+     * shift click, but a touch-screen player can only tap, so the mode makes them reachable.
+     */
+    enum Mode {
+        INVITE("commands.island.team.invite.gui.tips.LEFT.invite"),
+        COOP("commands.island.team.invite.gui.tips.RIGHT.coop"),
+        TRUST("commands.island.team.invite.gui.tips.SHIFT_LEFT.trust");
+
+        /** Tooltip used when the template has no action named after this mode. */
+        private final String defaultTooltip;
+
+        Mode(String defaultTooltip) {
+            this.defaultTooltip = defaultTooltip;
+        }
+
+        String key() {
+            return name().toLowerCase(Locale.ENGLISH);
+        }
+    }
 
     public IslandTeamInviteGUI(IslandTeamCommand itc, boolean invitedCmd, Island island) {
         this.island = island;
@@ -84,6 +106,7 @@ public class IslandTeamInviteGUI {
         panelBuilder.registerTypeBuilder("NEXT", this::createNextButton);
         panelBuilder.registerTypeBuilder("SEARCH", this::createSearchButton);
         panelBuilder.registerTypeBuilder("BACK", this::createBackButton);
+        panelBuilder.registerTypeBuilder("MODE", this::createModeButton);
         // Stash the backgrounds for later use
         border = panelBuilder.getPanelTemplate().border();
         background = panelBuilder.getPanelTemplate().background();
@@ -104,14 +127,63 @@ public class IslandTeamInviteGUI {
                 }).build();
     }
 
+    /**
+     * The modes this viewer can use: inviting always, coop and trust if those ranks exist and the
+     * viewer has the permission and rank for the command.
+     */
+    private List<Mode> availableModes() {
+        List<Mode> modes = new ArrayList<>();
+        modes.add(Mode.INVITE);
+        if (canUse(itc.getCoopCommand(), Mode.COOP)) {
+            modes.add(Mode.COOP);
+        }
+        if (canUse(itc.getTrustCommand(), Mode.TRUST)) {
+            modes.add(Mode.TRUST);
+        }
+        return modes;
+    }
+
+    private boolean canUse(@Nullable CompositeCommand command, Mode commandMode) {
+        if (command == null || island == null) {
+            return false;
+        }
+        return user.hasPermission(Objects.requireNonNullElse(command.getPermission(), ""))
+                && island.getRank(user) >= island.getRankCommand(itc.getLabel() + " " + commandMode.key());
+    }
+
+    /**
+     * A button that changes what a left click on a player does: invite, coop or trust. Any click
+     * moves to the next mode. It is left out when inviting is the only thing the viewer can do.
+     */
+    private PanelItem createModeButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        List<Mode> modes = availableModes();
+        if (modes.size() < 2) {
+            return getBlankBorder();
+        }
+        if (!modes.contains(mode)) {
+            mode = Mode.INVITE;
+        }
+        final String ref = "commands.island.team.invite.gui.mode.";
+        return new PanelItemBuilder()
+                .icon(template.icon() != null ? template.icon().clone() : new ItemStack(Material.COMPARATOR))
+                .name(user.getTranslation(ref + "name"))
+                .description(user.getTranslation(ref + mode.key()))
+                .description(user.getTranslation(ref + "change"))
+                .clickHandler((panel, clicker, clickType, clickSlot) -> {
+                    mode = modes.get((modes.indexOf(mode) + 1) % modes.size());
+                    clicker.getPlayer().playSound(clicker.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                    build(clicker);
+                    return true;
+                }).build();
+    }
+
     private PanelItem createSearchButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
         checkTemplate(template);
         PanelItemBuilder pib = new PanelItemBuilder().name(user.getTranslation(template.title())).icon(template.icon())
                 .clickHandler((panel, user, clickType, clickSlot) -> {
                     user.closeInventory();
-                    new ConversationFactory(BentoBox.getInstance()).withLocalEcho(false).withTimeout(90)
-                            .withModality(false).withFirstPrompt(new InviteNamePrompt())
-                            .buildConversation(user.getPlayer()).begin();
+                    Prompts.text(user).title("commands.island.team.invite.gui.enter-name")
+                            .initial(searchName).optional().onSubmit(this::nameEntered).onCancel(() -> build(user)).open();
                     return true;
                 });
         if (!this.searchName.isBlank()) {
@@ -226,12 +298,24 @@ public class IslandTeamInviteGUI {
         }
         template.actions().stream().map(ar -> user
                 .getTranslation("commands.island.team.invite.gui.tips." + ar.clickType().name() + ".name")
-                + " " + user.getTranslation(ar.tooltip())).forEach(desc::add);
+                + " " + user.getTranslation(tooltipFor(ar, template.actions()))).forEach(desc::add);
         return new PanelItemBuilder().icon(player.getName()).name(name).description(desc)
                 .clickHandler(
                         (panel, user, clickType, clickSlot) -> clickHandler(user, clickType, player,
                                 template.actions()))
                 .build();
+    }
+
+    /**
+     * The tooltip to show for an action. The left click does whatever the current mode is, so in
+     * coop or trust mode its tooltip is the one that belongs to that action.
+     */
+    private String tooltipFor(ActionRecords action, @NonNull List<ActionRecords> actions) {
+        if (mode == Mode.INVITE || !ClickType.LEFT.equals(action.clickType())) {
+            return action.tooltip();
+        }
+        return actions.stream().filter(ar -> mode.key().equalsIgnoreCase(ar.actionType()))
+                .map(ActionRecords::tooltip).filter(Objects::nonNull).findFirst().orElse(mode.defaultTooltip);
     }
 
     private boolean clickHandler(User user, ClickType clickType, Player player, @NonNull List<ActionRecords> list) {
@@ -240,41 +324,64 @@ public class IslandTeamInviteGUI {
             return true;
         }
         if (clickType.equals(ClickType.LEFT)) {
-            // Close inventory after one tick to allow the no pickup click return to occur
-            Bukkit.getScheduler().runTask(plugin, user::closeInventory);
-            if (itic.canExecute(user, itic.getLabel(), List.of(player.getName()))) {
-                plugin.log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
-                        + itc.getWorld().getName());
-                itic.execute(user, itic.getLabel(), List.of(player.getName()));
-            } else {
-                plugin.log("Invite failed: " + player.getName() + " by " + user.getName() + " to join island in "
-                        + itc.getWorld().getName());
+            switch (mode) {
+            case COOP -> coop(user, player);
+            case TRUST -> trust(user, player);
+            default -> invite(user, player);
             }
         } else if (clickType.equals(ClickType.RIGHT)) {
-            // Close inventory after one tick to allow the no pickup click return to occur
-            Bukkit.getScheduler().runTask(plugin, user::closeInventory);
-            if (this.itc.getCoopCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
-                plugin.log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
-                        + itc.getWorld().getName());
-                this.itc.getCoopCommand().execute(user, itic.getLabel(), List.of(player.getName()));
-            } else {
-                plugin.log(
-                        "Coop failed: " + player.getName() + "'s coop to " + user.getName() + " failed for island in "
-                                + itc.getWorld().getName());
-            }
+            coop(user, player);
         } else if (clickType.equals(ClickType.SHIFT_LEFT)) {
-            // Close inventory after one tick to allow the no pickup click return to occur
-            Bukkit.getScheduler().runTask(plugin, user::closeInventory);
-            if (this.itc.getTrustCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
-                plugin.log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
-                        + itc.getWorld().getName());
-                this.itc.getTrustCommand().execute(user, itic.getLabel(), List.of(player.getName()));
-            } else {
-                plugin.log("Trust failed: " + player.getName() + "'s trust failed for " + user.getName()
-                        + " for island in " + itc.getWorld().getName());
-            }
+            trust(user, player);
         }
         return true;
+    }
+
+    private void invite(User user, Player player) {
+        // Close inventory after one tick to allow the no pickup click return to occur
+        Bukkit.getScheduler().runTask(plugin, user::closeInventory);
+        if (itic.canExecute(user, itic.getLabel(), List.of(player.getName()))) {
+            plugin.log("Invite sent to: " + player.getName() + " by " + user.getName() + " to join island in "
+                    + itc.getWorld().getName());
+            itic.execute(user, itic.getLabel(), List.of(player.getName()));
+        } else {
+            plugin.log("Invite failed: " + player.getName() + " by " + user.getName() + " to join island in "
+                    + itc.getWorld().getName());
+        }
+    }
+
+    private void coop(User user, Player player) {
+        if (itc.getCoopCommand() == null) {
+            // The coop rank does not exist on this server
+            return;
+        }
+        // Close inventory after one tick to allow the no pickup click return to occur
+        Bukkit.getScheduler().runTask(plugin, user::closeInventory);
+        if (this.itc.getCoopCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
+            plugin.log("Coop: " + player.getName() + " cooped " + user.getName() + " to island in "
+                    + itc.getWorld().getName());
+            this.itc.getCoopCommand().execute(user, itic.getLabel(), List.of(player.getName()));
+        } else {
+            plugin.log("Coop failed: " + player.getName() + "'s coop to " + user.getName()
+                    + " failed for island in " + itc.getWorld().getName());
+        }
+    }
+
+    private void trust(User user, Player player) {
+        if (itc.getTrustCommand() == null) {
+            // The trusted rank does not exist on this server
+            return;
+        }
+        // Close inventory after one tick to allow the no pickup click return to occur
+        Bukkit.getScheduler().runTask(plugin, user::closeInventory);
+        if (this.itc.getTrustCommand().canExecute(user, itic.getLabel(), List.of(player.getName()))) {
+            plugin.log("Trust: " + player.getName() + " trusted " + user.getName() + " to island in "
+                    + itc.getWorld().getName());
+            this.itc.getTrustCommand().execute(user, itic.getLabel(), List.of(player.getName()));
+        } else {
+            plugin.log("Trust failed: " + player.getName() + "'s trust failed for " + user.getName()
+                    + " for island in " + itc.getWorld().getName());
+        }
     }
 
     private PanelItem getBlankBackground() {
@@ -283,27 +390,26 @@ public class IslandTeamInviteGUI {
                 .name((Objects.requireNonNullElse(background.title(), ""))).build();
     }
 
-    class InviteNamePrompt extends StringPrompt {
-
-        @Override
-        @NonNull
-        public String getPromptText(@NonNull ConversationContext context) {
-            return user.getTranslation("commands.island.team.invite.gui.enter-name");
+    /**
+     * Acts on a name typed into the search prompt. If it names a player who can be invited,
+     * they are invited. Otherwise it becomes the search text and the panel reopens. Nothing
+     * typed clears the search.
+     *
+     * @param input what the player typed
+     */
+    void nameEntered(String input) {
+        if (input.isBlank()) {
+            searchName = "";
+            build(user);
+            return;
         }
-
-        @Override
-        public Prompt acceptInput(@NonNull ConversationContext context, String input) {
-            if (itic.canExecute(user, itic.getLabel(), List.of(input))
-                    && itic.execute(user, itic.getLabel(), List.of(input))) {
-                return Prompt.END_OF_CONVERSATION;
-            }
-            // Set the search item to what was entered
-            searchName = input;
-            // Return to the GUI but give a second for the error to show
-            // The failed input is not carried back into the GUI; the player sees the error then the GUI reopens
-            Bukkit.getScheduler().runTaskLater(BentoBox.getInstance(), () -> build(user), 20L);
-            return Prompt.END_OF_CONVERSATION;
+        if (itic.canExecute(user, itic.getLabel(), List.of(input))
+                && itic.execute(user, itic.getLabel(), List.of(input))) {
+            return;
         }
-
+        // Set the search item to what was entered
+        searchName = input;
+        // Return to the GUI but give a second for the error to show
+        Bukkit.getScheduler().runTaskLater(BentoBox.getInstance(), () -> build(user), 20L);
     }
 }
