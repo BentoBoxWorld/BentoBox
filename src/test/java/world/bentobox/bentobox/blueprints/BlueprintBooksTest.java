@@ -211,6 +211,11 @@ class BlueprintBooksTest extends CommonTestSetup {
     @Test
     void testPageBreak() {
         assertEquals(List.of("one", "two\nthree"), BlueprintBooks.paginate("one\n [PAGE] \ntwo\nthree"));
+        // Formatting on the line with the break is ignored, and goes with it
+        assertEquals(List.of("one", "two"), BlueprintBooks.paginate("one\n[page]<gold><blue>\ntwo"));
+        assertEquals(List.of("one", "two"), BlueprintBooks.paginate("one\n&a[page]\n\ntwo"));
+        // In the middle of a line it is only text
+        assertEquals(List.of("see [page] here"), BlueprintBooks.paginate("see [page] here"));
         // Blank lines are kept inside a page but not at the top of one
         assertEquals(List.of("one\n\ntwo", "three"), BlueprintBooks.paginate("one\n\ntwo\n[page]\n\nthree"));
     }
