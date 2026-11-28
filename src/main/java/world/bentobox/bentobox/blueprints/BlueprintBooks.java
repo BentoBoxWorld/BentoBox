@@ -138,7 +138,8 @@ public final class BlueprintBooks {
 
     /**
      * Spreads text over pages. Lines that are too long are broken between words, and a line
-     * that is only {@link #PAGE_BREAK} starts a new page. Formatting is not counted towards
+     * that is only {@link #PAGE_BREAK}, with or without formatting, starts a new page. Where
+     * {@link #PAGE_BREAK} is part of a longer line it is ordinary text. Formatting is not counted towards
      * the length of a line. It starts afresh on each page, so text that runs over a page
      * loses the colour it had.
      * @param text the text, with lines separated by newlines
@@ -149,7 +150,8 @@ public final class BlueprintBooks {
         List<String> pages = new ArrayList<>();
         List<String> page = new ArrayList<>();
         for (String line : text.strip().split("\\R", -1)) {
-            if (line.strip().equalsIgnoreCase(PAGE_BREAK)) {
+            // Formatting on the line does not stop it being a page break
+            if (strip(line).strip().equalsIgnoreCase(PAGE_BREAK)) {
                 pages.add(String.join("\n", page));
                 page = new ArrayList<>();
                 continue;
