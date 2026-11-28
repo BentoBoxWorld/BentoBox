@@ -104,6 +104,12 @@ public class BrigadierCommandRegistrar {
      */
     private final Map<String, LiteralCommandNode<CommandSourceStack>> trees = new HashMap<>();
 
+    /**
+     * True while every command is being registered in one go, at startup or after
+     * a reload of the server's data
+     */
+    private boolean registeringAll;
+
     public BrigadierCommandRegistrar(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
@@ -119,7 +125,17 @@ public class BrigadierCommandRegistrar {
             reset();
             // Register everything already known. Commands created later come
             // through registerCommand() directly.
-            new ArrayList<>(plugin.getCommandsManager().getCommands().values()).forEach(this::registerCommand);
+            // Nothing is pushed to players while this goes on. Each push builds a
+            // player's tree on another thread, and the tree is still being added to
+            // here, which made those threads fail with a
+            // ConcurrentModificationException on /minecraft:reload. The server sends
+            // every player the finished tree itself once the reload is done.
+            registeringAll = true;
+            try {
+                new ArrayList<>(plugin.getCommandsManager().getCommands().values()).forEach(this::registerCommand);
+            } finally {
+                registeringAll = false;
+            }
         });
     }
 
@@ -161,7 +177,7 @@ public class BrigadierCommandRegistrar {
             }
             added |= registerRedirect(namespace(command) + ":" + label, main, label);
         }
-        if (added) {
+        if (added && !registeringAll) {
             // Players already online - an addon enabled at runtime, or a
             // /bentobox reload - need the new tree pushed to them.
             Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
